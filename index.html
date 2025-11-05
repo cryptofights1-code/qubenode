@@ -1,0 +1,2667 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QubeNode - Валідатор Qubetics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000000;
+            background-color: #000000 !important;
+            color: #ffffff;
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: static !important;
+        }
+
+        html {
+            background: #000000;
+            background-color: #000000 !important;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: radial-gradient(ellipse at 50% 50%, rgba(0, 212, 255, 0.15) 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 20%, rgba(0, 255, 240, 0.15) 0%, transparent 50%),
+                        radial-gradient(ellipse at 20% 80%, rgba(0, 128, 255, 0.15) 0%, transparent 50%);
+            animation: bgShift 20s ease infinite;
+            pointer-events: none;
+        }
+
+        @keyframes bgShift {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(5deg); }
+        }
+
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Hamburger Menu Styles */
+        .hamburger {
+            display: none;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 99999 !important;
+            width: 35px;
+            height: 35px;
+            background: rgba(0, 212, 255, 0.4);
+            border: 2px solid rgba(0, 212, 255, 0.8);
+            border-radius: 8px;
+            cursor: pointer;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.3s ease;
+            pointer-events: auto !important;
+            -webkit-tap-highlight-color: rgba(0, 212, 255, 0.3);
+            touch-action: manipulation;
+            outline: none;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 18px;
+            height: 2px;
+            background: #00FFF0;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .hamburger:active {
+            background: rgba(0, 212, 255, 0.6);
+            transform: scale(0.95);
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 80%;
+            max-width: 320px;
+            height: 100vh;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            border-right: 2px solid rgba(0, 212, 255, 0.3);
+            z-index: 99998;
+            padding: 80px 30px 30px;
+            overflow-y: auto;
+            transition: left 0.3s ease;
+            box-shadow: 5px 0 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        .mobile-contact-icons {
+            display: none;
+        }
+
+        /* Fixed contact icons for mobile */
+        .fixed-mobile-contacts {
+            display: none;
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 99999;
+            gap: 12px;
+        }
+
+        .fixed-contact-icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            background: transparent;
+            border: none;
+            border-radius: 12px;
+        }
+
+        .fixed-contact-icon svg {
+            width: 50px;
+            height: 50px;
+            filter: drop-shadow(0 2px 6px rgba(0, 212, 255, 0.5));
+            transition: all 0.3s ease;
+        }
+
+        .fixed-contact-icon:active {
+            transform: scale(0.95);
+        }
+
+        .fixed-contact-icon:active svg {
+            filter: drop-shadow(0 2px 8px rgba(0, 212, 255, 0.7));
+        }
+
+        .mobile-menu.active {
+            left: 0;
+        }
+
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 99997;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .mobile-menu-overlay.active {
+            pointer-events: auto;
+        }
+
+        .mobile-menu-overlay.active {
+            opacity: 1;
+        }
+
+        /* CSS-only menu toggle with checkbox */
+        #menu-toggle:checked ~ .mobile-menu {
+            left: 0;
+        }
+
+        #menu-toggle:checked ~ .mobile-menu-overlay {
+            display: block;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #menu-toggle:checked ~ label.hamburger span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        #menu-toggle:checked ~ label.hamburger span:nth-child(2) {
+            opacity: 0;
+        }
+
+        #menu-toggle:checked ~ label.hamburger span:nth-child(3) {
+            transform: rotate(-45deg) translate(8px, -8px);
+        }
+
+        /* Base styles для фіксації іконок на мобільних */
+        .hamburger {
+            position: fixed !important;
+            top: 20px !important;
+            left: 20px !important;
+            z-index: 999999 !important;
+        }
+
+        .fixed-mobile-contacts {
+            position: fixed !important;
+            top: 20px !important;
+            right: 20px !important;
+            display: none;
+            flex-direction: row !important;
+            gap: 15px !important;
+            z-index: 999998 !important;
+        }
+
+        .fixed-contact-icon {
+            width: 50px;
+            height: 50px;
+            background: transparent;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .fixed-contact-icon svg {
+            width: 50px;
+            height: 50px;
+        }
+
+        .fixed-contact-icon:active,
+        .fixed-contact-icon:hover {
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .fixed-mobile-contacts {
+                display: flex !important;
+            }
+        }
+
+        .mobile-menu-items {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .mobile-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 20px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.95em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .mobile-menu-item span {
+            pointer-events: none;
+        }
+
+        .mobile-menu-item:hover,
+        .mobile-menu-item:active {
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid rgba(0, 212, 255, 0.5);
+            transform: translateX(-5px);
+        }
+
+        .contact-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 50%;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 24px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .contact-icon span {
+            pointer-events: none;
+        }
+
+        .contact-icon:hover,
+        .contact-icon:active {
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid rgba(0, 212, 255, 0.5);
+            transform: scale(1.1);
+        }
+        .mobile-menu-item:active {
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid rgba(0, 212, 255, 0.5);
+            transform: translateX(-5px);
+        }
+
+        .top-left-menu {
+            position: absolute;
+            top: 30px;
+            left: 40px;
+            z-index: 10;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .ecosystem-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 50px;
+            color: #ffffff;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+            white-space: nowrap;
+            height: 44px;
+        }
+
+        .ecosystem-button span {
+            line-height: 1;
+        }
+
+        .ecosystem-button:hover {
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid rgba(0, 212, 255, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .top-contacts {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            display: flex;
+            gap: 15px;
+            z-index: 10;
+            align-items: center;
+        }
+
+        .contact-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 255, 240, 0.15));
+            border: none;
+            border-radius: 50px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.95em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.2);
+            white-space: nowrap;
+            height: 44px;
+        }
+
+        .contact-link span {
+            line-height: 1;
+        }
+
+        .contact-link:hover {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(0, 255, 240, 0.25));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .contact-link svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px 60px;
+        }
+
+        .qubetics-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 25px;
+            margin-bottom: 60px;
+            margin-top: 80px;
+            opacity: 0;
+            transform: translateY(-30px);
+            animation: fadeInDown 1s ease-out 0.3s forwards;
+        }
+
+        @keyframes fadeInDown {
+            to {
+                opacity: 0.8;
+                transform: translateY(0);
+            }
+        }
+
+        .qubetics-brand img {
+            width: 120px;
+            height: 120px;
+            border-radius: 20px;
+            filter: drop-shadow(0 0 30px rgba(0, 212, 255, 0.5));
+        }
+
+        .qubetics-brand span {
+            font-size: 3.5em;
+            color: #94a3b8;
+            font-weight: 800;
+            letter-spacing: 3px;
+        }
+
+        .brand-container {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 35px;
+            position: relative;
+            opacity: 0;
+            transform: scale(0.8);
+            animation: zoomIn 1s ease-out 0.8s forwards;
+        }
+
+        @keyframes zoomIn {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .brand-container img {
+            width: 200px;
+            height: 200px;
+            border-radius: 22px;
+            filter: drop-shadow(0 0 25px rgba(0, 212, 255, 0.7));
+        }
+
+        .validator-name {
+            font-size: 10em;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -2px;
+            line-height: 1;
+        }
+
+        .subtitle {
+            font-size: 1.4em;
+            color: #94a3b8;
+            margin-bottom: 40px;
+            font-weight: 300;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s ease-out 1.3s forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(34, 197, 94, 0.1);
+            border: 2px solid rgba(34, 197, 94, 0.4);
+            padding: 14px 32px;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: 1.1em;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s ease-out 1.6s forwards;
+        }
+
+        .status-badge::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.2), transparent);
+            animation: statusShine 3s infinite;
+        }
+
+        @keyframes statusShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 20px #22c55e;
+        }
+
+        /* Extended Status Badge with Inline Blocks */
+        .status-badge-extended {
+            max-width: 650px;
+            margin: 0 auto;
+            padding: 16px 25px;
+            background: rgba(34, 197, 94, 0.1);
+            border: 2px solid rgba(34, 197, 94, 0.4);
+            border-radius: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .status-badge-extended::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.2), transparent);
+            animation: statusShine 3s infinite;
+        }
+
+        .status-badge-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 1em;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .block-info {
+            color: #94a3b8;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+
+        .block-info span {
+            color: #00FFF0;
+            font-weight: 700;
+        }
+
+        .blocks-chain-inline {
+            display: flex;
+            gap: 5px;
+            overflow: hidden;
+            height: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .blocks-chain-inline::before,
+        .blocks-chain-inline::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 40px;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .blocks-chain-inline::before {
+            left: 0;
+            background: linear-gradient(to right, rgba(34, 197, 94, 0.3), transparent);
+        }
+
+        .blocks-chain-inline::after {
+            right: 0;
+            background: linear-gradient(to left, rgba(34, 197, 94, 0.3), transparent);
+        }
+
+        .blocks-track-inline {
+            display: flex;
+            gap: 5px;
+            animation: scrollBlocks 18s linear infinite;
+        }
+
+        @keyframes scrollBlocks {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .chain-block {
+            min-width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(0, 255, 240, 0.2));
+            border: 1.5px solid rgba(0, 212, 255, 0.6);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1em;
+            flex-shrink: 0;
+            animation: blockPop 0.3s ease-out;
+        }
+
+        @keyframes blockPop {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .chain-block.fresh {
+            border-color: #22c55e;
+            box-shadow: 0 0 8px rgba(34, 197, 94, 0.8);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 60px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(0, 255, 240, 0.05) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 20px;
+            padding: 35px;
+            transition: all 0.4s;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .stat-card:nth-child(1) { animation: cardFadeIn 0.6s ease-out 2s forwards; }
+        .stat-card:nth-child(2) { animation: cardFadeIn 0.6s ease-out 2.15s forwards; }
+        .stat-card:nth-child(3) { animation: cardFadeIn 0.6s ease-out 2.3s forwards; }
+        .stat-card:nth-child(4) { animation: cardFadeIn 0.6s ease-out 2.45s forwards; }
+        .stat-card:nth-child(5) { animation: cardFadeIn 0.6s ease-out 2.6s forwards; }
+        .stat-card:nth-child(6) { animation: cardFadeIn 0.6s ease-out 2.75s forwards; }
+        .stat-card:nth-child(7) { animation: cardFadeIn 0.6s ease-out 2.9s forwards; }
+        .stat-card:nth-child(8) { animation: cardFadeIn 0.6s ease-out 3.05s forwards; }
+
+        @keyframes cardFadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(0, 212, 255, 0.5);
+            box-shadow: 0 20px 60px rgba(0, 212, 255, 0.3);
+        }
+
+        .stat-label {
+            font-size: 0.95em;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .stat-value {
+            font-size: 2.8em;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00FFF0 0%, #00D4FF 50%, #0080FF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .stat-subvalue {
+            font-size: 0.9em;
+            color: #64748b;
+            font-weight: 400;
+        }
+
+        .info-section {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.03) 0%, rgba(0, 255, 240, 0.03) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            border-radius: 24px;
+            padding: 50px;
+            margin: 50px 0;
+        }
+
+        .info-section h2 {
+            font-size: 2.5em;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, #00FFF0 0%, #00D4FF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 25px 0;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+            gap: 30px;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #94a3b8;
+            font-weight: 600;
+            min-width: 200px;
+        }
+
+        .info-value {
+            color: #e0e7ff;
+            font-weight: 500;
+            text-align: right;
+        }
+
+        footer {
+            text-align: center;
+            padding: 60px 20px;
+            color: #64748b;
+            border-top: 1px solid rgba(0, 212, 255, 0.1);
+            margin-top: 80px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.95);
+        }
+
+        .modal.show {
+            display: block;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #0a0e27 0%, #000000 100%);
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        .modal-header {
+            padding: 40px 60px;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 3em;
+            background: linear-gradient(135deg, #00FFF0 0%, #00D4FF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+        }
+
+        .close-button {
+            font-size: 2.5em;
+            color: #94a3b8;
+            cursor: pointer;
+            background: rgba(0, 212, 255, 0.1);
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: rgba(0, 212, 255, 0.3);
+            position: relative;
+        }
+
+        .close-button:active {
+            background: rgba(0, 212, 255, 0.3);
+            transform: scale(0.95);
+        }
+
+        .close-button:hover {
+            color: #00FFF0;
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .modal-body h3 {
+            font-size: 2.2em;
+            color: #00D4FF;
+            margin: 40px 0 20px 0;
+            font-weight: 700;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-body p {
+            color: #cbd5e1;
+            font-size: 1.15em;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        .tech-item {
+            background: rgba(0, 212, 255, 0.05);
+            padding: 25px;
+            border-left: 4px solid #00D4FF;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .tech-item-title {
+            color: #00FFF0;
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .calc-input {
+            width: 100%;
+            padding: 18px 25px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 1.3em;
+            font-weight: 600;
+            outline: none;
+            margin-bottom: 20px;
+        }
+
+        .calc-input:focus {
+            border-color: rgba(0, 212, 255, 0.6);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .calc-button {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #00D4FF 0%, #00FFF0 100%);
+            border: none;
+            border-radius: 12px;
+            color: #000;
+            font-size: 1.2em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .calc-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.5);
+        }
+
+        .results {
+            display: none;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .result-item {
+            background: rgba(0, 212, 255, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .result-label {
+            color: #94a3b8;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+
+        .result-value {
+            color: #00D4FF;
+            font-size: 1.8em;
+            font-weight: 800;
+        }
+
+        .result-usd {
+            color: #64748b;
+            font-size: 0.95em;
+            margin-top: 5px;
+        }
+
+        /* FAQ Accordion Styles */
+        .faq-item {
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .faq-item:hover {
+            border-color: rgba(0, 212, 255, 0.4);
+            background: rgba(0, 212, 255, 0.08);
+        }
+
+        .faq-question {
+            width: 100%;
+            padding: 20px 25px;
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            font-size: 1.1em;
+            font-weight: 600;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .faq-question:hover {
+            color: #00D4FF;
+        }
+
+        .faq-icon {
+            font-size: 1.5em;
+            color: #00D4FF;
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            padding: 0 25px;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 1000px;
+            padding: 0 25px 20px 25px;
+        }
+
+        .faq-answer p {
+            color: #cbd5e1;
+            line-height: 1.8;
+            margin: 0;
+        }
+
+        .faq-answer strong {
+            color: #00FFF0;
+        }
+
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex !important;
+                pointer-events: auto !important;
+            }
+
+            .hamburger span {
+                width: 30px !important;
+                height: 3.5px !important;
+                background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important;
+                border-radius: 2px !important;
+                box-shadow: 0 2px 6px rgba(0, 212, 255, 0.5) !important;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .mobile-contact-icons {
+                display: flex !important;
+            }
+
+            .fixed-mobile-contacts {
+                display: flex !important;
+            }
+
+            .container {
+                position: relative;
+                z-index: 1;
+            }
+
+            .top-left-menu, .top-contacts {
+                display: none;
+            }
+
+            .container {
+                padding: 15px;
+                padding-top: 70px;
+            }
+
+            header {
+                padding: 10px 15px 30px;
+                text-align: center;
+            }
+
+            .qubetics-brand {
+                flex-direction: row;
+                justify-content: center;
+                gap: 15px;
+                margin-bottom: 30px;
+                margin-top: 0;
+            }
+
+            .qubetics-brand img {
+                width: 60px;
+                height: 60px;
+            }
+
+            .qubetics-brand span {
+                font-size: 1.1em;
+                letter-spacing: 1px;
+            }
+
+            .brand-container {
+                flex-direction: row;
+                justify-content: center;
+                gap: 15px;
+                margin-bottom: 15px;
+            }
+
+            .brand-container img {
+                width: 70px;
+                height: 70px;
+            }
+
+            .validator-name {
+                font-size: 3em;
+                letter-spacing: -1px;
+                text-align: center;
+            }
+
+            .subtitle {
+                font-size: 0.95em;
+                text-align: center;
+                padding: 0;
+                margin-bottom: 20px;
+            }
+
+            .status-badge {
+                font-size: 0.9em;
+                padding: 10px 20px;
+                display: inline-flex;
+                margin: 0 auto;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+                margin: 40px 0;
+            }
+
+            .stat-card {
+                padding: 20px 15px;
+                text-align: left;
+            }
+
+            .stat-label {
+                font-size: 0.75em;
+                text-align: left;
+                margin-bottom: 10px;
+            }
+
+            .stat-value {
+                font-size: 1.6em;
+                text-align: left;
+            }
+
+            .stat-subvalue {
+                font-size: 0.7em;
+                text-align: left;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                margin: 50px 0;
+            }
+
+            .feature-card {
+                padding: 25px 20px;
+                text-align: left;
+            }
+
+            .feature-icon {
+                font-size: 2.5em;
+            }
+
+            .feature-card h3 {
+                font-size: 1.3em;
+                text-align: left;
+            }
+
+            .feature-card p {
+                font-size: 0.95em;
+                text-align: left;
+            }
+
+            .info-section {
+                padding: 30px 20px;
+                text-align: left;
+            }
+
+            .info-section h2 {
+                font-size: 1.8em;
+                text-align: left;
+            }
+
+            .info-row {
+                flex-direction: column;
+                gap: 10px;
+                padding: 20px 0;
+            }
+
+            .info-label,
+            .info-value {
+                text-align: left;
+                min-width: auto;
+            }
+
+            .cta-section {
+                padding: 40px 20px;
+                margin: 50px 0;
+                text-align: left;
+            }
+
+            .cta-section h2 {
+                font-size: 1.8em;
+                margin-bottom: 15px;
+                text-align: left;
+            }
+
+            .cta-section p {
+                font-size: 1em;
+                margin-bottom: 30px;
+                text-align: left;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .btn {
+                padding: 15px 30px;
+                font-size: 0.95em;
+                width: 100%;
+                justify-content: center;
+            }
+
+            footer {
+                padding: 40px 20px;
+            }
+
+            .exchanges-container {
+                flex-direction: row !important;
+                gap: 15px !important;
+                padding: 30px 15px !important;
+                flex-wrap: nowrap !important;
+                overflow-x: visible !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+            }
+
+            .exchanges-container a {
+                flex: 1;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-width: 0;
+                padding: 15px 10px;
+                background: rgba(0, 212, 255, 0.05);
+                border: 2px solid rgba(0, 212, 255, 0.2);
+                border-radius: 12px;
+                transition: all 0.3s ease;
+            }
+
+            .exchanges-container a:active {
+                background: rgba(0, 212, 255, 0.15);
+                border-color: rgba(0, 212, 255, 0.4);
+                transform: scale(0.95);
+            }
+
+            .exchanges-container img {
+                max-width: 100% !important;
+                width: 100% !important;
+                max-height: 90px !important;
+                height: auto !important;
+                object-fit: contain !important;
+                margin-top: 0 !important;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 15px;
+                align-items: center;
+            }
+
+            .modal-content {
+                width: 95%;
+                max-width: 95%;
+                max-height: 90vh;
+            }
+
+            .modal-header, .modal-body {
+                padding: 20px;
+            }
+
+            .modal-body {
+                padding: 25px 20px;
+            }
+
+            .modal-body > div[style*="grid"] {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 25px !important;
+            }
+
+            .modal-body > div[style*="grid"] > div {
+                width: 100% !important;
+                padding: 20px;
+                background: rgba(0, 212, 255, 0.05);
+                border: 1px solid rgba(0, 212, 255, 0.2);
+                border-radius: 16px;
+                margin-bottom: 0 !important;
+            }
+
+            .modal-body > div[style*="grid"] > div > div:first-child {
+                font-size: 1.2em !important;
+                margin-bottom: 15px !important;
+                padding-bottom: 10px;
+                border-bottom: 2px solid rgba(0, 212, 255, 0.3);
+            }
+
+            .modal-body p {
+                margin-bottom: 20px;
+                line-height: 1.7;
+            }
+
+            .modal-body h3 {
+                margin-top: 35px;
+                padding-top: 20px;
+                border-top: 1px solid rgba(0, 212, 255, 0.2);
+            }
+
+            .modal-body h3:first-child {
+                margin-top: 0;
+                padding-top: 0;
+                border-top: none;
+            }
+
+            .modal-footer {
+                padding: 20px !important;
+                flex-direction: row !important;
+                gap: 10px !important;
+                flex-wrap: nowrap !important;
+                align-items: stretch !important;
+            }
+
+            .modal-link {
+                font-size: 0.8em !important;
+                padding: 10px 16px !important;
+                flex: 1 1 0 !important;
+                min-width: 0 !important;
+                max-width: 50% !important;
+                justify-content: center;
+                white-space: nowrap;
+            }
+            
+            .modal-link span {
+                display: inline-block;
+            }
+            
+            .modal-link span:first-child {
+                font-size: 1.1em;
+            }
+
+            .modal-header h2 {
+                font-size: 1.5em;
+                line-height: 1.3;
+            }
+
+            .modal-body h3 {
+                font-size: 1.3em;
+                margin: 30px 0 15px 0;
+                font-weight: 700;
+            }
+
+            .modal-body p, .modal-body li {
+                font-size: 1em;
+                line-height: 1.7;
+            }
+
+            .modal-body ul {
+                padding-left: 20px;
+                margin: 15px 0;
+            }
+
+            .modal-body li {
+                margin: 12px 0;
+                line-height: 1.6;
+            }
+
+            .modal-body strong {
+                color: #00FFF0;
+                font-weight: 700;
+            }
+
+            .modal-body [style*="background: rgba(0, 212, 255"] {
+                padding: 20px !important;
+                margin: 20px 0 !important;
+                border-radius: 12px !important;
+            }
+
+            .close-modal {
+                font-size: 2em;
+                width: 35px;
+                height: 35px;
+            }
+
+            /* FAQ Mobile Styles */
+            .faq-question {
+                padding: 15px 18px;
+                font-size: 1em;
+                gap: 10px;
+            }
+
+            .faq-icon {
+                font-size: 1.2em;
+            }
+
+            .faq-answer {
+                padding: 0 18px;
+            }
+
+            .faq-item.active .faq-answer {
+                padding: 0 18px 15px 18px;
+            }
+
+            .faq-answer p {
+                font-size: 0.95em;
+                line-height: 1.6;
+            }
+
+            .faq-answer ul {
+                padding-left: 18px;
+                margin: 10px 0;
+            }
+
+            .faq-answer li {
+                margin: 8px 0;
+                font-size: 0.95em;
+            }
+
+            /* Примітка про делегування через комп'ютер */
+            div[style*="linear-gradient(135deg, rgba(0, 212, 255, 0.1)"] {
+                padding: 20px !important;
+                margin: 30px 0 !important;
+            }
+
+            div[style*="linear-gradient(135deg, rgba(0, 212, 255, 0.1)"] h4 {
+                font-size: 1.1em !important;
+            }
+
+            div[style*="linear-gradient(135deg, rgba(0, 212, 255, 0.1)"] p {
+                font-size: 0.95em !important;
+            }
+
+            div[style*="linear-gradient(135deg, rgba(0, 212, 255, 0.1)"] a {
+                padding: 12px 16px !important;
+                font-size: 0.9em !important;
+            }
+
+            /* Кроки делегування (1-5) */
+            div[style*="width: 40px; height: 40px"] {
+                width: 35px !important;
+                height: 35px !important;
+                font-size: 1.1em !important;
+            }
+
+            div[style*="margin-left: 55px"] {
+                margin-left: 45px !important;
+            }
+
+            /* Контейнер з кроками */
+            div[style*="background: rgba(0, 212, 255, 0.03)"] {
+                padding: 25px 15px !important;
+            }
+
+            /* Гаманці список */
+            div[style*="display: flex; align-items: center; gap: 12px; padding: 15px"] {
+                padding: 12px !important;
+                gap: 10px !important;
+            }
+
+            /* Посилання на біржі в FAQ */
+            .faq-answer a {
+                font-size: 0.95em !important;
+                padding: 2px 0 !important;
+                display: inline-block;
+            }
+
+            /* Примітка блок з посиланнями */
+            div[style*="background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 240, 0.05))"] {
+                padding: 20px 15px !important;
+                margin: 30px 0 !important;
+            }
+
+            div[style*="background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 240, 0.05))"] h4 {
+                font-size: 1.1em !important;
+                margin-bottom: 12px !important;
+            }
+
+            div[style*="background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 240, 0.05))"] p {
+                font-size: 0.9em !important;
+                margin-bottom: 15px !important;
+            }
+
+            div[style*="background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 240, 0.05))"] a {
+                padding: 12px 15px !important;
+                font-size: 0.85em !important;
+                gap: 8px !important;
+            }
+
+            /* Закрити button */
+            .close-button {
+                width: 45px !important;
+                height: 45px !important;
+                font-size: 2em !important;
+            }
+
+            /* Розділ "Чому обрати QubeNode" на головній */
+            .info-row .info-value {
+                font-size: 0.95em !important;
+            }
+
+            /* Extended Badge Mobile */
+            .status-badge-extended {
+                max-width: calc(100% - 30px);
+                padding: 12px 15px !important;
+                border-radius: 20px !important;
+                margin-bottom: 20px !important;
+            }
+
+            .status-badge-header {
+                flex-direction: column;
+                gap: 6px !important;
+                font-size: 0.95em !important;
+                margin-bottom: 10px !important;
+            }
+
+            .block-info {
+                font-size: 0.7em !important;
+            }
+
+            .blocks-chain-inline {
+                height: 25px !important;
+                gap: 4px !important;
+            }
+
+            .blocks-track-inline {
+                gap: 4px !important;
+            }
+
+            .chain-block {
+                min-width: 24px !important;
+                height: 24px !important;
+                font-size: 0.9em !important;
+                border-width: 1px !important;
+            }
+
+            .blocks-chain-inline::before,
+            .blocks-chain-inline::after {
+                width: 30px !important;
+            }
+
+            /* Фіксація гамбургер меню та іконок */
+            .hamburger {
+                position: fixed !important;
+                top: 20px !important;
+                left: 20px !important;
+                display: flex !important;
+                z-index: 999999 !important;
+            }
+
+            .fixed-mobile-contacts {
+                position: fixed !important;
+                top: 20px !important;
+                right: 20px !important;
+                display: flex !important;
+                flex-direction: row !important;
+                gap: 15px !important;
+                z-index: 999998 !important;
+            }
+
+            .fixed-contact-icon {
+                width: 50px !important;
+                height: 50px !important;
+                background: transparent !important;
+                border: none !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                transition: all 0.3s ease !important;
+            }
+
+            .fixed-contact-icon svg {
+                width: 50px !important;
+                height: 50px !important;
+            }
+
+            .fixed-contact-icon:active,
+            .fixed-contact-icon:hover {
+                transform: scale(1.1) !important;
+            }
+
+            /* Приховати десктопні контакти на мобільних */
+            .top-contacts {
+                display: none !important;
+            }
+
+            .top-left-menu {
+                display: none !important;
+            }
+        }
+
+        /* Максимальний пріоритет для фіксації іконок */
+        @media (max-width: 768px) {
+            body .hamburger,
+            body label.hamburger[for="menu-toggle"] {
+                position: fixed !important;
+                top: 20px !important;
+                left: 20px !important;
+                z-index: 999999 !important;
+            }
+
+            body .fixed-mobile-contacts,
+            body div.fixed-mobile-contacts {
+                position: fixed !important;
+                top: 20px !important;
+                right: 20px !important;
+                z-index: 999998 !important;
+                flex-direction: row !important;
+            }
+        }
+    </style>
+    
+    <!-- КРИТИЧНИЙ STYLE - МАКСИМАЛЬНИЙ ПРІОРИТЕТ ДЛЯ ФІКСАЦІЇ -->
+    <style>
+        /* АБСОЛЮТНА ФІКСАЦІЯ - НАЙВИЩИЙ ПРІОРИТЕТ */
+        @media (max-width: 768px) {
+            body .hamburger,
+            body label.hamburger,
+            body [for="menu-toggle"].hamburger,
+            html body .hamburger,
+            html body label.hamburger {
+                display: flex !important;
+                position: fixed !important;
+                top: 20px !important;
+                left: 20px !important;
+                bottom: auto !important;
+                right: auto !important;
+                width: 50px !important;
+                height: 50px !important;
+                z-index: 999999 !important;
+                background: transparent !important;
+                border: none !important;
+                border-radius: 0 !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                align-items: center !important;
+                gap: 6px !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                transform: none !important;
+                translate: none !important;
+                inset: 20px auto auto 20px !important;
+            }
+            
+            body .hamburger span,
+            html body .hamburger span {
+                width: 30px !important;
+                height: 3.5px !important;
+                background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important;
+                display: block !important;
+                border-radius: 2px !important;
+                pointer-events: none !important;
+            }
+            
+            body .fixed-mobile-contacts,
+            body div.fixed-mobile-contacts,
+            html body .fixed-mobile-contacts,
+            html body div.fixed-mobile-contacts {
+                display: flex !important;
+                position: fixed !important;
+                top: 20px !important;
+                right: 20px !important;
+                bottom: auto !important;
+                left: auto !important;
+                z-index: 999998 !important;
+                flex-direction: row !important;
+                gap: 15px !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                transform: none !important;
+                translate: none !important;
+                inset: 20px 20px auto auto !important;
+            }
+
+            body .fixed-mobile-contacts *,
+            html body .fixed-mobile-contacts * {
+                position: static !important;
+            }
+        }
+
+        @media (min-width: 769px) {
+            /* Ховати мобільні іконки на десктопі */
+            #mobile-icons-container {
+                display: none !important;
+            }
+            
+            .hamburger { display: none !important; }
+            .fixed-mobile-contacts { display: none !important; }
+            
+            /* Ховати весь контейнер з мобільними іконками на десктопі */
+            #mobile-icons-container {
+                display: none !important;
+            }
+        }
+        
+        /* Ховати іконки коли модальне вікно відкрите */
+        .modal.show ~ div .hamburger,
+        .modal.show ~ div .fixed-mobile-contacts {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- КОНТЕЙНЕР ДЛЯ ІКОНОК - ТІЛЬКИ ВГОРІ САЙТУ -->
+    <div id="mobile-icons-container" style="position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important; width: 100% !important; height: 80px !important; z-index: 999999 !important; pointer-events: none !important; margin: 0 !important; padding: 0 !important;">
+        <!-- Hamburger Menu - ЗЛІВА -->
+        <label for="menu-toggle" class="hamburger" style="position: absolute !important; top: 20px !important; left: 20px !important; pointer-events: auto !important; display: flex !important; width: 50px !important; height: 50px !important; flex-direction: column !important; justify-content: center !important; align-items: center !important; gap: 6px !important; background: transparent !important; border: none !important; z-index: 1000000 !important;">
+            <span style="display: block !important; width: 30px !important; height: 3.5px !important; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important; border-radius: 2px !important;"></span>
+            <span style="display: block !important; width: 30px !important; height: 3.5px !important; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important; border-radius: 2px !important;"></span>
+            <span style="display: block !important; width: 30px !important; height: 3.5px !important; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important; border-radius: 2px !important;"></span>
+        </label>
+
+        <!-- Fixed Mobile Контакти Icons - СПРАВА ГОРИЗОНТАЛЬНО -->
+        <div class="fixed-mobile-contacts" style="position: absolute !important; top: 20px !important; right: 20px !important; display: flex !important; flex-direction: row !important; gap: 15px !important; pointer-events: auto !important; z-index: 1000000 !important;">
+            <a href="https://t.me/+sRnz7RyoL4Q0MWEy" class="fixed-contact-icon" target="_blank">
+                <svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 25L18 27.5L21 37L27 30L36 37L39 12L10 25Z" stroke="url(#iconGrad)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <path d="M18 27.5L21 32" stroke="url(#iconGrad)" stroke-width="3.5" stroke-linecap="round"/>
+                    <path d="M21 37V32" stroke="url(#iconGrad)" stroke-width="3.5" stroke-linecap="round"/>
+                    <path d="M18 27.5L31 17" stroke="url(#iconGrad)" stroke-width="3.5" stroke-linecap="round"/>
+                    <defs>
+                        <linearGradient id="iconGrad" x1="0" y1="0" x2="50" y2="50" gradientUnits="userSpaceOnUse">
+                            <stop offset="0%" stop-color="#00FFB3"/>
+                            <stop offset="25%" stop-color="#00D4FF"/>
+                            <stop offset="50%" stop-color="#6366F1"/>
+                            <stop offset="75%" stop-color="#A855F7"/>
+                            <stop offset="100%" stop-color="#FFD60A"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </a>
+            <a href="mailto:qube.node4@gmail.com" class="fixed-contact-icon">
+                <svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="11" y="16" width="28" height="18" rx="2" stroke="url(#iconGrad2)" stroke-width="3.5" fill="none"/>
+                    <path d="M11 19L25 28L39 19" stroke="url(#iconGrad2)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <defs>
+                        <linearGradient id="iconGrad2" x1="0" y1="0" x2="50" y2="50" gradientUnits="userSpaceOnUse">
+                            <stop offset="0%" stop-color="#00FFB3"/>
+                            <stop offset="25%" stop-color="#00D4FF"/>
+                            <stop offset="50%" stop-color="#6366F1"/>
+                            <stop offset="75%" stop-color="#A855F7"/>
+                            <stop offset="100%" stop-color="#FFD60A"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </a>
+        </div>
+    </div>
+
+    <div class="bg-animation"></div>
+    <div class="grid-overlay"></div>
+
+    <!-- CSS-ONLY Menu Toggle -->
+    <input type="checkbox" id="menu-toggle" style="display: none;">
+
+    <!-- Mobile Menu Overlay -->
+    <label for="menu-toggle" class="mobile-menu-overlay" id="menuOverlay"></label>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-items">
+            <button class="mobile-menu-item" data-modal="ecosystemModal" type="button">
+                <span>🌐</span>
+                <span>Про Екосистему</span>
+            </button>
+            <button class="mobile-menu-item" data-modal="ticsModal" type="button">
+                <span>💎</span>
+                <span>Монета TICS</span>
+            </button>
+            <button class="mobile-menu-item" data-modal="calcModal" type="button">
+                <span>🧮</span>
+                <span>Калькулятор</span>
+            </button>
+            <button class="mobile-menu-item" data-modal="delegatorModal" type="button">
+                <span>🤝</span>
+                <span>Як стати делегатором</span>
+            </button>
+            <button class="mobile-menu-item" data-modal="faqModal" type="button">
+                <span>❓</span>
+                <span>FAQ</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="top-left-menu">
+            <button class="ecosystem-button" onclick="openModal('ecosystemModal')">
+                <span>🌐</span>
+                <span>Про Екосистему</span>
+            </button>
+            <button class="ecosystem-button" onclick="openModal('ticsModal')">
+                <span>💎</span>
+                <span>Монета TICS</span>
+            </button>
+            <button class="ecosystem-button" onclick="openModal('calcModal')">
+                <span>🧮</span>
+                <span>Калькулятор</span>
+            </button>
+            <button class="ecosystem-button" onclick="openModal('delegatorModal')">
+                <span>🤝</span>
+                <span>Як стати делегатором</span>
+            </button>
+            <button class="ecosystem-button" onclick="openModal('faqModal')">
+                <span>❓</span>
+                <span>FAQ</span>
+            </button>
+        </div>
+
+        <div class="top-contacts">
+            <a href="https://t.me/+sRnz7RyoL4Q0MWEy" class="contact-link" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
+                </svg>
+                <span>Telegram</span>
+            </a>
+            <a href="mailto:qube.node4@gmail.com" class="contact-link">
+                <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                </svg>
+                <span>Email</span>
+            </a>
+        </div>
+
+        <header>
+            <div class="qubetics-brand">
+                <img src="qubetics.png" alt="Qubetics">
+                <span>QUBETICS BLOCKCHAIN</span>
+            </div>
+
+            <div class="brand-container">
+                <img src="qubenode-logo.png" alt="QubeNode">
+                <h1 class="validator-name">QubeNode</h1>
+            </div>
+            <p class="subtitle">Стабільний та надійний валідатор мережі Qubetics</p>
+            <div class="status-badge-extended">
+                <div class="status-badge-header">
+                    <span class="status-dot"></span>
+                    <span>Активний Валідатор</span>
+                    <span class="block-info">Блок #<span id="currentBlock">1,969,775</span> • ~5.83с</span>
+                </div>
+                <div class="blocks-chain-inline" id="blocksChainInline">
+                    <!-- Blocks will be added here -->
+                </div>
+            </div>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Загальна Сума</div>
+                <div class="stat-value">2.4M</div>
+                <div class="stat-subvalue">Делеговано $TICS</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Делегатори</div>
+                <div class="stat-value">147</div>
+                <div class="stat-subvalue">Активні учасники</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Uptime</div>
+                <div class="stat-value">99.8%</div>
+                <div class="stat-subvalue">Останні 100K блоків</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">APY</div>
+                <div class="stat-value">30%</div>
+                <div class="stat-subvalue">Річна винагорода</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Валідовано Блоків</div>
+                <div class="stat-value">12,847</div>
+                <div class="stat-subvalue">Всього перевірено мережею</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Ставка Комісії</div>
+                <div class="stat-value">5.00%</div>
+                <div class="stat-subvalue">Поточна комісія валідатора</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Ціна $TICS</div>
+                <div class="stat-value">$0.0234</div>
+                <div class="stat-subvalue">Поточна ринкова ціна монети $TICS</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Зміна за 24Г</div>
+                <div class="stat-value" style="color: #22c55e;">+5.2%</div>
+                <div class="stat-subvalue">Зміна ціни за останні 24 години</div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2>Чому обрати QubeNode?</h2>
+            <div class="info-row">
+                <div class="info-label">🛡️ Надійність</div>
+                <div class="info-value">Високий uptime — ми забезпечуємо стабільну роботу ноди 24/7 з професійним моніторингом</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">💎 Мінімальна комісія мережі</div>
+                <div class="info-value">Фіксована комісія 5% — більше винагороди залишається у вас</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">⚡ Продуктивність</div>
+                <div class="info-value">Потужне обладнання та оптимізована конфігурація ноди для максимальної ефективності</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">🤝 Підтримка</div>
+                <div class="info-value">Швидка підтримка та відкрита комунікація з делегаторами</div>
+            </div>
+        </div>
+
+        <footer>
+            <p><strong>QubeNode</strong> - Професійний валідатор Qubetics Network</p>
+            <p>© 2025 QubeNode. Всі права захищено.</p>
+        </footer>
+    </div>
+
+    <!-- Ecosystem Modal -->
+    <div id="ecosystemModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Про Екосистему Qubetics</h2>
+                <button class="close-button" data-close="ecosystemModal" onclick="closeModal('ecosystemModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h3>Що таке Qubetics?</h3>
+                <p>Qubetics — це перша у світі Layer-1 Web3-агрегована блокчейн-екосистема, створена для об'єднання Bitcoin, Ethereum, Solana та інших провідних мереж у єдину платформу. Побудована на Cosmos SDK з повною сумісністю EVM, мережа Qubetics вже працює і активно розвивається, маючи на меті вирішити проблему фрагментації блокчейну через забезпечення безшовної міжланцюгової взаємодії.</p>
+                
+                <h3>Чому це важливо</h3>
+                <p>Традиційні блокчейни працюють ізольовано, створюючи бар'єри для обміну даними та обмежуючи масштабованість. Qubetics вирішує це через безшовне з'єднання мереж — дозволяючи активам, даним та додаткам вільно переміщуватися через ланцюги з єдиної платформи без використання традиційних мостів.</p>
+                
+                <h3>Майбутні Технології та Інновації</h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-top: 30px;">
+                    <div>
+                        <div style="color: #00FFF0; font-size: 1.1em; font-weight: 700; margin-bottom: 10px;">⚡ Протокол Абстракції Ланцюгів (CAP)</div>
+                        <p style="color: #94a3b8; font-size: 0.95em; line-height: 1.7; margin: 0;">CAP - це революційний протокол Qubetics для міжланцюгових переказів на основі намірів (intent-based). Без мостів, обмінів чи кастодіальних ризиків - активи залишаються в смарт-контрактних сховищах до підтвердження розрахунку. Децентралізована мережа Solver забезпечує безшовну ліквідність через кілька ланцюгів.</p>
+                    </div>
+                    
+                    <div>
+                        <div style="color: #00FFF0; font-size: 1.1em; font-weight: 700; margin-bottom: 10px;">💳 Гаманець Qubetics</div>
+                        <p style="color: #94a3b8; font-size: 0.95em; line-height: 1.7; margin: 0;">Більше ніж просто крипто-гаманець — це ваш шлях до повсякденних цифрових фінансів. Гаманець Qubetics поєднує некастодіальну безпеку з реальною корисністю через інтегровані дебетові картки, віртуальні картки та підтримку Apple Pay і Google Pay.</p>
+                    </div>
+                    
+                    <div>
+                        <div style="color: #00FFF0; font-size: 1.1em; font-weight: 700; margin-bottom: 10px;">🔒 Децентралізована VPN (dVPN)</div>
+                        <p style="color: #94a3b8; font-size: 0.95em; line-height: 1.7; margin: 0;">Peer-to-peer VPN мережа, де користувачі діляться пропускною здатністю та заробляють монети $TICS за надання підключення. На відміну від централізованих VPN, Qubetics dVPN працює в розподіленій мережі без єдиної точки контролю.</p>
+                    </div>
+                    
+                    <div>
+                        <div style="color: #00FFF0; font-size: 1.1em; font-weight: 700; margin-bottom: 10px;">💎 Маркетплейс Токенізованих Активів</div>
+                        <p style="color: #94a3b8; font-size: 0.95em; line-height: 1.7; margin: 0;">Перетворюйте реальні активи в торгові цифрові токени на блокчейні. Володійте частковими частками нерухомості, торгуйте правами інтелектуальної власності або інвестуйте в токенізовані цінні папери з повною прозорістю.</p>
+                    </div>
+                    
+                    <div>
+                        <div style="color: #00FFF0; font-size: 1.1em; font-weight: 700; margin-bottom: 10px;">🛠️ QubeQode IDE</div>
+                        <p style="color: #94a3b8; font-size: 0.95em; line-height: 1.7; margin: 0;">Платформа розробки на базі AI, яка робить створення блокчейн-додатків доступним для всіх. З компонентами drag-and-drop та допомогою AI, підприємці можуть створювати складні dApps без написання коду.</p>
+                    </div>
+                    
+                    <div>
+                        <div style="color: #00FFF0; font-size: 1.1em; font-weight: 700; margin-bottom: 10px;">💵 Стейблкоїн QUSD</div>
+                        <p style="color: #94a3b8; font-size: 0.95em; line-height: 1.7; margin: 0;">Повністю забезпечений стейблкоїн, прив'язаний до долара США, забезпечений резервами USDT та USDC. QUSD забезпечує миттєві, недорогі міжнародні платежі та служить стабільним засобом обміну в екосистемі Qubetics.</p>
+                    </div>
+                    
+                    <div>
+                        <div style="color: #00FFF0; font-size: 1.1em; font-weight: 700; margin-bottom: 10px;">⚛️ Квантово-Стійка Безпека</div>
+                        <p style="color: #94a3b8; font-size: 0.95em; line-height: 1.7; margin: 0;">Qubetics проактивно впроваджує пост-квантові криптографічні алгоритми для захисту активів користувачів від майбутніх квантових атак. Ця перспективна модель безпеки використовує криптографію на основі решіток та квантово-стійкі схеми підписів.</p>
+                    </div>
+                    
+                    <div>
+                        <div style="color: #00FFF0; font-size: 1.1em; font-weight: 700; margin-bottom: 10px;">💰 Міжнародні Розрахунки</div>
+                        <p style="color: #94a3b8; font-size: 0.95em; line-height: 1.7; margin: 0;">Qubetics дає змогу банкам та фінансовим установам здійснювати майже миттєві міжнародні платежі, використовуючи монети $TICS. Усуваючи посередників, мережа значно зменшує витрати та час транзакцій з днів до секунд, забезпечуючи повну прозорість та регуляторну відповідність.</p>
+                    </div>
+                </div>
+                
+                <h3 style="margin-top: 50px;">Чому Qubetics - це Майбутнє Блокчейну</h3>
+                <p style="font-size: 0.95em; line-height: 1.8; color: #cbd5e1;">
+                    Qubetics представляє майбутнє блокчейну — першу у світі Layer-1 Web3-агреговану екосистему, яка об'єднає провідні мережі, включаючи Bitcoin, Ethereum, Solana та інші, в одну безшовну платформу. Поки більшість блокчейнів працюють ізольовано, Qubetics вирішить проблему фрагментації завдяки революційному Протоколу Абстракції Ланцюгів (CAP), забезпечуючи справжню міжланцюгову взаємодію без численних гаманців і складних мостів.
+                </p>
+                <p style="font-size: 0.95em; line-height: 1.8; color: #cbd5e1; margin-top: 15px;">
+                    Qubetics Wallet відкриє доступ до всього світу Web3 через один гаманець. Міжнародні платежі більше не повинні тривати днями та коштувати дорого — на Qubetics вони стануть швидкими та зручними.
+                </p>
+                <p style="font-size: 0.95em; line-height: 1.8; color: #cbd5e1; margin-top: 15px;">
+                    Децентралізована VPN гарантуватиме приватність і свободу доступу до інтернету, інструменти розробки з підтримкою AI демократизують створення dApp, а квантово-стійка безпека захистить майбутнє користувачів.
+                </p>
+                <p style="font-size: 0.95em; line-height: 1.8; color: #cbd5e1; margin-top: 15px;">
+                    Qubetics — це не просто ще один блокчейн. Це міст між традиційними фінансами та Web3-інноваціями, підсилений консенсусом Delegated Proof of Stake та сильною екосистемою валідаторів і делегаторів. Мережа не просто обіцяє майбутнє — вона активно будує його вже сьогодні, роблячи блокчейн доступним і корисним для мільйонів людей у всьому світі.
+                </p>
+            </div>
+            
+            <div class="modal-footer" style="padding: 40px 60px; background: rgba(0, 212, 255, 0.05); border-top: 1px solid rgba(0, 212, 255, 0.2); display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+                <a href="https://www.qubetics.com" class="modal-link" target="_blank" style="display: inline-flex; align-items: center; gap: 12px; padding: 18px 40px; background: rgba(0, 212, 255, 0.1); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 50px; color: #00D4FF; text-decoration: none; font-weight: 600; font-size: 1.1em; transition: all 0.3s;">
+                    <span>🌐</span>
+                    <span>Офіційний Сайт</span>
+                </a>
+                <a href="https://www.qubetics.com/documents/whitepaper.pdf?_gl=1*1al7y33*_gcl_au*MTU0NDc2NTgyOC4xNzU5NjE4NzA3" class="modal-link" target="_blank" style="display: inline-flex; align-items: center; gap: 12px; padding: 18px 40px; background: rgba(0, 212, 255, 0.1); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 50px; color: #00D4FF; text-decoration: none; font-weight: 600; font-size: 1.1em; transition: all 0.3s;">
+                    <span>📄</span>
+                    <span>Читати Whitepaper</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- TICS Modal -->
+    <div id="ticsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>$TICS Coin</h2>
+                <button class="close-button" data-close="ticsModal" onclick="closeModal('ticsModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h3>Що таке $TICS?</h3>
+                <p>$TICS - це нативна монета блокчейну Qubetics (Layer 1), яка є серцем всієї екосистеми. Вона живить мережу, виконує критичні функції та створює цінність для всіх учасників платформи.</p>
+                
+                <h3>Ключові Функції $TICS</h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-top: 30px;">
+                    <div>
+                        <div style="color: #00FFF0; font-size: 1.1em; font-weight: 700; margin-bottom: 10px;">⛽ Газ для Транзакцій</div>
+                        <p style="color: #94a3b8; font-size: 0.95em; line-height: 1.7; margin: 0;">$TICS використовується для оплати всіх операцій у мережі — від простих переказів до складних смарт-контрактів та міжланцюгових операцій.</p>
+                    </div>
+                    
+                    <div>
+                        <div style="color: #00FFF0; font-size: 1.1em; font-weight: 700; margin-bottom: 10px;">🔒 Стейкінг та Безпека Мережі</div>
+                        <p style="color: #94a3b8; font-size: 0.95em; line-height: 1.7; margin: 0;">Делегування $TICS валідаторам забезпечує безпеку блокчейну через консенсус Delegated Proof of Stake (DPoS). Валідатори та делегатори отримують винагороди за підтримку мережі.</p>
+                    </div>
+                    
+                    <div>
+                        <div style="color: #00FFF0; font-size: 1.1em; font-weight: 700; margin-bottom: 10px;">🌉 Протокол Абстракції Ланцюгів (CAP)</div>
+                        <p style="color: #94a3b8; font-size: 0.95em; line-height: 1.7; margin: 0;">$TICS буде використовуватися для міжланцюгових операцій через власний протокол Qubetics — CAP. Це революційна технологія переказів на основі намірів, яка усуне необхідність мостів, обмінів та кастодіальних ризиків, забезпечуючи безшовну взаємодію між Bitcoin, Ethereum, Solana та іншими блокчейнами.</p>
+                    </div>
+                    
+                    <div>
+                        <div style="color: #00FFF0; font-size: 1.1em; font-weight: 700; margin-bottom: 10px;">🔐 Децентралізована VPN (dVPN)</div>
+                        <p style="color: #94a3b8; font-size: 0.95em; line-height: 1.7; margin: 0;">$TICS буде служити валютою для оплати в децентралізованій VPN мережі. Оператори вузлів будуть заробляти $TICS за надання пропускної здатності, а користувачі будуть платити за приватний та безпечний доступ до інтернету.</p>
+                    </div>
+                    
+                    <div>
+                        <div style="color: #00FFF0; font-size: 1.1em; font-weight: 700; margin-bottom: 10px;">💎 Маркетплейс Токенізованих Активів</div>
+                        <p style="color: #94a3b8; font-size: 0.95em; line-height: 1.7; margin: 0;">$TICS буде основним засобом обміну на маркетплейсі токенізованих активів, де користувачі зможуть купувати та продавати часткові частки нерухомості, цінних паперів та інтелектуальної власності.</p>
+                    </div>
+                    
+                    <div>
+                        <div style="color: #00FFF0; font-size: 1.1em; font-weight: 700; margin-bottom: 10px;">⚡ DeFi та dApps</div>
+                        <p style="color: #94a3b8; font-size: 0.95em; line-height: 1.7; margin: 0;">Монета буде використовуватися у всіх децентралізованих додатках, побудованих на Qubetics, включаючи DeFi протоколи, NFT платформи та інші інноваційні рішення.</p>
+                    </div>
+                </div>
+                
+                <h3 style="text-align: center; margin-top: 50px; margin-bottom: 40px;">Доступно на Біржах</h3>
+                
+                <div class="exchanges-container" style="display: flex; justify-content: center; align-items: center; gap: 100px; max-width: 1400px; margin: 0 auto; padding: 40px 0;">
+                    <a href="https://www.mexc.com/uk-UA/exchange/TICS_USDT?_from=search_spot_trade" target="_blank" style="text-decoration: none; transition: all 0.3s;">
+                        <img src="Mexc.png" alt="MEXC Exchange" style="max-width: 450px; max-height: 230px; object-fit: contain; transition: all 0.3s; cursor: pointer; filter: brightness(1);">
+                    </a>
+                    <a href="https://www.lbank.com/uk/trade/tics_usdt" target="_blank" style="text-decoration: none; transition: all 0.3s;">
+                        <img src="LBank.png" alt="LBank Exchange" style="max-width: 450px; max-height: 230px; object-fit: contain; transition: all 0.3s; cursor: pointer; filter: brightness(1);">
+                    </a>
+                    <a href="https://www.coinstore.com/spot/TICSUSDT?ts=1760907955300" target="_blank" style="text-decoration: none; transition: all 0.3s;">
+                        <img src="Coinstore.png" alt="Coinstore Exchange" style="max-width: 450px; max-height: 230px; object-fit: contain; transition: all 0.3s; cursor: pointer; filter: brightness(1);">
+                    </a>
+                </div>
+                
+                <h3 style="text-align: center; margin-top: 60px; margin-bottom: 30px;">Ціна $TICS Chart</h3>
+                
+                <div style="margin: 0 auto; max-width: 100%; height: 500px; background: rgba(0, 212, 255, 0.03); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 12px; overflow: hidden;">
+                    <iframe src="https://www.tradingview.com/widgetembed/?frameElementId=tradingview_chart&symbol=MEXC%3ATICSUSDT&interval=30&hidesidetoolbar=0&symboledit=1&saveimage=1&toolbarbg=rgba(0%2C0%2C0%2C0)&studies=%5B%5D&theme=dark&style=1&timezone=Etc%2FUTC&withdateranges=1&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=www.tradingview.com&utm_medium=widget&utm_campaign=chart&utm_term=MEXC%3ATICSUSDT" style="width: 100%; height: 100%; border: none;"></iframe>
+                </div>
+            </div>
+            
+            <div class="modal-footer" style="padding: 40px 60px; background: rgba(0, 212, 255, 0.05); border-top: 1px solid rgba(0, 212, 255, 0.2); display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+                <a href="https://www.qubetics.com" class="modal-link" target="_blank" style="display: inline-flex; align-items: center; gap: 12px; padding: 18px 40px; background: rgba(0, 212, 255, 0.1); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 50px; color: #00D4FF; text-decoration: none; font-weight: 600; font-size: 1.1em; transition: all 0.3s;">
+                    <span>🌐</span>
+                    <span>Офіційний Сайт</span>
+                </a>
+                <a href="https://www.qubetics.com/tokenomics" class="modal-link" target="_blank" style="display: inline-flex; align-items: center; gap: 12px; padding: 18px 40px; background: rgba(0, 212, 255, 0.1); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 50px; color: #00D4FF; text-decoration: none; font-weight: 600; font-size: 1.1em; transition: all 0.3s;">
+                    <span>📊</span>
+                    <span>Токеноміка</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calculator Modal -->
+    <div id="calcModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Калькулятор Дохідності</h2>
+                <button class="close-button" data-close="calcModal" onclick="closeModal('calcModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="max-width: 800px; margin: 0 auto; background: rgba(0, 212, 255, 0.05); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 20px; padding: 40px;">
+                    <label style="display: block; color: #00D4FF; font-weight: 600; margin-bottom: 12px;">Кількість $TICS</label>
+                    <input type="number" id="amount" class="calc-input" placeholder="10000">
+                    
+                    <label style="display: block; color: #00D4FF; font-weight: 600; margin-bottom: 12px;">Ціна $TICS (USD)</label>
+                    <input type="number" id="price" class="calc-input" value="0.0234" step="0.0001">
+                    
+                    <label style="display: block; color: #00D4FF; font-weight: 600; margin-bottom: 12px;">APY (%)</label>
+                    <input type="number" id="apy" class="calc-input" value="30">
+                    
+                    <label style="display: block; color: #00D4FF; font-weight: 600; margin-bottom: 12px;">Комісія (%)</label>
+                    <input type="number" id="commission" class="calc-input" value="5">
+                    
+                    <button class="calc-button" onclick="calculate()">Розрахувати дохід</button>
+                    
+                    <div class="results" id="results">
+                        <h4 style="color: #00FFF0; font-size: 1.5em; margin-bottom: 25px; text-align: center;">Ваш дохід</h4>
+                        
+                        <div class="result-item">
+                            <div class="result-label">За день</div>
+                            <div class="result-value" id="daily"></div>
+                            <div class="result-usd" id="dailyUSD"></div>
+                        </div>
+                        
+                        <div class="result-item">
+                            <div class="result-label">За місяць</div>
+                            <div class="result-value" id="monthly"></div>
+                            <div class="result-usd" id="monthlyUSD"></div>
+                        </div>
+                        
+                        <div class="result-item">
+                            <div class="result-label">За рік</div>
+                            <div class="result-value" id="yearly"></div>
+                            <div class="result-usd" id="yearlyUSD"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delegator Modal -->
+    <div id="delegatorModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Як стати делегатором QubeNode</h2>
+                <button class="close-button" data-close="delegatorModal" onclick="closeModal('delegatorModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="background: rgba(0, 212, 255, 0.03); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 20px; padding: 40px; margin: 30px 0;">
+                    <div style="margin-bottom: 30px;">
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3em; font-weight: 800; color: #000;">1</div>
+                            <h4 style="color: #00FFF0; font-size: 1.3em; margin: 0;">Завантажте та створіть гаманець</h4>
+                        </div>
+                        <p style="color: #cbd5e1; margin-left: 55px; margin-bottom: 15px;">Делегування підтримують три гаманці:</p>
+                        <div style="margin-left: 55px; display: flex; flex-direction: column; gap: 12px;">
+                            <div style="display: flex; align-items: center; gap: 12px; padding: 15px; background: rgba(0, 212, 255, 0.05); border-radius: 10px;">
+                                <span style="font-size: 1.5em;">💎</span>
+                                <div>
+                                    <div style="color: #00FFF0; font-weight: 600;">Qubetics Wallet</div>
+                                    <div style="color: #94a3b8; font-size: 0.9em;">На даний момент лише браузерна версія підтримує делегування</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px; padding: 15px; background: rgba(0, 212, 255, 0.05); border-radius: 10px;">
+                                <span style="font-size: 1.5em;">🔷</span>
+                                <div style="color: #00FFF0; font-weight: 600;">Keplr Wallet</div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px; padding: 15px; background: rgba(0, 212, 255, 0.05); border-radius: 10px;">
+                                <span style="font-size: 1.5em;">🔶</span>
+                                <div style="color: #00FFF0; font-weight: 600;">Cosmostation Wallet</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 30px;">
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3em; font-weight: 800; color: #000;">2</div>
+                            <h4 style="color: #00FFF0; font-size: 1.3em; margin: 0;">Придбайте монети $TICS</h4>
+                        </div>
+                        <p style="color: #cbd5e1; margin-left: 55px;">Це можливо безпосередньо в гаманці Qubetics або на біржах (MEXC, LBank, Coinstore). Переведіть монети в один із гаманців, що підтримують делегування.</p>
+                    </div>
+
+                    <div style="margin-bottom: 30px;">
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3em; font-weight: 800; color: #000;">3</div>
+                            <h4 style="color: #00FFF0; font-size: 1.3em; margin: 0;">Відкрийте розділ Stake</h4>
+                        </div>
+                        <p style="color: #cbd5e1; margin-left: 55px;">У гаманці знаходимо та відкриваємо мережу Qubetics і шукаємо розділ <strong style="color: #00FFF0;">Stake</strong>.</p>
+                    </div>
+
+                    <div style="margin-bottom: 30px;">
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3em; font-weight: 800; color: #000;">4</div>
+                            <h4 style="color: #00FFF0; font-size: 1.3em; margin: 0;">Знайдіть QubeNode</h4>
+                        </div>
+                        <p style="color: #cbd5e1; margin-left: 55px;">У розділі "Stake" ви побачите список усіх валідаторів мережі. Оберіть валідатора <strong style="color: #00FFF0;">QubeNode</strong> і натисніть кнопку «Stake».</p>
+                    </div>
+
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3em; font-weight: 800; color: #000;">5</div>
+                            <h4 style="color: #00FFF0; font-size: 1.3em; margin: 0;">Делегуйте монети</h4>
+                        </div>
+                        <p style="color: #cbd5e1; margin-left: 55px;">Введіть кількість монет $TICS і підтвердіть транзакцію. Готово! Тепер ви будете отримувати винагороду автоматично.</p>
+                    </div>
+                </div>
+
+                <div style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 240, 0.05)); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 16px; padding: 30px; margin: 40px 0;">
+                    <h4 style="color: #00FFF0; font-size: 1.3em; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                        <span>💻</span>
+                        <span>Примітка</span>
+                    </h4>
+                    <p style="color: #cbd5e1; margin-bottom: 20px; line-height: 1.7;">Підключити гаманець та зробити делегування ви можете також за посиланням:</p>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <a href="https://native.ticsscan.com/qubetics/staking/qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld" target="_blank" style="display: inline-flex; align-items: center; gap: 10px; padding: 15px 20px; background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 12px; color: #00D4FF; text-decoration: none; font-weight: 600; transition: all 0.3s;">
+                            <span>🔗</span>
+                            <span>native.ticsscan.com/staking</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer" style="padding: 40px 60px; background: rgba(0, 212, 255, 0.05); border-top: 1px solid rgba(0, 212, 255, 0.2); display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+                <a href="https://native.ticsscan.com/qubetics/staking/qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld" class="modal-link" target="_blank" style="display: inline-flex; align-items: center; gap: 12px; padding: 18px 40px; background: rgba(0, 212, 255, 0.1); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 50px; color: #00D4FF; text-decoration: none; font-weight: 600; font-size: 1.1em; transition: all 0.3s; white-space: nowrap;">
+                    <span>💰</span>
+                    <span>Делегувати зараз</span>
+                </a>
+                <a href="https://t.me/+sRnz7RyoL4Q0MWEy" class="modal-link" target="_blank" style="display: inline-flex; align-items: center; gap: 12px; padding: 18px 40px; background: rgba(0, 212, 255, 0.1); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 50px; color: #00D4FF; text-decoration: none; font-weight: 600; font-size: 1.1em; transition: all 0.3s; white-space: nowrap;">
+                    <span>💬</span>
+                    <span>Підтримка в Telegram</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Modal -->
+    <div id="faqModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">❓ Часті питання (FAQ)</h2>
+                <button class="close-button" data-close="faqModal" onclick="closeModal('faqModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 1.2em; margin-bottom: 40px;">Знайдіть відповіді на найпоширеніші питання про делегування та стейкінг з QubeNode</p>
+                
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>❓ Що таке стейкінг і як він працює?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Стейкінг — це процес блокування ваших монет $TICS для підтримки роботи мережі Qubetics. Коли ви делегуєте монети валідатору, ви допомагаєте забезпечувати безпеку блокчейну та отримуєте винагороду за це. Ваші монети залишаються у вашому гаманці, але беруть участь у консенсусі мережі.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>❓ Коли я почну отримувати винагороду?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Винагорода нараховується <strong>автоматично після кожного створеного блоку</strong>. Перші нарахування можна побачити вже через кілька секунд після делегування. Ви можете переглядати свої винагороди в реальному часі через ваш гаманець або explorer мережі Qubetics.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>❓ Чи можу я забрати свої монети в будь-який час?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Так, ви можете зробити <strong>unbond (розделегувати)</strong> монети в будь-який момент. Після unbond діє період очікування <strong>(unbonding period) тривалістю 14 днів</strong>, після чого монети повернуться у ваш гаманець згідно з правилами мережі Qubetics. Під час періоду unbonding монети не приносять винагороду.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>❓ Чи є мінімальна сума для делегування?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Для першого делегування мінімальна сума становить <strong>1000 монет $TICS</strong>. Усі наступні делегування можна здійснювати без будь-яких обмежень за сумою, що дозволяє кожному брати участь у стейкінгу та додавати монети поступово.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>❓ Чи безпечно делегувати монети?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p><strong>Так, це абсолютно безпечно!</strong> При делегуванні ваші монети <strong>залишаються у вашому гаманці</strong>. Ви не передаєте монети валідатору, а лише делегуєте право на їх використання для валідації блоків. Тільки ви маєте доступ до своїх приватних ключів та можете керувати своїми коштами.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>❓ Яка комісія QubeNode?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Комісія валідатора QubeNode складає <strong>5%</strong> від винагороди мережі. Це найнижча можлива комісія мережі. Вона автоматично утримується з нарахованої винагороди, тому ви отримуєте вже чисту суму.</p>
+                        <p><strong>Приклад розрахунку:</strong></p>
+                        <p>Ви зробили делегування <strong>1000 монет</strong>. Винагорода мережі (APY) складає <strong>30%</strong> річних, отже за рік вся винагорода мережі складатиме <strong>300 монет</strong>. Звідси забираємо 5% комісію валідатора:</p>
+                        <p style="color: #00FFF0; font-weight: 600;">300 монет - 5% комісії = ваша чиста винагорода <strong>285 монет (28.5%)</strong></p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>❓ Який APY (річна прибутковість)?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>APY становить <strong>30%</strong> річних. Однак, варто зауважити, що APY є динамічним показником і може змінюватися в залежності від різних факторів, в тому числі загальної кількості застейканих монет у мережі.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>❓ Які ризики існують у стейкінгу/делегуванні?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Основні ризики пов'язані з роботою валідатора:</p>
+                        <ul>
+                            <li><strong>Double-signing (подвійне підписання):</strong> Якщо валідатор підпише два блоки на одній висоті, буде застосовано штраф у розмірі <strong>5%</strong> від загального стейку.</li>
+                            <li><strong>Downtime (простій):</strong> Якщо валідатор пропустить більше 50% з останніх 100,000 блоків, буде застосовано штраф у розмірі <strong>1%</strong>.</li>
+                        </ul>
+                        <p style="margin-top: 15px;"><strong>QubeNode забезпечує вашу безпеку:</strong> Потужна інфраструктура валідатора QubeNode забезпечує стабільну та надійну роботу. Ми використовуємо багаторівневий моніторинг, щоб мінімізувати будь-які ризики простою.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>❓ Які гаманці підтримують стейкінг Qubetics?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Для стейкінга Qubetics ви можете використовувати:</p>
+                        <ul>
+                            <li><strong>Qubetics Wallet</strong> — офіційний гаманець мережі</li>
+                            <li><strong>Keplr Wallet</strong> — популярний гаманець для Cosmos екосистеми</li>
+                            <li><strong>Cosmostation Wallet</strong> — зручний мобільний та веб-гаманець</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>❓ Де можна купити монети $TICS?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Монети $TICS доступні на наступних централізованих біржах:</p>
+                        <ul>
+                            <li><strong><a href="https://www.mexc.com/uk-UA/exchange/TICS_USDT?_from=search_spot_trade" target="_blank" style="color: #00D4FF; text-decoration: none; border-bottom: 1px dashed #00D4FF;">MEXC</a></strong></li>
+                            <li><strong><a href="https://www.lbank.com/uk/trade/tics_usdt" target="_blank" style="color: #00D4FF; text-decoration: none; border-bottom: 1px dashed #00D4FF;">LBank</a></strong></li>
+                            <li><strong><a href="https://www.coinstore.com/spot/TICSUSDT?ts=1760907955300" target="_blank" style="color: #00D4FF; text-decoration: none; border-bottom: 1px dashed #00D4FF;">Coinstore</a></strong></li>
+                        </ul>
+                        <p>Також можна придбати монети безпосередньо через гаманець Qubetics.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>❓ Як зв'язатися з підтримкою QubeNode?</span>
+                        <span class="faq-icon">▼</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Ви можете зв'язатися з нами через:</p>
+                        <ul>
+                            <li><strong><a href="https://t.me/+sRnz7RyoL4Q0MWEy" target="_blank" style="color: #00D4FF; text-decoration: none; border-bottom: 1px dashed #00D4FF;">Telegram</a>:</strong> Наша група підтримки завжди готова допомогти</li>
+                            <li><strong>Email:</strong> qube.node4@gmail.com</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer" style="padding: 40px 60px; background: rgba(0, 212, 255, 0.05); border-top: 1px solid rgba(0, 212, 255, 0.2); display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+                <a href="https://qubetics.com" class="modal-link" target="_blank" style="display: inline-flex; align-items: center; gap: 12px; padding: 18px 40px; background: rgba(0, 212, 255, 0.1); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 50px; color: #00D4FF; text-decoration: none; font-weight: 600; font-size: 1.1em; transition: all 0.3s;">
+                    <span>🚀</span>
+                    <span>Почати стейкінг</span>
+                </a>
+                <a href="https://t.me/+sRnz7RyoL4Q0MWEy" class="modal-link" target="_blank" style="display: inline-flex; align-items: center; gap: 12px; padding: 18px 40px; background: rgba(0, 212, 255, 0.1); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 50px; color: #00D4FF; text-decoration: none; font-weight: 600; font-size: 1.1em; transition: all 0.3s;">
+                    <span>💬</span>
+                    <span>Підтримка</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // FAQ Accordion Toggle
+        function toggleFaq(button) {
+            const faqItem = button.parentElement;
+            const isActive = faqItem.classList.contains('active');
+            
+            // Закрити all other FAQ items
+            document.querySelectorAll('.faq-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Toggle current item
+            if (!isActive) {
+                faqItem.classList.add('active');
+            }
+        }
+
+        function bindЗакритиButtons() {
+            var closeButtons = document.querySelectorAll('.close-button[data-close]');
+            closeButtons.forEach(function(btn) {
+                var modalId = btn.getAttribute('data-close');
+                
+                // Remove old listeners
+                var newBtn = btn.cloneNode(true);
+                btn.parentNode.replaceChild(newBtn, btn);
+                
+                // Touch event for mobile
+                newBtn.addEventListener('touchend', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    closeModal(modalId);
+                }, {passive: false});
+                
+                // Click event for desktop  
+                newBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    closeModal(modalId);
+                });
+            });
+        }
+    
+        function openModal(id) {
+            var modal = document.getElementById(id);
+            
+            if (modal) {
+                modal.classList.add('show');
+                modal.style.display = 'block';
+                modal.style.zIndex = '100000';
+                
+                // ПРИХОВАТИ іконки меню, телеграм та пошти в модальних вікнах
+                var iconsContainer = document.getElementById('mobile-icons-container');
+                if (iconsContainer) {
+                    iconsContainer.style.display = 'none';
+                }
+                
+                // Bind close button after modal opens
+                setTimeout(bindЗакритиButtons, 100);
+            }
+        }
+
+        function closeModal(id) {
+            var modal = document.getElementById(id);
+            if (modal) {
+                modal.classList.remove('show');
+                modal.style.display = 'none';
+                
+                // ПОКАЗАТИ іконки меню, телеграм та пошти назад (тільки на мобільних)
+                var iconsContainer = document.getElementById('mobile-icons-container');
+                if (iconsContainer && window.innerWidth <= 768) {
+                    iconsContainer.style.display = 'block';
+                }
+            }
+        }
+
+        function calculate() {
+            var amount = parseFloat(document.getElementById('amount').value);
+            var price = parseFloat(document.getElementById('price').value);
+            var apy = parseFloat(document.getElementById('apy').value);
+            var commission = parseFloat(document.getElementById('commission').value);
+
+            if (!amount || amount <= 0) {
+                alert('Введіть коректну кількість монет');
+                return;
+            }
+
+            var netAPY = apy * (1 - commission / 100);
+            var yearlyReward = amount * (netAPY / 100);
+            var monthlyReward = yearlyReward / 12;
+            var dailyReward = yearlyReward / 365;
+
+            document.getElementById('daily').textContent = dailyReward.toFixed(2) + ' $TICS';
+            document.getElementById('dailyUSD').textContent = '≈ $' + (dailyReward * price).toFixed(2);
+
+            document.getElementById('monthly').textContent = monthlyReward.toFixed(2) + ' $TICS';
+            document.getElementById('monthlyUSD').textContent = '≈ $' + (monthlyReward * price).toFixed(2);
+
+            document.getElementById('yearly').textContent = yearlyReward.toFixed(2) + ' $TICS';
+            document.getElementById('yearlyUSD').textContent = '≈ $' + (yearlyReward * price).toFixed(2);
+
+            document.getElementById('results').style.display = 'block';
+        }
+
+        // Bind menu items using data-modal attribute
+        document.addEventListener('DOMContentLoaded', function() {
+            var menuItems = document.querySelectorAll('.mobile-menu-item[data-modal]');
+            
+            menuItems.forEach(function(item) {
+                var modalId = item.getAttribute('data-modal');
+                
+                // Touch event for mobile
+                item.addEventListener('touchend', function(e) {
+                    e.preventDefault();
+                    
+                    // Закрити menu
+                    document.getElementById('menu-toggle').checked = false;
+                    
+                    // Open modal with small delay
+                    setTimeout(function() {
+                        openModal(modalId);
+                    }, 300);
+                }, {passive: false});
+                
+                // Click event for desktop
+                item.addEventListener('click', function(e) {
+                    // Закрити menu
+                    document.getElementById('menu-toggle').checked = false;
+                    
+                    // Open modal with small delay
+                    setTimeout(function() {
+                        openModal(modalId);
+                    }, 300);
+                });
+            });
+            
+            // Bind close buttons on page load
+            bindЗакритиButtons();
+        });
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('show');
+                event.target.style.display = 'none';
+            }
+        }
+
+        // Wait for DOM to be ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inline Blocks Chain in Status Badge
+            const container = document.getElementById('blocksChainInline');
+            const blockNumDisplay = document.getElementById('currentBlock');
+            
+            if (!container || !blockNumDisplay) {
+                return; // Silently exit if elements not found
+            }
+            
+            let blockNumber = 1969775;
+            let isLiveDataAvailable = false;
+            let blocksWrapper = document.createElement('div');
+            blocksWrapper.className = 'blocks-track-inline';
+            container.appendChild(blocksWrapper);
+            
+            // Debug mode - set to true to see console messages
+            const DEBUG_MODE = false;
+            
+            function debugLog(message) {
+                if (DEBUG_MODE) {
+                    console.log(message);
+                }
+            }
+            
+            // Fetch real block data from TicsScan
+            // 
+            // TODO: Replace with actual API endpoints when available:
+            // - https://rpc.qubetics.com/abci_info - for block height
+            // - https://api.qubetics.com/v1/blocks/latest - alternative endpoint
+            // - Or use validator-specific endpoint for QubeNode data
+            // 
+            async function fetchLiveBlockData() {
+                try {
+                    // Try to get latest block from TicsScan RPC
+                    const response = await fetch('https://rpc.qubetics.com/abci_info');
+                    const data = await response.json();
+                    
+                    if (data && data.result && data.result.response && data.result.response.last_block_height) {
+                        blockNumber = parseInt(data.result.response.last_block_height);
+                        isLiveDataAvailable = true;
+                        blockNumDisplay.textContent = blockNumber.toLocaleString();
+                        return true;
+                    }
+                } catch (error) {
+                    // Fallback: try alternative endpoint
+                    try {
+                        const response2 = await fetch('https://api.qubetics.com/v1/blocks/latest');
+                        const data2 = await response2.json();
+                        if (data2 && data2.block && data2.block.header) {
+                            blockNumber = parseInt(data2.block.header.height);
+                            isLiveDataAvailable = true;
+                            blockNumDisplay.textContent = blockNumber.toLocaleString();
+                            return true;
+                        }
+                    } catch (err2) {
+                        debugLog('⚠️ Using simulated block data - API endpoints not available');
+                    }
+                }
+                return false;
+            }
+            
+            function createBlock(isFresh) {
+                const block = document.createElement('div');
+                block.className = 'chain-block' + (isFresh ? ' fresh' : '');
+                block.textContent = '⛓️';
+                return block;
+            }
+            
+            function initBlocks() {
+                for (let i = 0; i < 40; i++) {
+                    blocksWrapper.appendChild(createBlock(false));
+                }
+            }
+            
+            function addNewBlock() {
+                blockNumber++;
+                blockNumDisplay.textContent = blockNumber.toLocaleString();
+                
+                const newBlock = createBlock(true);
+                blocksWrapper.appendChild(newBlock);
+                
+                setTimeout(function() {
+                    newBlock.classList.remove('fresh');
+                }, 500);
+                
+                if (blocksWrapper.children.length > 40) {
+                    blocksWrapper.removeChild(blocksWrapper.firstChild);
+                }
+            }
+            
+            // Initialize
+            initBlocks();
+            
+            // Try to fetch real data first
+            fetchLiveBlockData().then(function(success) {
+                if (success) {
+                    debugLog('✅ Live block data connected - using real API');
+                    // Live data connected - update from API every 6 секунд
+                    setInterval(fetchLiveBlockData, 6000);
+                } else {
+                    debugLog('⚠️ Using simulated block data - enable DEBUG_MODE to see details');
+                    // Fallback to simulation
+                    setInterval(addNewBlock, 6000);
+                }
+            });
+            
+            // Always animate blocks
+            setInterval(addNewBlock, 6000);
+        });
+    </script>
+</body>
+</html>

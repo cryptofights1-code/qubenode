@@ -2201,29 +2201,19 @@
         }
     </style>
     
-    <!-- CosmJS Library for Cosmos blockchain integration -->
-    <script src="https://cdn.jsdelivr.net/npm/@cosmjs/stargate@0.32.2/build/index.js"></script>
+    <!-- CosmJS Library - LOCAL FILE (no CDN needed) -->
+    <script src="cosmjs.min.js"></script>
     <script>
-        // Make CosmJS available globally with retry
-        let attempts = 0;
-        const maxAttempts = 30;
-        
-        function checkCosmJS() {
+        // Make CosmJS available globally
+        setTimeout(function() {
             if (typeof stargate !== 'undefined') {
                 window.cosmos = stargate;
-                console.log('✅ CosmJS loaded successfully');
+                console.log('✅ CosmJS loaded successfully from local file');
             } else {
-                attempts++;
-                if (attempts < maxAttempts) {
-                    setTimeout(checkCosmJS, 200);
-                } else {
-                    console.error('❌ CosmJS failed to load');
-                    alert('Помилка завантаження CosmJS. Спробуйте оновити сторінку (Ctrl+F5)');
-                }
+                console.error('❌ CosmJS local file not found');
+                alert('Помилка: файл cosmjs.min.js не знайдено. Перевірте що він завантажений в репозиторій.');
             }
-        }
-        
-        setTimeout(checkCosmJS, 500);
+        }, 500);
     </script>
 </head>
 <body>

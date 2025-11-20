@@ -1,4 +1,4 @@
-// === QubeNode Wallet Integration v2.3.0 ===
+// === QubeNode Wallet Integration v2.3.1 ===
 // Keplr + Cosmostation Wallet Integration for Qubetics Network
 // Features: Connect wallet, show balance, delegate tokens, rewards display
 // v2.1.0: Fixed Keplr account selection bug - now correctly uses selected account
@@ -10,8 +10,34 @@
 // v2.2.1: CRITICAL FIX - Correct chain ID is "qubetics_9030-1" (EVM-compatible format)
 // v2.2.2: Removed DEBUG alert - production ready
 // v2.3.0: Added connectWalletDirect() for modal integration - direct connection without choice modal
+// v2.3.1: Added CosmJS ready check for GitHub Pages compatibility
 
-console.log('🔐 QubeNode Wallet Integration v2.3.0 LOADED');
+console.log('🔐 QubeNode Wallet Integration v2.3.1 LOADED');
+
+// Wait for CosmJS to be ready (for ESM module loading)
+function waitForCosmJS(callback, maxAttempts = 100) {
+    let attempts = 0;
+    const checkInterval = setInterval(() => {
+        attempts++;
+        if (window.cosmos && window.cosmos.SigningStargateClient) {
+            console.log('✅ CosmJS is ready for wallet operations');
+            clearInterval(checkInterval);
+            callback();
+        } else if (attempts >= maxAttempts) {
+            console.error('❌ CosmJS not available after', attempts, 'attempts');
+            clearInterval(checkInterval);
+            alert('Помилка: Не вдалося завантажити бібліотеку blockchain. Спробуйте перезавантажити сторінку (Ctrl+F5).');
+        }
+    }, 100);
+}
+
+// Initialize wallet integration after CosmJS is ready
+waitForCosmJS(() => {
+    console.log('✅ Wallet integration initialized');
+    initializeWalletIntegration();
+});
+
+function initializeWalletIntegration() {
 
 // Qubetics Network Configuration
 const QUBETICS_CHAIN_ID = "qubetics_9030-1";
@@ -1185,3 +1211,5 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('⚠️ No wallet extensions found');
   }
 });
+
+} // End of initializeWalletIntegration()

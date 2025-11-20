@@ -2202,26 +2202,28 @@
     </style>
     
     <!-- CosmJS Library for Cosmos blockchain integration -->
-    <!-- Using ESM for better compatibility with GitHub Pages -->
-    <script type="module">
-        // Import CosmJS via ESM (works better on GitHub Pages)
-        import * as stargate from 'https://esm.sh/@cosmjs/stargate@0.32.4';
+    <script src="https://cdn.jsdelivr.net/npm/@cosmjs/stargate@0.32.2/build/index.js"></script>
+    <script>
+        // Make CosmJS available globally with retry
+        let attempts = 0;
+        const maxAttempts = 30;
         
-        // Make it globally available
-        window.cosmos = stargate;
-        window.stargateLoaded = true;
+        function checkCosmJS() {
+            if (typeof stargate !== 'undefined') {
+                window.cosmos = stargate;
+                console.log('✅ CosmJS loaded successfully');
+            } else {
+                attempts++;
+                if (attempts < maxAttempts) {
+                    setTimeout(checkCosmJS, 200);
+                } else {
+                    console.error('❌ CosmJS failed to load');
+                    alert('Помилка завантаження CosmJS. Спробуйте оновити сторінку (Ctrl+F5)');
+                }
+            }
+        }
         
-        console.log('✅ CosmJS loaded successfully via ESM');
-        console.log('✅ Available methods:', Object.keys(stargate).slice(0, 10).join(', '));
-        
-        // Dispatch event to notify that CosmJS is ready
-        window.dispatchEvent(new Event('cosmjs-loaded'));
-    </script>
-    
-    <!-- Fallback for non-module browsers -->
-    <script nomodule>
-        console.warn('⚠️ Your browser does not support ES modules. Please use a modern browser.');
-        alert('Ваш браузер застарілий. Будь ласка, оновіть браузер або використовуйте Chrome/Firefox/Edge.');
+        setTimeout(checkCosmJS, 500);
     </script>
 </head>
 <body>

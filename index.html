@@ -405,7 +405,7 @@
             position: absolute;
             top: 30px;
             left: 40px;
-            right: 260px;
+            right: 180px;
             z-index: 10;
             display: flex;
             gap: 15px;
@@ -544,7 +544,7 @@
         .top-contacts {
             position: absolute;
             top: 30px;
-            right: 20px;
+            right: 10px;
             display: flex;
             gap: 15px;
             z-index: 10;
@@ -3375,13 +3375,40 @@
                 modal.style.display = 'block';
                 modal.style.zIndex = '100000';
                 
-                // Check if opening delegator modal with wallet connected
-                if (id === 'delegatorModal' && headerWalletConnected && cosmosStaking && cosmosStaking.isWalletConnected()) {
-                    // Show dashboard, hide old interface
-                    document.getElementById('delegatorDashboard').style.display = 'block';
-                    document.getElementById('stakingInterface').style.display = 'none';
-                    // Update dashboard data
-                    updateDashboardData();
+                // Check if opening delegator modal
+                if (id === 'delegatorModal') {
+                    const dashboard = document.getElementById('delegatorDashboard');
+                    const stakingInterface = document.getElementById('stakingInterface');
+                    
+                    // Check if wallet is connected
+                    if (headerWalletConnected && cosmosStaking && cosmosStaking.isWalletConnected()) {
+                        // Show dashboard
+                        if (dashboard) dashboard.style.display = 'block';
+                        if (stakingInterface) stakingInterface.style.display = 'none';
+                        // Update dashboard data
+                        updateDashboardData();
+                    } else {
+                        // Show wallet selection
+                        if (dashboard) dashboard.style.display = 'none';
+                        if (stakingInterface) stakingInterface.style.display = 'block';
+                        
+                        // Make sure wallet section is visible and buttons are enabled
+                        const walletSection = document.getElementById('walletSection');
+                        if (walletSection) {
+                            walletSection.style.display = 'block';
+                        }
+                        
+                        const keplrBtn = document.getElementById('connectKeplrBtn');
+                        const cosmostationBtn = document.getElementById('connectCosmostationBtn');
+                        if (keplrBtn) {
+                            keplrBtn.disabled = false;
+                            keplrBtn.innerHTML = '<span style="font-size: 1.3em;">🔷</span><span>Keplr Wallet</span>';
+                        }
+                        if (cosmostationBtn) {
+                            cosmostationBtn.disabled = false;
+                            cosmostationBtn.innerHTML = '<span style="font-size: 1.3em;">🔶</span><span>Cosmostation</span>';
+                        }
+                    }
                 }
                 
                 // ПРИХОВАТИ іконки меню, телеграм та пошти в модальних вікнах
@@ -3694,12 +3721,12 @@
                 const keplrBtn = document.getElementById('connectKeplrBtn');
                 const cosmostationBtn = document.getElementById('connectCosmostationBtn');
                 
-                keplrBtn.disabled = true;
-                cosmostationBtn.disabled = true;
+                if (keplrBtn) keplrBtn.disabled = true;
+                if (cosmostationBtn) cosmostationBtn.disabled = true;
                 
-                if (walletType === 'keplr') {
+                if (walletType === 'keplr' && keplrBtn) {
                     keplrBtn.innerHTML = '<span>⏳</span><span>Підключення...</span>';
-                } else {
+                } else if (cosmostationBtn) {
                     cosmostationBtn.innerHTML = '<span>⏳</span><span>Підключення...</span>';
                 }
 
@@ -3708,10 +3735,16 @@
 
                 if (result.success) {
                     // Hide old interface
-                    document.getElementById('stakingInterface').style.display = 'none';
+                    const stakingInterface = document.getElementById('stakingInterface');
+                    if (stakingInterface) {
+                        stakingInterface.style.display = 'none';
+                    }
                     
                     // Show dashboard
-                    document.getElementById('delegatorDashboard').style.display = 'block';
+                    const dashboard = document.getElementById('delegatorDashboard');
+                    if (dashboard) {
+                        dashboard.style.display = 'block';
+                    }
                     
                     // Update dashboard data
                     await updateDashboardData();
@@ -3728,10 +3761,14 @@
                 const keplrBtn = document.getElementById('connectKeplrBtn');
                 const cosmostationBtn = document.getElementById('connectCosmostationBtn');
                 
-                keplrBtn.disabled = false;
-                cosmostationBtn.disabled = false;
-                keplrBtn.innerHTML = '<span style="font-size: 1.3em;">🔷</span><span>Keplr Wallet</span>';
-                cosmostationBtn.innerHTML = '<span style="font-size: 1.3em;">🔶</span><span>Cosmostation</span>';
+                if (keplrBtn) {
+                    keplrBtn.disabled = false;
+                    keplrBtn.innerHTML = '<span style="font-size: 1.3em;">🔷</span><span>Keplr Wallet</span>';
+                }
+                if (cosmostationBtn) {
+                    cosmostationBtn.disabled = false;
+                    cosmostationBtn.innerHTML = '<span style="font-size: 1.3em;">🔶</span><span>Cosmostation</span>';
+                }
             }
         }
 
@@ -3757,13 +3794,13 @@
                 const delegated = cosmosStaking.formatTics(overview.totalDelegated);
                 const rewards = cosmosStaking.formatTics(overview.totalRewards);
                 
-                // Calculate unbonding - improved logic
+                // Calculate unbonding - FIXED to use unbondingDelegations
                 let unbonding = '0';
-                console.log('Unbonding data:', overview.unbonding); // Debug
+                console.log('Unbonding data:', overview.unbondingDelegations); // Debug
                 
-                if (overview.unbonding && Array.isArray(overview.unbonding) && overview.unbonding.length > 0) {
+                if (overview.unbondingDelegations && Array.isArray(overview.unbondingDelegations) && overview.unbondingDelegations.length > 0) {
                     let totalUnbonding = BigInt(0);
-                    overview.unbonding.forEach(unbondingItem => {
+                    overview.unbondingDelegations.forEach(unbondingItem => {
                         if (unbondingItem.entries && Array.isArray(unbondingItem.entries)) {
                             unbondingItem.entries.forEach(entry => {
                                 if (entry.balance) {
@@ -3923,10 +3960,34 @@
                 }
                 
                 // Hide dashboard
-                document.getElementById('delegatorDashboard').style.display = 'none';
+                const dashboard = document.getElementById('delegatorDashboard');
+                if (dashboard) {
+                    dashboard.style.display = 'none';
+                }
                 
                 // Show wallet selection
-                document.getElementById('stakingInterface').style.display = 'block';
+                const stakingInterface = document.getElementById('stakingInterface');
+                if (stakingInterface) {
+                    stakingInterface.style.display = 'block';
+                }
+                
+                // Make sure wallet section is visible
+                const walletSection = document.getElementById('walletSection');
+                if (walletSection) {
+                    walletSection.style.display = 'block';
+                }
+                
+                // Reset wallet buttons
+                const keplrBtn = document.getElementById('connectKeplrBtn');
+                const cosmostationBtn = document.getElementById('connectCosmostationBtn');
+                if (keplrBtn) {
+                    keplrBtn.disabled = false;
+                    keplrBtn.innerHTML = '<span style="font-size: 1.3em;">🔷</span><span>Keplr Wallet</span>';
+                }
+                if (cosmostationBtn) {
+                    cosmostationBtn.disabled = false;
+                    cosmostationBtn.innerHTML = '<span style="font-size: 1.3em;">🔶</span><span>Cosmostation</span>';
+                }
                 
                 // Reset header
                 headerWalletConnected = false;
@@ -4341,11 +4402,30 @@
                 resetHeaderWalletButton();
                 
                 // Reset modal sections
-                if (document.getElementById('walletSection')) {
-                    document.getElementById('walletSection').style.display = 'block';
+                const dashboard = document.getElementById('delegatorDashboard');
+                const stakingInterface = document.getElementById('stakingInterface');
+                const walletSection = document.getElementById('walletSection');
+                
+                if (dashboard) {
+                    dashboard.style.display = 'none';
                 }
-                if (document.getElementById('delegatorDashboard')) {
-                    document.getElementById('delegatorDashboard').style.display = 'none';
+                if (stakingInterface) {
+                    stakingInterface.style.display = 'block';
+                }
+                if (walletSection) {
+                    walletSection.style.display = 'block';
+                }
+                
+                // Reset wallet buttons
+                const keplrBtn = document.getElementById('connectKeplrBtn');
+                const cosmostationBtn = document.getElementById('connectCosmostationBtn');
+                if (keplrBtn) {
+                    keplrBtn.disabled = false;
+                    keplrBtn.innerHTML = '<span style="font-size: 1.3em;">🔷</span><span>Keplr Wallet</span>';
+                }
+                if (cosmostationBtn) {
+                    cosmostationBtn.disabled = false;
+                    cosmostationBtn.innerHTML = '<span style="font-size: 1.3em;">🔶</span><span>Cosmostation</span>';
                 }
                 
                 const dropdown = document.getElementById('headerWalletDropdown');

@@ -405,7 +405,7 @@
             position: absolute;
             top: 30px;
             left: 40px;
-            right: 180px;
+            right: 420px;
             z-index: 10;
             display: flex;
             gap: 15px;
@@ -3379,6 +3379,8 @@
                 if (id === 'delegatorModal') {
                     const dashboard = document.getElementById('delegatorDashboard');
                     const stakingInterface = document.getElementById('stakingInterface');
+                    const walletStatus = document.getElementById('walletStatus');
+                    const stakingActions = document.getElementById('stakingActions');
                     
                     // Check if wallet is connected
                     if (headerWalletConnected && cosmosStaking && cosmosStaking.isWalletConnected()) {
@@ -3391,6 +3393,10 @@
                         // Show wallet selection
                         if (dashboard) dashboard.style.display = 'none';
                         if (stakingInterface) stakingInterface.style.display = 'block';
+                        
+                        // HIDE old wallet status and actions
+                        if (walletStatus) walletStatus.style.display = 'none';
+                        if (stakingActions) stakingActions.style.display = 'none';
                         
                         // Make sure wallet section is visible and buttons are enabled
                         const walletSection = document.getElementById('walletSection');
@@ -3977,6 +3983,12 @@
                     walletSection.style.display = 'block';
                 }
                 
+                // HIDE old wallet status and actions
+                const walletStatus = document.getElementById('walletStatus');
+                const stakingActions = document.getElementById('stakingActions');
+                if (walletStatus) walletStatus.style.display = 'none';
+                if (stakingActions) stakingActions.style.display = 'none';
+                
                 // Reset wallet buttons
                 const keplrBtn = document.getElementById('connectKeplrBtn');
                 const cosmostationBtn = document.getElementById('connectCosmostationBtn');
@@ -4401,20 +4413,20 @@
                 }
                 resetHeaderWalletButton();
                 
-                // Reset modal sections
+                // Reset ALL modal sections completely
                 const dashboard = document.getElementById('delegatorDashboard');
                 const stakingInterface = document.getElementById('stakingInterface');
                 const walletSection = document.getElementById('walletSection');
+                const walletStatus = document.getElementById('walletStatus');
+                const stakingActions = document.getElementById('stakingActions');
                 
-                if (dashboard) {
-                    dashboard.style.display = 'none';
-                }
-                if (stakingInterface) {
-                    stakingInterface.style.display = 'block';
-                }
-                if (walletSection) {
-                    walletSection.style.display = 'block';
-                }
+                if (dashboard) dashboard.style.display = 'none';
+                if (stakingInterface) stakingInterface.style.display = 'block';
+                if (walletSection) walletSection.style.display = 'block';
+                
+                // HIDE old wallet status and staking actions
+                if (walletStatus) walletStatus.style.display = 'none';
+                if (stakingActions) stakingActions.style.display = 'none';
                 
                 // Reset wallet buttons
                 const keplrBtn = document.getElementById('connectKeplrBtn');

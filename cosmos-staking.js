@@ -217,7 +217,7 @@ class CosmosStakingModule {
 
     formatTics(minimal) {
         const tics = this.minimalToTics(minimal);
-        return tics.toFixed(2);
+        return tics.toFixed(6);
     }
 }
 

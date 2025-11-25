@@ -405,33 +405,28 @@
             position: absolute;
             top: 30px;
             left: 40px;
-            z-index: 100; /* Higher than mobile container */
+            z-index: 10;
             display: flex;
-            gap: 10px;
+            gap: 15px;
             align-items: center;
-            max-width: calc(100% - 480px);
         }
 
         .ecosystem-button {
             display: flex;
             align-items: center;
-            gap: 6px;
-            padding: 10px 16px;
+            gap: 8px;
+            padding: 12px 20px;
             background: rgba(0, 212, 255, 0.1);
             border: 1px solid rgba(0, 212, 255, 0.3);
             border-radius: 50px;
             color: #ffffff;
-            font-size: 0.88em;
+            font-size: 0.95em;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             outline: none;
             white-space: nowrap;
-            height: 42px;
-            flex-shrink: 0;
-            pointer-events: auto;
-            position: relative;
-            z-index: 101; /* Above menu container */
+            height: 44px;
         }
 
         .ecosystem-button span {
@@ -445,189 +440,32 @@
             box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
         }
 
-        /* Wallet Connect Button in Header */
-        .header-wallet-button {
-            position: absolute;
-            top: 30px;
-            right: 320px; /* More space from Telegram */
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.25), rgba(0, 255, 240, 0.2));
-            border: 2px solid rgba(0, 212, 255, 0.5);
-            border-radius: 50px;
-            color: #ffffff;
-            font-size: 0.9em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
-            white-space: nowrap;
-            height: 42px;
-            z-index: 100;
-        }
-
-        .header-wallet-button:hover {
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.35), rgba(0, 255, 240, 0.3));
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
-        }
-
-        .header-wallet-button svg {
-            width: 18px;
-            height: 18px;
-        }
-
-        .header-wallet-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .wallet-address-short {
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
-        }
-
-        .wallet-balance {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            padding: 4px 12px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 20px;
-            font-size: 0.85em;
-        }
-
-        /* Delegator Dashboard Styles */
-        .delegator-dashboard {
-            display: none;
-            margin-top: 30px;
-            padding: 30px;
-            background: rgba(10, 10, 10, 0.8);
-            border: 1px solid rgba(0, 212, 255, 0.3);
-            border-radius: 20px;
-        }
-
-        .dashboard-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .dashboard-header h3 {
-            font-size: 1.8em;
-            color: #00D4FF;
-            margin-bottom: 10px;
-        }
-
-        .dashboard-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 240, 0.05));
-            border: 1px solid rgba(0, 212, 255, 0.3);
-            border-radius: 15px;
-            padding: 25px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
-            border-color: rgba(0, 212, 255, 0.6);
-        }
-
-        .stat-label {
-            font-size: 0.9em;
-            color: #94a3b8;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .stat-value {
-            font-size: 2em;
-            font-weight: 700;
-            color: #00FFF0;
-            margin-bottom: 5px;
-        }
-
-        .stat-subtext {
-            font-size: 0.85em;
-            color: #64748b;
-        }
-
-        .delegations-list {
-            margin-top: 20px;
-        }
-
-        .delegations-list h4 {
-            color: #00D4FF;
-            margin-bottom: 15px;
-            font-size: 1.3em;
-        }
-
-        .delegation-item {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(0, 212, 255, 0.2);
-            border-radius: 10px;
-            padding: 15px 20px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s ease;
-        }
-
-        .delegation-item:hover {
-            border-color: rgba(0, 212, 255, 0.5);
-            background: rgba(0, 212, 255, 0.05);
-        }
-
-        .delegation-validator {
-            font-weight: 600;
-            color: #ffffff;
-        }
-
-        .delegation-amount {
-            font-family: 'Courier New', monospace;
-            color: #00FFF0;
-            font-weight: 700;
-            font-size: 1.1em;
-        }
-
         .top-contacts {
             position: absolute;
             top: 30px;
             right: 40px;
             display: flex;
-            gap: 10px;
-            z-index: 100;
+            gap: 15px;
+            z-index: 10;
             align-items: center;
         }
 
         .contact-link {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 10px 18px;
+            gap: 10px;
+            padding: 12px 24px;
             background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 255, 240, 0.15));
             border: none;
             border-radius: 50px;
             color: #ffffff;
             text-decoration: none;
-            font-size: 0.88em;
+            font-size: 0.95em;
             font-weight: 600;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0, 212, 255, 0.2);
             white-space: nowrap;
-            height: 42px;
+            height: 44px;
         }
 
         .contact-link span {
@@ -641,8 +479,8 @@
         }
 
         .contact-link svg {
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             fill: currentColor;
         }
 
@@ -1291,10 +1129,6 @@
             }
 
             .top-left-menu, .top-contacts {
-                display: none;
-            }
-            
-            .header-wallet-button {
                 display: none;
             }
 
@@ -2203,37 +2037,6 @@
             #compoundComparison > div:first-child > div > div:nth-child(2) {
                 font-size: 1.1em !important;
             }
-
-            /* Header Wallet Button Mobile */
-            .header-wallet-button {
-                position: fixed !important;
-                top: 80px !important;
-                left: 50% !important;
-                right: auto !important;
-                transform: translateX(-50%) !important;
-                width: calc(100% - 40px) !important;
-                max-width: 350px !important;
-                justify-content: center !important;
-            }
-
-            /* Dashboard Mobile */
-            .dashboard-stats {
-                grid-template-columns: 1fr !important;
-            }
-
-            .stat-card {
-                padding: 20px !important;
-            }
-
-            .stat-value {
-                font-size: 1.5em !important;
-            }
-
-            .delegation-item {
-                flex-direction: column !important;
-                align-items: flex-start !important;
-                gap: 10px !important;
-            }
         }
     </style>
     
@@ -2241,16 +2044,6 @@
     <style>
         /* АБСОЛЮТНА ФІКСАЦІЯ - НАЙВИЩИЙ ПРІОРИТЕТ */
         @media (max-width: 768px) {
-            /* Mobile icons container - enable on mobile */
-            #mobile-icons-container,
-            body #mobile-icons-container,
-            div[id="mobile-icons-container"] {
-                display: block !important;
-                height: 80px !important;
-                z-index: 999999 !important;
-                pointer-events: none !important;
-            }
-            
             body .hamburger,
             body label.hamburger,
             body [for="menu-toggle"].hamburger,
@@ -2277,7 +2070,6 @@
                 transform: none !important;
                 translate: none !important;
                 inset: 20px auto auto 20px !important;
-                pointer-events: auto !important;
             }
             
             body .hamburger span,
@@ -2308,7 +2100,6 @@
                 transform: none !important;
                 translate: none !important;
                 inset: 20px 20px auto auto !important;
-                pointer-events: auto !important;
             }
 
             body .fixed-mobile-contacts *,
@@ -2318,29 +2109,17 @@
         }
 
         @media (min-width: 769px) {
-            /* Ховати мобільні іконки на десктопі - СИЛЬНІ ПРАВИЛА */
-            #mobile-icons-container,
-            div[id="mobile-icons-container"] {
+            /* Ховати мобільні іконки на десктопі */
+            #mobile-icons-container {
                 display: none !important;
-                visibility: hidden !important;
-                pointer-events: none !important;
-                height: 0 !important;
-                width: 0 !important;
-                overflow: hidden !important;
             }
             
-            .hamburger,
-            label.hamburger { 
-                display: none !important;
-                visibility: hidden !important;
-                pointer-events: none !important;
-            }
+            .hamburger { display: none !important; }
+            .fixed-mobile-contacts { display: none !important; }
             
-            .fixed-mobile-contacts,
-            div.fixed-mobile-contacts { 
+            /* Ховати весь контейнер з мобільними іконками на десктопі */
+            #mobile-icons-container {
                 display: none !important;
-                visibility: hidden !important;
-                pointer-events: none !important;
             }
         }
         
@@ -2352,17 +2131,17 @@
     </style>
 </head>
 <body>
-    <!-- КОНТЕЙНЕР ДЛЯ ІКОНОК - ТІЛЬКИ ДЛЯ МОБІЛЬНИХ -->
-    <div id="mobile-icons-container" style="position: absolute; top: 0; left: 0; right: 0; width: 100%; height: 0; z-index: -1; pointer-events: none; margin: 0; padding: 0;">
+    <!-- КОНТЕЙНЕР ДЛЯ ІКОНОК - ТІЛЬКИ ВГОРІ САЙТУ -->
+    <div id="mobile-icons-container" style="position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important; width: 100% !important; height: 80px !important; z-index: 999999 !important; pointer-events: none !important; margin: 0 !important; padding: 0 !important;">
         <!-- Hamburger Menu - ЗЛІВА -->
-        <label for="menu-toggle" class="hamburger" style="position: absolute; top: 20px; left: 20px; pointer-events: none; display: none; width: 50px; height: 50px; flex-direction: column; justify-content: center; align-items: center; gap: 6px; background: transparent; border: none; z-index: -1;">
-            <span style="display: block; width: 30px; height: 3.5px; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%); border-radius: 2px;"></span>
-            <span style="display: block; width: 30px; height: 3.5px; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%); border-radius: 2px;"></span>
-            <span style="display: block; width: 30px; height: 3.5px; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%); border-radius: 2px;"></span>
+        <label for="menu-toggle" class="hamburger" style="position: absolute !important; top: 20px !important; left: 20px !important; pointer-events: auto !important; display: flex !important; width: 50px !important; height: 50px !important; flex-direction: column !important; justify-content: center !important; align-items: center !important; gap: 6px !important; background: transparent !important; border: none !important; z-index: 1000000 !important;">
+            <span style="display: block !important; width: 30px !important; height: 3.5px !important; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important; border-radius: 2px !important;"></span>
+            <span style="display: block !important; width: 30px !important; height: 3.5px !important; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important; border-radius: 2px !important;"></span>
+            <span style="display: block !important; width: 30px !important; height: 3.5px !important; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important; border-radius: 2px !important;"></span>
         </label>
 
         <!-- Fixed Mobile Контакти Icons - СПРАВА ГОРИЗОНТАЛЬНО -->
-        <div class="fixed-mobile-contacts" style="position: absolute; top: 20px; right: 20px; display: none; flex-direction: row; gap: 15px; pointer-events: none; z-index: -1;">
+        <div class="fixed-mobile-contacts" style="position: absolute !important; top: 20px !important; right: 20px !important; display: flex !important; flex-direction: row !important; gap: 15px !important; pointer-events: auto !important; z-index: 1000000 !important;">
             <a href="https://t.me/+sRnz7RyoL4Q0MWEy" class="fixed-contact-icon" target="_blank">
                 <svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M10 25L18 27.5L21 37L27 30L36 37L39 12L10 25Z" stroke="url(#iconGrad)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
@@ -2424,7 +2203,7 @@
             </button>
             <button class="mobile-menu-item" data-modal="delegatorModal" type="button">
                 <span>🤝</span>
-                <span>Стати делегатором</span>
+                <span>Як стати делегатором</span>
             </button>
             <button class="mobile-menu-item" data-modal="faqModal" type="button">
                 <span>❓</span>
@@ -2449,20 +2228,12 @@
             </button>
             <button class="ecosystem-button" onclick="openModal('delegatorModal')">
                 <span>🤝</span>
-                <span>Стати делегатором</span>
+                <span>Як стати делегатором</span>
             </button>
             <button class="ecosystem-button" onclick="openModal('faqModal')">
                 <span>❓</span>
                 <span>FAQ</span>
             </button>
-        </div>
-
-        <!-- Header Wallet Button -->
-        <div id="headerWalletButton" class="header-wallet-button" onclick="toggleHeaderWallet()">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
-            </svg>
-            <span id="headerWalletText">Підключити гаманець</span>
         </div>
 
         <div class="top-contacts">
@@ -2902,7 +2673,7 @@
     <div id="delegatorModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Стати делегатором QubeNode</h2>
+                <h2>Як стати делегатором QubeNode</h2>
                 <button class="close-button" data-close="delegatorModal" onclick="closeModal('delegatorModal')">&times;</button>
             </div>
             <div class="modal-body">
@@ -2912,110 +2683,6 @@
                         <span>🔗</span>
                         <span>Делегувати прямо з сайту</span>
                     </h3>
-                    
-                    <!-- Delegator Dashboard -->
-                    <div id="delegatorDashboard" class="delegator-dashboard">
-                        <div class="dashboard-header">
-                            <h3>💎 Ваш стейкінг дашборд</h3>
-                            <p style="color: #64748b; margin-top: 10px;">
-                                <span id="dashboardAddress" style="font-family: 'Courier New', monospace; font-size: 0.9em;"></span>
-                            </p>
-                            <button onclick="disconnectWallet()" style="margin-top: 15px; padding: 8px 20px; background: rgba(255, 0, 0, 0.1); border: 1px solid rgba(255, 0, 0, 0.3); border-radius: 25px; color: #ff6b6b; cursor: pointer; font-weight: 600; font-size: 0.9em; transition: all 0.3s;">
-                                🔌 Відключити гаманець
-                            </button>
-                        </div>
-
-                        <!-- Main Stats Grid -->
-                        <div class="dashboard-stats" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
-                            <div class="stat-card">
-                                <div class="stat-label">💰 Доступний баланс</div>
-                                <div class="stat-value" id="dashAvailableBalance">0</div>
-                                <div class="stat-subtext">TICS</div>
-                            </div>
-
-                            <div class="stat-card">
-                                <div class="stat-label">🤝 Делеговано</div>
-                                <div class="stat-value" id="dashTotalDelegated">0</div>
-                                <div class="stat-subtext">TICS на QubeNode</div>
-                            </div>
-
-                            <div class="stat-card" style="border-color: rgba(34, 197, 94, 0.4);">
-                                <div class="stat-label">✨ Винагороди</div>
-                                <div class="stat-value" style="color: #22c55e;" id="dashTotalRewards">0</div>
-                                <div class="stat-subtext">TICS накопичено</div>
-                            </div>
-
-                            <div class="stat-card" style="border-color: rgba(255, 107, 107, 0.4);">
-                                <div class="stat-label">⏳ В unbonding</div>
-                                <div class="stat-value" style="color: #ff6b6b;" id="dashUnbonding">0</div>
-                                <div class="stat-subtext">TICS (14 днів)</div>
-                            </div>
-                        </div>
-
-                        <!-- Quick Actions -->
-                        <div style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.08), rgba(0, 255, 240, 0.03)); border: 2px solid rgba(0, 212, 255, 0.25); border-radius: 15px; padding: 25px; margin: 25px 0;">
-                            <h4 style="color: #00FFF0; font-size: 1.3em; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
-                                <span>⚡</span>
-                                <span>Швидкі дії</span>
-                            </h4>
-                            
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
-                                <button onclick="showStakingTab('delegate')" style="padding: 15px 20px; background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 255, 240, 0.15)); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 12px; color: #00FFF0; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                                    <span style="font-size: 1.3em;">💎</span>
-                                    <span>Делегувати</span>
-                                </button>
-                                
-                                <button onclick="showStakingTab('claim')" style="padding: 15px 20px; background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(22, 163, 74, 0.15)); border: 2px solid rgba(34, 197, 94, 0.4); border-radius: 12px; color: #22c55e; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                                    <span style="font-size: 1.3em;">💰</span>
-                                    <span>Забрати винагороду</span>
-                                </button>
-                                
-                                <button onclick="showStakingTab('redelegate')" style="padding: 15px 20px; background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(124, 58, 237, 0.15)); border: 2px solid rgba(139, 92, 246, 0.4); border-radius: 12px; color: #a78bfa; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                                    <span style="font-size: 1.3em;">🔄</span>
-                                    <span>Ределегувати</span>
-                                </button>
-                                
-                                <button onclick="showStakingTab('undelegate')" style="padding: 15px 20px; background: linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(239, 68, 68, 0.15)); border: 2px solid rgba(255, 107, 107, 0.4); border-radius: 12px; color: #ff6b6b; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                                    <span style="font-size: 1.3em;">⚠️</span>
-                                    <span>Розділегувати</span>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Delegations List -->
-                        <div class="delegations-list" id="dashDelegationsList">
-                            <h4 style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-                                <span>📊</span>
-                                <span>Мої делегування</span>
-                            </h4>
-                            <!-- Delegations will be populated here -->
-                        </div>
-
-                        <!-- APY Calculator -->
-                        <div style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.05), rgba(0, 255, 240, 0.02)); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 15px; padding: 25px; margin-top: 25px;">
-                            <h4 style="color: #00FFF0; font-size: 1.2em; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
-                                <span>📈</span>
-                                <span>Прогноз винагород</span>
-                            </h4>
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; text-align: center;">
-                                <div style="padding: 15px; background: rgba(0, 0, 0, 0.3); border-radius: 10px;">
-                                    <div style="color: #94a3b8; font-size: 0.85em; margin-bottom: 5px;">На день (~30% APY)</div>
-                                    <div style="color: #00FFF0; font-size: 1.2em; font-weight: 700;" id="dailyReward">0</div>
-                                </div>
-                                <div style="padding: 15px; background: rgba(0, 0, 0, 0.3); border-radius: 10px;">
-                                    <div style="color: #94a3b8; font-size: 0.85em; margin-bottom: 5px;">На місяць</div>
-                                    <div style="color: #00FFF0; font-size: 1.2em; font-weight: 700;" id="monthlyReward">0</div>
-                                </div>
-                                <div style="padding: 15px; background: rgba(0, 0, 0, 0.3); border-radius: 10px;">
-                                    <div style="color: #94a3b8; font-size: 0.85em; margin-bottom: 5px;">На рік</div>
-                                    <div style="color: #00FFF0; font-size: 1.2em; font-weight: 700;" id="yearlyReward">0</div>
-                                </div>
-                            </div>
-                            <p style="color: #64748b; font-size: 0.85em; margin-top: 15px; text-align: center;">
-                                * Прогнозні значення базуються на поточному APY ~30% та вашій загальній сумі делегування
-                            </p>
-                        </div>
-                    </div>
                     
                     <!-- Wallet Connection Section -->
                     <div id="walletSection">
@@ -3064,11 +2731,10 @@
                         <div style="background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 25px;">
                             <h4 style="color: #00FFF0; font-size: 1.2em; margin-bottom: 20px;">Операції зі стейкінгом</h4>
                             
-                            <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid rgba(0, 212, 255, 0.2); padding-bottom: 10px; flex-wrap: wrap;">
-                                <button onclick="showStakingTab('delegate')" id="tabDelegate" class="staking-tab active" style="padding: 12px 20px; background: rgba(0, 212, 255, 0.2); border: none; border-radius: 8px; color: #00FFF0; font-weight: 600; cursor: pointer; transition: all 0.3s; white-space: nowrap;">Делегувати</button>
-                                <button onclick="showStakingTab('redelegate')" id="tabRedelegate" class="staking-tab" style="padding: 12px 20px; background: transparent; border: none; border-radius: 8px; color: #94a3b8; font-weight: 600; cursor: pointer; transition: all 0.3s; white-space: nowrap;">Ределегувати</button>
-                                <button onclick="showStakingTab('undelegate')" id="tabUndelegate" class="staking-tab" style="padding: 12px 20px; background: transparent; border: none; border-radius: 8px; color: #94a3b8; font-weight: 600; cursor: pointer; transition: all 0.3s; white-space: nowrap;">Розділегувати</button>
-                                <button onclick="showStakingTab('claim')" id="tabClaim" class="staking-tab" style="padding: 12px 20px; background: transparent; border: none; border-radius: 8px; color: #94a3b8; font-weight: 600; cursor: pointer; transition: all 0.3s; white-space: nowrap;">Забрати винагороду</button>
+                            <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid rgba(0, 212, 255, 0.2); padding-bottom: 10px;">
+                                <button onclick="showStakingTab('delegate')" id="tabDelegate" class="staking-tab active" style="padding: 12px 24px; background: rgba(0, 212, 255, 0.2); border: none; border-radius: 8px; color: #00FFF0; font-weight: 600; cursor: pointer; transition: all 0.3s;">Делегувати</button>
+                                <button onclick="showStakingTab('undelegate')" id="tabUndelegate" class="staking-tab" style="padding: 12px 24px; background: transparent; border: none; border-radius: 8px; color: #94a3b8; font-weight: 600; cursor: pointer; transition: all 0.3s;">Розділегувати</button>
+                                <button onclick="showStakingTab('claim')" id="tabClaim" class="staking-tab" style="padding: 12px 24px; background: transparent; border: none; border-radius: 8px; color: #94a3b8; font-weight: 600; cursor: pointer; transition: all 0.3s;">Забрати винагороду</button>
                             </div>
                             
                             <!-- Delegate Tab -->
@@ -3093,34 +2759,6 @@
                                 <button onclick="executeUndelegate()" style="width: 100%; padding: 18px; background: rgba(255, 107, 107, 0.2); border: 2px solid rgba(255, 107, 107, 0.4); border-radius: 12px; color: #ff6b6b; font-size: 1.2em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
                                     ⚠️ Розділегувати
                                 </button>
-                            </div>
-                            
-                            <!-- Redelegate Tab -->
-                            <div id="redelegateTab" class="staking-tab-content" style="display: none;">
-                                <p style="color: #cbd5e1; margin-bottom: 15px;">Перемістіть делегування на інший валідатор <strong style="color: #a78bfa;">миттєво</strong> (без очікування 14 днів)</p>
-                                <div style="margin-bottom: 20px;">
-                                    <label style="color: #94a3b8; font-size: 0.95em; margin-bottom: 8px; display: block;">З валідатора (де у вас є делегування):</label>
-                                    <select id="srcValidator" style="width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 10px; color: #fff; font-size: 1em; cursor: pointer;">
-                                        <option value="">Оберіть валідатора...</option>
-                                    </select>
-                                </div>
-                                <div style="margin-bottom: 20px;">
-                                    <label style="color: #94a3b8; font-size: 0.95em; margin-bottom: 8px; display: block;">На валідатор (куди перемістити):</label>
-                                    <select id="dstValidator" style="width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 10px; color: #fff; font-size: 1em; cursor: pointer;">
-                                        <option value="">Спочатку оберіть джерело...</option>
-                                    </select>
-                                </div>
-                                <div style="margin-bottom: 20px;">
-                                    <label style="color: #94a3b8; font-size: 0.95em; margin-bottom: 8px; display: block;">Сума TICS:</label>
-                                    <input type="number" id="redelegateAmount" placeholder="0.1" step="0.1" min="0.1" style="width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 10px; color: #fff; font-size: 1.1em;">
-                                    <div style="margin-top: 8px; font-size: 0.85em; color: #64748b;" id="maxRedelegateAmount"></div>
-                                </div>
-                                <button onclick="executeRedelegate()" style="width: 100%; padding: 18px; background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(124, 58, 237, 0.2)); border: 2px solid rgba(139, 92, 246, 0.5); border-radius: 12px; color: #a78bfa; font-size: 1.2em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
-                                    🔄 Ределегувати
-                                </button>
-                                <p style="color: #64748b; font-size: 0.85em; margin-top: 15px; text-align: center;">
-                                    ⚠️ Увага: ределегування між тими самими валідаторами можливе лише раз на 21 день
-                                </p>
                             </div>
                             
                             <!-- Claim Tab -->
@@ -3433,13 +3071,6 @@
                 modal.classList.add('show');
                 modal.style.display = 'block';
                 modal.style.zIndex = '100000';
-                
-                // If opening delegator modal and wallet is already connected, show dashboard
-                if (id === 'delegatorModal' && window.stakingModule && window.stakingModule.walletManager && window.stakingModule.walletManager.isConnected()) {
-                    setTimeout(function() {
-                        updateDelegatorDashboard();
-                    }, 100);
-                }
                 
                 // ПРИХОВАТИ іконки меню, телеграм та пошти в модальних вікнах
                 var iconsContainer = document.getElementById('mobile-icons-container');
@@ -3757,20 +3388,14 @@
                 const result = await cosmosStaking.connectWallet(walletType);
 
                 if (result.success) {
-                    // Hide wallet connection section
                     document.getElementById('walletSection').style.display = 'none';
                     document.getElementById('walletStatus').style.display = 'block';
-                    
-                    // Show dashboard and staking actions
-                    document.getElementById('delegatorDashboard').style.display = 'block';
                     document.getElementById('stakingActions').style.display = 'block';
 
                     document.getElementById('connectedWallet').textContent = result.wallet;
                     document.getElementById('connectedAddress').textContent = result.address;
 
-                    // Update both old and new interfaces
                     await updateStakingData();
-                    await updateDelegatorDashboard();
                 }
             } catch (error) {
                 console.error('Connection error:', error);
@@ -3792,23 +3417,12 @@
                 cosmosStaking.disconnect();
             }
             
-            // Hide dashboard and show wallet connection
             document.getElementById('walletSection').style.display = 'block';
             document.getElementById('walletStatus').style.display = 'none';
-            document.getElementById('delegatorDashboard').style.display = 'none';
             document.getElementById('stakingActions').style.display = 'none';
-            
-            // Reset header wallet button
-            updateHeaderWallet(null, null);
-            
-            // Reset buttons
             document.getElementById('connectKeplrBtn').disabled = false;
             document.getElementById('connectCosmostationBtn').disabled = false;
             document.getElementById('connectKeplrBtn').innerHTML = '<span style="font-size: 1.3em;">🔷</span><span>Keplr Wallet</span>';
-            document.getElementById('connectCosmostationBtn').innerHTML = '<span style="font-size: 1.3em;">🔶</span><span>Cosmostation</span>';
-            
-            console.log('Wallet disconnected');
-        }
         }
 
         async function updateStakingData() {
@@ -3829,37 +3443,17 @@
         }
 
         function showStakingTab(tab) {
-            // Make sure stakingActions section is visible
-            const stakingActionsSection = document.getElementById('stakingActions');
-            if (stakingActionsSection) {
-                stakingActionsSection.style.display = 'block';
-                // Scroll to the section smoothly
-                stakingActionsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-            
-            // Update tab buttons
             document.querySelectorAll('.staking-tab').forEach(btn => {
                 btn.style.background = 'transparent';
                 btn.style.color = '#94a3b8';
             });
-            
-            // Hide all tab contents
             document.querySelectorAll('.staking-tab-content').forEach(content => {
                 content.style.display = 'none';
             });
 
-            // Show selected tab
-            const tabButton = document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1));
-            const tabContent = document.getElementById(tab + 'Tab');
-            
-            if (tabButton) {
-                tabButton.style.background = 'rgba(0, 212, 255, 0.2)';
-                tabButton.style.color = '#00FFF0';
-            }
-            
-            if (tabContent) {
-                tabContent.style.display = 'block';
-            }
+            document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).style.background = 'rgba(0, 212, 255, 0.2)';
+            document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).style.color = '#00FFF0';
+            document.getElementById(tab + 'Tab').style.display = 'block';
         }
 
         async function executeDelegate() {
@@ -3879,7 +3473,6 @@
                 
                 setTimeout(async () => {
                     await updateStakingData();
-                    await updateDelegatorDashboard();
                     document.getElementById('delegateAmount').value = '';
                 }, 2000);
                 
@@ -3909,7 +3502,6 @@
                 
                 setTimeout(async () => {
                     await updateStakingData();
-                    await updateDelegatorDashboard();
                     document.getElementById('undelegateAmount').value = '';
                 }, 2000);
                 
@@ -3928,95 +3520,7 @@
                 
                 setTimeout(async () => {
                     await updateStakingData();
-                    await updateDelegatorDashboard();
                 }, 2000);
-                
-            } catch (error) {
-                showTxStatus('error', 'Помилка: ' + error.message);
-            }
-        }
-
-        function updateDestinationValidators(delegations) {
-            const srcSelect = document.getElementById('srcValidator');
-            const dstSelect = document.getElementById('dstValidator');
-            const selectedSrc = srcSelect.value;
-            
-            dstSelect.innerHTML = '<option value="">Оберіть валідатора...</option>';
-            
-            // Add QubeNode as primary option if not the source
-            const qubenodeAddr = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
-            if (selectedSrc !== qubenodeAddr) {
-                const option = document.createElement('option');
-                option.value = qubenodeAddr;
-                option.textContent = 'QubeNode (рекомендовано)';
-                dstSelect.appendChild(option);
-            }
-            
-            // Add other validators from delegations
-            if (delegations && delegations.length > 0) {
-                delegations.forEach(del => {
-                    const validatorAddr = del.delegation.validator_address;
-                    if (validatorAddr !== selectedSrc) {
-                        const validatorName = validatorAddr === qubenodeAddr 
-                            ? 'QubeNode' 
-                            : validatorAddr.substring(0, 20) + '...';
-                        
-                        const option = document.createElement('option');
-                        option.value = validatorAddr;
-                        option.textContent = validatorName;
-                        dstSelect.appendChild(option);
-                    }
-                });
-            }
-            
-            dstSelect.disabled = !selectedSrc;
-        }
-
-        async function executeRedelegate() {
-            const srcValidator = document.getElementById('srcValidator').value;
-            const dstValidator = document.getElementById('dstValidator').value;
-            const amount = parseFloat(document.getElementById('redelegateAmount').value);
-            
-            if (!srcValidator) {
-                alert('Оберіть валідатора з якого хочете перемістити делегування');
-                return;
-            }
-            
-            if (!dstValidator) {
-                alert('Оберіть валідатора на якого хочете перемістити делегування');
-                return;
-            }
-            
-            if (!amount || amount < 0.1) {
-                alert('Мінімальна сума: 0.1 TICS');
-                return;
-            }
-            
-            // Get max amount for validation
-            const srcSelect = document.getElementById('srcValidator');
-            const selectedOption = srcSelect.options[srcSelect.selectedIndex];
-            const maxAmount = parseFloat(cosmosStaking.formatTics(selectedOption.getAttribute('data-amount')));
-            
-            if (amount > maxAmount) {
-                alert(`Недостатньо коштів. Максимум: ${maxAmount} TICS`);
-                return;
-            }
-
-            const srcName = selectedOption.textContent.split(' (')[0];
-            const dstSelect = document.getElementById('dstValidator');
-            const dstName = dstSelect.options[dstSelect.selectedIndex].textContent;
-
-            if (!confirm(`Ределегувати ${amount} TICS з ${srcName} на ${dstName}?`)) {
-                return;
-            }
-
-            try {
-                showTxStatus('processing', 'Обробка транзакції...');
-                
-                // Note: This requires adding redelegate method to cosmos-staking.js
-                // For now, show info message
-                alert('⚠️ Функція ределегування буде додана в наступному оновленні. Наразі використовуйте Qubetics Wallet для ределегування.');
-                showTxStatus('error', 'Функція в розробці');
                 
             } catch (error) {
                 showTxStatus('error', 'Помилка: ' + error.message);
@@ -4052,327 +3556,6 @@
                 setTimeout(() => {
                     statusDiv.style.display = 'none';
                 }, 5000);
-            }
-        }
-
-        // ============================================
-        // HEADER WALLET BUTTON FUNCTIONALITY
-        // ============================================
-        let headerWalletConnected = false;
-        let walletSelectorVisible = false;
-
-        function toggleHeaderWallet() {
-            if (!headerWalletConnected) {
-                // Show wallet selector dropdown
-                showWalletSelector();
-            } else {
-                // Show disconnect menu
-                showDisconnectMenu();
-            }
-        }
-
-        function showDisconnectMenu() {
-            if (walletSelectorVisible) {
-                hideWalletSelector();
-                return;
-            }
-
-            const button = document.getElementById('headerWalletButton');
-            
-            // Create disconnect menu
-            const menu = document.createElement('div');
-            menu.id = 'walletSelectorDropdown';
-            menu.style.cssText = `
-                position: absolute;
-                top: 80px;
-                right: 260px;
-                background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-                border: 2px solid rgba(0, 212, 255, 0.5);
-                border-radius: 15px;
-                padding: 20px;
-                z-index: 9999;
-                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
-                min-width: 250px;
-            `;
-            
-            menu.innerHTML = `
-                <div style="margin-bottom: 15px;">
-                    <h4 style="color: #00FFF0; margin-bottom: 10px; font-size: 1.1em;">Гаманець підключено</h4>
-                </div>
-                <button onclick="openModal('delegatorModal'); hideWalletSelector();" style="width: 100%; padding: 15px; margin-bottom: 10px; background: rgba(0, 212, 255, 0.15); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 12px; color: #00FFF0; font-size: 1em; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;">
-                    <span style="font-size: 1.3em;">📊</span>
-                    <span>Відкрити дашборд</span>
-                </button>
-                <button onclick="disconnectHeaderWallet()" style="width: 100%; padding: 15px; background: rgba(255, 0, 0, 0.15); border: 2px solid rgba(255, 0, 0, 0.4); border-radius: 12px; color: #ff6b6b; font-size: 1em; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;">
-                    <span style="font-size: 1.3em;">🔌</span>
-                    <span>Відключити</span>
-                </button>
-            `;
-            
-            document.body.appendChild(menu);
-            walletSelectorVisible = true;
-
-            // Close on click outside
-            setTimeout(() => {
-                document.addEventListener('click', closeWalletSelectorOnClickOutside);
-            }, 100);
-        }
-
-        function disconnectHeaderWallet() {
-            hideWalletSelector();
-            disconnectWallet();
-            headerWalletConnected = false;
-        }
-
-        function showWalletSelector() {
-            if (walletSelectorVisible) {
-                hideWalletSelector();
-                return;
-            }
-
-            const button = document.getElementById('headerWalletButton');
-            
-            // Create wallet selector dropdown
-            const selector = document.createElement('div');
-            selector.id = 'walletSelectorDropdown';
-            selector.style.cssText = `
-                position: absolute;
-                top: 80px;
-                right: 320px;
-                background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-                border: 2px solid rgba(0, 212, 255, 0.5);
-                border-radius: 15px;
-                padding: 20px;
-                z-index: 9999;
-                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
-                min-width: 280px;
-            `;
-            
-            selector.innerHTML = `
-                <div style="margin-bottom: 15px;">
-                    <h4 style="color: #00FFF0; margin-bottom: 10px; font-size: 1.1em;">Оберіть гаманець</h4>
-                </div>
-                <button onclick="connectHeaderWallet('keplr')" style="width: 100%; padding: 15px; margin-bottom: 10px; background: rgba(0, 212, 255, 0.15); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 12px; color: #00FFF0; font-size: 1em; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;">
-                    <span style="font-size: 1.3em;">🔷</span>
-                    <span>Keplr Wallet</span>
-                </button>
-                <button onclick="connectHeaderWallet('cosmostation')" style="width: 100%; padding: 15px; background: rgba(0, 212, 255, 0.15); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 12px; color: #00FFF0; font-size: 1em; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;">
-                    <span style="font-size: 1.3em;">🔶</span>
-                    <span>Cosmostation</span>
-                </button>
-            `;
-            
-            document.body.appendChild(selector);
-            walletSelectorVisible = true;
-
-            // Close on click outside
-            setTimeout(() => {
-                document.addEventListener('click', closeWalletSelectorOnClickOutside);
-            }, 100);
-        }
-
-        function hideWalletSelector() {
-            const selector = document.getElementById('walletSelectorDropdown');
-            if (selector) {
-                selector.remove();
-            }
-            walletSelectorVisible = false;
-            document.removeEventListener('click', closeWalletSelectorOnClickOutside);
-        }
-
-        function closeWalletSelectorOnClickOutside(e) {
-            const selector = document.getElementById('walletSelectorDropdown');
-            const button = document.getElementById('headerWalletButton');
-            
-            if (selector && !selector.contains(e.target) && !button.contains(e.target)) {
-                hideWalletSelector();
-            }
-        }
-
-        async function connectHeaderWallet(walletType) {
-            hideWalletSelector();
-            
-            try {
-                // Wait for modules to be ready
-                if (!stakingModuleReady) {
-                    alert('Зачекайте, модулі завантажуються...');
-                    return;
-                }
-
-                // Initialize staking module if not done
-                await initializeStaking();
-                
-                // Connect wallet using the same logic as modal
-                const result = await cosmosStaking.connectWallet(walletType);
-                
-                if (result.success) {
-                    // Get staking overview
-                    const overview = await cosmosStaking.loadStakingOverview();
-                    const address = cosmosStaking.walletManager.getAddress();
-                    const balance = cosmosStaking.formatTics(overview.balance);
-                    
-                    // Update header display
-                    updateHeaderWallet(address, balance);
-                    
-                    console.log('✅ Header wallet connected successfully');
-                }
-                
-            } catch (error) {
-                console.error('Failed to connect wallet:', error);
-                alert('Помилка підключення гаманця: ' + error.message);
-            }
-        }
-
-        function updateHeaderWallet(address, balance) {
-            const button = document.getElementById('headerWalletButton');
-            const text = document.getElementById('headerWalletText');
-            
-            if (address && balance !== undefined) {
-                headerWalletConnected = true;
-                const shortAddress = address.substring(0, 10) + '...' + address.substring(address.length - 6);
-                text.innerHTML = `
-                    <div class="header-wallet-info">
-                        <span class="wallet-address-short">${shortAddress}</span>
-                        <span class="wallet-balance">
-                            💎 ${balance} TICS
-                        </span>
-                    </div>
-                `;
-            } else {
-                headerWalletConnected = false;
-                text.textContent = 'Підключити гаманець';
-            }
-        }
-
-        // ============================================
-        // DELEGATOR DASHBOARD FUNCTIONALITY
-        // ============================================
-        async function updateDelegatorDashboard() {
-            if (!cosmosStaking || !cosmosStaking.walletManager.isConnected()) {
-                // Show wallet connection buttons if not connected
-                document.getElementById('walletSection').style.display = 'block';
-                document.getElementById('delegatorDashboard').style.display = 'none';
-                document.getElementById('stakingActions').style.display = 'none';
-                return;
-            }
-
-            try {
-                console.log('📊 Updating delegator dashboard...');
-                const overview = await cosmosStaking.loadStakingOverview();
-                
-                // Update dashboard address
-                const address = cosmosStaking.walletManager.getAddress();
-                document.getElementById('dashboardAddress').textContent = address;
-                
-                // Update stats
-                const balance = cosmosStaking.formatTics(overview.balance);
-                const delegated = cosmosStaking.formatTics(overview.totalDelegated);
-                const rewards = cosmosStaking.formatTics(overview.totalRewards);
-                
-                document.getElementById('dashAvailableBalance').textContent = balance;
-                document.getElementById('dashTotalDelegated').textContent = delegated;
-                document.getElementById('dashTotalRewards').textContent = rewards;
-                
-                // Calculate unbonding total
-                let unbondingTotal = 0;
-                if (overview.unbondingDelegations && overview.unbondingDelegations.length > 0) {
-                    overview.unbondingDelegations.forEach(ub => {
-                        if (ub.entries) {
-                            ub.entries.forEach(entry => {
-                                unbondingTotal += parseFloat(entry.balance || 0);
-                            });
-                        }
-                    });
-                }
-                document.getElementById('dashUnbonding').textContent = 
-                    cosmosStaking.formatTics(unbondingTotal.toString());
-                
-                // Calculate projected rewards (APY ~30%)
-                const delegatedAmount = parseFloat(delegated.replace(/,/g, ''));
-                const apy = 0.30; // 30% APY
-                
-                const dailyReward = (delegatedAmount * apy / 365).toFixed(2);
-                const monthlyReward = (delegatedAmount * apy / 12).toFixed(2);
-                const yearlyReward = (delegatedAmount * apy).toFixed(2);
-                
-                document.getElementById('dailyReward').textContent = dailyReward + ' TICS';
-                document.getElementById('monthlyReward').textContent = monthlyReward + ' TICS';
-                document.getElementById('yearlyReward').textContent = yearlyReward + ' TICS';
-                
-                // Update header wallet if it wasn't connected from header
-                if (!headerWalletConnected) {
-                    updateHeaderWallet(address, balance);
-                }
-                
-                // Update delegations list
-                const listEl = document.getElementById('dashDelegationsList');
-                listEl.innerHTML = '<h4 style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;"><span>📊</span><span>Мої делегування</span></h4>';
-                
-                if (overview.delegations && overview.delegations.length > 0) {
-                    overview.delegations.forEach(del => {
-                        const validatorName = del.delegation.validator_address === 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld' 
-                            ? 'QubeNode 🏆' 
-                            : del.delegation.validator_address.substring(0, 20) + '...';
-                        
-                        const item = document.createElement('div');
-                        item.className = 'delegation-item';
-                        item.innerHTML = `
-                            <span class="delegation-validator">${validatorName}</span>
-                            <span class="delegation-amount">${cosmosStaking.formatTics(del.balance.amount)} TICS</span>
-                        `;
-                        listEl.appendChild(item);
-                    });
-                } else {
-                    listEl.innerHTML += '<p style="text-align: center; color: #64748b; padding: 20px;">Немає активних делегувань</p>';
-                }
-                
-                // Update redelegate source validator dropdown
-                const srcValidatorSelect = document.getElementById('srcValidator');
-                if (srcValidatorSelect) {
-                    srcValidatorSelect.innerHTML = '<option value="">Оберіть валідатора...</option>';
-                    
-                    if (overview.delegations && overview.delegations.length > 0) {
-                        overview.delegations.forEach(del => {
-                            const validatorAddr = del.delegation.validator_address;
-                            const validatorName = validatorAddr === 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld' 
-                                ? 'QubeNode' 
-                                : validatorAddr.substring(0, 20) + '...';
-                            const amount = cosmosStaking.formatTics(del.balance.amount);
-                            
-                            const option = document.createElement('option');
-                            option.value = validatorAddr;
-                            option.setAttribute('data-amount', del.balance.amount);
-                            option.textContent = `${validatorName} (${amount} TICS)`;
-                            srcValidatorSelect.appendChild(option);
-                        });
-                        
-                        // Add onChange listener to source validator
-                        srcValidatorSelect.onchange = function() {
-                            updateDestinationValidators(overview.delegations);
-                            
-                            // Show max amount for selected validator
-                            const selectedOption = this.options[this.selectedIndex];
-                            if (selectedOption.value) {
-                                const amount = selectedOption.getAttribute('data-amount');
-                                const formattedAmount = cosmosStaking.formatTics(amount);
-                                document.getElementById('maxRedelegateAmount').textContent = 
-                                    `Максимум: ${formattedAmount} TICS`;
-                            } else {
-                                document.getElementById('maxRedelegateAmount').textContent = '';
-                            }
-                        };
-                    }
-                }
-                
-                // HIDE wallet connection buttons, SHOW dashboard and staking actions
-                document.getElementById('walletSection').style.display = 'none';
-                document.getElementById('delegatorDashboard').style.display = 'block';
-                document.getElementById('stakingActions').style.display = 'block';
-                
-                console.log('✅ Dashboard updated successfully');
-                
-            } catch (error) {
-                console.error('❌ Error updating dashboard:', error);
             }
         }
 

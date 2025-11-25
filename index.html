@@ -2856,6 +2856,7 @@
                         
                         <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid rgba(0, 212, 255, 0.2); padding-bottom: 10px; flex-wrap: wrap;">
                             <button onclick="showDashTab('delegate')" id="dashTabDelegate" class="dash-tab active" style="padding: 12px 20px; background: rgba(0, 212, 255, 0.2); border: none; border-radius: 8px; color: #00FFF0; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 0.95em;">Делегувати</button>
+                            <button onclick="showDashTab('redelegate')" id="dashTabRedelegate" class="dash-tab" style="padding: 12px 20px; background: transparent; border: none; border-radius: 8px; color: #94a3b8; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 0.95em;">Ределегувати</button>
                             <button onclick="showDashTab('undelegate')" id="dashTabUndelegate" class="dash-tab" style="padding: 12px 20px; background: transparent; border: none; border-radius: 8px; color: #94a3b8; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 0.95em;">Розділегувати</button>
                             <button onclick="showDashTab('claim')" id="dashTabClaim" class="dash-tab" style="padding: 12px 20px; background: transparent; border: none; border-radius: 8px; color: #94a3b8; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 0.95em;">Забрати винагороду</button>
                         </div>
@@ -2869,6 +2870,34 @@
                             </div>
                             <button onclick="executeDashDelegate()" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border: none; border-radius: 12px; color: #000; font-size: 1.1em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
                                 💎 Делегувати на QubeNode
+                            </button>
+                        </div>
+                        
+                        <!-- Redelegate Tab -->
+                        <div id="dashRedelegateTab" class="dash-tab-content" style="display: none;">
+                            <p style="color: #cbd5e1; margin-bottom: 15px; font-size: 0.95em;">Переведіть делегування з одного валідатора на іншого миттєво</p>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <label style="color: #94a3b8; font-size: 0.95em; margin-bottom: 8px; display: block;">З якого валідатора:</label>
+                                <select id="dashRedelegateFrom" style="width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 10px; color: #fff; font-size: 1.1em;">
+                                    <option value="">Завантаження...</option>
+                                </select>
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <label style="color: #94a3b8; font-size: 0.95em; margin-bottom: 8px; display: block;">Кому делегувати:</label>
+                                <select id="dashRedelegateTo" style="width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 10px; color: #fff; font-size: 1.1em;">
+                                    <option value="">Завантаження...</option>
+                                </select>
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <label style="color: #94a3b8; font-size: 0.95em; margin-bottom: 8px; display: block;">Сума TICS:</label>
+                                <input type="number" id="dashRedelegateAmount" placeholder="0.1" step="0.1" min="0.1" style="width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 10px; color: #fff; font-size: 1.1em;">
+                            </div>
+                            
+                            <button onclick="executeDashRedelegate()" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #A855F7, #6366F1); border: none; border-radius: 12px; color: #fff; font-size: 1.1em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
+                                🔄 Ределегувати
                             </button>
                         </div>
                         
@@ -2899,6 +2928,49 @@
                     
                     <!-- Transaction Status -->
                     <div id="dashTxStatus" style="display: none; margin-top: 20px; padding: 20px; border-radius: 12px;"></div>
+                    
+                    <!-- My Delegations Section -->
+                    <div style="background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 25px; margin-top: 30px;">
+                        <h4 style="color: #00FFF0; font-size: 1.3em; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                            <span>📊</span>
+                            <span>Мої делегування</span>
+                        </h4>
+                        <div id="dashDelegationsList">
+                            <div style="padding: 20px; text-align: center; color: #94a3b8;">
+                                Завантаження делегувань...
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Rewards Forecast Section -->
+                    <div style="background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 25px; margin-top: 20px;">
+                        <h4 style="color: #00FFF0; font-size: 1.3em; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                            <span>📈</span>
+                            <span>Прогноз винагород</span>
+                        </h4>
+                        <div id="dashRewardsForecast">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                                <!-- Daily -->
+                                <div style="text-align: center;">
+                                    <div style="color: #94a3b8; font-size: 0.85em; margin-bottom: 8px;">На день (~30% APY)</div>
+                                    <div style="color: #00FFF0; font-size: 1.5em; font-weight: 700;"><span id="forecastDaily">0.00</span> TICS</div>
+                                </div>
+                                
+                                <!-- Monthly -->
+                                <div style="text-align: center;">
+                                    <div style="color: #94a3b8; font-size: 0.85em; margin-bottom: 8px;">На місяць</div>
+                                    <div style="color: #00FFF0; font-size: 1.5em; font-weight: 700;"><span id="forecastMonthly">0.00</span> TICS</div>
+                                </div>
+                                
+                                <!-- Yearly -->
+                                <div style="text-align: center;">
+                                    <div style="color: #94a3b8; font-size: 0.85em; margin-bottom: 8px;">На рік</div>
+                                    <div style="color: #00FFF0; font-size: 1.5em; font-weight: 700;"><span id="forecastYearly">0.00</span> TICS</div>
+                                </div>
+                            </div>
+                            <p style="color: #64748b; font-size: 0.8em; margin-top: 15px; text-align: center;">* Прогнозні значення базуються на поточному APY ~30% та вашій загальній сумі делегування</p>
+                        </div>
+                    </div>
                     
                     <!-- Disconnect Button -->
                     <div style="text-align: center; margin-top: 25px;">
@@ -3685,16 +3757,25 @@
                 const delegated = cosmosStaking.formatTics(overview.totalDelegated);
                 const rewards = cosmosStaking.formatTics(overview.totalRewards);
                 
-                // Calculate unbonding
+                // Calculate unbonding - improved logic
                 let unbonding = '0';
-                if (overview.unbonding && overview.unbonding.length > 0) {
+                console.log('Unbonding data:', overview.unbonding); // Debug
+                
+                if (overview.unbonding && Array.isArray(overview.unbonding) && overview.unbonding.length > 0) {
                     let totalUnbonding = BigInt(0);
-                    overview.unbonding.forEach(u => {
-                        u.entries.forEach(entry => {
-                            totalUnbonding += BigInt(entry.balance);
-                        });
+                    overview.unbonding.forEach(unbondingItem => {
+                        if (unbondingItem.entries && Array.isArray(unbondingItem.entries)) {
+                            unbondingItem.entries.forEach(entry => {
+                                if (entry.balance) {
+                                    totalUnbonding += BigInt(entry.balance);
+                                }
+                            });
+                        }
                     });
-                    unbonding = cosmosStaking.formatTics(totalUnbonding.toString());
+                    
+                    if (totalUnbonding > BigInt(0)) {
+                        unbonding = cosmosStaking.formatTics(totalUnbonding.toString());
+                    }
                 }
 
                 // Update dashboard displays with 2 decimal places
@@ -3703,6 +3784,16 @@
                 document.getElementById('dashRewards').textContent = parseFloat(rewards).toFixed(2);
                 document.getElementById('dashUnbonding').textContent = parseFloat(unbonding).toFixed(2);
                 document.getElementById('dashClaimableRewards').textContent = parseFloat(rewards).toFixed(2);
+                
+                // Update delegations list if exists
+                if (document.getElementById('dashDelegationsList')) {
+                    updateDelegationsList(overview);
+                }
+                
+                // Update rewards forecast if exists
+                if (document.getElementById('dashRewardsForecast')) {
+                    updateRewardsForecast(overview);
+                }
             } catch (error) {
                 console.error('Error updating dashboard data:', error);
             }
@@ -3840,6 +3931,150 @@
                 // Reset header
                 headerWalletConnected = false;
                 resetHeaderWalletButton();
+            }
+        }
+
+        // Update Delegations List
+        async function updateDelegationsList(overview) {
+            const container = document.getElementById('dashDelegationsList');
+            
+            if (!overview.delegations || overview.delegations.length === 0) {
+                container.innerHTML = '<div style="padding: 20px; text-align: center; color: #94a3b8;">Немає активних делегувань</div>';
+                return;
+            }
+            
+            let html = '<div style="display: flex; flex-direction: column; gap: 12px;">';
+            
+            overview.delegations.forEach(del => {
+                const amount = cosmosStaking.formatTics(del.balance.amount);
+                const validatorName = del.delegation.validator_address === 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld' 
+                    ? 'QubeNode 🏆' 
+                    : del.delegation.validator_address.substring(0, 20) + '...';
+                
+                html += `
+                    <div style="background: rgba(0, 212, 255, 0.05); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 10px; padding: 15px; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="color: #00FFF0; font-weight: 600; margin-bottom: 4px;">${validatorName}</div>
+                            <div style="color: #64748b; font-size: 0.85em;">${del.delegation.validator_address}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="color: #00FFF0; font-size: 1.2em; font-weight: 700;">${parseFloat(amount).toFixed(2)}</div>
+                            <div style="color: #94a3b8; font-size: 0.85em;">TICS</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+            
+            // Update redelegate dropdowns
+            updateRedelegateDropdowns(overview);
+        }
+
+        // Update Rewards Forecast
+        async function updateRewardsForecast(overview) {
+            try {
+                const delegated = cosmosStaking.formatTics(overview.totalDelegated);
+                const amount = parseFloat(delegated);
+                
+                if (amount === 0) {
+                    document.getElementById('forecastDaily').textContent = '0.00';
+                    document.getElementById('forecastMonthly').textContent = '0.00';
+                    document.getElementById('forecastYearly').textContent = '0.00';
+                    return;
+                }
+                
+                // APY 30%, but with 5% commission = 28.5% for user
+                const APY = 0.285;
+                
+                const dailyReward = (amount * APY) / 365;
+                const monthlyReward = (amount * APY) / 12;
+                const yearlyReward = amount * APY;
+                
+                document.getElementById('forecastDaily').textContent = dailyReward.toFixed(2);
+                document.getElementById('forecastMonthly').textContent = monthlyReward.toFixed(2);
+                document.getElementById('forecastYearly').textContent = yearlyReward.toFixed(2);
+            } catch (error) {
+                console.error('Error updating rewards forecast:', error);
+            }
+        }
+
+        // Update Redelegate Dropdowns
+        async function updateRedelegateDropdowns(overview) {
+            const fromSelect = document.getElementById('dashRedelegateFrom');
+            const toSelect = document.getElementById('dashRedelegateTo');
+            
+            if (!overview.delegations || overview.delegations.length === 0) {
+                fromSelect.innerHTML = '<option value="">Немає делегувань</option>';
+                toSelect.innerHTML = '<option value="">Завантаження...</option>';
+                return;
+            }
+            
+            // Update FROM dropdown with user's delegations
+            let fromHtml = '<option value="">Оберіть валідатора</option>';
+            overview.delegations.forEach(del => {
+                const amount = cosmosStaking.formatTics(del.balance.amount);
+                const validatorName = del.delegation.validator_address === 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld' 
+                    ? 'QubeNode' 
+                    : del.delegation.validator_address.substring(0, 15) + '...';
+                
+                fromHtml += `<option value="${del.delegation.validator_address}">${validatorName} (${parseFloat(amount).toFixed(2)} TICS)</option>`;
+            });
+            fromSelect.innerHTML = fromHtml;
+            
+            // Update TO dropdown - for now, just add QubeNode and a placeholder
+            // In production, you'd fetch all validators from the network
+            let toHtml = '<option value="">Оберіть валідатора</option>';
+            toHtml += '<option value="qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld">QubeNode 🏆</option>';
+            // Add other validators if needed
+            toSelect.innerHTML = toHtml;
+        }
+
+        // Execute Redelegate
+        async function executeDashRedelegate() {
+            const fromValidator = document.getElementById('dashRedelegateFrom').value;
+            const toValidator = document.getElementById('dashRedelegateTo').value;
+            const amount = parseFloat(document.getElementById('dashRedelegateAmount').value);
+            
+            if (!fromValidator) {
+                alert('Оберіть валідатора з якого ределегувати');
+                return;
+            }
+            
+            if (!toValidator) {
+                alert('Оберіть валідатора кому ределегувати');
+                return;
+            }
+            
+            if (fromValidator === toValidator) {
+                alert('Не можна ределегувати на того самого валідатора');
+                return;
+            }
+            
+            if (!amount || amount < 0.1) {
+                alert('Мінімальна сума: 0.1 TICS');
+                return;
+            }
+            
+            if (!confirm(`Ределегувати ${amount} TICS?`)) {
+                return;
+            }
+
+            try {
+                showDashTxStatus('processing', 'Обробка транзакції...');
+                
+                const result = await cosmosStaking.redelegate(fromValidator, toValidator, amount, 'Redelegation via QubeNode.space');
+                
+                showDashTxStatus('success', `Успішно! TX: ${result.txHash}`);
+                
+                setTimeout(async () => {
+                    await updateDashboardData();
+                    document.getElementById('dashRedelegateAmount').value = '';
+                }, 2000);
+                
+            } catch (error) {
+                showDashTxStatus('error', 'Помилка: ' + error.message);
             }
         }
 

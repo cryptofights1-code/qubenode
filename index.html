@@ -440,6 +440,105 @@
             box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
         }
 
+        /* Header Wallet Button */
+        .header-wallet-button {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 255, 240, 0.15));
+            border: 2px solid rgba(0, 212, 255, 0.5);
+            border-radius: 50px;
+            color: #00FFF0;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+            white-space: nowrap;
+            height: 44px;
+        }
+
+        .header-wallet-button:hover {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(0, 255, 240, 0.25));
+            border-color: rgba(0, 212, 255, 0.7);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .wallet-dropdown {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 0;
+            min-width: 220px;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            border: 2px solid rgba(0, 212, 255, 0.4);
+            border-radius: 12px;
+            padding: 10px;
+            display: none !important;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 1000;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+        }
+
+        .wallet-dropdown.show {
+            display: flex !important;
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .wallet-option {
+            padding: 12px 16px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 8px;
+            color: #00FFF0;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .wallet-option:hover {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: rgba(0, 212, 255, 0.5);
+            transform: translateX(5px);
+        }
+
+        .wallet-connected {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(22, 163, 74, 0.15));
+            border-color: rgba(34, 197, 94, 0.5);
+        }
+
+        .wallet-connected:hover {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.3), rgba(22, 163, 74, 0.25));
+            border-color: rgba(34, 197, 94, 0.7);
+        }
+
+        .wallet-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .wallet-address {
+            font-size: 0.85em;
+            color: #94a3b8;
+        }
+
+        .wallet-balance {
+            font-size: 0.95em;
+            color: #22c55e;
+            font-weight: 700;
+        }
+
         .top-contacts {
             position: absolute;
             top: 30px;
@@ -1095,6 +1194,20 @@
 
         .faq-answer strong {
             color: #00FFF0;
+        }
+
+        /* Medium screens - adjust menu layout */
+        @media (max-width: 1100px) {
+            .top-left-menu {
+                flex-wrap: wrap;
+                max-width: 600px;
+            }
+            
+            .ecosystem-button, .header-wallet-button {
+                font-size: 0.9em;
+                padding: 10px 16px;
+                height: 40px;
+            }
         }
 
         @media (max-width: 768px) {
@@ -2209,6 +2322,10 @@
                 <span>❓</span>
                 <span>FAQ</span>
             </button>
+            <button class="mobile-menu-item" id="mobileWalletBtn" onclick="handleMobileWalletClick()" type="button">
+                <span>💼</span>
+                <span>Підключити гаманець</span>
+            </button>
         </div>
     </div>
 
@@ -2234,6 +2351,22 @@
                 <span>❓</span>
                 <span>FAQ</span>
             </button>
+            <div style="position: relative;">
+                <button class="header-wallet-button" id="headerWalletBtn" onclick="toggleHeaderWalletDropdown(event)">
+                    <span>💼</span>
+                    <span>Підключити гаманець</span>
+                </button>
+                <div class="wallet-dropdown" id="headerWalletDropdown">
+                    <button class="wallet-option" onclick="connectHeaderWallet('keplr'); event.stopPropagation();">
+                        <span>🔷</span>
+                        <span>Keplr</span>
+                    </button>
+                    <button class="wallet-option" onclick="connectHeaderWallet('cosmostation'); event.stopPropagation();">
+                        <span>🔶</span>
+                        <span>Cosmostation</span>
+                    </button>
+                </div>
+            </div>
         </div>
 
         <div class="top-contacts">
@@ -3347,6 +3480,13 @@
 
         // Wait for all modules to load
         window.addEventListener('DOMContentLoaded', function() {
+            // Initialize wallet dropdown - make sure it's hidden
+            const dropdown = document.getElementById('headerWalletDropdown');
+            if (dropdown) {
+                dropdown.classList.remove('show');
+                dropdown.style.display = 'none';
+            }
+            
             // Check if CosmosStakingModule is available
             const checkModules = setInterval(function() {
                 if (typeof CosmosStakingModule !== 'undefined' && 
@@ -3557,6 +3697,182 @@
                     statusDiv.style.display = 'none';
                 }, 5000);
             }
+        }
+
+        // Header Wallet Button Functions
+        let headerWalletConnected = false;
+
+        function toggleHeaderWalletDropdown(event) {
+            if (event) event.stopPropagation();
+            
+            if (headerWalletConnected) {
+                // If connected, show dashboard modal instead
+                openModal('delegatorModal');
+                return;
+            }
+            
+            const dropdown = document.getElementById('headerWalletDropdown');
+            if (dropdown) {
+                dropdown.classList.toggle('show');
+            }
+        }
+
+        async function connectHeaderWallet(walletType) {
+            const dropdown = document.getElementById('headerWalletDropdown');
+            dropdown.classList.remove('show');
+            
+            const headerBtn = document.getElementById('headerWalletBtn');
+            headerBtn.innerHTML = '<span>⏳</span><span>Підключення...</span>';
+            headerBtn.style.pointerEvents = 'none';
+            
+            try {
+                await initializeStaking();
+                const result = await cosmosStaking.connectWallet(walletType);
+                
+                if (result.success) {
+                    headerWalletConnected = true;
+                    await updateHeaderWalletDisplay();
+                    
+                    // Also update modal if it's open
+                    if (document.getElementById('walletSection')) {
+                        document.getElementById('walletSection').style.display = 'none';
+                        document.getElementById('walletStatus').style.display = 'block';
+                        document.getElementById('stakingActions').style.display = 'block';
+                        document.getElementById('connectedWallet').textContent = result.wallet;
+                        document.getElementById('connectedAddress').textContent = result.address;
+                        await updateStakingData();
+                    }
+                }
+            } catch (error) {
+                console.error('Header wallet connection error:', error);
+                alert('Помилка підключення: ' + error.message);
+                resetHeaderWalletButton();
+            } finally {
+                headerBtn.style.pointerEvents = 'auto';
+            }
+        }
+
+        async function updateHeaderWalletDisplay() {
+            try {
+                const overview = await cosmosStaking.refresh();
+                const walletInfo = cosmosStaking.getWalletInfo();
+                
+                const balance = cosmosStaking.formatTics(overview.balance);
+                const formattedBalance = parseFloat(balance).toFixed(2);
+                
+                // Shorten address: first 8 and last 6 characters
+                const address = walletInfo.address;
+                const shortAddress = address.substring(0, 8) + '...' + address.substring(address.length - 6);
+                
+                const headerBtn = document.getElementById('headerWalletBtn');
+                headerBtn.innerHTML = `
+                    <span>💼</span>
+                    <div class="wallet-info">
+                        <div class="wallet-address">${shortAddress}</div>
+                        <div class="wallet-balance">${formattedBalance} TICS</div>
+                    </div>
+                `;
+                headerBtn.classList.add('wallet-connected');
+                
+                // Update mobile button too
+                updateMobileWalletButton();
+            } catch (error) {
+                console.error('Error updating header wallet display:', error);
+                resetHeaderWalletButton();
+            }
+        }
+
+        function resetHeaderWalletButton() {
+            headerWalletConnected = false;
+            const headerBtn = document.getElementById('headerWalletBtn');
+            headerBtn.innerHTML = `
+                <span>💼</span>
+                <span>Підключити гаманець</span>
+            `;
+            headerBtn.classList.remove('wallet-connected');
+            
+            // Make sure dropdown exists and is hidden
+            const dropdown = document.getElementById('headerWalletDropdown');
+            if (dropdown) {
+                dropdown.classList.remove('show');
+            }
+            
+            // Reset mobile button too
+            updateMobileWalletButton();
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('headerWalletDropdown');
+            const headerBtn = document.getElementById('headerWalletBtn');
+            
+            if (dropdown && headerBtn && !headerBtn.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        // Mobile wallet button handler
+        function handleMobileWalletClick() {
+            // Close mobile menu
+            const hamburger = document.querySelector('.hamburger');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            if (hamburger) hamburger.classList.remove('active');
+            if (mobileMenu) mobileMenu.style.left = '-100%';
+            
+            // If already connected, open delegator modal
+            if (headerWalletConnected) {
+                setTimeout(() => openModal('delegatorModal'), 300);
+                return;
+            }
+            
+            // Show wallet selection
+            const walletChoice = confirm('Оберіть гаманець:\n\nНатисніть OK для Keplr\nНатисніть Скасувати для Cosmostation');
+            const walletType = walletChoice ? 'keplr' : 'cosmostation';
+            
+            connectHeaderWallet(walletType);
+        }
+
+        // Update mobile wallet button display
+        function updateMobileWalletButton() {
+            const mobileBtn = document.getElementById('mobileWalletBtn');
+            if (!mobileBtn) return;
+            
+            if (headerWalletConnected && cosmosStaking) {
+                const walletInfo = cosmosStaking.getWalletInfo();
+                const address = walletInfo.address;
+                const shortAddress = address.substring(0, 8) + '...' + address.substring(address.length - 6);
+                
+                mobileBtn.innerHTML = `
+                    <span>💼</span>
+                    <span>${shortAddress}</span>
+                `;
+                mobileBtn.style.background = 'rgba(34, 197, 94, 0.2)';
+                mobileBtn.style.borderColor = 'rgba(34, 197, 94, 0.4)';
+            } else {
+                mobileBtn.innerHTML = `
+                    <span>💼</span>
+                    <span>Підключити гаманець</span>
+                `;
+                mobileBtn.style.background = '';
+                mobileBtn.style.borderColor = '';
+            }
+        }
+
+        // Check if wallet was connected in modal and update header
+        const originalConnectWallet = connectWallet;
+        async function connectWallet(walletType) {
+            await originalConnectWallet(walletType);
+            if (cosmosStaking && cosmosStaking.isWalletConnected()) {
+                headerWalletConnected = true;
+                await updateHeaderWalletDisplay();
+            }
+        }
+
+        // Check if wallet gets disconnected in modal and update header
+        const originalDisconnectWallet = disconnectWallet;
+        async function disconnectWallet() {
+            await originalDisconnectWallet();
+            resetHeaderWalletButton();
         }
 
     </script>

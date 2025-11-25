@@ -408,27 +408,27 @@
             right: 420px;
             z-index: 10;
             display: flex;
-            gap: 15px;
+            gap: 10px;
             align-items: center;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
         }
 
         .ecosystem-button {
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 12px 20px;
+            padding: 10px 16px;
             background: rgba(0, 212, 255, 0.1);
             border: 1px solid rgba(0, 212, 255, 0.3);
             border-radius: 50px;
             color: #ffffff;
-            font-size: 0.95em;
+            font-size: 0.9em;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             outline: none;
             white-space: nowrap;
-            height: 44px;
+            height: 40px;
         }
 
         .ecosystem-button span {
@@ -448,18 +448,18 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 12px 20px;
+            padding: 10px 16px;
             background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 255, 240, 0.15));
             border: 2px solid rgba(0, 212, 255, 0.5);
             border-radius: 50px;
             color: #00FFF0;
-            font-size: 0.95em;
+            font-size: 0.9em;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             outline: none;
             white-space: nowrap;
-            height: 44px;
+            height: 40px;
         }
 
         .header-wallet-button:hover {
@@ -2992,12 +2992,12 @@
                         <p style="color: #cbd5e1; margin-bottom: 20px;">Підключіть ваш гаманець, щоб делегувати $TICS безпосередньо на QubeNode:</p>
                         
                         <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px;">
-                            <button id="connectKeplrBtn" onclick="connectWallet('keplr')" style="flex: 1; min-width: 200px; padding: 18px 30px; background: rgba(0, 212, 255, 0.15); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 12px; color: #00FFF0; font-size: 1.1em; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                            <button id="connectKeplrBtn" onclick="connectHeaderWallet('keplr')" style="flex: 1; min-width: 200px; padding: 18px 30px; background: rgba(0, 212, 255, 0.15); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 12px; color: #00FFF0; font-size: 1.1em; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;">
                                 <span style="font-size: 1.3em;">🔷</span>
                                 <span>Keplr Wallet</span>
                             </button>
                             
-                            <button id="connectCosmostationBtn" onclick="connectWallet('cosmostation')" style="flex: 1; min-width: 200px; padding: 18px 30px; background: rgba(0, 212, 255, 0.15); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 12px; color: #00FFF0; font-size: 1.1em; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                            <button id="connectCosmostationBtn" onclick="connectHeaderWallet('cosmostation')" style="flex: 1; min-width: 200px; padding: 18px 30px; background: rgba(0, 212, 255, 0.15); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 12px; color: #00FFF0; font-size: 1.1em; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;">
                                 <span style="font-size: 1.3em;">🔶</span>
                                 <span>Cosmostation</span>
                             </button>
@@ -4299,11 +4299,13 @@
 
         async function connectHeaderWallet(walletType) {
             const dropdown = document.getElementById('headerWalletDropdown');
-            dropdown.classList.remove('show');
+            if (dropdown) dropdown.classList.remove('show');
             
             const headerBtn = document.getElementById('headerWalletBtn');
-            headerBtn.innerHTML = '<span>⏳</span><span>Підключення...</span>';
-            headerBtn.style.pointerEvents = 'none';
+            if (headerBtn) {
+                headerBtn.innerHTML = '<span>⏳</span><span>Підключення...</span>';
+                headerBtn.style.pointerEvents = 'none';
+            }
             
             try {
                 await initializeStaking();
@@ -4313,14 +4315,14 @@
                     headerWalletConnected = true;
                     await updateHeaderWalletDisplay();
                     
-                    // Also update modal if it's open
-                    if (document.getElementById('walletSection')) {
-                        document.getElementById('walletSection').style.display = 'none';
-                        document.getElementById('walletStatus').style.display = 'block';
-                        document.getElementById('stakingActions').style.display = 'block';
-                        document.getElementById('connectedWallet').textContent = result.wallet;
-                        document.getElementById('connectedAddress').textContent = result.address;
-                        await updateStakingData();
+                    // Update modal - show DASHBOARD instead of old interface
+                    const dashboard = document.getElementById('delegatorDashboard');
+                    const stakingInterface = document.getElementById('stakingInterface');
+                    
+                    if (dashboard && stakingInterface) {
+                        stakingInterface.style.display = 'none';
+                        dashboard.style.display = 'block';
+                        await updateDashboardData();
                     }
                 }
             } catch (error) {
@@ -4328,7 +4330,7 @@
                 alert('Помилка підключення: ' + error.message);
                 resetHeaderWalletButton();
             } finally {
-                headerBtn.style.pointerEvents = 'auto';
+                if (headerBtn) headerBtn.style.pointerEvents = 'auto';
             }
         }
 

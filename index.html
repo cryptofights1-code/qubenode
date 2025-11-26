@@ -3818,17 +3818,21 @@
                         // Initialize staking module first
                         await initializeStaking();
                         
-                        // Then connect wallet
-                        await connectWallet(effectiveWalletType);
+                        // Then connect wallet (silent = true to avoid alert)
+                        const result = await connectWallet(effectiveWalletType, true);
                         
-                        console.log('✅ Auto-reconnect successful!');
-                        
-                        // Restore modal if it was open
-                        if (currentModal && document.getElementById(currentModal)) {
-                            console.log('🔄 Restoring modal:', currentModal);
-                            setTimeout(() => {
-                                openModal(currentModal);
-                            }, 500); // Wait for wallet connection to complete
+                        if (result && result.success) {
+                            console.log('✅ Auto-reconnect successful!');
+                            
+                            // Restore modal if it was open
+                            if (currentModal && document.getElementById(currentModal)) {
+                                console.log('🔄 Restoring modal:', currentModal);
+                                setTimeout(() => {
+                                    openModal(currentModal);
+                                }, 500); // Wait for wallet connection to complete
+                            }
+                        } else {
+                            console.log('ℹ️ Auto-reconnect failed or was cancelled by user');
                         }
                     } else {
                         console.log('ℹ️ No saved wallet connection');
@@ -3864,6 +3868,7 @@
         // Cosmos Staking Functions
         let cosmosStaking = null;
         let stakingModuleReady = false;
+        let isConnecting = false; // Flag to prevent recursion
 
         // Wait for all modules to load
         window.addEventListener('DOMContentLoaded', function() {
@@ -3896,8 +3901,17 @@
             }
         }
 
-        async function connectWallet(walletType) {
+        async function connectWallet(walletType, silent = false) {
+            // Prevent recursion
+            if (isConnecting) {
+                console.log('⚠️ Already connecting, skipping...');
+                return { success: false, message: 'Connection in progress' };
+            }
+            
             try {
+                isConnecting = true;
+                console.log('🔌 Starting wallet connection...', walletType);
+                
                 // Disable buttons and show loading
                 const keplrBtn = document.getElementById('connectKeplrBtn');
                 const cosmostationBtn = document.getElementById('connectCosmostationBtn');
@@ -3956,9 +3970,17 @@
                     headerWalletConnected = true;
                     await updateHeaderWalletDisplay();
                 }
+                
+                isConnecting = false; // Reset flag
+                console.log('✅ Connection complete');
+                return result;
             } catch (error) {
+                isConnecting = false; // Reset flag on error
                 console.error('Connection error:', error);
-                alert('Помилка підключення: ' + error.message);
+                
+                if (!silent) {
+                    alert('Помилка підключення: ' + error.message);
+                }
                 
                 // Reset buttons
                 const keplrBtn = document.getElementById('connectKeplrBtn');

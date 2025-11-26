@@ -81,12 +81,41 @@ class CosmosStakingService {
         return this.concatenateUint8Arrays(parts);
     }
 
+    encodeRedelegateMsg(value) {
+        const encoder = new TextEncoder();
+        const parts = [];
+        
+        // Field 1: delegator_address
+        const delegatorBytes = encoder.encode(value.delegatorAddress);
+        parts.push(new Uint8Array([0x0a, delegatorBytes.length]));
+        parts.push(delegatorBytes);
+        
+        // Field 2: validator_src_address
+        const validatorSrcBytes = encoder.encode(value.validatorSrcAddress);
+        parts.push(new Uint8Array([0x12, validatorSrcBytes.length]));
+        parts.push(validatorSrcBytes);
+        
+        // Field 3: validator_dst_address
+        const validatorDstBytes = encoder.encode(value.validatorDstAddress);
+        parts.push(new Uint8Array([0x1a, validatorDstBytes.length]));
+        parts.push(validatorDstBytes);
+        
+        // Field 4: amount (Coin)
+        const coinBytes = this.encodeCoin(value.amount);
+        parts.push(new Uint8Array([0x22, coinBytes.length]));
+        parts.push(coinBytes);
+        
+        return this.concatenateUint8Arrays(parts);
+    }
+
     encodeMessageValue(typeUrl, value) {
         if (typeUrl === '/cosmos.staking.v1beta1.MsgDelegate' || 
             typeUrl === '/cosmos.staking.v1beta1.MsgUndelegate') {
             return this.encodeStakingMsg(value);
         } else if (typeUrl === '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward') {
             return this.encodeWithdrawMsg(value);
+        } else if (typeUrl === '/cosmos.staking.v1beta1.MsgBeginRedelegate') {
+            return this.encodeRedelegateMsg(value);
         }
         throw new Error(`Unsupported message type: ${typeUrl}`);
     }

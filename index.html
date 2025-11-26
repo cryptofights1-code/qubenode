@@ -3790,25 +3790,36 @@
             // Auto-reconnect wallet if was connected
             setTimeout(async () => {
                 try {
+                    // Check both our keys AND cosmos-staking.js keys
                     const wasConnected = localStorage.getItem('walletConnected');
                     const walletType = localStorage.getItem('walletType');
                     const walletAddress = localStorage.getItem('walletAddress');
+                    
+                    // Also check cosmos-staking.js keys
+                    const cosmosWalletType = localStorage.getItem('cosmos_wallet_type');
+                    const cosmosWalletAddress = localStorage.getItem('cosmos_wallet_address');
                     const currentModal = localStorage.getItem('currentModal');
                     
                     console.log('🔍 Checking saved wallet state:');
                     console.log('   walletConnected:', wasConnected);
                     console.log('   walletType:', walletType);
                     console.log('   walletAddress:', walletAddress);
+                    console.log('   cosmos_wallet_type:', cosmosWalletType);
+                    console.log('   cosmos_wallet_address:', cosmosWalletAddress);
                     console.log('   currentModal:', currentModal);
                     
-                    if (wasConnected === 'true' && walletType) {
-                        console.log('🔄 Auto-reconnecting wallet:', walletType);
+                    // Use cosmos-staking.js keys if our keys are missing
+                    const effectiveWalletType = walletType || cosmosWalletType;
+                    const hasWallet = (wasConnected === 'true') || (cosmosWalletType && cosmosWalletAddress);
+                    
+                    if (hasWallet && effectiveWalletType) {
+                        console.log('🔄 Auto-reconnecting wallet:', effectiveWalletType);
                         
                         // Initialize staking module first
                         await initializeStaking();
                         
                         // Then connect wallet
-                        await connectWallet(walletType);
+                        await connectWallet(effectiveWalletType);
                         
                         console.log('✅ Auto-reconnect successful!');
                         
@@ -3821,11 +3832,8 @@
                         }
                     } else {
                         console.log('ℹ️ No saved wallet connection');
-                        if (!wasConnected) {
-                            console.log('   Reason: walletConnected is', wasConnected);
-                        }
-                        if (!walletType) {
-                            console.log('   Reason: walletType is', walletType);
+                        if (!wasConnected && !cosmosWalletType) {
+                            console.log('   Reason: No wallet type found');
                         }
                         
                         // Still try to restore modal even without wallet
@@ -3838,7 +3846,7 @@
                     }
                 } catch (error) {
                     console.error('❌ Auto-reconnect failed:', error);
-                    // Clear invalid state
+                    // Don't clear cosmos-staking.js keys, only our keys
                     localStorage.removeItem('walletConnected');
                     localStorage.removeItem('walletType');
                     localStorage.removeItem('walletAddress');

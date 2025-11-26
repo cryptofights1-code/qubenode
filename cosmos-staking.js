@@ -214,6 +214,33 @@ class CosmosStakingModule {
         }
     }
 
+    async cancelUnbonding(validatorAddress, amountTics, creationHeight, memo = '') {
+        try {
+            if (!this.stakingService) {
+                throw new Error('Будь ласка, спочатку підключіть гаманець');
+            }
+
+            const amountMinimal = this.ticsToMinimal(amountTics);
+
+            console.log('Canceling unbonding', amountTics, 'TICS from', validatorAddress, 'at height', creationHeight);
+
+            const result = await this.stakingService.cancelUnbonding(
+                validatorAddress,
+                amountMinimal,
+                creationHeight,
+                memo
+            );
+
+            await this.loadStakingOverview();
+
+            return result;
+
+        } catch (error) {
+            console.error('❌ Cancel unbonding failed:', error);
+            throw error;
+        }
+    }
+
     getWalletInfo() {
         return this.walletManager.getWalletInfo();
     }

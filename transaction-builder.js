@@ -61,6 +61,21 @@ class CosmosTransactionBuilder {
         };
     }
 
+    createCancelUnbondingMsg(delegatorAddress, validatorAddress, amount, creationHeight) {
+        return {
+            typeUrl: '/cosmos.staking.v1beta1.MsgCancelUnbondingDelegation',
+            value: {
+                delegatorAddress: delegatorAddress,
+                validatorAddress: validatorAddress,
+                amount: {
+                    denom: this.chainConfig.stakeCurrency.coinMinimalDenom,
+                    amount: amount
+                },
+                creationHeight: creationHeight
+            }
+        };
+    }
+
     formatAmount(amount, decimals = 18) {
         const value = BigInt(amount);
         const divisor = BigInt(10 ** decimals);

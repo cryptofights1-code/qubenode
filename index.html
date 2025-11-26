@@ -2970,6 +2970,17 @@
                     <!-- Transaction Status -->
                     <div id="dashTxStatus" style="display: none; margin-bottom: 15px; padding: 15px; border-radius: 10px; font-size: 0.9em;"></div>
                     
+                    <!-- Unbonding Delegations Section -->
+                    <div id="unbondingSection" style="background: rgba(239, 68, 68, 0.1); border: 2px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 18px; margin-bottom: 20px; display: none;">
+                        <h4 style="color: #ef4444; font-size: 1.1em; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                            <span>⏳</span>
+                            <span>Unbonding Delegations</span>
+                        </h4>
+                        <div id="unbondingList">
+                            <!-- Unbonding items will be loaded here -->
+                        </div>
+                    </div>
+                    
                     <!-- Disconnect Button -->
                     <div style="text-align: center;">
                         <button onclick="disconnectDashboard()" style="padding: 10px 25px; background: rgba(239, 68, 68, 0.2); border: 2px solid rgba(239, 68, 68, 0.4); border-radius: 30px; color: #ef4444; cursor: pointer; font-weight: 600; transition: all 0.3s; font-size: 0.9em;">
@@ -3848,8 +3859,105 @@
                 if (document.getElementById('dashRewardsForecast')) {
                     updateRewardsForecast(overview);
                 }
+                
+                // Update unbonding list if exists
+                if (document.getElementById('unbondingList')) {
+                    updateUnbondingList(overview);
+                }
             } catch (error) {
                 console.error('Error updating dashboard data:', error);
+            }
+        }
+
+        // Update Unbonding List
+        function updateUnbondingList(overview) {
+            const section = document.getElementById('unbondingSection');
+            const container = document.getElementById('unbondingList');
+            
+            if (!overview.unbondingDelegations || overview.unbondingDelegations.length === 0) {
+                section.style.display = 'none';
+                return;
+            }
+            
+            // Check if there are any actual entries
+            let hasEntries = false;
+            overview.unbondingDelegations.forEach(unbonding => {
+                if (unbonding.entries && unbonding.entries.length > 0) {
+                    hasEntries = true;
+                }
+            });
+            
+            if (!hasEntries) {
+                section.style.display = 'none';
+                return;
+            }
+            
+            section.style.display = 'block';
+            let html = '<div style="display: flex; flex-direction: column; gap: 12px;">';
+            
+            overview.unbondingDelegations.forEach(unbonding => {
+                const valAddress = unbonding.validator_address;
+                const validatorName = validatorNamesCache[valAddress] || valAddress.substring(0, 20) + '...';
+                
+                if (unbonding.entries && unbonding.entries.length > 0) {
+                    unbonding.entries.forEach(entry => {
+                        const amount = cosmosStaking.formatTics(entry.balance);
+                        const completionTime = new Date(entry.completion_time);
+                        const now = new Date();
+                        const timeRemaining = Math.max(0, completionTime - now);
+                        const daysRemaining = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+                        const hoursRemaining = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        
+                        html += `
+                            <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px; padding: 15px;">
+                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                                    <div style="flex: 1;">
+                                        <div style="color: #ef4444; font-weight: 700; font-size: 1.1em; margin-bottom: 5px;">${parseFloat(amount).toFixed(4)} TICS</div>
+                                        <div style="color: #fff; font-weight: 600; font-size: 0.9em; margin-bottom: 3px;">From: ${validatorName}</div>
+                                        <div style="color: #64748b; font-size: 0.75em;">${valAddress}</div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="color: #94a3b8; font-size: 0.75em; margin-bottom: 3px;">Completion</div>
+                                        <div style="color: #fff; font-size: 0.85em; font-weight: 600;">${completionTime.toLocaleString('uk-UA', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 8px; padding: 10px; margin-bottom: 10px;">
+                                    <div style="color: #94a3b8; font-size: 0.75em; margin-bottom: 3px;">Time Remaining</div>
+                                    <div style="color: #FFA500; font-size: 1em; font-weight: 700;">${daysRemaining}d ${hoursRemaining}h</div>
+                                </div>
+                                
+                                <button onclick="executeCancelUnbonding('${valAddress}', '${amount}', ${entry.creation_height})" style="width: 100%; padding: 10px; background: rgba(239, 68, 68, 0.2); border: 2px solid rgba(239, 68, 68, 0.4); border-radius: 8px; color: #ef4444; font-size: 0.9em; font-weight: 600; cursor: pointer; transition: all 0.3s;">
+                                    Cancel Unbonding
+                                </button>
+                            </div>
+                        `;
+                    });
+                }
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        async function executeCancelUnbonding(validatorAddress, amount, creationHeight) {
+            try {
+                if (!confirm(`Скасувати unbonding ${amount} TICS?\n\nТокени будуть знову делеговані на валідатора.`)) {
+                    return;
+                }
+                
+                showDashTxStatus('processing', 'Обробка транзакції...');
+                
+                const result = await cosmosStaking.cancelUnbonding(validatorAddress, amount, creationHeight, 'Cancel unbonding via QubeNode.space');
+                
+                showDashTxStatus('success', `Успішно скасовано! TX: ${result.txHash}`);
+                
+                setTimeout(async () => {
+                    await updateDashboardData();
+                }, 2000);
+                
+            } catch (error) {
+                showDashTxStatus('error', 'Помилка: ' + error.message);
             }
         }
 

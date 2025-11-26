@@ -108,6 +108,33 @@ class CosmosStakingService {
         return this.concatenateUint8Arrays(parts);
     }
 
+    encodeCancelUnbondingMsg(value) {
+        const encoder = new TextEncoder();
+        const parts = [];
+        
+        // Field 1: delegator_address
+        const delegatorBytes = encoder.encode(value.delegatorAddress);
+        parts.push(new Uint8Array([0x0a, delegatorBytes.length]));
+        parts.push(delegatorBytes);
+        
+        // Field 2: validator_address
+        const validatorBytes = encoder.encode(value.validatorAddress);
+        parts.push(new Uint8Array([0x12, validatorBytes.length]));
+        parts.push(validatorBytes);
+        
+        // Field 3: amount (Coin)
+        const coinBytes = this.encodeCoin(value.amount);
+        parts.push(new Uint8Array([0x1a, coinBytes.length]));
+        parts.push(coinBytes);
+        
+        // Field 4: creation_height (int64)
+        const heightBytes = this.encodeVarint(value.creationHeight);
+        parts.push(new Uint8Array([0x20]));
+        parts.push(heightBytes);
+        
+        return this.concatenateUint8Arrays(parts);
+    }
+
     encodeMessageValue(typeUrl, value) {
         if (typeUrl === '/cosmos.staking.v1beta1.MsgDelegate' || 
             typeUrl === '/cosmos.staking.v1beta1.MsgUndelegate') {
@@ -116,6 +143,8 @@ class CosmosStakingService {
             return this.encodeWithdrawMsg(value);
         } else if (typeUrl === '/cosmos.staking.v1beta1.MsgBeginRedelegate') {
             return this.encodeRedelegateMsg(value);
+        } else if (typeUrl === '/cosmos.staking.v1beta1.MsgCancelUnbondingDelegation') {
+            return this.encodeCancelUnbondingMsg(value);
         }
         throw new Error(`Unsupported message type: ${typeUrl}`);
     }
@@ -526,6 +555,47 @@ class CosmosStakingService {
 
         } catch (error) {
             console.error('❌ Claim rewards failed:', error);
+            throw error;
+        }
+    }
+
+    async cancelUnbonding(validatorAddress, amount, creationHeight, memo = '') {
+        try {
+            const delegatorAddress = this.walletManager.getAddress();
+
+            const msg = this.txBuilder.createCancelUnbondingMsg(
+                delegatorAddress, 
+                validatorAddress, 
+                amount,
+                creationHeight
+            );
+            
+            const gasLimit = this.chainClient.chainConfig.gas.cancelUnbonding || 250000;
+            
+            const gasPrice = this.chainClient.chainConfig.feeCurrencies[0].gasPriceStep.average;
+            const feeAmount = Math.ceil(gasLimit * gasPrice);
+
+            const fee = {
+                amount: [{
+                    denom: this.chainClient.chainConfig.stakeCurrency.coinMinimalDenom,
+                    amount: feeAmount.toString()
+                }],
+                gas: gasLimit.toString()
+            };
+
+            console.log('📤 Broadcasting cancel unbonding...');
+            console.log('   Validator:', validatorAddress);
+            console.log('   Amount:', amount);
+            console.log('   Creation Height:', creationHeight);
+
+            const result = await this.signAndBroadcast([msg], fee, memo);
+
+            console.log('✅ Cancel unbonding successful:', result.txHash);
+
+            return result;
+
+        } catch (error) {
+            console.error('❌ Cancel unbonding failed:', error);
             throw error;
         }
     }

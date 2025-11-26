@@ -2822,31 +2822,31 @@
                     <!-- Dashboard Stats Grid -->
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
                         <!-- Available Balance -->
-                        <div style="background: rgba(0, 0, 0, 0.4); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 12px; padding: 15px; text-align: center;">
+                        <div style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(0, 212, 255, 0.05)); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 12px; padding: 15px; text-align: center;">
                             <div style="color: #94a3b8; font-size: 0.8em; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">💰 Баланс</div>
-                            <div style="color: #00FFF0; font-size: 1.6em; font-weight: 700; margin-bottom: 3px;"><span id="dashBalance">0.00</span></div>
+                            <div style="color: #00D4FF; font-size: 1.6em; font-weight: 700; margin-bottom: 3px;"><span id="dashBalance">0.00</span></div>
                             <div style="color: #64748b; font-size: 0.8em;">TICS</div>
                         </div>
                         
                         <!-- Delegated Amount -->
-                        <div style="background: rgba(0, 0, 0, 0.4); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 12px; padding: 15px; text-align: center;">
+                        <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.05)); border: 2px solid rgba(34, 197, 94, 0.4); border-radius: 12px; padding: 15px; text-align: center;">
                             <div style="color: #94a3b8; font-size: 0.8em; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">🤝 Делеговано</div>
-                            <div style="color: #00FFF0; font-size: 1.6em; font-weight: 700; margin-bottom: 3px;"><span id="dashDelegated">0.00</span></div>
-                            <div style="color: #64748b; font-size: 0.8em;">TICS</div>
+                            <div style="color: #22c55e; font-size: 1.6em; font-weight: 700; margin-bottom: 3px;"><span id="dashDelegated">0.00</span></div>
+                            <div style="color: #86efac; font-size: 0.8em;">TICS</div>
                         </div>
                         
                         <!-- Rewards -->
-                        <div style="background: rgba(0, 0, 0, 0.4); border: 2px solid rgba(34, 197, 94, 0.3); border-radius: 12px; padding: 15px; text-align: center;">
+                        <div style="background: linear-gradient(135deg, rgba(250, 204, 21, 0.15), rgba(250, 204, 21, 0.05)); border: 2px solid rgba(250, 204, 21, 0.4); border-radius: 12px; padding: 15px; text-align: center;">
                             <div style="color: #94a3b8; font-size: 0.8em; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">✨ Винагороди</div>
-                            <div style="color: #22c55e; font-size: 1.6em; font-weight: 700; margin-bottom: 3px;"><span id="dashRewards">0.00</span></div>
-                            <div style="color: #64748b; font-size: 0.8em;">TICS</div>
+                            <div style="color: #facc15; font-size: 1.6em; font-weight: 700; margin-bottom: 3px;"><span id="dashRewards">0.00</span></div>
+                            <div style="color: #fde047; font-size: 0.8em;">TICS</div>
                         </div>
                         
                         <!-- Unbonding -->
-                        <div style="background: rgba(0, 0, 0, 0.4); border: 2px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 15px; text-align: center;">
+                        <div style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05)); border: 2px solid rgba(239, 68, 68, 0.4); border-radius: 12px; padding: 15px; text-align: center;">
                             <div style="color: #94a3b8; font-size: 0.8em; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">⏳ Unbonding</div>
                             <div style="color: #ef4444; font-size: 1.6em; font-weight: 700; margin-bottom: 3px;"><span id="dashUnbonding">0.00</span></div>
-                            <div style="color: #64748b; font-size: 0.8em;">TICS (14 днів)</div>
+                            <div style="color: #fca5a5; font-size: 0.8em;">TICS (14 днів)</div>
                         </div>
                     </div>
                     
@@ -2872,21 +2872,21 @@
                         <div id="dashRewardsForecast">
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
                                 <!-- Daily -->
-                                <div style="text-align: center;">
-                                    <div style="color: #94a3b8; font-size: 0.8em; margin-bottom: 6px;">На день</div>
-                                    <div style="color: #00FFF0; font-size: 1.3em; font-weight: 700;"><span id="forecastDaily">0.00</span> TICS</div>
+                                <div style="background: linear-gradient(135deg, rgba(250, 204, 21, 0.1), rgba(250, 204, 21, 0.03)); border: 1px solid rgba(250, 204, 21, 0.3); border-radius: 10px; padding: 12px; text-align: center;">
+                                    <div style="color: #fde047; font-size: 0.8em; margin-bottom: 6px; font-weight: 600;">На день</div>
+                                    <div style="color: #facc15; font-size: 1.3em; font-weight: 700;"><span id="forecastDaily">0.00</span> TICS</div>
                                 </div>
                                 
                                 <!-- Monthly -->
-                                <div style="text-align: center;">
-                                    <div style="color: #94a3b8; font-size: 0.8em; margin-bottom: 6px;">На місяць</div>
-                                    <div style="color: #00FFF0; font-size: 1.3em; font-weight: 700;"><span id="forecastMonthly">0.00</span> TICS</div>
+                                <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.03)); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 10px; padding: 12px; text-align: center;">
+                                    <div style="color: #86efac; font-size: 0.8em; margin-bottom: 6px; font-weight: 600;">На місяць</div>
+                                    <div style="color: #22c55e; font-size: 1.3em; font-weight: 700;"><span id="forecastMonthly">0.00</span> TICS</div>
                                 </div>
                                 
                                 <!-- Yearly -->
-                                <div style="text-align: center;">
-                                    <div style="color: #94a3b8; font-size: 0.8em; margin-bottom: 6px;">На рік</div>
-                                    <div style="color: #00FFF0; font-size: 1.3em; font-weight: 700;"><span id="forecastYearly">0.00</span> TICS</div>
+                                <div style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 212, 255, 0.03)); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 10px; padding: 12px; text-align: center;">
+                                    <div style="color: #7dd3fc; font-size: 0.8em; margin-bottom: 6px; font-weight: 600;">На рік</div>
+                                    <div style="color: #00D4FF; font-size: 1.3em; font-weight: 700;"><span id="forecastYearly">0.00</span> TICS</div>
                                 </div>
                             </div>
                             <p style="color: #64748b; font-size: 0.75em; margin-top: 10px; text-align: center;">* APY ~30%, комісія валідатора вже врахована</p>
@@ -4143,14 +4143,14 @@
                 const validatorName = validatorNamesCache[valAddress] || valAddress.substring(0, 20) + '...';
                 
                 html += `
-                    <div style="background: rgba(0, 212, 255, 0.05); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 10px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.08), rgba(99, 102, 241, 0.05)); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 10px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
                         <div style="flex: 1;">
-                            <div style="color: #00FFF0; font-weight: 600; margin-bottom: 3px; font-size: 0.95em;">${validatorName}</div>
+                            <div style="color: #a855f7; font-weight: 600; margin-bottom: 3px; font-size: 0.95em;">${validatorName}</div>
                             <div style="color: #64748b; font-size: 0.75em;">${valAddress}</div>
                         </div>
                         <div style="text-align: right;">
-                            <div style="color: #00FFF0; font-size: 1.1em; font-weight: 700;">${parseFloat(amount).toFixed(2)}</div>
-                            <div style="color: #94a3b8; font-size: 0.75em;">TICS</div>
+                            <div style="color: #c084fc; font-size: 1.1em; font-weight: 700;">${parseFloat(amount).toFixed(2)}</div>
+                            <div style="color: #e9d5ff; font-size: 0.75em;">TICS</div>
                         </div>
                     </div>
                 `;

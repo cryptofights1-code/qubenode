@@ -2879,16 +2879,18 @@
                             
                             <div style="margin-bottom: 20px;">
                                 <label style="color: #94a3b8; font-size: 0.95em; margin-bottom: 8px; display: block;">З якого валідатора:</label>
-                                <select id="dashRedelegateFrom" style="width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 10px; color: #fff; font-size: 1.1em;">
-                                    <option value="">Завантаження...</option>
-                                </select>
+                                <button id="selectFromValidator" onclick="openValidatorModal('from')" style="width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 10px; color: #fff; font-size: 1.1em; text-align: left; cursor: pointer; transition: all 0.3s;">
+                                    <span id="fromValidatorText">Оберіть валідатора</span>
+                                </button>
+                                <input type="hidden" id="dashRedelegateFrom" value="">
                             </div>
                             
                             <div style="margin-bottom: 20px;">
                                 <label style="color: #94a3b8; font-size: 0.95em; margin-bottom: 8px; display: block;">Кому делегувати:</label>
-                                <select id="dashRedelegateTo" style="width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 10px; color: #fff; font-size: 1.1em;">
-                                    <option value="">Завантаження...</option>
-                                </select>
+                                <button id="selectToValidator" onclick="openValidatorModal('to')" style="width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 10px; color: #fff; font-size: 1.1em; text-align: left; cursor: pointer; transition: all 0.3s;">
+                                    <span id="toValidatorText">Оберіть валідатора</span>
+                                </button>
+                                <input type="hidden" id="dashRedelegateTo" value="">
                             </div>
                             
                             <div style="margin-bottom: 20px;">
@@ -3164,6 +3166,19 @@
                     <span>💬</span>
                     <span>Підтримка в Telegram</span>
                 </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Validator Selection Modal -->
+    <div id="validatorSelectorModal" class="modal">
+        <div class="modal-content" style="max-width: 600px; max-height: 80vh; overflow-y: auto;">
+            <button class="закрити-button" onclick="closeModal('validatorSelectorModal')" style="position: absolute; top: 20px; right: 20px; background: rgba(239, 68, 68, 0.2); border: 2px solid rgba(239, 68, 68, 0.4); padding: 8px 16px; border-radius: 8px; color: #ef4444; cursor: pointer; font-weight: 600; z-index: 10;">✕ Закрити</button>
+            
+            <h2 id="validatorModalTitle" style="color: #FFA500; font-size: 2em; margin-bottom: 30px; text-align: center;">Select Validator</h2>
+            
+            <div id="validatorListContainer" style="display: flex; flex-direction: column; gap: 12px;">
+                <!-- Validators will be loaded here -->
             </div>
         </div>
     </div>
@@ -4020,15 +4035,14 @@
             
             overview.delegations.forEach(del => {
                 const amount = cosmosStaking.formatTics(del.balance.amount);
-                const validatorName = del.delegation.validator_address === 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld' 
-                    ? 'QubeNode 🏆' 
-                    : del.delegation.validator_address.substring(0, 20) + '...';
+                const valAddress = del.delegation.validator_address;
+                const validatorName = validatorNamesCache[valAddress] || valAddress.substring(0, 20) + '...';
                 
                 html += `
                     <div style="background: rgba(0, 212, 255, 0.05); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 10px; padding: 15px; display: flex; justify-content: space-between; align-items: center;">
                         <div>
                             <div style="color: #00FFF0; font-weight: 600; margin-bottom: 4px;">${validatorName}</div>
-                            <div style="color: #64748b; font-size: 0.85em;">${del.delegation.validator_address}</div>
+                            <div style="color: #64748b; font-size: 0.85em;">${valAddress}</div>
                         </div>
                         <div style="text-align: right;">
                             <div style="color: #00FFF0; font-size: 1.2em; font-weight: 700;">${parseFloat(amount).toFixed(2)}</div>
@@ -4075,59 +4089,107 @@
 
         // Update Redelegate Dropdowns
         async function updateRedelegateDropdowns(overview) {
-            const fromSelect = document.getElementById('dashRedelegateFrom');
-            const toSelect = document.getElementById('dashRedelegateTo');
-            
-            if (!overview.delegations || overview.delegations.length === 0) {
-                fromSelect.innerHTML = '<option value="">Немає делегувань</option>';
-                toSelect.innerHTML = '<option value="">Завантаження валідаторів...</option>';
-                // Still fetch all validators for TO dropdown
-            } else {
-                // Update FROM dropdown with user's delegations
-                let fromHtml = '<option value="">Оберіть валідатора</option>';
+            // Store user's delegations for FROM selector
+            if (overview.delegations && overview.delegations.length > 0) {
                 overview.delegations.forEach(del => {
-                    const amount = cosmosStaking.formatTics(del.balance.amount);
-                    const validatorName = del.delegation.validator_address === 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld' 
-                        ? 'QubeNode 🏆' 
-                        : del.delegation.validator_address.substring(0, 20) + '...';
-                    
-                    fromHtml += `<option value="${del.delegation.validator_address}">${validatorName} (${parseFloat(amount).toFixed(2)} TICS)</option>`;
+                    const valAddress = del.delegation.validator_address;
+                    if (valAddress === 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld') {
+                        validatorNamesCache[valAddress] = 'QubeNode 🏆';
+                    }
                 });
-                fromSelect.innerHTML = fromHtml;
             }
             
-            // Fetch ALL active validators for TO dropdown
+            // Fetch ALL active validators for TO selector
             try {
-                toSelect.innerHTML = '<option value="">Завантаження валідаторів...</option>';
-                
-                const allValidators = await cosmosStaking.chainClient.getAllValidators();
+                allValidators = await cosmosStaking.chainClient.getAllValidators();
                 
                 if (allValidators && allValidators.length > 0) {
-                    let toHtml = '<option value="">Оберіть валідатора</option>';
-                    
+                    // Cache all validator names
                     allValidators.forEach(validator => {
                         const valAddress = validator.operator_address;
                         let valName = validator.description?.moniker || valAddress.substring(0, 15) + '...';
-                        const commission = validator.commission?.commission_rates?.rate 
-                            ? (parseFloat(validator.commission.commission_rates.rate) * 100).toFixed(2) 
-                            : '0.00';
                         
-                        // Highlight QubeNode
                         if (valAddress === 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld') {
                             valName = 'QubeNode 🏆';
                         }
                         
-                        toHtml += `<option value="${valAddress}">${valName} - Commission: ${commission}%</option>`;
+                        validatorNamesCache[valAddress] = valName;
                     });
                     
-                    toSelect.innerHTML = toHtml;
-                } else {
-                    toSelect.innerHTML = '<option value="">Валідатори не знайдено</option>';
+                    console.log(`✅ Loaded ${allValidators.length} validators`);
                 }
             } catch (error) {
                 console.error('Error loading validators:', error);
-                toSelect.innerHTML = '<option value="">Помилка завантаження валідаторів</option>';
             }
+        }
+
+        function openValidatorModal(mode) {
+            validatorModalMode = mode;
+            const modal = document.getElementById('validatorSelectorModal');
+            const title = document.getElementById('validatorModalTitle');
+            const container = document.getElementById('validatorListContainer');
+            
+            if (mode === 'from') {
+                title.textContent = 'З якого валідатора';
+                // Show only user's delegations
+                const overview = cosmosStaking.getStakingOverview();
+                if (!overview || !overview.delegations || overview.delegations.length === 0) {
+                    container.innerHTML = '<div style="padding: 20px; text-align: center; color: #94a3b8;">Немає делегувань</div>';
+                } else {
+                    let html = '';
+                    overview.delegations.forEach(del => {
+                        const valAddress = del.delegation.validator_address;
+                        const valName = validatorNamesCache[valAddress] || valAddress.substring(0, 20) + '...';
+                        const amount = cosmosStaking.formatTics(del.balance.amount);
+                        
+                        html += `
+                            <div onclick="selectValidator('${valAddress}', '${valName.replace(/'/g, "\\'")}', 'from')" style="background: rgba(0, 212, 255, 0.05); border: 2px solid rgba(0, 212, 255, 0.2); border-radius: 10px; padding: 15px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='rgba(0, 212, 255, 0.15)'" onmouseout="this.style.background='rgba(0, 212, 255, 0.05)'">
+                                <div style="color: #FFA500; font-weight: 700; font-size: 1.1em; margin-bottom: 5px;">${valName}</div>
+                                <div style="color: #64748b; font-size: 0.85em; margin-bottom: 8px;">${valAddress}</div>
+                                <div style="color: #00FFF0; font-weight: 600;">${parseFloat(amount).toFixed(2)} TICS</div>
+                            </div>
+                        `;
+                    });
+                    container.innerHTML = html;
+                }
+            } else {
+                title.textContent = 'Кому делегувати';
+                // Show all validators
+                if (!allValidators || allValidators.length === 0) {
+                    container.innerHTML = '<div style="padding: 20px; text-align: center; color: #94a3b8;">Завантаження валідаторів...</div>';
+                } else {
+                    let html = '';
+                    allValidators.forEach(validator => {
+                        const valAddress = validator.operator_address;
+                        const valName = validatorNamesCache[valAddress] || valAddress.substring(0, 20) + '...';
+                        const commission = validator.commission?.commission_rates?.rate 
+                            ? (parseFloat(validator.commission.commission_rates.rate) * 100).toFixed(2) 
+                            : '0.00';
+                        
+                        html += `
+                            <div onclick="selectValidator('${valAddress}', '${valName.replace(/'/g, "\\'")}', 'to')" style="background: rgba(0, 212, 255, 0.05); border: 2px solid rgba(0, 212, 255, 0.2); border-radius: 10px; padding: 15px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='rgba(0, 212, 255, 0.15)'" onmouseout="this.style.background='rgba(0, 212, 255, 0.05)'">
+                                <div style="color: #FFA500; font-weight: 700; font-size: 1.1em; margin-bottom: 5px;">${valName}</div>
+                                <div style="color: #64748b; font-size: 0.85em; margin-bottom: 8px;">${valAddress}</div>
+                                <div style="color: #fff; font-weight: 600;">Commission: ${commission}%</div>
+                            </div>
+                        `;
+                    });
+                    container.innerHTML = html;
+                }
+            }
+            
+            openModal('validatorSelectorModal');
+        }
+
+        function selectValidator(address, name, mode) {
+            if (mode === 'from') {
+                document.getElementById('dashRedelegateFrom').value = address;
+                document.getElementById('fromValidatorText').textContent = name;
+            } else {
+                document.getElementById('dashRedelegateTo').value = address;
+                document.getElementById('toValidatorText').textContent = name;
+            }
+            closeModal('validatorSelectorModal');
         }
 
         // Execute Redelegate
@@ -4313,6 +4375,9 @@
 
         // Header Wallet Button Functions
         let headerWalletConnected = false;
+        let allValidators = []; // Store all validators with names
+        let validatorModalMode = ''; // 'from' or 'to'
+        let validatorNamesCache = {}; // Cache validator names by address
 
         function toggleHeaderWalletDropdown(event) {
             if (event) event.stopPropagation();

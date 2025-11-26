@@ -3452,12 +3452,6 @@
                 modal.style.display = 'block';
                 modal.style.zIndex = '100000';
                 
-                // Save current modal to localStorage (except validator selector)
-                if (id !== 'validatorSelectorModal') {
-                    localStorage.setItem('currentModal', id);
-                    console.log('💾 Saved current modal:', id);
-                }
-                
                 // Check if opening delegator modal
                 if (id === 'delegatorModal') {
                     const dashboard = document.getElementById('delegatorDashboard');
@@ -3538,12 +3532,6 @@
             if (modal) {
                 modal.classList.remove('show');
                 modal.style.display = 'none';
-                
-                // Clear saved modal from localStorage
-                if (id !== 'validatorSelectorModal') {
-                    localStorage.removeItem('currentModal');
-                    console.log('🗑️ Cleared current modal from localStorage');
-                }
                 
                 // ПОКАЗАТИ іконки меню, телеграм та пошти назад (тільки на мобільних)
                 var iconsContainer = document.getElementById('mobile-icons-container');
@@ -3786,76 +3774,6 @@
             
             // Bind close buttons on page load
             bindЗакритиButtons();
-            
-            // Auto-reconnect wallet if was connected
-            setTimeout(async () => {
-                try {
-                    // Check both our keys AND cosmos-staking.js keys
-                    const wasConnected = localStorage.getItem('walletConnected');
-                    const walletType = localStorage.getItem('walletType');
-                    const walletAddress = localStorage.getItem('walletAddress');
-                    
-                    // Also check cosmos-staking.js keys
-                    const cosmosWalletType = localStorage.getItem('cosmos_wallet_type');
-                    const cosmosWalletAddress = localStorage.getItem('cosmos_wallet_address');
-                    const currentModal = localStorage.getItem('currentModal');
-                    
-                    console.log('🔍 Checking saved wallet state:');
-                    console.log('   walletConnected:', wasConnected);
-                    console.log('   walletType:', walletType);
-                    console.log('   walletAddress:', walletAddress);
-                    console.log('   cosmos_wallet_type:', cosmosWalletType);
-                    console.log('   cosmos_wallet_address:', cosmosWalletAddress);
-                    console.log('   currentModal:', currentModal);
-                    
-                    // Use cosmos-staking.js keys if our keys are missing
-                    const effectiveWalletType = walletType || cosmosWalletType;
-                    const hasWallet = (wasConnected === 'true') || (cosmosWalletType && cosmosWalletAddress);
-                    
-                    if (hasWallet && effectiveWalletType) {
-                        console.log('🔄 Auto-reconnecting wallet:', effectiveWalletType);
-                        
-                        // Initialize staking module first
-                        await initializeStaking();
-                        
-                        // Then connect wallet (silent = true to avoid alert)
-                        const result = await connectWallet(effectiveWalletType, true);
-                        
-                        if (result && result.success) {
-                            console.log('✅ Auto-reconnect successful!');
-                            
-                            // Restore modal if it was open
-                            if (currentModal && document.getElementById(currentModal)) {
-                                console.log('🔄 Restoring modal:', currentModal);
-                                setTimeout(() => {
-                                    openModal(currentModal);
-                                }, 500); // Wait for wallet connection to complete
-                            }
-                        } else {
-                            console.log('ℹ️ Auto-reconnect failed or was cancelled by user');
-                        }
-                    } else {
-                        console.log('ℹ️ No saved wallet connection');
-                        if (!wasConnected && !cosmosWalletType) {
-                            console.log('   Reason: No wallet type found');
-                        }
-                        
-                        // Still try to restore modal even without wallet
-                        if (currentModal && document.getElementById(currentModal)) {
-                            console.log('🔄 Restoring modal without wallet:', currentModal);
-                            setTimeout(() => {
-                                openModal(currentModal);
-                            }, 500);
-                        }
-                    }
-                } catch (error) {
-                    console.error('❌ Auto-reconnect failed:', error);
-                    // Don't clear cosmos-staking.js keys, only our keys
-                    localStorage.removeItem('walletConnected');
-                    localStorage.removeItem('walletType');
-                    localStorage.removeItem('walletAddress');
-                }
-            }, 1500); // Wait 1.5 seconds for modules to load
         });
 
         window.onclick = function(event) {
@@ -3868,7 +3786,6 @@
         // Cosmos Staking Functions
         let cosmosStaking = null;
         let stakingModuleReady = false;
-        let isConnecting = false; // Flag to prevent recursion
 
         // Wait for all modules to load
         window.addEventListener('DOMContentLoaded', function() {
@@ -3901,17 +3818,8 @@
             }
         }
 
-        async function connectWallet(walletType, silent = false) {
-            // Prevent recursion
-            if (isConnecting) {
-                console.log('⚠️ Already connecting, skipping...');
-                return { success: false, message: 'Connection in progress' };
-            }
-            
+        async function connectWallet(walletType) {
             try {
-                isConnecting = true;
-                console.log('🔌 Starting wallet connection...', walletType);
-                
                 // Disable buttons and show loading
                 const keplrBtn = document.getElementById('connectKeplrBtn');
                 const cosmostationBtn = document.getElementById('connectCosmostationBtn');
@@ -3929,28 +3837,6 @@
                 const result = await cosmosStaking.connectWallet(walletType);
 
                 if (result.success) {
-                    // Save connection state
-                    localStorage.setItem('walletConnected', 'true');
-                    localStorage.setItem('walletType', walletType);
-                    localStorage.setItem('walletAddress', result.address);
-                    
-                    // Verify it was saved
-                    const savedConnected = localStorage.getItem('walletConnected');
-                    const savedType = localStorage.getItem('walletType');
-                    const savedAddress = localStorage.getItem('walletAddress');
-                    
-                    console.log('💾 Saved wallet connection to localStorage');
-                    console.log('✅ Verification - values stored:', {
-                        walletConnected: savedConnected,
-                        walletType: savedType,
-                        walletAddress: savedAddress
-                    });
-                    
-                    if (savedConnected !== 'true' || savedType !== walletType) {
-                        console.error('⚠️ WARNING: localStorage save verification FAILED!');
-                        console.error('This might be caused by browser privacy settings or incognito mode');
-                    }
-                    
                     // Hide old interface
                     const stakingInterface = document.getElementById('stakingInterface');
                     if (stakingInterface) {
@@ -3970,17 +3856,9 @@
                     headerWalletConnected = true;
                     await updateHeaderWalletDisplay();
                 }
-                
-                isConnecting = false; // Reset flag
-                console.log('✅ Connection complete');
-                return result;
             } catch (error) {
-                isConnecting = false; // Reset flag on error
                 console.error('Connection error:', error);
-                
-                if (!silent) {
-                    alert('Помилка підключення: ' + error.message);
-                }
+                alert('Помилка підключення: ' + error.message);
                 
                 // Reset buttons
                 const keplrBtn = document.getElementById('connectKeplrBtn');
@@ -4277,11 +4155,6 @@
 
         function disconnectDashboard() {
             if (confirm('Відключити гаманець?')) {
-                // Clear saved state
-                localStorage.removeItem('walletConnected');
-                localStorage.removeItem('walletType');
-                localStorage.removeItem('walletAddress');
-                
                 if (cosmosStaking) {
                     cosmosStaking.disconnect();
                 }

@@ -164,6 +164,33 @@ class CosmosStakingModule {
         }
     }
 
+    async redelegate(validatorSrcAddress, validatorDstAddress, amountTics, memo = '') {
+        try {
+            if (!this.stakingService) {
+                throw new Error('Будь ласка, спочатку підключіть гаманець');
+            }
+
+            const amountMinimal = this.ticsToMinimal(amountTics);
+
+            console.log('Redelegating', amountTics, 'TICS from', validatorSrcAddress, 'to', validatorDstAddress);
+
+            const result = await this.stakingService.redelegate(
+                validatorSrcAddress,
+                validatorDstAddress,
+                amountMinimal,
+                memo
+            );
+
+            await this.loadStakingOverview();
+
+            return result;
+
+        } catch (error) {
+            console.error('❌ Redelegation failed:', error);
+            throw error;
+        }
+    }
+
     async claimRewards(memo = '') {
         try {
             if (!this.stakingService) {

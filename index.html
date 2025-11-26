@@ -4080,28 +4080,54 @@
             
             if (!overview.delegations || overview.delegations.length === 0) {
                 fromSelect.innerHTML = '<option value="">Немає делегувань</option>';
-                toSelect.innerHTML = '<option value="">Завантаження...</option>';
-                return;
+                toSelect.innerHTML = '<option value="">Завантаження валідаторів...</option>';
+                // Still fetch all validators for TO dropdown
+            } else {
+                // Update FROM dropdown with user's delegations
+                let fromHtml = '<option value="">Оберіть валідатора</option>';
+                overview.delegations.forEach(del => {
+                    const amount = cosmosStaking.formatTics(del.balance.amount);
+                    const validatorName = del.delegation.validator_address === 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld' 
+                        ? 'QubeNode 🏆' 
+                        : del.delegation.validator_address.substring(0, 20) + '...';
+                    
+                    fromHtml += `<option value="${del.delegation.validator_address}">${validatorName} (${parseFloat(amount).toFixed(2)} TICS)</option>`;
+                });
+                fromSelect.innerHTML = fromHtml;
             }
             
-            // Update FROM dropdown with user's delegations
-            let fromHtml = '<option value="">Оберіть валідатора</option>';
-            overview.delegations.forEach(del => {
-                const amount = cosmosStaking.formatTics(del.balance.amount);
-                const validatorName = del.delegation.validator_address === 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld' 
-                    ? 'QubeNode' 
-                    : del.delegation.validator_address.substring(0, 15) + '...';
+            // Fetch ALL active validators for TO dropdown
+            try {
+                toSelect.innerHTML = '<option value="">Завантаження валідаторів...</option>';
                 
-                fromHtml += `<option value="${del.delegation.validator_address}">${validatorName} (${parseFloat(amount).toFixed(2)} TICS)</option>`;
-            });
-            fromSelect.innerHTML = fromHtml;
-            
-            // Update TO dropdown - for now, just add QubeNode and a placeholder
-            // In production, you'd fetch all validators from the network
-            let toHtml = '<option value="">Оберіть валідатора</option>';
-            toHtml += '<option value="qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld">QubeNode 🏆</option>';
-            // Add other validators if needed
-            toSelect.innerHTML = toHtml;
+                const allValidators = await cosmosStaking.chainClient.getAllValidators();
+                
+                if (allValidators && allValidators.length > 0) {
+                    let toHtml = '<option value="">Оберіть валідатора</option>';
+                    
+                    allValidators.forEach(validator => {
+                        const valAddress = validator.operator_address;
+                        let valName = validator.description?.moniker || valAddress.substring(0, 15) + '...';
+                        const commission = validator.commission?.commission_rates?.rate 
+                            ? (parseFloat(validator.commission.commission_rates.rate) * 100).toFixed(2) 
+                            : '0.00';
+                        
+                        // Highlight QubeNode
+                        if (valAddress === 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld') {
+                            valName = 'QubeNode 🏆';
+                        }
+                        
+                        toHtml += `<option value="${valAddress}">${valName} - Commission: ${commission}%</option>`;
+                    });
+                    
+                    toSelect.innerHTML = toHtml;
+                } else {
+                    toSelect.innerHTML = '<option value="">Валідатори не знайдено</option>';
+                }
+            } catch (error) {
+                console.error('Error loading validators:', error);
+                toSelect.innerHTML = '<option value="">Помилка завантаження валідаторів</option>';
+            }
         }
 
         // Execute Redelegate

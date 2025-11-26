@@ -218,6 +218,43 @@ class CosmosChainClient {
         const amount = parseFloat(ticsRewards.amount);
         return Math.floor(amount).toString();
     }
+
+    async getAllValidators() {
+        try {
+            console.log('📋 Fetching all validators...');
+            
+            // Fetch bonded validators
+            const response = await fetch(
+                `${this.restEndpoint}/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED&pagination.limit=100`
+            );
+
+            if (!response.ok) {
+                throw new Error(`Failed to fetch validators: ${response.status}`);
+            }
+
+            const data = await response.json();
+            
+            if (!data.validators || data.validators.length === 0) {
+                console.warn('No validators found');
+                return [];
+            }
+
+            console.log(`✅ Found ${data.validators.length} validators`);
+            
+            // Sort validators by tokens (descending)
+            const sortedValidators = data.validators.sort((a, b) => {
+                const tokensA = BigInt(a.tokens || '0');
+                const tokensB = BigInt(b.tokens || '0');
+                return tokensB > tokensA ? 1 : tokensB < tokensA ? -1 : 0;
+            });
+            
+            return sortedValidators;
+
+        } catch (error) {
+            console.error('Error fetching validators:', error);
+            return [];
+        }
+    }
 }
 
 if (typeof window !== 'undefined') {

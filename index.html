@@ -972,8 +972,8 @@
         }
 
         /* Centered modal for validator selector */
-        #validatorSelectorModal {
-            display: flex;
+        #validatorSelectorModal.show {
+            display: flex !important;
             align-items: center;
             justify-content: center;
         }
@@ -3452,6 +3452,12 @@
                 modal.style.display = 'block';
                 modal.style.zIndex = '100000';
                 
+                // Save current modal to localStorage (except validator selector)
+                if (id !== 'validatorSelectorModal') {
+                    localStorage.setItem('currentModal', id);
+                    console.log('💾 Saved current modal:', id);
+                }
+                
                 // Check if opening delegator modal
                 if (id === 'delegatorModal') {
                     const dashboard = document.getElementById('delegatorDashboard');
@@ -3532,6 +3538,12 @@
             if (modal) {
                 modal.classList.remove('show');
                 modal.style.display = 'none';
+                
+                // Clear saved modal from localStorage
+                if (id !== 'validatorSelectorModal') {
+                    localStorage.removeItem('currentModal');
+                    console.log('🗑️ Cleared current modal from localStorage');
+                }
                 
                 // ПОКАЗАТИ іконки меню, телеграм та пошти назад (тільки на мобільних)
                 var iconsContainer = document.getElementById('mobile-icons-container');
@@ -3781,11 +3793,13 @@
                     const wasConnected = localStorage.getItem('walletConnected');
                     const walletType = localStorage.getItem('walletType');
                     const walletAddress = localStorage.getItem('walletAddress');
+                    const currentModal = localStorage.getItem('currentModal');
                     
                     console.log('🔍 Checking saved wallet state:');
                     console.log('   walletConnected:', wasConnected);
                     console.log('   walletType:', walletType);
                     console.log('   walletAddress:', walletAddress);
+                    console.log('   currentModal:', currentModal);
                     
                     if (wasConnected === 'true' && walletType) {
                         console.log('🔄 Auto-reconnecting wallet:', walletType);
@@ -3797,6 +3811,14 @@
                         await connectWallet(walletType);
                         
                         console.log('✅ Auto-reconnect successful!');
+                        
+                        // Restore modal if it was open
+                        if (currentModal && document.getElementById(currentModal)) {
+                            console.log('🔄 Restoring modal:', currentModal);
+                            setTimeout(() => {
+                                openModal(currentModal);
+                            }, 500); // Wait for wallet connection to complete
+                        }
                     } else {
                         console.log('ℹ️ No saved wallet connection');
                         if (!wasConnected) {
@@ -3804,6 +3826,14 @@
                         }
                         if (!walletType) {
                             console.log('   Reason: walletType is', walletType);
+                        }
+                        
+                        // Still try to restore modal even without wallet
+                        if (currentModal && document.getElementById(currentModal)) {
+                            console.log('🔄 Restoring modal without wallet:', currentModal);
+                            setTimeout(() => {
+                                openModal(currentModal);
+                            }, 500);
                         }
                     }
                 } catch (error) {

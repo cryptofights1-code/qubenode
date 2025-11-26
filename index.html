@@ -3652,10 +3652,13 @@
             document.getElementById('totalResult').textContent = totalReward.toFixed(2) + ' TICS';
             document.getElementById('totalUSD').textContent = '$' + (totalReward * priceToUse).toFixed(2);
             
-            // Calculate commission breakdown
-            const grossReward = amount * 0.30 * (period / 12); // 30% APY gross reward
-            const validatorCommission = grossReward * 0.05; // 5% commission
-            const netReward = totalReward; // This already accounts for commission
+            // Calculate commission breakdown based on ACTUAL totalReward (includes compound if enabled)
+            // Total reward is what user actually gets (28.5% APY already applied)
+            // To get gross reward, we need to reverse the commission: netReward = grossReward * 0.95
+            // So: grossReward = netReward / 0.95
+            const netReward = totalReward; // User's reward (already has 28.5% APY with 5% commission deducted)
+            const grossReward = netReward / 0.95; // Back-calculate gross reward before commission
+            const validatorCommission = grossReward - netReward; // Commission = gross - net
             
             // Detailed breakdown
             document.getElementById('initialAmount').textContent = amount.toLocaleString() + ' TICS ($' + (amount * priceToUse).toFixed(2) + ')';

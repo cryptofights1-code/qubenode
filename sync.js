@@ -306,6 +306,11 @@ async function updateTicsPrice() {
       const changeValue = changeEl.parentElement;
       changeValue.style.color = change24h >= 0 ? "#22c55e" : "#ef4444";
       
+      // Update calculator price
+      if (typeof updateCalculatorPrice === 'function') {
+        updateCalculatorPrice(price);
+      }
+      
       console.log(`✅ TICS price: $${price.toFixed(5)} (${changeText})`);
       return;
     }

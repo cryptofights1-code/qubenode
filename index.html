@@ -2715,64 +2715,99 @@
                     <!-- Results Section -->
                     <div id="calcResults" style="display: none;">
                         <!-- Summary Cards -->
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
-                            <div style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 240, 0.1)); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 15px; padding: 20px; text-align: center;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px;">
+                            <!-- Daily -->
+                            <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(74, 222, 128, 0.08)); border: 1px solid rgba(34, 197, 94, 0.35); border-radius: 15px; padding: 20px; text-align: center;">
                                 <div style="color: #94a3b8; font-size: 0.9em; margin-bottom: 8px;">Щоденний дохід</div>
-                                <div style="color: #00FFF0; font-size: 1.5em; font-weight: 700;" id="dailyResult">--</div>
-                                <div style="color: #64748b; font-size: 0.85em; margin-top: 5px;" id="dailyUSD">--</div>
+                                <div style="color: #22c55e; font-size: 1.5em; font-weight: 700;" id="dailyResult">--</div>
+                                <div style="color: #86efac; font-size: 0.85em; margin-top: 5px;" id="dailyUSD">--</div>
                             </div>
                             
-                            <div style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 240, 0.1)); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 15px; padding: 20px; text-align: center;">
+                            <!-- Weekly -->
+                            <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(74, 222, 128, 0.08)); border: 1px solid rgba(34, 197, 94, 0.35); border-radius: 15px; padding: 20px; text-align: center;">
+                                <div style="color: #94a3b8; font-size: 0.9em; margin-bottom: 8px;">Тижневий дохід</div>
+                                <div style="color: #22c55e; font-size: 1.5em; font-weight: 700;" id="weeklyResult">--</div>
+                                <div style="color: #86efac; font-size: 0.85em; margin-top: 5px;" id="weeklyUSD">--</div>
+                            </div>
+                            
+                            <!-- Monthly -->
+                            <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(74, 222, 128, 0.08)); border: 1px solid rgba(34, 197, 94, 0.35); border-radius: 15px; padding: 20px; text-align: center;">
                                 <div style="color: #94a3b8; font-size: 0.9em; margin-bottom: 8px;">Місячний дохід</div>
-                                <div style="color: #00FFF0; font-size: 1.5em; font-weight: 700;" id="monthlyResult">--</div>
-                                <div style="color: #64748b; font-size: 0.85em; margin-top: 5px;" id="monthlyUSD">--</div>
+                                <div style="color: #22c55e; font-size: 1.5em; font-weight: 700;" id="monthlyResult">--</div>
+                                <div style="color: #86efac; font-size: 0.85em; margin-top: 5px;" id="monthlyUSD">--</div>
                             </div>
                             
-                            <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(74, 222, 128, 0.1)); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 15px; padding: 20px; text-align: center;">
+                            <!-- Total -->
+                            <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(74, 222, 128, 0.1)); border: 2px solid rgba(34, 197, 94, 0.4); border-radius: 15px; padding: 20px; text-align: center;">
                                 <div style="color: #94a3b8; font-size: 0.9em; margin-bottom: 8px;">Загальний дохід</div>
-                                <div style="color: #22c55e; font-size: 1.5em; font-weight: 700;" id="totalResult">--</div>
-                                <div style="color: #64748b; font-size: 0.85em; margin-top: 5px;" id="totalUSD">--</div>
+                                <div style="color: #22c55e; font-size: 1.6em; font-weight: 700;" id="totalResult">--</div>
+                                <div style="color: #86efac; font-size: 0.85em; margin-top: 5px;" id="totalUSD">--</div>
                             </div>
                         </div>
 
                         <!-- Detailed Breakdown -->
-                        <div style="background: rgba(0, 212, 255, 0.05); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 15px; padding: 25px; margin-bottom: 30px;">
-                            <h4 style="color: #00FFF0; margin-bottom: 20px;">📊 Детальний розрахунок</h4>
+                        <div style="background: rgba(34, 197, 94, 0.05); border: 1px solid rgba(34, 197, 94, 0.25); border-radius: 15px; padding: 25px; margin-bottom: 30px;">
+                            <h4 style="color: #22c55e; margin-bottom: 20px;">📊 Детальний розрахунок</h4>
                             
-                            <div style="display: grid; gap: 15px;">
-                                <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(0, 212, 255, 0.1);">
-                                    <span style="color: #94a3b8;">Початкова сума:</span>
+                            <div style="display: grid; gap: 12px;">
+                                <!-- Principal -->
+                                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(34, 197, 94, 0.15);">
+                                    <span style="color: #94a3b8;">Тіло депозиту (Principal):</span>
                                     <span style="color: #fff; font-weight: 600;" id="initialAmount">--</span>
                                 </div>
                                 
-                                <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(0, 212, 255, 0.1);">
-                                    <span style="color: #94a3b8;">APY (річна винагорода):</span>
-                                    <span style="color: #fff; font-weight: 600;">30%</span>
-                                </div>
-                                
-                                <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(0, 212, 255, 0.1);">
-                                    <span style="color: #94a3b8;">Комісія валідатора:</span>
-                                    <span style="color: #fff; font-weight: 600;">5% (від винагороди)</span>
-                                </div>
-                                
-                                <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(0, 212, 255, 0.1);">
-                                    <span style="color: #94a3b8;">Ваш реальний APY:</span>
-                                    <span style="color: #22c55e; font-weight: 600;">28.5%</span>
-                                </div>
-                                
-                                <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(0, 212, 255, 0.1);">
-                                    <span style="color: #94a3b8;">Період:</span>
+                                <!-- Period -->
+                                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(34, 197, 94, 0.15);">
+                                    <span style="color: #94a3b8;">Період стейкінгу:</span>
                                     <span style="color: #fff; font-weight: 600;" id="periodText">--</span>
                                 </div>
                                 
-                                <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(0, 212, 255, 0.1);">
-                                    <span style="color: #94a3b8;">Compound:</span>
+                                <!-- APY -->
+                                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(34, 197, 94, 0.15);">
+                                    <span style="color: #94a3b8;">APY (базова ставка):</span>
+                                    <span style="color: #22c55e; font-weight: 600;">30%</span>
+                                </div>
+                                
+                                <!-- Validator Commission % -->
+                                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(34, 197, 94, 0.15);">
+                                    <span style="color: #94a3b8;">Комісія валідатора (%):</span>
+                                    <span style="color: #fbbf24; font-weight: 600;">5%</span>
+                                </div>
+                                
+                                <!-- Your Effective APY -->
+                                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(34, 197, 94, 0.15);">
+                                    <span style="color: #94a3b8;">Ваш реальний APY:</span>
+                                    <span style="color: #22c55e; font-weight: 600; font-size: 1.05em;">28.5%</span>
+                                </div>
+                                
+                                <!-- Compound Type -->
+                                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(34, 197, 94, 0.15);">
+                                    <span style="color: #94a3b8;">Реінвестування:</span>
                                     <span style="color: #fff; font-weight: 600;" id="compoundText">--</span>
                                 </div>
                                 
-                                <div style="display: flex; justify-content: space-between; padding: 12px 0; border-top: 2px solid rgba(0, 212, 255, 0.3); margin-top: 10px;">
-                                    <span style="color: #00FFF0; font-size: 1.1em; font-weight: 600;">Кінцева сума:</span>
-                                    <span style="color: #00FFF0; font-size: 1.1em; font-weight: 700;" id="finalAmount">--</span>
+                                <!-- Total Rewards -->
+                                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(34, 197, 94, 0.15);">
+                                    <span style="color: #94a3b8;">Загальна винагорода:</span>
+                                    <span style="color: #22c55e; font-weight: 700; font-size: 1.05em;" id="totalRewardAmount">--</span>
+                                </div>
+                                
+                                <!-- Validator Commission Amount -->
+                                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(34, 197, 94, 0.15);">
+                                    <span style="color: #94a3b8;">Комісія валідатора (сума):</span>
+                                    <span style="color: #fbbf24; font-weight: 600;" id="validatorCommissionAmount">--</span>
+                                </div>
+                                
+                                <!-- Your Net Reward -->
+                                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 2px solid rgba(34, 197, 94, 0.3);">
+                                    <span style="color: #94a3b8;">Ваша винагорода (чиста):</span>
+                                    <span style="color: #22c55e; font-weight: 700; font-size: 1.05em;" id="netRewardAmount">--</span>
+                                </div>
+                                
+                                <!-- Final Amount -->
+                                <div style="display: flex; justify-content: space-between; padding: 15px 0 5px 0; margin-top: 10px;">
+                                    <span style="color: #22c55e; font-size: 1.15em; font-weight: 700;">Кінцева сума:</span>
+                                    <span style="color: #22c55e; font-size: 1.15em; font-weight: 700;" id="finalAmount">--</span>
                                 </div>
                             </div>
                         </div>
@@ -3595,7 +3630,10 @@
                 totalReward = finalAmount - amount;
             }
             
-            const dailyReward = totalReward / (period * 30); // Average daily
+            // Calculate daily reward based on actual days per year (365)
+            const daysInPeriod = (period / 12) * 365; // Convert months to days
+            const dailyReward = totalReward / daysInPeriod;
+            const weeklyReward = dailyReward * 7; // Weekly = daily × 7
             const monthlyReward = totalReward / period;
             
             // Update UI
@@ -3605,16 +3643,30 @@
             document.getElementById('dailyResult').textContent = dailyReward.toFixed(2) + ' TICS';
             document.getElementById('dailyUSD').textContent = '$' + (dailyReward * priceToUse).toFixed(2);
             
+            document.getElementById('weeklyResult').textContent = weeklyReward.toFixed(2) + ' TICS';
+            document.getElementById('weeklyUSD').textContent = '$' + (weeklyReward * priceToUse).toFixed(2);
+            
             document.getElementById('monthlyResult').textContent = monthlyReward.toFixed(2) + ' TICS';
             document.getElementById('monthlyUSD').textContent = '$' + (monthlyReward * priceToUse).toFixed(2);
             
             document.getElementById('totalResult').textContent = totalReward.toFixed(2) + ' TICS';
             document.getElementById('totalUSD').textContent = '$' + (totalReward * priceToUse).toFixed(2);
             
+            // Calculate commission breakdown
+            const grossReward = amount * 0.30 * (period / 12); // 30% APY gross reward
+            const validatorCommission = grossReward * 0.05; // 5% commission
+            const netReward = totalReward; // This already accounts for commission
+            
             // Detailed breakdown
-            document.getElementById('initialAmount').textContent = amount.toLocaleString() + ' TICS';
+            document.getElementById('initialAmount').textContent = amount.toLocaleString() + ' TICS ($' + (amount * priceToUse).toFixed(2) + ')';
             document.getElementById('periodText').textContent = getPeriodText(period, customDays);
             document.getElementById('compoundText').textContent = compoundText;
+            
+            // New detailed fields
+            document.getElementById('totalRewardAmount').textContent = grossReward.toFixed(2) + ' TICS ($' + (grossReward * priceToUse).toFixed(2) + ')';
+            document.getElementById('validatorCommissionAmount').textContent = validatorCommission.toFixed(2) + ' TICS ($' + (validatorCommission * priceToUse).toFixed(2) + ')';
+            document.getElementById('netRewardAmount').textContent = netReward.toFixed(2) + ' TICS ($' + (netReward * priceToUse).toFixed(2) + ')';
+            
             document.getElementById('finalAmount').textContent = finalAmount.toFixed(2) + ' TICS ($' + (finalAmount * priceToUse).toFixed(2) + ')';
             
             // Compound comparison (show only if reinvesting)

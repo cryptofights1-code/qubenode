@@ -971,6 +971,17 @@
             min-height: 100vh;
         }
 
+        /* Centered modal for validator selector */
+        #validatorSelectorModal .modal-content {
+            margin: 5% auto;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            min-height: auto;
+            border-radius: 20px;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+        }
+
         .modal-header {
             padding: 40px 60px;
             border-bottom: 1px solid rgba(0, 212, 255, 0.2);
@@ -3754,6 +3765,25 @@
             
             // Bind close buttons on page load
             bindЗакритиButtons();
+            
+            // Auto-reconnect wallet if was connected
+            setTimeout(async () => {
+                const wasConnected = localStorage.getItem('walletConnected');
+                const walletType = localStorage.getItem('walletType');
+                
+                if (wasConnected === 'true' && walletType) {
+                    console.log('🔄 Auto-reconnecting wallet:', walletType);
+                    try {
+                        await connectWallet(walletType);
+                    } catch (error) {
+                        console.error('Auto-reconnect failed:', error);
+                        // Clear invalid state
+                        localStorage.removeItem('walletConnected');
+                        localStorage.removeItem('walletType');
+                        localStorage.removeItem('walletAddress');
+                    }
+                }
+            }, 1000); // Wait 1 second for modules to load
         });
 
         window.onclick = function(event) {
@@ -3817,6 +3847,11 @@
                 const result = await cosmosStaking.connectWallet(walletType);
 
                 if (result.success) {
+                    // Save connection state
+                    localStorage.setItem('walletConnected', 'true');
+                    localStorage.setItem('walletType', walletType);
+                    localStorage.setItem('walletAddress', result.address);
+                    
                     // Hide old interface
                     const stakingInterface = document.getElementById('stakingInterface');
                     if (stakingInterface) {
@@ -4135,6 +4170,11 @@
 
         function disconnectDashboard() {
             if (confirm('Відключити гаманець?')) {
+                // Clear saved state
+                localStorage.removeItem('walletConnected');
+                localStorage.removeItem('walletType');
+                localStorage.removeItem('walletAddress');
+                
                 if (cosmosStaking) {
                     cosmosStaking.disconnect();
                 }
@@ -4300,12 +4340,18 @@
                         const valAddress = del.delegation.validator_address;
                         const valName = validatorNamesCache[valAddress] || valAddress.substring(0, 20) + '...';
                         const amount = cosmosStaking.formatTics(del.balance.amount);
+                        const shortAddress = valAddress.substring(0, 20) + '...' + valAddress.substring(valAddress.length - 6);
                         
                         html += `
-                            <div onclick="selectValidator('${valAddress}', '${valName.replace(/'/g, "\\'")}', 'from')" style="background: rgba(0, 212, 255, 0.05); border: 2px solid rgba(0, 212, 255, 0.2); border-radius: 10px; padding: 15px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='rgba(0, 212, 255, 0.15)'" onmouseout="this.style.background='rgba(0, 212, 255, 0.05)'">
-                                <div style="color: #FFA500; font-weight: 700; font-size: 1.1em; margin-bottom: 5px;">${valName}</div>
-                                <div style="color: #64748b; font-size: 0.85em; margin-bottom: 8px;">${valAddress}</div>
-                                <div style="color: #00FFF0; font-weight: 600;">${parseFloat(amount).toFixed(2)} TICS</div>
+                            <div onclick="selectValidator('${valAddress}', '${valName.replace(/'/g, "\\'")}', 'from')" style="background: rgba(0, 212, 255, 0.05); border: 2px solid rgba(0, 212, 255, 0.2); border-radius: 10px; padding: 15px; cursor: pointer; transition: all 0.3s; display: flex; justify-content: space-between; align-items: center;" onmouseover="this.style.background='rgba(0, 212, 255, 0.15)'" onmouseout="this.style.background='rgba(0, 212, 255, 0.05)'">
+                                <div style="flex: 1;">
+                                    <div style="color: #FFA500; font-weight: 700; font-size: 1.05em; margin-bottom: 5px;">${valName}</div>
+                                    <div style="color: #64748b; font-size: 0.8em;">${shortAddress}</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="color: #00FFF0; font-weight: 700; font-size: 1.1em;">${parseFloat(amount).toFixed(2)}</div>
+                                    <div style="color: #86efac; font-size: 0.8em;">TICS</div>
+                                </div>
                             </div>
                         `;
                     });
@@ -4321,15 +4367,21 @@
                     allValidators.forEach(validator => {
                         const valAddress = validator.operator_address;
                         const valName = validatorNamesCache[valAddress] || valAddress.substring(0, 20) + '...';
+                        const shortAddress = valAddress.substring(0, 20) + '...' + valAddress.substring(valAddress.length - 6);
                         const commission = validator.commission?.commission_rates?.rate 
                             ? (parseFloat(validator.commission.commission_rates.rate) * 100).toFixed(2) 
                             : '0.00';
                         
                         html += `
-                            <div onclick="selectValidator('${valAddress}', '${valName.replace(/'/g, "\\'")}', 'to')" style="background: rgba(0, 212, 255, 0.05); border: 2px solid rgba(0, 212, 255, 0.2); border-radius: 10px; padding: 15px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='rgba(0, 212, 255, 0.15)'" onmouseout="this.style.background='rgba(0, 212, 255, 0.05)'">
-                                <div style="color: #FFA500; font-weight: 700; font-size: 1.1em; margin-bottom: 5px;">${valName}</div>
-                                <div style="color: #64748b; font-size: 0.85em; margin-bottom: 8px;">${valAddress}</div>
-                                <div style="color: #fff; font-weight: 600;">Commission: ${commission}%</div>
+                            <div onclick="selectValidator('${valAddress}', '${valName.replace(/'/g, "\\'")}', 'to')" style="background: rgba(0, 212, 255, 0.05); border: 2px solid rgba(0, 212, 255, 0.2); border-radius: 10px; padding: 15px; cursor: pointer; transition: all 0.3s; display: flex; justify-content: space-between; align-items: center;" onmouseover="this.style.background='rgba(0, 212, 255, 0.15)'" onmouseout="this.style.background='rgba(0, 212, 255, 0.05)'">
+                                <div style="flex: 1;">
+                                    <div style="color: #FFA500; font-weight: 700; font-size: 1.05em; margin-bottom: 5px;">${valName}</div>
+                                    <div style="color: #64748b; font-size: 0.8em;">${shortAddress}</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="color: #fff; font-weight: 600; font-size: 0.85em; margin-bottom: 2px;">Commission</div>
+                                    <div style="color: #fbbf24; font-weight: 700; font-size: 1.1em;">${commission}%</div>
+                                </div>
                             </div>
                         `;
                     });

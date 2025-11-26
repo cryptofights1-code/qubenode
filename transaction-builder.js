@@ -36,6 +36,21 @@ class CosmosTransactionBuilder {
         };
     }
 
+    createRedelegateMsg(delegatorAddress, validatorSrcAddress, validatorDstAddress, amount) {
+        return {
+            typeUrl: '/cosmos.staking.v1beta1.MsgBeginRedelegate',
+            value: {
+                delegatorAddress: delegatorAddress,
+                validatorSrcAddress: validatorSrcAddress,
+                validatorDstAddress: validatorDstAddress,
+                amount: {
+                    denom: this.chainConfig.stakeCurrency.coinMinimalDenom,
+                    amount: amount
+                }
+            }
+        };
+    }
+
     createClaimRewardsMsg(delegatorAddress, validatorAddress) {
         return {
             typeUrl: '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward',

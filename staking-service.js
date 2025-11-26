@@ -428,6 +428,47 @@ class CosmosStakingService {
         }
     }
 
+    async redelegate(validatorSrcAddress, validatorDstAddress, amount, memo = '') {
+        try {
+            const delegatorAddress = this.walletManager.getAddress();
+
+            const msg = this.txBuilder.createRedelegateMsg(
+                delegatorAddress, 
+                validatorSrcAddress, 
+                validatorDstAddress, 
+                amount
+            );
+            
+            const gasLimit = this.chainClient.chainConfig.gas.redelegate || 300000;
+            
+            const gasPrice = this.chainClient.chainConfig.feeCurrencies[0].gasPriceStep.average;
+            const feeAmount = Math.ceil(gasLimit * gasPrice);
+
+            const fee = {
+                amount: [{
+                    denom: this.chainClient.chainConfig.stakeCurrency.coinMinimalDenom,
+                    amount: feeAmount.toString()
+                }],
+                gas: gasLimit.toString()
+            };
+
+            console.log('📤 Broadcasting redelegation...');
+            console.log('   From:', validatorSrcAddress);
+            console.log('   To:', validatorDstAddress);
+            console.log('   Amount:', amount);
+
+            const result = await this.signAndBroadcast([msg], fee, memo);
+
+            console.log('✅ Redelegation successful:', result.txHash);
+
+            return result;
+
+        } catch (error) {
+            console.error('❌ Redelegation failed:', error);
+            throw error;
+        }
+    }
+
     async claimRewards(validatorAddress, memo = '') {
         try {
             const delegatorAddress = this.walletManager.getAddress();

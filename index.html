@@ -3087,26 +3087,32 @@
                             <span>Прогноз винагород</span>
                         </h4>
                         <div id="dashRewardsForecast">
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px;">
                                 <!-- Daily -->
                                 <div style="background: linear-gradient(135deg, rgba(250, 204, 21, 0.1), rgba(250, 204, 21, 0.03)); border: 1px solid rgba(250, 204, 21, 0.3); border-radius: 10px; padding: 12px; text-align: center;">
-                                    <div style="color: #fde047; font-size: 0.8em; margin-bottom: 6px; font-weight: 600;">На день</div>
-                                    <div style="color: #facc15; font-size: 1.3em; font-weight: 700;"><span id="forecastDaily">0.00</span> TICS</div>
+                                    <div style="color: #fde047; font-size: 0.75em; margin-bottom: 6px; font-weight: 600;">На день</div>
+                                    <div style="color: #facc15; font-size: 1.2em; font-weight: 700;"><span id="forecastDaily">0.00</span> TICS</div>
+                                </div>
+                                
+                                <!-- Weekly -->
+                                <div style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(168, 85, 247, 0.03)); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 10px; padding: 12px; text-align: center;">
+                                    <div style="color: #c084fc; font-size: 0.75em; margin-bottom: 6px; font-weight: 600;">На тиждень</div>
+                                    <div style="color: #a855f7; font-size: 1.2em; font-weight: 700;"><span id="forecastWeekly">0.00</span> TICS</div>
                                 </div>
                                 
                                 <!-- Monthly -->
                                 <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.03)); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 10px; padding: 12px; text-align: center;">
-                                    <div style="color: #86efac; font-size: 0.8em; margin-bottom: 6px; font-weight: 600;">На місяць</div>
-                                    <div style="color: #22c55e; font-size: 1.3em; font-weight: 700;"><span id="forecastMonthly">0.00</span> TICS</div>
+                                    <div style="color: #86efac; font-size: 0.75em; margin-bottom: 6px; font-weight: 600;">На місяць</div>
+                                    <div style="color: #22c55e; font-size: 1.2em; font-weight: 700;"><span id="forecastMonthly">0.00</span> TICS</div>
                                 </div>
                                 
                                 <!-- Yearly -->
                                 <div style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 212, 255, 0.03)); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 10px; padding: 12px; text-align: center;">
-                                    <div style="color: #7dd3fc; font-size: 0.8em; margin-bottom: 6px; font-weight: 600;">На рік</div>
-                                    <div style="color: #00D4FF; font-size: 1.3em; font-weight: 700;"><span id="forecastYearly">0.00</span> TICS</div>
+                                    <div style="color: #7dd3fc; font-size: 0.75em; margin-bottom: 6px; font-weight: 600;">На рік</div>
+                                    <div style="color: #00D4FF; font-size: 1.2em; font-weight: 700;"><span id="forecastYearly">0.00</span> TICS</div>
                                 </div>
                             </div>
-                            <p style="color: #64748b; font-size: 0.75em; margin-top: 10px; text-align: center;">* APY ~30%, комісія валідатора вже врахована</p>
+                            <p style="color: #64748b; font-size: 0.75em; margin-top: 10px; text-align: center;">* APY ~30%, комісія валідатора вже врахована. Розрахунки наведені без урахування складного відсотка.</p>
                         </div>
                     </div>
                     
@@ -3375,7 +3381,7 @@
                         <span class="faq-icon">▼</span>
                     </button>
                     <div class="faq-answer">
-                        <p>Для першого делегування мінімальна сума становить <strong>1000 монет $TICS</strong>. Усі наступні делегування можна здійснювати без будь-яких обмежень за сумою, що дозволяє кожному брати участь у стейкінгу та додавати монети поступово.</p>
+                        <p>Мінімальної суми для делегування немає.</p>
                     </div>
                 </div>
 
@@ -3398,7 +3404,7 @@
                         <p>Комісія валідатора QubeNode складає <strong>5%</strong> від винагороди мережі. Це найнижча можлива комісія мережі. Вона автоматично утримується з нарахованої винагороди, тому ви отримуєте вже чисту суму.</p>
                         <p><strong>Приклад розрахунку:</strong></p>
                         <p>Ви зробили делегування <strong>1000 монет</strong>. Винагорода мережі (APY) складає <strong>30%</strong> річних, отже за рік вся винагорода мережі складатиме <strong>300 монет</strong>. Звідси забираємо 5% комісію валідатора:</p>
-                        <p style="color: #00FFF0; font-weight: 600;">300 монет - 5% комісії = ваша чиста винагорода <strong>285 монет (28.5%)</strong></p>
+                        <p style="color: #00FFF0; font-weight: 600;">300 монет - 5% комісії = ваша чиста винагорода <strong>285 монет (28.5%)</strong> і винагорода валідатора <strong>15 монет (1.5%)</strong></p>
                     </div>
                 </div>
 
@@ -3420,8 +3426,7 @@
                     <div class="faq-answer">
                         <p>Основні ризики пов'язані з роботою валідатора:</p>
                         <ul>
-                            <li><strong>Double-signing (подвійне підписання):</strong> Якщо валідатор підпише два блоки на одній висоті, буде застосовано штраф у розмірі <strong>5%</strong> від загального стейку.</li>
-                            <li><strong>Downtime (простій):</strong> Якщо валідатор пропустить більше 50% з останніх 100,000 блоків, буде застосовано штраф у розмірі <strong>1%</strong>.</li>
+                            <li><strong>Downtime (простій):</strong> Якщо валідатор пропустить більше 50% з останніх 100,000 блоків, буде застосовано штраф у розмірі <strong>1%</strong>. Для прикладу, щоб пропустити 50,000 блоків, валідатор має не працювати приблизно <strong>79 годин (~3 дні)</strong>.</li>
                         </ul>
                         <p style="margin-top: 15px;"><strong>QubeNode забезпечує вашу безпеку:</strong> Потужна інфраструктура валідатора QubeNode забезпечує стабільну та надійну роботу. Ми використовуємо багаторівневий моніторинг, щоб мінімізувати будь-які ризики простою.</p>
                     </div>
@@ -3435,7 +3440,6 @@
                     <div class="faq-answer">
                         <p>Для стейкінга Qubetics ви можете використовувати:</p>
                         <ul>
-                            <li><strong>Qubetics Wallet</strong> — офіційний гаманець мережі</li>
                             <li><strong>Keplr Wallet</strong> — популярний гаманець для Cosmos екосистеми</li>
                             <li><strong>Cosmostation Wallet</strong> — зручний мобільний та веб-гаманець</li>
                         </ul>
@@ -3467,17 +3471,17 @@
                         <p>Ви можете зв'язатися з нами через:</p>
                         <ul>
                             <li><strong><a href="https://t.me/+sRnz7RyoL4Q0MWEy" target="_blank" style="color: #00D4FF; text-decoration: none; border-bottom: 1px dashed #00D4FF;">Telegram</a>:</strong> Наша група підтримки завжди готова допомогти</li>
-                            <li><strong>Email:</strong> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c4b5b1a6a1eaaaaba0a1f084a3a9a5ada8eaa7aba9">[email&#160;protected]</a></li>
+                            <li><strong>Email:</strong> <a href="mailto:support@qubenode.space" style="color: #00D4FF; text-decoration: none; border-bottom: 1px dashed #00D4FF;">support@qubenode.space</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
             
             <div class="modal-footer" style="padding: 40px 60px; background: rgba(0, 212, 255, 0.05); border-top: 1px solid rgba(0, 212, 255, 0.2); display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
-                <a href="https://qubetics.com" class="modal-link" target="_blank" style="display: inline-flex; align-items: center; gap: 12px; padding: 18px 40px; background: rgba(0, 212, 255, 0.1); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 50px; color: #00D4FF; text-decoration: none; font-weight: 600; font-size: 1.1em; transition: all 0.3s;">
+                <button onclick="closeModal('faqModal'); openModal('delegatorModal');" class="modal-link" style="display: inline-flex; align-items: center; gap: 12px; padding: 18px 40px; background: rgba(0, 212, 255, 0.1); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 50px; color: #00D4FF; font-weight: 600; font-size: 1.1em; transition: all 0.3s; cursor: pointer;">
                     <span>🚀</span>
                     <span>Почати стейкінг</span>
-                </a>
+                </button>
                 <a href="https://t.me/+sRnz7RyoL4Q0MWEy" class="modal-link" target="_blank" style="display: inline-flex; align-items: center; gap: 12px; padding: 18px 40px; background: rgba(0, 212, 255, 0.1); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 50px; color: #00D4FF; text-decoration: none; font-weight: 600; font-size: 1.1em; transition: all 0.3s;">
                     <span>💬</span>
                     <span>Підтримка</span>
@@ -4326,6 +4330,7 @@
                 
                 if (amount === 0) {
                     document.getElementById('forecastDaily').textContent = '0.00';
+                    document.getElementById('forecastWeekly').textContent = '0.00';
                     document.getElementById('forecastMonthly').textContent = '0.00';
                     document.getElementById('forecastYearly').textContent = '0.00';
                     return;
@@ -4335,10 +4340,12 @@
                 const APY = 0.285;
                 
                 const dailyReward = (amount * APY) / 365;
+                const weeklyReward = (amount * APY) / 52;
                 const monthlyReward = (amount * APY) / 12;
                 const yearlyReward = amount * APY;
                 
                 document.getElementById('forecastDaily').textContent = dailyReward.toFixed(2);
+                document.getElementById('forecastWeekly').textContent = weeklyReward.toFixed(2);
                 document.getElementById('forecastMonthly').textContent = monthlyReward.toFixed(2);
                 document.getElementById('forecastYearly').textContent = yearlyReward.toFixed(2);
             } catch (error) {

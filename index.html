@@ -3469,7 +3469,7 @@
         </div>
     </div>
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    <script>
         // FAQ Accordion Toggle
         function toggleFaq(button) {
             const faqItem = button.parentElement;
@@ -3521,13 +3521,6 @@
                 
                 // Check if opening delegator modal
                 if (id === 'delegatorModal') {
-                    // Initialize staking modules if not already initialized
-                    if (!cosmosStaking || !window.stakingInitialized) {
-                        initializeStaking().catch(err => {
-                            console.error('Failed to initialize staking:', err);
-                        });
-                    }
-                    
                     const dashboard = document.getElementById('delegatorDashboard');
                     const walletSection = document.getElementById('walletSection');
                     const walletStatus = document.getElementById('walletStatus');
@@ -3880,35 +3873,11 @@
 
         async function initializeStaking() {
             if (!cosmosStaking) {
-                // Wait for modules if not ready yet
                 if (!stakingModuleReady) {
-                    console.log('⏳ Waiting for staking modules to load...');
-                    await new Promise((resolve) => {
-                        const checkInterval = setInterval(() => {
-                            if (stakingModuleReady) {
-                                clearInterval(checkInterval);
-                                console.log('✅ Staking modules ready!');
-                                resolve();
-                            }
-                        }, 100);
-                        // Timeout after 10 seconds
-                        setTimeout(() => {
-                            clearInterval(checkInterval);
-                            if (!stakingModuleReady) {
-                                console.error('❌ Timeout waiting for staking modules');
-                            }
-                            resolve();
-                        }, 10000);
-                    });
+                    throw new Error('Модулі стейкінгу ще завантажуються, спробуйте через секунду');
                 }
-                
-                if (!stakingModuleReady) {
-                    throw new Error('Не вдалося завантажити модулі стейкінгу. Спробуйте оновити сторінку.');
-                }
-                
                 cosmosStaking = new CosmosStakingModule();
                 await cosmosStaking.initialize();
-                window.stakingInitialized = true;
             }
         }
 

@@ -4871,4 +4871,15 @@
         }
 
         // Check if wallet gets disconnected in modal and update header
-        const originalDisconnectWallet = discon
+        const originalDisconnectWallet = disconnectWallet;
+        async function disconnectWallet() {
+            await originalDisconnectWallet();
+            resetHeaderWalletButton();
+        }
+
+    </script>
+
+    <!-- Cosmos Staking Module Integration - Load in correct order -->
+    <script src="chain-config.js"></script>
+    <script src="wallet-manager.js"></script>
+    <script src="chain-client.js"><

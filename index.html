@@ -2868,7 +2868,169 @@
             </div>
             <div class="modal-body">
                 <!-- DELEGATOR DASHBOARD - Shows when wallet is connected -->
-                <div id="delegatorDashboard" style="display: none; background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 240, 0.05)); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 15px; padding: 20px; margin-bottom: 25px;">
+
+                <!-- Способи делегування -->
+                <div style="background: rgba(0, 212, 255, 0.03); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 20px; padding: 40px; margin: 30px 0;">
+                    
+                    <!-- Спосіб 1: Через гаманці Keplr/Cosmostation -->
+                    <div style="margin-bottom: 40px;">
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                            <div style="width: 45px; height: 45px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4em; font-weight: 800; color: #000;">1</div>
+                            <h3 style="color: #00FFF0; font-size: 1.5em; margin: 0;">Делегування через мобільний гаманець</h3>
+                        </div>
+                        
+                        <p style="color: #cbd5e1; margin-bottom: 20px; line-height: 1.8;">
+                            Ви можете зробити делегування у гаманці 
+                            <span style="color: #00D4FF; font-weight: 600; cursor: pointer;" onclick="openModal('keplrGuideModal')">Keplr (<u>інструкція</u>)</span> 
+                            або 
+                            <span style="color: #00D4FF; font-weight: 600;">Cosmostation</span>.
+                        </p>
+                        
+                        <div style="background: rgba(250, 204, 21, 0.1); border-left: 4px solid #facc15; padding: 15px 20px; border-radius: 8px; margin-top: 15px;">
+                            <p style="color: #fde047; margin: 0; font-size: 0.95em;">
+                                <span style="font-weight: 700;">💡 Рекомендація:</span> Радимо використовувати гаманець Keplr для мобільного делегування.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Спосіб 2: Через TicsScan -->
+                    <div style="margin-bottom: 40px;">
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                            <div style="width: 45px; height: 45px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4em; font-weight: 800; color: #000;">2</div>
+                            <h3 style="color: #00FFF0; font-size: 1.5em; margin: 0;">Делегування через TicsScan</h3>
+                        </div>
+                        
+                        <p style="color: #cbd5e1; margin-bottom: 15px; line-height: 1.8;">
+                            Підключити гаманець та зробити делегування ви можете на сторінці блокчейну TicsScan:
+                        </p>
+                        
+                        <a href="https://native.ticsscan.com/qubetics/staking/" target="_blank" style="display: inline-flex; align-items: center; gap: 12px; padding: 16px 25px; background: rgba(0, 212, 255, 0.1); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 12px; color: #00D4FF; text-decoration: none; font-weight: 600; transition: all 0.3s; font-size: 1.05em;">
+                            <span>🔗</span>
+                            <span>native.ticsscan.com/staking/</span>
+                        </a>
+                    </div>
+
+                    <!-- Спосіб 3: Через наш сайт -->
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                            <div style="width: 45px; height: 45px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4em; font-weight: 800; color: #000;">3</div>
+                            <h3 style="color: #00FFF0; font-size: 1.5em; margin: 0;">Делегування через QubeNode.space</h3>
+                        </div>
+                        
+                        <p style="color: #cbd5e1; margin-bottom: 20px; line-height: 1.8;">
+                            Найпростіший спосіб — підключити гаманець прямо на цій сторінці для миттєвого делегування.
+                        </p>
+                        
+                        <div style="background: rgba(0, 212, 255, 0.05); border-left: 4px solid #00D4FF; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
+                            <p style="color: #00FFF0; font-weight: 600; margin-bottom: 12px; font-size: 1.05em;">
+                                💎 Після підключення гаманця ви зможете:
+                            </p>
+                            <ul style="color: #cbd5e1; margin: 0; padding-left: 20px; line-height: 2;">
+                                <li><strong style="color: #00D4FF;">Переглянути дашборд делегатора</strong> — баланс, делегації, винагороди</li>
+                                <li><strong style="color: #00D4FF;">Делегувати токени</strong> валідатору QubeNode</li>
+                                <li><strong style="color: #00D4FF;">Ределегувати</strong> токени між валідаторами</li>
+                                <li><strong style="color: #00D4FF;">Зібрати винагороди</strong> в будь-який момент</li>
+                                <li><strong style="color: #00D4FF;">Зробити Undelegate</strong> (розблокування за 14 днів)</li>
+                                <li><strong style="color: #00D4FF;">Скасувати активний Unbond</strong> під час періоду розблокування</li>
+                            </ul>
+                        </div>
+
+                        <!-- Wallet Connection Section -->
+                        <div id="walletSection">
+                            <p style="color: #cbd5e1; margin-bottom: 15px; font-size: 0.95em; font-weight: 600;">Підключіть гаманець для делегування $TICS:</p>
+                            
+                            <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 15px;">
+                                <button id="connectKeplrBtn" onclick="connectHeaderWallet('keplr')" style="flex: 1; min-width: 180px; padding: 14px 24px; background: rgba(0, 212, 255, 0.15); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 10px; color: #00FFF0; font-size: 1em; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                    <span style="font-size: 1.2em;">🔷</span>
+                                    <span>Keplr Wallet</span>
+                                </button>
+                                
+                                <button id="connectCosmostationBtn" onclick="connectHeaderWallet('cosmostation')" style="flex: 1; min-width: 180px; padding: 14px 24px; background: rgba(0, 212, 255, 0.15); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 10px; color: #00FFF0; font-size: 1em; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                    <span style="font-size: 1.2em;">🔶</span>
+                                    <span>Cosmostation</span>
+                                </button>
+                            </div>
+                            
+                            <div id="walletStatus" style="display: none; padding: 20px; background: rgba(0, 212, 255, 0.1); border-radius: 12px; margin-top: 20px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                    <div>
+                                        <div style="color: #00FFF0; font-weight: 600; margin-bottom: 5px;">Підключено: <span id="connectedWallet"></span></div>
+                                        <div style="color: #94a3b8; font-size: 0.9em; word-break: break-all;"><span id="connectedAddress"></span></div>
+                                    </div>
+                                    <button onclick="disconnectWallet()" style="padding: 10px 20px; background: rgba(255, 0, 0, 0.2); border: 1px solid rgba(255, 0, 0, 0.4); border-radius: 8px; color: #ff6b6b; cursor: pointer; font-weight: 600;">Відключити</button>
+                                </div>
+                                
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
+                                    <div style="padding: 15px; background: rgba(0, 0, 0, 0.3); border-radius: 10px;">
+                                        <div style="color: #94a3b8; font-size: 0.9em; margin-bottom: 5px;">Баланс</div>
+                                        <div style="color: #00FFF0; font-size: 1.3em; font-weight: 700;"><span id="walletBalance">0</span> TICS</div>
+                                    </div>
+                                    <div style="padding: 15px; background: rgba(0, 0, 0, 0.3); border-radius: 10px;">
+                                        <div style="color: #94a3b8; font-size: 0.9em; margin-bottom: 5px;">Делеговано</div>
+                                        <div style="color: #00FFF0; font-size: 1.3em; font-weight: 700;"><span id="walletDelegated">0</span> TICS</div>
+                                    </div>
+                                    <div style="padding: 15px; background: rgba(0, 0, 0, 0.3); border-radius: 10px;">
+                                        <div style="color: #94a3b8; font-size: 0.9em; margin-bottom: 5px;">Винагороди</div>
+                                        <div style="color: #22c55e; font-size: 1.3em; font-weight: 700;"><span id="walletRewards">0</span> TICS</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Staking Actions Section -->
+                        <div id="stakingActions" style="display: none; margin-top: 30px;">
+                            <div style="background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 25px;">
+                                <h4 style="color: #00FFF0; font-size: 1.2em; margin-bottom: 20px;">Операції зі стейкінгом</h4>
+                                
+                                <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid rgba(0, 212, 255, 0.2); padding-bottom: 10px;">
+                                    <button onclick="showStakingTab('delegate')" id="tabDelegate" class="staking-tab active" style="padding: 12px 24px; background: rgba(0, 212, 255, 0.2); border: none; border-radius: 8px; color: #00FFF0; font-weight: 600; cursor: pointer; transition: all 0.3s;">Делегувати</button>
+                                    <button onclick="showStakingTab('undelegate')" id="tabUndelegate" class="staking-tab" style="padding: 12px 24px; background: transparent; border: none; border-radius: 8px; color: #94a3b8; font-weight: 600; cursor: pointer; transition: all 0.3s;">Розділегувати</button>
+                                    <button onclick="showStakingTab('claim')" id="tabClaim" class="staking-tab" style="padding: 12px 24px; background: transparent; border: none; border-radius: 8px; color: #94a3b8; font-weight: 600; cursor: pointer; transition: all 0.3s;">Забрати винагороду</button>
+                                </div>
+                                
+                                <!-- Delegate Tab -->
+                                <div id="delegateTab" class="staking-tab-content">
+                                    <p style="color: #cbd5e1; margin-bottom: 15px;">Мінімальна сума делегування: <strong style="color: #00FFF0;">0.1 TICS</strong></p>
+                                    <div style="margin-bottom: 20px;">
+                                        <label style="color: #94a3b8; font-size: 0.95em; margin-bottom: 8px; display: block;">Сума TICS:</label>
+                                        <input type="number" id="delegateAmount" placeholder="0.1" step="0.1" min="0.1" style="width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 10px; color: #fff; font-size: 1.1em;">
+                                    </div>
+                                    <button onclick="executeDelegate()" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border: none; border-radius: 12px; color: #000; font-size: 1.2em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
+                                        💎 Делегувати на QubeNode
+                                    </button>
+                                </div>
+                                
+                                <!-- Undelegate Tab -->
+                                <div id="undelegateTab" class="staking-tab-content" style="display: none;">
+                                    <p style="color: #cbd5e1; margin-bottom: 15px;">Період розделегування: <strong style="color: #ff6b6b;">14 днів</strong></p>
+                                    <div style="margin-bottom: 20px;">
+                                        <label style="color: #94a3b8; font-size: 0.95em; margin-bottom: 8px; display: block;">Сума TICS:</label>
+                                        <input type="number" id="undelegateAmount" placeholder="0.1" step="0.1" min="0.1" style="width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 10px; color: #fff; font-size: 1.1em;">
+                                    </div>
+                                    <button onclick="executeUndelegate()" style="width: 100%; padding: 18px; background: rgba(255, 107, 107, 0.2); border: 2px solid rgba(255, 107, 107, 0.4); border-radius: 12px; color: #ff6b6b; font-size: 1.2em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
+                                        ⚠️ Розділегувати
+                                    </button>
+                                </div>
+                                
+                                <!-- Claim Tab -->
+                                <div id="claimTab" class="staking-tab-content" style="display: none;">
+                                    <p style="color: #cbd5e1; margin-bottom: 20px;">Заберіть вашу накопичену винагороду:</p>
+                                    <div style="padding: 20px; background: rgba(34, 197, 94, 0.1); border: 2px solid rgba(34, 197, 94, 0.3); border-radius: 12px; margin-bottom: 20px; text-align: center;">
+                                        <div style="color: #94a3b8; font-size: 0.9em; margin-bottom: 5px;">Доступна винагорода</div>
+                                        <div style="color: #22c55e; font-size: 2em; font-weight: 700;"><span id="claimableRewards">0</span> TICS</div>
+                                    </div>
+                                    <button onclick="executeClaim()" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #22c55e, #16a34a); border: none; border-radius: 12px; color: #000; font-size: 1.2em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
+                                        💰 Забрати винагороду
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div id="txStatus" style="display: none; margin-top: 20px; padding: 20px; border-radius: 12px;"></div>
+                        </div>
+                    </div>
+
+                        <!-- DELEGATOR DASHBOARD - Shows when wallet is connected -->
+                        <div id="delegatorDashboard" style="display: none; background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 240, 0.05)); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 15px; padding: 20px; margin-top: 25px;">
                     <h3 style="color: #00FFF0; font-size: 1.5em; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
                         <span>💎</span>
                         <span>Ваш стейкінг дашборд</span>
@@ -3043,166 +3205,6 @@
                         </button>
                     </div>
                 </div>
-
-                <!-- Способи делегування -->
-                <div style="background: rgba(0, 212, 255, 0.03); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 20px; padding: 40px; margin: 30px 0;">
-                    
-                    <!-- Спосіб 1: Через гаманці Keplr/Cosmostation -->
-                    <div style="margin-bottom: 40px;">
-                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
-                            <div style="width: 45px; height: 45px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4em; font-weight: 800; color: #000;">1</div>
-                            <h3 style="color: #00FFF0; font-size: 1.5em; margin: 0;">Делегування через мобільний гаманець</h3>
-                        </div>
-                        
-                        <p style="color: #cbd5e1; margin-bottom: 20px; line-height: 1.8;">
-                            Ви можете зробити делегування у гаманці 
-                            <span style="color: #00D4FF; font-weight: 600; cursor: pointer;" onclick="openModal('keplrGuideModal')">Keplr (<u>інструкція</u>)</span> 
-                            або 
-                            <span style="color: #00D4FF; font-weight: 600;">Cosmostation</span>.
-                        </p>
-                        
-                        <div style="background: rgba(250, 204, 21, 0.1); border-left: 4px solid #facc15; padding: 15px 20px; border-radius: 8px; margin-top: 15px;">
-                            <p style="color: #fde047; margin: 0; font-size: 0.95em;">
-                                <span style="font-weight: 700;">💡 Рекомендація:</span> Радимо використовувати гаманець Keplr для мобільного делегування.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Спосіб 2: Через TicsScan -->
-                    <div style="margin-bottom: 40px;">
-                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
-                            <div style="width: 45px; height: 45px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4em; font-weight: 800; color: #000;">2</div>
-                            <h3 style="color: #00FFF0; font-size: 1.5em; margin: 0;">Делегування через TicsScan</h3>
-                        </div>
-                        
-                        <p style="color: #cbd5e1; margin-bottom: 15px; line-height: 1.8;">
-                            Підключити гаманець та зробити делегування ви можете на сторінці блокчейну TicsScan:
-                        </p>
-                        
-                        <a href="https://native.ticsscan.com/qubetics/staking/" target="_blank" style="display: inline-flex; align-items: center; gap: 12px; padding: 16px 25px; background: rgba(0, 212, 255, 0.1); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 12px; color: #00D4FF; text-decoration: none; font-weight: 600; transition: all 0.3s; font-size: 1.05em;">
-                            <span>🔗</span>
-                            <span>native.ticsscan.com/staking/</span>
-                        </a>
-                    </div>
-
-                    <!-- Спосіб 3: Через наш сайт -->
-                    <div>
-                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
-                            <div style="width: 45px; height: 45px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4em; font-weight: 800; color: #000;">3</div>
-                            <h3 style="color: #00FFF0; font-size: 1.5em; margin: 0;">Делегування через QubeNode.space</h3>
-                        </div>
-                        
-                        <p style="color: #cbd5e1; margin-bottom: 20px; line-height: 1.8;">
-                            Найпростіший спосіб — підключити гаманець прямо на цьій сторінці для миттєвого делегування.
-                        </p>
-                        
-                        <div style="background: rgba(0, 212, 255, 0.05); border-left: 4px solid #00D4FF; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
-                            <p style="color: #00FFF0; font-weight: 600; margin-bottom: 12px; font-size: 1.05em;">
-                                💎 Після підключення гаманця ви зможете:
-                            </p>
-                            <ul style="color: #cbd5e1; margin: 0; padding-left: 20px; line-height: 2;">
-                                <li><strong style="color: #00D4FF;">Переглянути дашборд делегатора</strong> — баланс, делегації, винагороди</li>
-                                <li><strong style="color: #00D4FF;">Делегувати токени</strong> валідатору QubeNode</li>
-                                <li><strong style="color: #00D4FF;">Ределегувати</strong> токени між валідаторами</li>
-                                <li><strong style="color: #00D4FF;">Зібрати винагороди</strong> в будь-який момент</li>
-                                <li><strong style="color: #00D4FF;">Зробити Undelegate</strong> (розблокування за 14 днів)</li>
-                                <li><strong style="color: #00D4FF;">Скасувати активний Unbond</strong> під час періоду розблокування</li>
-                            </ul>
-                        </div>
-
-                        <!-- Wallet Connection Section -->
-                        <div id="walletSection">
-                            <p style="color: #cbd5e1; margin-bottom: 15px; font-size: 0.95em; font-weight: 600;">Підключіть гаманець для делегування $TICS:</p>
-                            
-                            <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 15px;">
-                                <button id="connectKeplrBtn" onclick="connectHeaderWallet('keplr')" style="flex: 1; min-width: 180px; padding: 14px 24px; background: rgba(0, 212, 255, 0.15); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 10px; color: #00FFF0; font-size: 1em; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                                    <span style="font-size: 1.2em;">🔷</span>
-                                    <span>Keplr Wallet</span>
-                                </button>
-                                
-                                <button id="connectCosmostationBtn" onclick="connectHeaderWallet('cosmostation')" style="flex: 1; min-width: 180px; padding: 14px 24px; background: rgba(0, 212, 255, 0.15); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 10px; color: #00FFF0; font-size: 1em; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                                    <span style="font-size: 1.2em;">🔶</span>
-                                    <span>Cosmostation</span>
-                                </button>
-                            </div>
-                            
-                            <div id="walletStatus" style="display: none; padding: 20px; background: rgba(0, 212, 255, 0.1); border-radius: 12px; margin-top: 20px;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                    <div>
-                                        <div style="color: #00FFF0; font-weight: 600; margin-bottom: 5px;">Підключено: <span id="connectedWallet"></span></div>
-                                        <div style="color: #94a3b8; font-size: 0.9em; word-break: break-all;"><span id="connectedAddress"></span></div>
-                                    </div>
-                                    <button onclick="disconnectWallet()" style="padding: 10px 20px; background: rgba(255, 0, 0, 0.2); border: 1px solid rgba(255, 0, 0, 0.4); border-radius: 8px; color: #ff6b6b; cursor: pointer; font-weight: 600;">Відключити</button>
-                                </div>
-                                
-                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
-                                    <div style="padding: 15px; background: rgba(0, 0, 0, 0.3); border-radius: 10px;">
-                                        <div style="color: #94a3b8; font-size: 0.9em; margin-bottom: 5px;">Баланс</div>
-                                        <div style="color: #00FFF0; font-size: 1.3em; font-weight: 700;"><span id="walletBalance">0</span> TICS</div>
-                                    </div>
-                                    <div style="padding: 15px; background: rgba(0, 0, 0, 0.3); border-radius: 10px;">
-                                        <div style="color: #94a3b8; font-size: 0.9em; margin-bottom: 5px;">Делеговано</div>
-                                        <div style="color: #00FFF0; font-size: 1.3em; font-weight: 700;"><span id="walletDelegated">0</span> TICS</div>
-                                    </div>
-                                    <div style="padding: 15px; background: rgba(0, 0, 0, 0.3); border-radius: 10px;">
-                                        <div style="color: #94a3b8; font-size: 0.9em; margin-bottom: 5px;">Винагороди</div>
-                                        <div style="color: #22c55e; font-size: 1.3em; font-weight: 700;"><span id="walletRewards">0</span> TICS</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Staking Actions Section -->
-                        <div id="stakingActions" style="display: none; margin-top: 30px;">
-                            <div style="background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 25px;">
-                                <h4 style="color: #00FFF0; font-size: 1.2em; margin-bottom: 20px;">Операції зі стейкінгом</h4>
-                                
-                                <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid rgba(0, 212, 255, 0.2); padding-bottom: 10px;">
-                                    <button onclick="showStakingTab('delegate')" id="tabDelegate" class="staking-tab active" style="padding: 12px 24px; background: rgba(0, 212, 255, 0.2); border: none; border-radius: 8px; color: #00FFF0; font-weight: 600; cursor: pointer; transition: all 0.3s;">Делегувати</button>
-                                    <button onclick="showStakingTab('undelegate')" id="tabUndelegate" class="staking-tab" style="padding: 12px 24px; background: transparent; border: none; border-radius: 8px; color: #94a3b8; font-weight: 600; cursor: pointer; transition: all 0.3s;">Розділегувати</button>
-                                    <button onclick="showStakingTab('claim')" id="tabClaim" class="staking-tab" style="padding: 12px 24px; background: transparent; border: none; border-radius: 8px; color: #94a3b8; font-weight: 600; cursor: pointer; transition: all 0.3s;">Забрати винагороду</button>
-                                </div>
-                                
-                                <!-- Delegate Tab -->
-                                <div id="delegateTab" class="staking-tab-content">
-                                    <p style="color: #cbd5e1; margin-bottom: 15px;">Мінімальна сума делегування: <strong style="color: #00FFF0;">0.1 TICS</strong></p>
-                                    <div style="margin-bottom: 20px;">
-                                        <label style="color: #94a3b8; font-size: 0.95em; margin-bottom: 8px; display: block;">Сума TICS:</label>
-                                        <input type="number" id="delegateAmount" placeholder="0.1" step="0.1" min="0.1" style="width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 10px; color: #fff; font-size: 1.1em;">
-                                    </div>
-                                    <button onclick="executeDelegate()" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border: none; border-radius: 12px; color: #000; font-size: 1.2em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
-                                        💎 Делегувати на QubeNode
-                                    </button>
-                                </div>
-                                
-                                <!-- Undelegate Tab -->
-                                <div id="undelegateTab" class="staking-tab-content" style="display: none;">
-                                    <p style="color: #cbd5e1; margin-bottom: 15px;">Період розделегування: <strong style="color: #ff6b6b;">14 днів</strong></p>
-                                    <div style="margin-bottom: 20px;">
-                                        <label style="color: #94a3b8; font-size: 0.95em; margin-bottom: 8px; display: block;">Сума TICS:</label>
-                                        <input type="number" id="undelegateAmount" placeholder="0.1" step="0.1" min="0.1" style="width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 10px; color: #fff; font-size: 1.1em;">
-                                    </div>
-                                    <button onclick="executeUndelegate()" style="width: 100%; padding: 18px; background: rgba(255, 107, 107, 0.2); border: 2px solid rgba(255, 107, 107, 0.4); border-radius: 12px; color: #ff6b6b; font-size: 1.2em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
-                                        ⚠️ Розділегувати
-                                    </button>
-                                </div>
-                                
-                                <!-- Claim Tab -->
-                                <div id="claimTab" class="staking-tab-content" style="display: none;">
-                                    <p style="color: #cbd5e1; margin-bottom: 20px;">Заберіть вашу накопичену винагороду:</p>
-                                    <div style="padding: 20px; background: rgba(34, 197, 94, 0.1); border: 2px solid rgba(34, 197, 94, 0.3); border-radius: 12px; margin-bottom: 20px; text-align: center;">
-                                        <div style="color: #94a3b8; font-size: 0.9em; margin-bottom: 5px;">Доступна винагорода</div>
-                                        <div style="color: #22c55e; font-size: 2em; font-weight: 700;"><span id="claimableRewards">0</span> TICS</div>
-                                    </div>
-                                    <button onclick="executeClaim()" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #22c55e, #16a34a); border: none; border-radius: 12px; color: #000; font-size: 1.2em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
-                                        💰 Забрати винагороду
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <div id="txStatus" style="display: none; margin-top: 20px; padding: 20px; border-radius: 12px;"></div>
-                        </div>
-                    </div>
 
                 </div>
             </div>
@@ -3537,41 +3539,37 @@
                 // Check if opening delegator modal
                 if (id === 'delegatorModal') {
                     const dashboard = document.getElementById('delegatorDashboard');
-                    const stakingInterface = document.getElementById('stakingInterface');
+                    const walletSection = document.getElementById('walletSection');
                     const walletStatus = document.getElementById('walletStatus');
                     const stakingActions = document.getElementById('stakingActions');
                     
                     // Check if wallet is connected
                     if (headerWalletConnected && cosmosStaking && cosmosStaking.isWalletConnected()) {
-                        // Show dashboard
-                        if (dashboard) dashboard.style.display = 'block';
-                        if (stakingInterface) stakingInterface.style.display = 'none';
-                        // Update dashboard data
-                        updateDashboardData();
-                    } else {
-                        // Show wallet selection
-                        if (dashboard) dashboard.style.display = 'none';
-                        if (stakingInterface) stakingInterface.style.display = 'block';
-                        
-                        // HIDE old wallet status and actions
+                        // Wallet IS connected - hide buttons, show dashboard
+                        if (walletSection) walletSection.style.display = 'none';
                         if (walletStatus) walletStatus.style.display = 'none';
                         if (stakingActions) stakingActions.style.display = 'none';
-                        
-                        // Make sure wallet section is visible and buttons are enabled
-                        const walletSection = document.getElementById('walletSection');
-                        if (walletSection) {
-                            walletSection.style.display = 'block';
+                        if (dashboard) {
+                            dashboard.style.display = 'block';
+                            updateDashboardData();
                         }
+                    } else {
+                        // Wallet NOT connected - show buttons, hide dashboard
+                        if (walletSection) walletSection.style.display = 'block';
+                        if (walletStatus) walletStatus.style.display = 'none';
+                        if (stakingActions) stakingActions.style.display = 'none';
+                        if (dashboard) dashboard.style.display = 'none';
                         
+                        // Reset buttons to enabled state
                         const keplrBtn = document.getElementById('connectKeplrBtn');
                         const cosmostationBtn = document.getElementById('connectCosmostationBtn');
                         if (keplrBtn) {
                             keplrBtn.disabled = false;
-                            keplrBtn.innerHTML = '<span style="font-size: 1.3em;">🔷</span><span>Keplr Wallet</span>';
+                            keplrBtn.innerHTML = '<span style="font-size: 1.2em;">🔷</span><span>Keplr Wallet</span>';
                         }
                         if (cosmostationBtn) {
                             cosmostationBtn.disabled = false;
-                            cosmostationBtn.innerHTML = '<span style="font-size: 1.3em;">🔶</span><span>Cosmostation</span>';
+                            cosmostationBtn.innerHTML = '<span style="font-size: 1.2em;">🔶</span><span>Cosmostation</span>';
                         }
                     }
                 }
@@ -4679,12 +4677,18 @@
                     headerWalletConnected = true;
                     await updateHeaderWalletDisplay();
                     
-                    // Update modal - show DASHBOARD instead of old interface
+                    // Hide wallet connection buttons in modal
+                    const walletSection = document.getElementById('walletSection');
+                    const walletStatus = document.getElementById('walletStatus');
+                    const stakingActions = document.getElementById('stakingActions');
                     const dashboard = document.getElementById('delegatorDashboard');
-                    const stakingInterface = document.getElementById('stakingInterface');
                     
-                    if (dashboard && stakingInterface) {
-                        stakingInterface.style.display = 'none';
+                    if (walletSection) walletSection.style.display = 'none';
+                    if (walletStatus) walletStatus.style.display = 'none';
+                    if (stakingActions) stakingActions.style.display = 'none';
+                    
+                    // Show dashboard in modal (way 3)
+                    if (dashboard) {
                         dashboard.style.display = 'block';
                         await updateDashboardData();
                     }

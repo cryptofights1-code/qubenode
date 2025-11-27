@@ -41,8 +41,8 @@ async function updateBlockHeight() {
   
   // Try different endpoints to get current block
   const endpoints = [
-    'https://rpc.qubetics.com/abci_info',
     'https://swagger.qubetics.com/cosmos/base/tendermint/v1beta1/blocks/latest',
+    'https://tendermint.qubetics.com/abci_info',
     `${RPC_BASE}/status`
   ];
   

@@ -3977,7 +3977,7 @@
         // SIMPLE WORKING FUNCTIONS (like the working module below)
         // =====================================================================
         
-        async function quickStakeMore(validatorAddress) {
+        window.quickStakeMore = async function(validatorAddress) {
             // Get validator name
             const validatorName = validatorNamesCache[validatorAddress] || validatorAddress.substring(0, 20) + '...';
             
@@ -4094,7 +4094,7 @@
             };
         }
         
-        async function quickSwitchValidator(fromValidatorAddress) {
+        window.quickSwitchValidator = async function(fromValidatorAddress) {
             const fromValidatorName = validatorNamesCache[fromValidatorAddress] || fromValidatorAddress.substring(0, 20) + '...';
             const overview = cosmosStaking ? cosmosStaking.getStakingOverview() : null;
             
@@ -4293,7 +4293,7 @@
             };
         }
         
-        async function quickUnbond(validatorAddress) {
+        window.quickUnbond = async function(validatorAddress) {
             const validatorName = validatorNamesCache[validatorAddress] || validatorAddress.substring(0, 20) + '...';
             const overview = cosmosStaking ? cosmosStaking.getStakingOverview() : null;
             
@@ -4427,12 +4427,12 @@
             };
         }
         
-        async function quickStakeQubeNode() {
+        window.quickStakeQubeNode = async function() {
             const qubenodeAddress = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
             quickStakeMore(qubenodeAddress);
         }
         
-        async function quickClaimAllRewards() {
+        window.quickClaimAllRewards = async function() {
             if (!cosmosStaking || !cosmosStaking.isWalletConnected()) {
                 alert('Please connect your wallet first');
                 return;

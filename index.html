@@ -3972,89 +3972,491 @@
         // DASHBOARD FUNCTIONS
         
 
+
+        // =====================================================================
+        // PROFESSIONAL MODAL WINDOW SYSTEM
+        // =====================================================================
+        
+        function createModal(title, content, onConfirm, confirmText = 'Підтвердити') {
+            // Remove existing modal if any
+            const existing = document.getElementById('customModalOverlay');
+            if (existing) existing.remove();
+            
+            // Create overlay
+            const overlay = document.createElement('div');
+            overlay.id = 'customModalOverlay';
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.85);
+                backdrop-filter: blur(10px);
+                z-index: 99999;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                animation: fadeIn 0.2s ease;
+            `;
+            
+            // Create modal
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+                border: 2px solid rgba(0, 212, 255, 0.4);
+                border-radius: 20px;
+                padding: 30px;
+                max-width: 500px;
+                width: 90%;
+                max-height: 90vh;
+                overflow-y: auto;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+                animation: slideUp 0.3s ease;
+            `;
+            
+            modal.innerHTML = `
+                <style>
+                    @keyframes fadeIn {
+                        from { opacity: 0; }
+                        to { opacity: 1; }
+                    }
+                    @keyframes slideUp {
+                        from { transform: translateY(30px); opacity: 0; }
+                        to { transform: translateY(0); opacity: 1; }
+                    }
+                    #customModalOverlay input:focus {
+                        outline: none;
+                        border-color: rgba(0, 212, 255, 0.6) !important;
+                        box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+                    }
+                    #customModalOverlay select:focus {
+                        outline: none;
+                        border-color: rgba(0, 212, 255, 0.6) !important;
+                        box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+                    }
+                </style>
+                <div style="margin-bottom: 25px;">
+                    <h3 style="color: #FFA500; font-size: 1.5em; margin: 0; text-align: center;">${title}</h3>
+                </div>
+                
+                <div id="modalContent">
+                    ${content}
+                </div>
+                
+                <div style="display: flex; gap: 12px; margin-top: 25px;">
+                    <button onclick="closeCustomModal()" style="flex: 1; padding: 14px; background: rgba(100, 116, 139, 0.2); border: 1px solid rgba(100, 116, 139, 0.4); border-radius: 12px; color: #94a3b8; font-size: 1em; font-weight: 600; cursor: pointer; transition: all 0.3s;">
+                        Скасувати
+                    </button>
+                    <button id="modalConfirmBtn" style="flex: 1; padding: 14px; background: linear-gradient(135deg, #FFA500, #FF8C00); border: none; border-radius: 12px; color: #000; font-size: 1em; font-weight: 700; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 12px rgba(255, 165, 0, 0.3);">
+                        ${confirmText}
+                    </button>
+                </div>
+            `;
+            
+            overlay.appendChild(modal);
+            document.body.appendChild(overlay);
+            
+            // Set up confirm button
+            document.getElementById('modalConfirmBtn').onclick = onConfirm;
+            
+            // Close on overlay click
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) closeCustomModal();
+            });
+            
+            // Focus first input
+            setTimeout(() => {
+                const firstInput = modal.querySelector('input, select');
+                if (firstInput) firstInput.focus();
+            }, 100);
+        }
+        
+        function closeCustomModal() {
+            const overlay = document.getElementById('customModalOverlay');
+            if (overlay) {
+                overlay.style.animation = 'fadeOut 0.2s ease';
+                setTimeout(() => overlay.remove(), 200);
+            }
+        }
+        
+        // =====================================================================
+        // STAKE MORE MODAL
+        // =====================================================================
+        
+        function showStakeMoreModal(validatorAddress, validatorName) {
+            const overview = cosmosStaking ? cosmosStaking.getStakingOverview() : null;
+            const available = overview ? cosmosStaking.formatTics(overview.balance) : '0';
+            
+            const content = `
+                <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+                    <div style="color: #00FFF0; font-weight: 600; margin-bottom: 8px; font-size: 1.1em;">${validatorName}</div>
+                    <div style="color: #64748b; font-size: 0.85em; font-family: monospace; word-break: break-all;">${validatorAddress}</div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="color: #94a3b8; font-size: 0.9em; display: block; margin-bottom: 8px; font-weight: 500;">Сума для делегування (TICS)</label>
+                    <input 
+                        type="number" 
+                        id="stakeAmount" 
+                        placeholder="0.00"
+                        min="0.1"
+                        step="0.1"
+                        style="width: 100%; padding: 14px; background: rgba(15, 23, 42, 0.6); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 10px; color: #fff; font-size: 1.2em; font-weight: 600; text-align: center;"
+                    />
+                    <div style="color: #64748b; font-size: 0.85em; margin-top: 8px; display: flex; justify-content: space-between;">
+                        <span>Мінімум: 0.1 TICS</span>
+                        <span>Доступно: ${parseFloat(available).toFixed(2)} TICS</span>
+                    </div>
+                </div>
+                
+                <div style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 10px; padding: 12px; margin-bottom: 10px;">
+                    <div style="color: #86efac; font-size: 0.85em;">
+                        ✅ Почнете отримувати винагороди одразу після делегування
+                    </div>
+                </div>
+            `;
+            
+            createModal('💎 Делегувати більше', content, async () => {
+                const amount = document.getElementById('stakeAmount').value;
+                
+                if (!amount || isNaN(amount) || parseFloat(amount) < 0.1) {
+                    alert('Мінімальна сума: 0.1 TICS');
+                    return;
+                }
+                
+                closeCustomModal();
+                
+                try {
+                    showDashTxStatus('processing', 'Обробка транзакції...');
+                    const result = await cosmosStaking.delegate(parseFloat(amount), 'Stake more to ' + validatorName);
+                    showDashTxStatus('success', `Успішно! TX: ${result.txHash}`);
+                    
+                    // Refresh dashboard
+                    setTimeout(async () => { await updateDashboardData(); }, 3000);
+                    let refreshCount = 0;
+                    const refreshInterval = setInterval(async () => {
+                        refreshCount++;
+                        await updateDashboardData();
+                        if (refreshCount >= 6) clearInterval(refreshInterval);
+                    }, 5000);
+                } catch (error) {
+                    showDashTxStatus('error', 'Помилка: ' + error.message);
+                }
+            }, 'Делегувати');
+        }
+        
+        // =====================================================================
+        // SWITCH VALIDATOR MODAL (Redelegate)
+        // =====================================================================
+        
+        function showSwitchValidatorModal(fromValidatorAddress, fromValidatorName) {
+            const overview = cosmosStaking ? cosmosStaking.getStakingOverview() : null;
+            
+            // Get current delegation amount
+            let currentAmount = '0';
+            if (overview && overview.delegations) {
+                const delegation = overview.delegations.find(d => d.delegation.validator_address === fromValidatorAddress);
+                if (delegation) {
+                    currentAmount = cosmosStaking.formatTics(delegation.balance.amount);
+                }
+            }
+            
+            // Get list of other validators
+            let validatorOptions = '';
+            if (overview && overview.delegations) {
+                overview.delegations.forEach(del => {
+                    const addr = del.delegation.validator_address;
+                    if (addr !== fromValidatorAddress) {
+                        const name = validatorNamesCache[addr] || addr.substring(0, 20) + '...';
+                        validatorOptions += `<option value="${addr}">${name}</option>`;
+                    }
+                });
+            }
+            
+            // Add QubeNode if not in list
+            const qubenodeAddr = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
+            if (fromValidatorAddress !== qubenodeAddr) {
+                validatorOptions = `<option value="${qubenodeAddr}">QubeNode 🏆</option>` + validatorOptions;
+            }
+            
+            const content = `
+                <div style="background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+                    <div style="color: #a855f7; font-weight: 600; margin-bottom: 8px;">З валідатора:</div>
+                    <div style="color: #c084fc; font-size: 1.1em; font-weight: 700;">${fromValidatorName}</div>
+                    <div style="color: #64748b; font-size: 0.8em; margin-top: 5px;">Делеговано: ${parseFloat(currentAmount).toFixed(2)} TICS</div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="color: #94a3b8; font-size: 0.9em; display: block; margin-bottom: 8px; font-weight: 500;">Кому делегувати:</label>
+                    <select 
+                        id="toValidator" 
+                        style="width: 100%; padding: 14px; background: rgba(15, 23, 42, 0.6); border: 2px solid rgba(168, 85, 247, 0.3); border-radius: 10px; color: #fff; font-size: 1em; font-weight: 600;"
+                    >
+                        ${validatorOptions}
+                    </select>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="color: #94a3b8; font-size: 0.9em; display: block; margin-bottom: 8px; font-weight: 500;">Сума для переведення (TICS)</label>
+                    <input 
+                        type="number" 
+                        id="redelegateAmount" 
+                        placeholder="0.00"
+                        min="0.1"
+                        max="${currentAmount}"
+                        step="0.1"
+                        style="width: 100%; padding: 14px; background: rgba(15, 23, 42, 0.6); border: 2px solid rgba(168, 85, 247, 0.3); border-radius: 10px; color: #fff; font-size: 1.2em; font-weight: 600; text-align: center;"
+                    />
+                    <div style="color: #64748b; font-size: 0.85em; margin-top: 8px;">
+                        Максимум: ${parseFloat(currentAmount).toFixed(2)} TICS
+                    </div>
+                </div>
+                
+                <div style="background: rgba(250, 204, 21, 0.1); border: 1px solid rgba(250, 204, 21, 0.3); border-radius: 10px; padding: 12px;">
+                    <div style="color: #fde047; font-size: 0.85em;">
+                        ⚠️ Ределегування миттєве, але можна робити лише раз на 21 день
+                    </div>
+                </div>
+            `;
+            
+            createModal('🔄 Переключити валідатора', content, async () => {
+                const toAddr = document.getElementById('toValidator').value;
+                const amount = document.getElementById('redelegateAmount').value;
+                
+                if (!amount || isNaN(amount) || parseFloat(amount) < 0.1) {
+                    alert('Мінімальна сума: 0.1 TICS');
+                    return;
+                }
+                
+                if (parseFloat(amount) > parseFloat(currentAmount)) {
+                    alert('Сума перевищує делеговану кількість');
+                    return;
+                }
+                
+                if (!toAddr) {
+                    alert('Оберіть валідатора');
+                    return;
+                }
+                
+                closeCustomModal();
+                
+                try {
+                    showDashTxStatus('processing', 'Обробка транзакції...');
+                    const result = await cosmosStaking.redelegate(
+                        fromValidatorAddress,
+                        toAddr,
+                        parseFloat(amount),
+                        'Redelegate from ' + fromValidatorName
+                    );
+                    showDashTxStatus('success', `Успішно! TX: ${result.txHash}`);
+                    
+                    // Refresh dashboard
+                    setTimeout(async () => { await updateDashboardData(); }, 3000);
+                    let refreshCount = 0;
+                    const refreshInterval = setInterval(async () => {
+                        refreshCount++;
+                        await updateDashboardData();
+                        if (refreshCount >= 6) clearInterval(refreshInterval);
+                    }, 5000);
+                } catch (error) {
+                    showDashTxStatus('error', 'Помилка: ' + error.message);
+                }
+            }, 'Переключити');
+        }
+        
+        // =====================================================================
+        // UNBOND MODAL
+        // =====================================================================
+        
+        function showUnbondModal(validatorAddress, validatorName) {
+            const overview = cosmosStaking ? cosmosStaking.getStakingOverview() : null;
+            
+            // Get current delegation amount
+            let currentAmount = '0';
+            if (overview && overview.delegations) {
+                const delegation = overview.delegations.find(d => d.delegation.validator_address === validatorAddress);
+                if (delegation) {
+                    currentAmount = cosmosStaking.formatTics(delegation.balance.amount);
+                }
+            }
+            
+            const content = `
+                <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+                    <div style="color: #ef4444; font-weight: 600; margin-bottom: 8px; font-size: 1.1em;">${validatorName}</div>
+                    <div style="color: #64748b; font-size: 0.85em;">Делеговано: ${parseFloat(currentAmount).toFixed(2)} TICS</div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="color: #94a3b8; font-size: 0.9em; display: block; margin-bottom: 8px; font-weight: 500;">Сума для розділегування (TICS)</label>
+                    <input 
+                        type="number" 
+                        id="unbondAmount" 
+                        placeholder="0.00"
+                        min="0.1"
+                        max="${currentAmount}"
+                        step="0.1"
+                        style="width: 100%; padding: 14px; background: rgba(15, 23, 42, 0.6); border: 2px solid rgba(239, 68, 68, 0.3); border-radius: 10px; color: #fff; font-size: 1.2em; font-weight: 600; text-align: center;"
+                    />
+                    <div style="color: #64748b; font-size: 0.85em; margin-top: 8px;">
+                        Максимум: ${parseFloat(currentAmount).toFixed(2)} TICS
+                    </div>
+                </div>
+                
+                <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px; padding: 12px;">
+                    <div style="color: #fca5a5; font-size: 0.85em; margin-bottom: 8px;">
+                        ⚠️ <strong>Важливо:</strong> Період очікування - 14 днів
+                    </div>
+                    <div style="color: #64748b; font-size: 0.8em;">
+                        Після розділегування токени будуть недоступні протягом 14 днів. В цей період вони не приносять винагород і не можуть бути переведені.
+                    </div>
+                </div>
+            `;
+            
+            createModal('⛔ Розділегувати', content, async () => {
+                const amount = document.getElementById('unbondAmount').value;
+                
+                if (!amount || isNaN(amount) || parseFloat(amount) < 0.1) {
+                    alert('Мінімальна сума: 0.1 TICS');
+                    return;
+                }
+                
+                if (parseFloat(amount) > parseFloat(currentAmount)) {
+                    alert('Сума перевищує делеговану кількість');
+                    return;
+                }
+                
+                if (!confirm(`Розділегувати ${amount} TICS від ${validatorName}?
+
+Перів очікування: 14 днів`)) {
+                    return;
+                }
+                
+                closeCustomModal();
+                
+                try {
+                    showDashTxStatus('processing', 'Обробка транзакції...');
+                    const result = await cosmosStaking.undelegate(parseFloat(amount), 'Unbond from ' + validatorName);
+                    showDashTxStatus('success', `Успішно! TX: ${result.txHash}. Очікуйте 14 днів.`);
+                    
+                    // Refresh dashboard
+                    setTimeout(async () => { await updateDashboardData(); }, 3000);
+                    let refreshCount = 0;
+                    const refreshInterval = setInterval(async () => {
+                        refreshCount++;
+                        await updateDashboardData();
+                        if (refreshCount >= 6) clearInterval(refreshInterval);
+                    }, 5000);
+                } catch (error) {
+                    showDashTxStatus('error', 'Помилка: ' + error.message);
+                }
+            }, 'Розділегувати');
+        }
+        
+        // =====================================================================
+        // CLAIM REWARDS MODAL
+        // =====================================================================
+        
+        function showClaimRewardsModal() {
+            const overview = cosmosStaking ? cosmosStaking.getStakingOverview() : null;
+            
+            if (!overview || !overview.delegations || overview.delegations.length === 0) {
+                alert('Немає активних делегувань');
+                return;
+            }
+            
+            const totalRewards = overview.totalRewards ? (parseFloat(overview.totalRewards) / 1e18).toFixed(4) : '0.0000';
+            
+            let validatorsList = '';
+            overview.delegations.forEach(del => {
+                const addr = del.delegation.validator_address;
+                const name = validatorNamesCache[addr] || addr.substring(0, 20) + '...';
+                
+                let rewards = '0.0000';
+                if (overview.rewards && overview.rewards.rewards) {
+                    const rewardEntry = overview.rewards.rewards.find(r => r.validator_address === addr);
+                    if (rewardEntry && rewardEntry.reward && rewardEntry.reward.length > 0) {
+                        const ticsReward = rewardEntry.reward.find(r => r.denom === 'tics');
+                        if (ticsReward) {
+                            rewards = (parseFloat(ticsReward.amount) / 1e18).toFixed(4);
+                        }
+                    }
+                }
+                
+                validatorsList += `
+                    <div style="display: flex; justify-content: space-between; padding: 10px; background: rgba(250, 204, 21, 0.05); border-radius: 8px; margin-bottom: 8px;">
+                        <span style="color: #94a3b8; font-size: 0.9em;">${name}</span>
+                        <span style="color: #facc15; font-weight: 600; font-size: 0.9em;">${rewards} TICS</span>
+                    </div>
+                `;
+            });
+            
+            const content = `
+                <div style="background: rgba(250, 204, 21, 0.15); border: 2px solid rgba(250, 204, 21, 0.4); border-radius: 12px; padding: 20px; margin-bottom: 20px; text-align: center;">
+                    <div style="color: #fde047; font-size: 0.9em; margin-bottom: 8px;">Всього винагород:</div>
+                    <div style="color: #facc15; font-size: 2em; font-weight: 700;">${totalRewards} TICS</div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <div style="color: #94a3b8; font-size: 0.9em; margin-bottom: 12px; font-weight: 600;">Винагороди від валідаторів:</div>
+                    ${validatorsList}
+                </div>
+                
+                <div style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 10px; padding: 12px;">
+                    <div style="color: #86efac; font-size: 0.85em;">
+                        ✅ Всі винагороди будуть зібрані в одній транзакції
+                    </div>
+                </div>
+            `;
+            
+            createModal('💰 Забрати винагороди', content, async () => {
+                closeCustomModal();
+                
+                try {
+                    showDashTxStatus('processing', 'Обробка транзакції...');
+                    const result = await cosmosStaking.claimRewards('Claim all rewards');
+                    showDashTxStatus('success', `Всі винагороди зібрано! TX: ${result.txHash}`);
+                    
+                    // Refresh dashboard
+                    setTimeout(async () => { await updateDashboardData(); }, 3000);
+                    let refreshCount = 0;
+                    const refreshInterval = setInterval(async () => {
+                        refreshCount++;
+                        await updateDashboardData();
+                        if (refreshCount >= 6) clearInterval(refreshInterval);
+                    }, 5000);
+                } catch (error) {
+                    showDashTxStatus('error', 'Помилка: ' + error.message);
+                }
+            }, 'Забрати');
+        }
+
         // =====================================================================
         // QUICK ACTION FUNCTIONS FOR VALIDATOR CARDS
         // =====================================================================
         
         function quickStakeMore(validatorAddress) {
-            // Switch to delegate tab
-            showDashTab('delegate');
-            
-            // Wait for modal to appear and pre-fill
-            setTimeout(() => {
-                // Pre-fill validator in the existing delegate modal
-                const validatorNameElem = document.querySelector('#dashTabDelegate.active ~ div .validator-name');
-                if (validatorNameElem) {
-                    validatorNameElem.textContent = validatorNamesCache[validatorAddress] || validatorAddress;
-                }
-                // Focus amount input
-                const amountInput = document.querySelector('input[placeholder*="Amount"]');
-                if (amountInput) amountInput.focus();
-            }, 200);
+            const validatorName = validatorNamesCache[validatorAddress] || validatorAddress.substring(0, 20) + '...';
+            showStakeMoreModal(validatorAddress, validatorName);
         }
         
         function quickSwitchValidator(fromValidatorAddress) {
-            // Switch to redelegate tab
-            showDashTab('redelegate');
-            
-            // Pre-fill the "from" validator with multiple attempts
-            const attempts = [100, 300, 500, 1000];
-            attempts.forEach(delay => {
-                setTimeout(() => {
-                    const fromSelect = document.getElementById('dashRedelegateFrom');
-                    if (fromSelect) {
-                        fromSelect.value = fromValidatorAddress;
-                        // Trigger change event
-                        const event = new Event('change', { bubbles: true });
-                        fromSelect.dispatchEvent(event);
-                    }
-                }, delay);
-            });
+            const validatorName = validatorNamesCache[fromValidatorAddress] || fromValidatorAddress.substring(0, 20) + '...';
+            showSwitchValidatorModal(fromValidatorAddress, validatorName);
         }
         
         function quickUnbond(validatorAddress) {
-            // Switch to undelegate tab
-            showDashTab('undelegate');
-            
-            // Pre-fill validator
-            setTimeout(() => {
-                const validatorSelect = document.getElementById('dashUndelegateFrom');
-                if (validatorSelect) {
-                    validatorSelect.value = validatorAddress;
-                    // Trigger change event
-                    validatorSelect.dispatchEvent(new Event('change', { bubbles: true }));
-                }
-                // Focus amount
-                setTimeout(() => {
-                    const amountInput = document.querySelector('#dash-tab-undelegate input[placeholder*="Amount"]');
-                    if (amountInput) amountInput.focus();
-                }, 100);
-            }, 200);
+            const validatorName = validatorNamesCache[validatorAddress] || validatorAddress.substring(0, 20) + '...';
+            showUnbondModal(validatorAddress, validatorName);
         }
         
         function quickStakeQubeNode() {
-            // Simply open the delegate tab (QubeNode is default)
-            showDashTab('delegate');
-            
-            // Focus amount input
-            setTimeout(() => {
-                const amountInput = document.querySelector('input[placeholder*="Amount"]');
-                if (amountInput) amountInput.focus();
-            }, 200);
+            const qubenodeAddress = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
+            showStakeMoreModal(qubenodeAddress, 'QubeNode 🏆');
         }
         
         function quickClaimAllRewards() {
-            // Switch to claim rewards tab
-            showDashTab('claim');
-            
-            // Auto-trigger claim all
-            setTimeout(() => {
-                const claimButton = document.querySelector('#dash-tab-claim button[onclick*="executeDashClaim"]');
-                if (claimButton) {
-                    // Optionally auto-click or just highlight it
-                    claimButton.style.animation = 'pulse 1s';
-                }
-            }, 200);
+            showClaimRewardsModal();
         }
 
         async function updateDashboardData() {

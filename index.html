@@ -4145,20 +4145,26 @@
                 `;
             }
             
-            // Add other validators
-            overview.delegations.forEach(del => {
-                const addr = del.delegation.validator_address;
-                if (addr !== fromValidatorAddress && addr !== qubenodeAddr) {
-                    const name = validatorNamesCache[addr] || addr.substring(0, 20) + '...';
-                    validatorOptions += `
-                        <div class="validator-option" data-address="${addr}" style="background: rgba(100, 116, 139, 0.1); border: 2px solid rgba(100, 116, 139, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 12px; cursor: pointer; transition: all 0.3s;">
-                            <div style="color: #94a3b8; font-weight: 600; font-size: 1em; margin-bottom: 4px;">${name}</div>
-                            <div style="color: #64748b; font-size: 0.75em; font-family: monospace;">${addr.substring(0, 30)}...</div>
-                            <div style="color: #64748b; font-size: 0.85em; margin-top: 8px;">Commission: 5.00%</div>
-                        </div>
-                    `;
-                }
-            });
+            // Add ALL active validators (not just delegated ones)
+            if (allValidators && allValidators.length > 0) {
+                allValidators.forEach(validator => {
+                    const addr = validator.operator_address;
+                    if (addr !== fromValidatorAddress && addr !== qubenodeAddr) {
+                        const name = validatorNamesCache[addr] || validator.description?.moniker || addr.substring(0, 20) + '...';
+                        const commission = validator.commission?.commission_rates?.rate 
+                            ? (parseFloat(validator.commission.commission_rates.rate) * 100).toFixed(2) 
+                            : '5.00';
+                        
+                        validatorOptions += `
+                            <div class="validator-option" data-address="${addr}" style="background: rgba(100, 116, 139, 0.1); border: 2px solid rgba(100, 116, 139, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 12px; cursor: pointer; transition: all 0.3s;">
+                                <div style="color: #94a3b8; font-weight: 600; font-size: 1em; margin-bottom: 4px;">${name}</div>
+                                <div style="color: #64748b; font-size: 0.75em; font-family: monospace;">${addr.substring(0, 30)}...</div>
+                                <div style="color: #64748b; font-size: 0.85em; margin-top: 8px;">Commission: ${commission}%</div>
+                            </div>
+                        `;
+                    }
+                });
+            }
             
             modal.innerHTML = `
                 <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 2px solid rgba(168, 85, 247, 0.4); border-radius: 20px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);">
@@ -4195,7 +4201,7 @@
                     
                     <div style="background: rgba(250, 204, 21, 0.1); border: 1px solid rgba(250, 204, 21, 0.3); border-radius: 10px; padding: 12px; margin-bottom: 20px;">
                         <div style="color: #fde047; font-size: 0.85em;">
-                            ⚠️ Redelegation is instant but can only be done once every 21 days
+                            ⚠️ Redelegation is instant but can only be done once every 14 days
                         </div>
                     </div>
                     
@@ -4967,35 +4973,45 @@
                 // Check if QubeNode
                 const isQubeNode = valAddress === 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
                 
+                // Badge for QubeNode
+                const badge = isQubeNode ? '<span style="background: linear-gradient(135deg, #FFA500, #FF8C00); color: #000; padding: 4px 10px; border-radius: 6px; font-size: 0.7em; font-weight: 700; margin-left: 8px;">🏆 QubeNode</span>' : '';
+                
                 html += `
-                    <div style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(99, 102, 241, 0.05)); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 12px; padding: 14px;">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                    <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.6), rgba(15, 23, 42, 0.4)); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                             <div style="flex: 1;">
-                                <div style="color: #a855f7; font-weight: 700; font-size: 1em; margin-bottom: 4px;">${validatorName}</div>
-                                <div style="color: #64748b; font-size: 0.75em; font-family: monospace;">${shortAddress}</div>
+                                <div style="color: #a855f7; font-weight: 700; font-size: 1.2em; margin-bottom: 6px; display: flex; align-items: center;">
+                                    ${validatorName}${badge}
+                                </div>
+                                <div style="color: #64748b; font-size: 0.8em; font-family: monospace;">${shortAddress}</div>
                             </div>
                         </div>
                         
-                        <div style="display: flex; gap: 12px; margin-bottom: 10px; flex-wrap: wrap;">
-                            <div style="flex: 1; min-width: 120px; background: rgba(168, 85, 247, 0.1); border-radius: 8px; padding: 8px;">
-                                <div style="color: #94a3b8; font-size: 0.7em; margin-bottom: 2px;">Делеговано</div>
-                                <div style="color: #c084fc; font-size: 1em; font-weight: 700;">${parseFloat(amount).toFixed(2)} TICS</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                            <div style="background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 12px; padding: 14px; text-align: center;">
+                                <div style="color: #c084fc; font-size: 0.75em; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Делеговано</div>
+                                <div style="color: #e9d5ff; font-size: 1.5em; font-weight: 700; line-height: 1;">${parseFloat(amount).toFixed(2)}</div>
+                                <div style="color: #a855f7; font-size: 0.85em; margin-top: 2px;">TICS</div>
                             </div>
-                            <div style="flex: 1; min-width: 120px; background: rgba(250, 204, 21, 0.1); border-radius: 8px; padding: 8px;">
-                                <div style="color: #94a3b8; font-size: 0.7em; margin-bottom: 2px;">Винагороди</div>
-                                <div style="color: #facc15; font-size: 1em; font-weight: 700;">${validatorRewards} TICS</div>
+                            <div style="background: rgba(250, 204, 21, 0.15); border: 1px solid rgba(250, 204, 21, 0.3); border-radius: 12px; padding: 14px; text-align: center;">
+                                <div style="color: #fbbf24; font-size: 0.75em; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Винагороди</div>
+                                <div style="color: #fef3c7; font-size: 1.5em; font-weight: 700; line-height: 1;">${validatorRewards}</div>
+                                <div style="color: #facc15; font-size: 0.85em; margin-top: 2px;">TICS</div>
                             </div>
                         </div>
                         
-                        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                            <button class="btn-stake-more" data-validator="${valAddress}" style="flex: 1; min-width: 100px; padding: 8px 12px; background: rgba(0, 212, 255, 0.15); border: 1px solid rgba(0, 212, 255, 0.4); border-radius: 8px; color: #00D4FF; font-size: 0.85em; font-weight: 600; cursor: pointer;">
-                                Stake more
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                            <button class="btn-stake-more" data-validator="${valAddress}" style="padding: 10px 14px; background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 212, 255, 0.1)); border: 1px solid rgba(0, 212, 255, 0.5); border-radius: 10px; color: #00FFF0; font-size: 0.85em; font-weight: 600; cursor: pointer; transition: all 0.3s; text-align: center;">
+                                <div style="font-size: 1.2em; margin-bottom: 2px;">💎</div>
+                                <div>Stake</div>
                             </button>
-                            <button class="btn-switch-validator" data-validator="${valAddress}" style="flex: 1; min-width: 100px; padding: 8px 12px; background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 8px; color: #a855f7; font-size: 0.85em; font-weight: 600; cursor: pointer;">
-                                Switch Validator
+                            <button class="btn-switch-validator" data-validator="${valAddress}" style="padding: 10px 14px; background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(168, 85, 247, 0.1)); border: 1px solid rgba(168, 85, 247, 0.5); border-radius: 10px; color: #c084fc; font-size: 0.85em; font-weight: 600; cursor: pointer; transition: all 0.3s; text-align: center;">
+                                <div style="font-size: 1.2em; margin-bottom: 2px;">🔄</div>
+                                <div>Switch</div>
                             </button>
-                            <button class="btn-unbond" data-validator="${valAddress}" style="flex: 1; min-width: 100px; padding: 8px 12px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 8px; color: #ef4444; font-size: 0.85em; font-weight: 600; cursor: pointer;">
-                                Unbond
+                            <button class="btn-unbond" data-validator="${valAddress}" style="padding: 10px 14px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1)); border: 1px solid rgba(239, 68, 68, 0.5); border-radius: 10px; color: #f87171; font-size: 0.85em; font-weight: 600; cursor: pointer; transition: all 0.3s; text-align: center;">
+                                <div style="font-size: 1.2em; margin-bottom: 2px;">🔓</div>
+                                <div>Unbond</div>
                             </button>
                         </div>
                     </div>

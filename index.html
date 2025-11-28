@@ -4962,46 +4962,51 @@
                 }
                 
                 // Short address format
-                const shortAddress = valAddress.substring(0, 18) + '...' + valAddress.substring(valAddress.length - 6);
+                const shortAddress = valAddress.substring(0, 16) + '...' + valAddress.substring(valAddress.length - 6);
                 
                 // Check if QubeNode
                 const isQubeNode = valAddress === 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
                 
-                // Color for name
-                const nameColor = isQubeNode ? '#FFA500' : '#FF8C00';
-                const borderColor = isQubeNode ? 'rgba(255, 165, 0, 0.4)' : 'rgba(255, 140, 0, 0.3)';
+                // Unique colors for QubeNode vs others
+                const cardBg = isQubeNode 
+                    ? 'linear-gradient(135deg, rgba(0, 212, 255, 0.08), rgba(168, 85, 247, 0.05))'
+                    : 'linear-gradient(135deg, rgba(100, 116, 139, 0.08), rgba(71, 85, 105, 0.05))';
+                const cardBorder = isQubeNode 
+                    ? 'rgba(0, 212, 255, 0.4)'
+                    : 'rgba(100, 116, 139, 0.3)';
+                const nameColor = isQubeNode ? '#00D4FF' : '#94a3b8';
+                const badge = isQubeNode ? ' <span style="background: linear-gradient(135deg, #00D4FF, #a855f7); padding: 2px 8px; border-radius: 6px; font-size: 0.65em; color: #000; font-weight: 700; margin-left: 6px;">🏆</span>' : '';
                 
                 html += `
-                    <div style="background: rgba(20, 20, 30, 0.6); border: 1px solid ${borderColor}; border-radius: 12px; padding: 16px; margin-bottom: 12px;">
-                        <!-- Header: Name left, Staked right -->
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                    <div style="background: ${cardBg}; border: 1px solid ${cardBorder}; border-radius: 14px; padding: 18px; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);">
+                        <!-- Header row -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
                             <div style="flex: 1;">
-                                <div style="color: ${nameColor}; font-weight: 700; font-size: 1.1em; margin-bottom: 4px;">${validatorName}</div>
-                                <div style="color: #6b7280; font-size: 0.75em; font-family: monospace;">${shortAddress}</div>
+                                <div style="color: ${nameColor}; font-weight: 700; font-size: 1.15em; margin-bottom: 5px;">${validatorName}${badge}</div>
+                                <div style="color: #64748b; font-size: 0.8em; font-family: monospace;">${shortAddress}</div>
                             </div>
                             <div style="text-align: right;">
-                                <div style="color: #10b981; font-size: 1.3em; font-weight: 700; line-height: 1;">${parseFloat(amount).toFixed(4)}</div>
-                                <div style="color: #10b981; font-size: 0.75em; margin-top: 2px;">TICS</div>
-                                <div style="color: #6b7280; font-size: 0.7em; margin-top: 2px;">Staked</div>
+                                <div style="color: #c084fc; font-size: 1.4em; font-weight: 700; line-height: 1;">${parseFloat(amount).toFixed(4)}</div>
+                                <div style="color: #a855f7; font-size: 0.75em; margin-top: 3px; font-weight: 600;">TICS Staked</div>
                             </div>
                         </div>
                         
-                        <!-- Pending Rewards row -->
-                        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; padding: 10px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
-                            <div style="color: #9ca3af; font-size: 0.85em;">Pending Rewards</div>
-                            <div style="color: #10b981; font-size: 1.1em; font-weight: 700;">${validatorRewards} TICS</div>
+                        <!-- Rewards row -->
+                        <div style="background: linear-gradient(90deg, rgba(250, 204, 21, 0.12), rgba(250, 204, 21, 0.06)); border-left: 3px solid #facc15; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
+                            <div style="color: #fbbf24; font-size: 0.9em; font-weight: 600;">💰 Pending Rewards</div>
+                            <div style="color: #fde047; font-size: 1.05em; font-weight: 700;">${validatorRewards} TICS</div>
                         </div>
                         
-                        <!-- Buttons row -->
-                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-                            <button class="btn-stake-more" data-validator="${valAddress}" style="padding: 10px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 8px; color: #10b981; font-size: 0.9em; font-weight: 600; cursor: pointer; transition: all 0.2s;">
-                                Stake More
+                        <!-- Buttons -->
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                            <button class="btn-stake-more" data-validator="${valAddress}" style="padding: 11px; background: linear-gradient(135deg, rgba(0, 212, 255, 0.18), rgba(0, 212, 255, 0.08)); border: 1px solid rgba(0, 212, 255, 0.5); border-radius: 9px; color: #00FFF0; font-size: 0.88em; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                                💎 Stake More
                             </button>
-                            <button class="btn-switch-validator" data-validator="${valAddress}" style="padding: 10px; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 8px; color: #f59e0b; font-size: 0.9em; font-weight: 600; cursor: pointer; transition: all 0.2s;">
-                                Switch Validator
+                            <button class="btn-switch-validator" data-validator="${valAddress}" style="padding: 11px; background: linear-gradient(135deg, rgba(168, 85, 247, 0.18), rgba(168, 85, 247, 0.08)); border: 1px solid rgba(168, 85, 247, 0.5); border-radius: 9px; color: #c084fc; font-size: 0.88em; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                                🔄 Switch
                             </button>
-                            <button class="btn-unbond" data-validator="${valAddress}" style="padding: 10px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 8px; color: #ef4444; font-size: 0.9em; font-weight: 600; cursor: pointer; transition: all 0.2s;">
-                                Unstake
+                            <button class="btn-unbond" data-validator="${valAddress}" style="padding: 11px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.18), rgba(239, 68, 68, 0.08)); border: 1px solid rgba(239, 68, 68, 0.5); border-radius: 9px; color: #f87171; font-size: 0.88em; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                                🔓 Unbond
                             </button>
                         </div>
                     </div>

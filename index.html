@@ -5605,5 +5605,20 @@
     <script src="staking-service.js"></script>
     <script src="cosmos-staking.js"></script>
     <script src="sync.js"></script>
+
+    <script>
+    // TEST: Verify functions are loaded
+    console.log('🔧 Testing function definitions...');
+    console.log('quickStakeMore type:', typeof window.quickStakeMore);
+    console.log('quickStakeQubeNode type:', typeof window.quickStakeQubeNode);
+    console.log('quickClaimAllRewards type:', typeof window.quickClaimAllRewards);
+    
+    if (typeof window.quickStakeQubeNode === 'function') {
+        console.log('✅ Functions are loaded correctly!');
+    } else {
+        console.error('❌ Functions are NOT loaded!');
+    }
+    </script>
+
 </body>
 </html>

@@ -3093,11 +3093,11 @@
                             <span>Швидкі дії</span>
                         </h4>
                         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                            <button onclick="quickStakeQubeNode()" style="flex: 1; min-width: 200px; padding: 14px 20px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border: none; border-radius: 10px; color: #000; font-size: 1em; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                            <button id="btnQuickStakeQubeNode" style="flex: 1; min-width: 200px; padding: 14px 20px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border: none; border-radius: 10px; color: #000; font-size: 1em; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;">
                                 <span style="font-size: 1.2em;">🚀</span>
                                 <span>Делегувати на QubeNode</span>
                             </button>
-                            <button onclick="quickClaimAllRewards()" style="flex: 1; min-width: 200px; padding: 14px 20px; background: rgba(250, 204, 21, 0.15); border: 2px solid rgba(250, 204, 21, 0.4); border-radius: 10px; color: #facc15; font-size: 1em; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                            <button id="btnQuickClaimAllRewards" style="flex: 1; min-width: 200px; padding: 14px 20px; background: rgba(250, 204, 21, 0.15); border: 2px solid rgba(250, 204, 21, 0.4); border-radius: 10px; color: #facc15; font-size: 1em; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;">
                                 <span style="font-size: 1.2em;">💰</span>
                                 <span>Забрати всі винагороди (<span id="dashClaimableRewards">0.00</span> TICS)</span>
                             </button>
@@ -4976,13 +4976,13 @@
                         </div>
                         
                         <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                            <button onclick="quickStakeMore('${valAddress}')" style="flex: 1; min-width: 100px; padding: 8px 12px; background: rgba(0, 212, 255, 0.15); border: 1px solid rgba(0, 212, 255, 0.4); border-radius: 8px; color: #00D4FF; font-size: 0.85em; font-weight: 600; cursor: pointer;">
+                            <button class="btn-stake-more" data-validator="${valAddress}" style="flex: 1; min-width: 100px; padding: 8px 12px; background: rgba(0, 212, 255, 0.15); border: 1px solid rgba(0, 212, 255, 0.4); border-radius: 8px; color: #00D4FF; font-size: 0.85em; font-weight: 600; cursor: pointer;">
                                 Stake more
                             </button>
-                            <button onclick="quickSwitchValidator('${valAddress}')" style="flex: 1; min-width: 100px; padding: 8px 12px; background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 8px; color: #a855f7; font-size: 0.85em; font-weight: 600; cursor: pointer;">
+                            <button class="btn-switch-validator" data-validator="${valAddress}" style="flex: 1; min-width: 100px; padding: 8px 12px; background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 8px; color: #a855f7; font-size: 0.85em; font-weight: 600; cursor: pointer;">
                                 Switch Validator
                             </button>
-                            <button onclick="quickUnbond('${valAddress}')" style="flex: 1; min-width: 100px; padding: 8px 12px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 8px; color: #ef4444; font-size: 0.85em; font-weight: 600; cursor: pointer;">
+                            <button class="btn-unbond" data-validator="${valAddress}" style="flex: 1; min-width: 100px; padding: 8px 12px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 8px; color: #ef4444; font-size: 0.85em; font-weight: 600; cursor: pointer;">
                                 Unbond
                             </button>
                         </div>
@@ -4992,6 +4992,31 @@
             
             html += '</div>';
             container.innerHTML = html;
+            
+            // Attach event listeners to delegation card buttons using event delegation
+            document.querySelectorAll('.btn-stake-more').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const validator = this.getAttribute('data-validator');
+                    console.log('🚀 Stake more clicked for:', validator);
+                    window.quickStakeMore(validator);
+                });
+            });
+            
+            document.querySelectorAll('.btn-switch-validator').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const validator = this.getAttribute('data-validator');
+                    console.log('🔄 Switch validator clicked for:', validator);
+                    window.quickSwitchValidator(validator);
+                });
+            });
+            
+            document.querySelectorAll('.btn-unbond').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const validator = this.getAttribute('data-validator');
+                    console.log('🔓 Unbond clicked for:', validator);
+                    window.quickUnbond(validator);
+                });
+            });
             
             // Update redelegate dropdowns
             updateRedelegateDropdowns(overview);
@@ -5615,6 +5640,26 @@
     
     if (typeof window.quickStakeQubeNode === 'function') {
         console.log('✅ Functions are loaded correctly!');
+        
+        // Attach event listeners to upper quick actions buttons
+        const btnQuickStakeQubeNode = document.getElementById('btnQuickStakeQubeNode');
+        const btnQuickClaimAllRewards = document.getElementById('btnQuickClaimAllRewards');
+        
+        if (btnQuickStakeQubeNode) {
+            btnQuickStakeQubeNode.addEventListener('click', function() {
+                console.log('🚀 Quick Stake QubeNode clicked!');
+                window.quickStakeQubeNode();
+            });
+            console.log('✅ btnQuickStakeQubeNode listener attached');
+        }
+        
+        if (btnQuickClaimAllRewards) {
+            btnQuickClaimAllRewards.addEventListener('click', function() {
+                console.log('💰 Quick Claim All Rewards clicked!');
+                window.quickClaimAllRewards();
+            });
+            console.log('✅ btnQuickClaimAllRewards listener attached');
+        }
     } else {
         console.error('❌ Functions are NOT loaded!');
     }

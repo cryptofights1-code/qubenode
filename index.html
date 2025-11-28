@@ -4153,34 +4153,6 @@
             }
         }
 
-        // =====================================================================
-        // QUICK ACTION FUNCTIONS FOR VALIDATOR CARDS
-        // =====================================================================
-        
-        function quickStakeMore(validatorAddress) {
-            const validatorName = validatorNamesCache[validatorAddress] || validatorAddress.substring(0, 20) + '...';
-            showStakeMoreModal(validatorAddress, validatorName);
-        }
-        
-        function quickSwitchValidator(fromValidatorAddress) {
-            const validatorName = validatorNamesCache[fromValidatorAddress] || fromValidatorAddress.substring(0, 20) + '...';
-            showSwitchValidatorModal(fromValidatorAddress, validatorName);
-        }
-        
-        function quickUnbond(validatorAddress) {
-            const validatorName = validatorNamesCache[validatorAddress] || validatorAddress.substring(0, 20) + '...';
-            showUnbondModal(validatorAddress, validatorName);
-        }
-        
-        function quickStakeQubeNode() {
-            const qubenodeAddress = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
-            showStakeMoreModal(qubenodeAddress, 'QubeNode 🏆');
-        }
-        
-        function quickClaimAllRewards() {
-            showClaimRewardsModal();
-        }
-
         async function updateDashboardData() {
             try {
                 const overview = await cosmosStaking.refresh();

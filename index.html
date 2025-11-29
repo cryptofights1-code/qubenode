@@ -1232,6 +1232,19 @@
             }
         }
 
+        /* Mobile Connect Wallet Button Hover */
+        #mobileConnectWallet:hover {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.25), rgba(0, 212, 255, 0.1)) !important;
+            border-color: rgba(0, 212, 255, 0.6) !important;
+            box-shadow: 0 4px 12px rgba(0, 212, 255, 0.4) !important;
+            transform: translateX(-50%) translateY(-2px) !important;
+        }
+
+        #mobileConnectWallet:active {
+            transform: translateX(-50%) translateY(0px) !important;
+            box-shadow: 0 2px 6px rgba(0, 212, 255, 0.3) !important;
+        }
+
         @media (max-width: 768px) {
             .hamburger {
                 display: flex !important;
@@ -1256,6 +1269,12 @@
 
             .fixed-mobile-contacts {
                 display: flex !important;
+            }
+
+            #mobileConnectWallet {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
             }
 
             .container {
@@ -2026,6 +2045,69 @@
                 grid-template-columns: 1fr !important;
                 gap: 15px !important;
             }
+
+            /* 📱 MOBILE DASHBOARD OPTIMIZATION 📱 */
+            
+            /* Dashboard stats cards - 2 columns */
+            #dashboardModal .modal-body > div > div[style*="grid-template-columns"] {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 12px !important;
+            }
+            
+            /* Dashboard stats individual cards - smaller padding */
+            #dashboardModal .modal-body > div > div[style*="grid-template-columns"] > div {
+                padding: 12px !important;
+            }
+            
+            #dashboardModal .modal-body > div > div[style*="grid-template-columns"] > div > div:first-child {
+                font-size: 0.7em !important;
+            }
+            
+            #dashboardModal .modal-body > div > div[style*="grid-template-columns"] > div > div:nth-child(2) {
+                font-size: 1.3em !important;
+            }
+            
+            #dashboardModal .modal-body > div > div[style*="grid-template-columns"] > div > div:last-child {
+                font-size: 0.75em !important;
+            }
+            
+            /* Forecast cards - 2 columns */
+            #dashRewardsForecast > div {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 10px !important;
+            }
+            
+            #dashRewardsForecast > div > div {
+                padding: 10px !important;
+            }
+            
+            #dashRewardsForecast > div > div > div:first-child {
+                font-size: 0.7em !important;
+            }
+            
+            #dashRewardsForecast > div > div > div:last-child {
+                font-size: 1em !important;
+            }
+            
+            /* Validator delegation cards - buttons in ONE row */
+            #dashDelegationsList > div > div > div:last-child {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 6px !important;
+            }
+            
+            #dashDelegationsList button {
+                padding: 10px 6px !important;
+                font-size: 0.75em !important;
+            }
+            
+            /* Quick Actions buttons - stack on mobile if needed */
+            #dashboardModal div[style*="Швидкі дії"] + div {
+                flex-direction: column !important;
+            }
+            
+            #dashboardModal div[style*="Швидкі дії"] + div button {
+                min-width: 100% !important;
+            }
         }
 
         /* Максимальний пріоритет для фіксації іконок */
@@ -2172,6 +2254,12 @@
             #compoundComparison > div:first-child > div > div:nth-child(2) {
                 font-size: 1.1em !important;
             }
+
+            /* Mobile Connect Wallet button - smaller on tiny screens */
+            #mobileConnectWallet {
+                padding: 10px 16px !important;
+                font-size: 0.75em !important;
+            }
         }
     </style>
     
@@ -2274,6 +2362,11 @@
             <span style="display: block !important; width: 30px !important; height: 3.5px !important; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important; border-radius: 2px !important;"></span>
             <span style="display: block !important; width: 30px !important; height: 3.5px !important; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important; border-radius: 2px !important;"></span>
         </label>
+
+        <!-- Connect Wallet Button - ЦЕНТР (між hamburger і telegram) -->
+        <button id="mobileConnectWallet" onclick="openModal('connectModal')" style="position: absolute !important; top: 20px !important; left: 50% !important; transform: translateX(-50%) !important; pointer-events: auto !important; display: none !important; padding: 12px 20px !important; background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(0, 212, 255, 0.05)) !important; border: 2px solid rgba(0, 212, 255, 0.4) !important; border-radius: 25px !important; color: #00D4FF !important; font-size: 0.85em !important; font-weight: 700 !important; white-space: nowrap !important; cursor: pointer !important; z-index: 1000000 !important; box-shadow: 0 2px 8px rgba(0, 212, 255, 0.3) !important; transition: all 0.3s ease !important;">
+            💎 Підключити
+        </button>
 
         <!-- Fixed Mobile Контакти Icons - СПРАВА ГОРИЗОНТАЛЬНО -->
         <div class="fixed-mobile-contacts" style="position: absolute !important; top: 20px !important; right: 20px !important; display: flex !important; flex-direction: row !important; gap: 15px !important; pointer-events: auto !important; z-index: 1000000 !important;">

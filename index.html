@@ -1277,6 +1277,12 @@
                 justify-content: center !important;
             }
 
+            /* Hide blue background animation on mobile */
+            .bg-animation,
+            .grid-overlay {
+                display: none !important;
+            }
+
             .container {
                 position: relative;
                 z-index: 1;
@@ -2052,7 +2058,18 @@
             #dashboardModal .modal-content {
                 width: 98% !important;
                 max-width: 98% !important;
-                padding: 15px !important;
+                padding: 8px !important;  /* Було: 15px */
+            }
+            
+            /* Dashboard modal body - reduce padding */
+            #dashboardModal .modal-body {
+                padding: 10px !important;  /* Було: 25px 20px */
+            }
+            
+            /* Reduce all section paddings inside dashboard */
+            #dashboardModal .modal-body > div > div {
+                padding: 12px !important;  /* Було: 18px */
+                margin-bottom: 12px !important;  /* Було: 20px */
             }
             
             /* Dashboard stats cards - 2 columns */
@@ -2127,9 +2144,9 @@
             #customSwitchModal > div,
             #customUnbondModal > div,
             #customClaimModal > div {
-                width: 96% !important;
-                max-width: 96% !important;
-                padding: 20px !important;
+                width: 98% !important;  /* Було: 96% */
+                max-width: 98% !important;
+                padding: 15px !important;  /* Було: 20px */
             }
         }
 

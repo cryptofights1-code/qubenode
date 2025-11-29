@@ -745,24 +745,29 @@
     </div>
 
     
+    
     <script>
         // ============ CONFIGURATION ============
         const CHAIN_ID = 'qubetics_9030-1';
         const RPC_URL = 'https://rpc.qubetics.com';
         const REST_URL = 'https://api.qubetics.com';
-        const VALIDATOR_ADDRESS = 'qubevaloper1eqkv0a5nxzk4z3h3nj6m3y8l0k9g2f5d4c3b2a';
-        const QUBENODE_OPERATOR = 'qubevaloper10lmgzhtyjp7mhgp0t4r7qrmrk93vlpfvdmrz78';
+        const DENOM = 'aunit';
+        const QUBENODE_VALIDATOR = 'qubevaloper10lmgzhtyjp7mhgp0t4r7qrmrk93vlpfvdmrz78';
         
         // ============ GLOBAL STATE ============
-        let connectedWallet = null;
+        let keplr = null;
+        let offlineSigner = null;
         let userAddress = null;
+        let walletType = null;
         let allDelegations = [];
         let allUnbonding = [];
         
         // ============ UTILITY FUNCTIONS ============
         function formatNumber(num) {
             if (!num) return '0.00';
-            return parseFloat(num).toLocaleString('uk-UA', {
+            const n = parseFloat(num);
+            if (isNaN(n)) return '0.00';
+            return n.toLocaleString('uk-UA', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             });
@@ -785,7 +790,6 @@
             document.getElementById(modalId).style.display = 'none';
         }
         
-        // Close modal on outside click
         window.onclick = function(event) {
             if (event.target.classList.contains('modal')) {
                 event.target.style.display = 'none';
@@ -793,27 +797,50 @@
         }
         
         // ============ WALLET CONNECTION ============
-        async function checkWalletConnection() {
-            // Check if wallet already connected in main page
+        async function connectToWallet() {
             const urlParams = new URLSearchParams(window.location.search);
-            const wallet = urlParams.get('wallet');
+            walletType = urlParams.get('wallet');
             const address = urlParams.get('address');
             
-            if (wallet && address) {
-                connectedWallet = wallet;
-                userAddress = address;
-                document.getElementById('walletAddress').textContent = address;
-                await loadDashboardData();
-            } else {
-                // Redirect to main page to connect wallet
-                alert('Будь ласка, підключіть гаманець на головній сторінці');
-                window.location.href = 'index.html';
+            if (!walletType || !address) {
+                alert('Будь ласка, підключіть гаманець на сторінці "Стати делегатором"');
+                window.location.href = 'how-to-delegate.html';
+                return false;
+            }
+            
+            try {
+                if (walletType === 'keplr') {
+                    if (!window.keplr) {
+                        throw new Error('Keplr не знайдено');
+                    }
+                    await window.keplr.enable(CHAIN_ID);
+                    keplr = window.keplr;
+                    offlineSigner = window.keplr.getOfflineSigner(CHAIN_ID);
+                } else if (walletType === 'cosmostation') {
+                    if (!window.cosmostation) {
+                        throw new Error('Cosmostation не знайдено');
+                    }
+                    const provider = window.cosmostation.providers.keplr;
+                    await provider.enable(CHAIN_ID);
+                    keplr = provider;
+                    offlineSigner = provider.getOfflineSigner(CHAIN_ID);
+                }
+                
+                const accounts = await offlineSigner.getAccounts();
+                userAddress = accounts[0].address;
+                
+                document.getElementById('walletAddress').textContent = userAddress;
+                
+                return true;
+            } catch (error) {
+                console.error('Wallet connection error:', error);
+                alert('Помилка підключення гаманця: ' + error.message);
+                window.location.href = 'how-to-delegate.html';
+                return false;
             }
         }
         
         function disconnectWallet() {
-            connectedWallet = null;
-            userAddress = null;
             window.location.href = 'index.html';
         }
         
@@ -838,14 +865,13 @@
                 const response = await fetch(`${REST_URL}/cosmos/bank/v1beta1/balances/${userAddress}`);
                 const data = await response.json();
                 
-                const ticsBalance = data.balances?.find(b => b.denom === 'aunit');
+                const ticsBalance = data.balances?.find(b => b.denom === DENOM);
                 const balance = ticsBalance ? fromMicroTics(ticsBalance.amount) : 0;
                 
                 document.getElementById('dashBalance').textContent = formatNumber(balance);
                 document.getElementById('availableBalance').textContent = formatNumber(balance);
             } catch (error) {
                 console.error('Error loading balance:', error);
-                document.getElementById('dashBalance').textContent = '0.00';
             }
         }
         
@@ -866,7 +892,6 @@
                 renderDelegations();
             } catch (error) {
                 console.error('Error loading delegations:', error);
-                document.getElementById('dashDelegated').textContent = '0.00';
             }
         }
         
@@ -877,14 +902,13 @@
                 
                 let totalRewards = 0;
                 if (data.total && data.total.length > 0) {
-                    const ticsReward = data.total.find(r => r.denom === 'aunit');
+                    const ticsReward = data.total.find(r => r.denom === DENOM);
                     totalRewards = ticsReward ? fromMicroTics(ticsReward.amount) : 0;
                 }
                 
                 document.getElementById('dashRewards').textContent = formatNumber(totalRewards);
             } catch (error) {
                 console.error('Error loading rewards:', error);
-                document.getElementById('dashRewards').textContent = '0.00';
             }
         }
         
@@ -910,10 +934,10 @@
                 }
             } catch (error) {
                 console.error('Error loading unbonding:', error);
-                document.getElementById('dashUnbonding').textContent = '0.00';
             }
         }
         
+        // ============ RENDERING ============
         function renderDelegations() {
             const container = document.getElementById('delegationsList');
             
@@ -925,7 +949,8 @@
             container.innerHTML = allDelegations.map(del => {
                 const amount = fromMicroTics(del.balance.amount);
                 const validatorAddr = del.delegation.validator_address;
-                const validatorName = validatorAddr.substring(0, 20) + '...';
+                const isQubeNode = validatorAddr === QUBENODE_VALIDATOR;
+                const validatorName = isQubeNode ? 'QubeNode ⭐' : validatorAddr.substring(0, 20) + '...';
                 
                 return `
                     <div class="delegation-item">
@@ -962,7 +987,8 @@
             let html = '';
             allUnbonding.forEach(unbond => {
                 const validatorAddr = unbond.validator_address;
-                const validatorName = validatorAddr.substring(0, 20) + '...';
+                const isQubeNode = validatorAddr === QUBENODE_VALIDATOR;
+                const validatorName = isQubeNode ? 'QubeNode ⭐' : validatorAddr.substring(0, 20) + '...';
                 
                 unbond.entries.forEach(entry => {
                     const amount = fromMicroTics(entry.balance);
@@ -1004,8 +1030,8 @@
             const delegatedText = document.getElementById('dashDelegated').textContent;
             const delegated = parseFloat(delegatedText.replace(/,/g, '')) || 0;
             
-            const APY = 0.30; // 30%
-            const COMMISSION = 0.05; // 5%
+            const APY = 0.30;
+            const COMMISSION = 0.05;
             const NET_APY = APY * (1 - COMMISSION);
             
             const daily = delegated * (NET_APY / 365);
@@ -1024,41 +1050,47 @@
             openModal('delegateModal');
         }
         
+        function openStakeMore(validatorAddr, currentAmount) {
+            // Same as delegate but to specific validator
+            openModal('delegateModal');
+        }
+        
         function openUnbondModal(validatorAddr, currentAmount) {
             document.getElementById('unbondValidator').value = validatorAddr;
             document.getElementById('unbondAvailable').textContent = formatNumber(currentAmount);
             openModal('unbondModal');
         }
         
-        function openClaimModal(validatorAddr) {
-            // Load rewards for this validator
-            fetch(`${REST_URL}/cosmos/distribution/v1beta1/delegators/${userAddress}/rewards/${validatorAddr}`)
-                .then(res => res.json())
-                .then(data => {
-                    let rewards = 0;
-                    if (data.rewards && data.rewards.length > 0) {
-                        const ticsReward = data.rewards.find(r => r.denom === 'aunit');
-                        rewards = ticsReward ? fromMicroTics(ticsReward.amount) : 0;
-                    }
-                    
-                    document.getElementById('claimValidator').textContent = validatorAddr.substring(0, 20) + '...';
-                    document.getElementById('claimAmount').textContent = formatNumber(rewards);
-                    document.getElementById('claimModal').setAttribute('data-validator', validatorAddr);
-                    
-                    openModal('claimModal');
-                })
-                .catch(err => {
-                    console.error('Error loading rewards:', err);
-                    alert('Помилка завантаження винагород');
-                });
+        async function openClaimModal(validatorAddr) {
+            try {
+                const response = await fetch(`${REST_URL}/cosmos/distribution/v1beta1/delegators/${userAddress}/rewards/${validatorAddr}`);
+                const data = await response.json();
+                
+                let rewards = 0;
+                if (data.rewards && data.rewards.length > 0) {
+                    const ticsReward = data.rewards.find(r => r.denom === DENOM);
+                    rewards = ticsReward ? fromMicroTics(ticsReward.amount) : 0;
+                }
+                
+                const isQubeNode = validatorAddr === QUBENODE_VALIDATOR;
+                const validatorName = isQubeNode ? 'QubeNode ⭐' : validatorAddr.substring(0, 20) + '...';
+                
+                document.getElementById('claimValidator').textContent = validatorName;
+                document.getElementById('claimAmount').textContent = formatNumber(rewards);
+                document.getElementById('claimModal').setAttribute('data-validator', validatorAddr);
+                
+                openModal('claimModal');
+            } catch (error) {
+                console.error('Error loading rewards:', error);
+                alert('Помилка завантаження винагород');
+            }
         }
         
-        function openRedelegateModal(validatorAddr, currentAmount) {
+        async function openRedelegateModal(validatorAddr, currentAmount) {
             document.getElementById('redelegateFrom').value = validatorAddr;
             document.getElementById('redelegateAvailable').textContent = formatNumber(currentAmount);
             
-            // Load validators list
-            loadValidatorsList();
+            await loadValidatorsList();
             
             openModal('redelegateModal');
         }
@@ -1080,7 +1112,7 @@
             }
         }
         
-        // ============ TRANSACTION FUNCTIONS ============
+        // ============ TRANSACTIONS ============
         async function executeDelegation() {
             const amount = document.getElementById('delegateAmount').value;
             
@@ -1090,17 +1122,32 @@
             }
             
             try {
-                if (!window.keplr && !window.cosmostation) {
-                    alert('Гаманець не знайдено. Підключіть Keplr або Cosmostation');
-                    return;
+                const msg = {
+                    typeUrl: '/cosmos.staking.v1beta1.MsgDelegate',
+                    value: {
+                        delegatorAddress: userAddress,
+                        validatorAddress: QUBENODE_VALIDATOR,
+                        amount: {
+                            denom: DENOM,
+                            amount: toMicroTics(amount)
+                        }
+                    }
+                };
+                
+                const fee = {
+                    amount: [{ denom: DENOM, amount: '5000' }],
+                    gas: '200000'
+                };
+                
+                const result = await signAndBroadcast([msg], fee, 'Делегування до QubeNode');
+                
+                if (result.code === 0) {
+                    alert('✅ Делегування успішне!');
+                    closeModal('delegateModal');
+                    await loadDashboardData();
+                } else {
+                    throw new Error(result.rawLog || 'Transaction failed');
                 }
-                
-                // TODO: Implement actual transaction via Keplr/Cosmostation
-                alert('Функція делегування в розробці. Використовуйте головну сторінку для делегування.');
-                closeModal('delegateModal');
-                
-                // Refresh data
-                await loadDashboardData();
             } catch (error) {
                 console.error('Delegation error:', error);
                 alert('Помилка делегування: ' + error.message);
@@ -1117,10 +1164,32 @@
             }
             
             try {
-                alert('Функція unbond в розробці. Використовуйте головну сторінку.');
-                closeModal('unbondModal');
+                const msg = {
+                    typeUrl: '/cosmos.staking.v1beta1.MsgUndelegate',
+                    value: {
+                        delegatorAddress: userAddress,
+                        validatorAddress: validator,
+                        amount: {
+                            denom: DENOM,
+                            amount: toMicroTics(amount)
+                        }
+                    }
+                };
                 
-                await loadDashboardData();
+                const fee = {
+                    amount: [{ denom: DENOM, amount: '5000' }],
+                    gas: '200000'
+                };
+                
+                const result = await signAndBroadcast([msg], fee, 'Unbond');
+                
+                if (result.code === 0) {
+                    alert('✅ Unbond успішний! Токени будуть доступні через 14 днів');
+                    closeModal('unbondModal');
+                    await loadDashboardData();
+                } else {
+                    throw new Error(result.rawLog || 'Transaction failed');
+                }
             } catch (error) {
                 console.error('Unbond error:', error);
                 alert('Помилка unbond: ' + error.message);
@@ -1131,10 +1200,28 @@
             const validator = document.getElementById('claimModal').getAttribute('data-validator');
             
             try {
-                alert('Функція claim в розробці. Використовуйте головну сторінку.');
-                closeModal('claimModal');
+                const msg = {
+                    typeUrl: '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward',
+                    value: {
+                        delegatorAddress: userAddress,
+                        validatorAddress: validator
+                    }
+                };
                 
-                await loadDashboardData();
+                const fee = {
+                    amount: [{ denom: DENOM, amount: '5000' }],
+                    gas: '200000'
+                };
+                
+                const result = await signAndBroadcast([msg], fee, 'Claim Rewards');
+                
+                if (result.code === 0) {
+                    alert('✅ Винагороди зібрано успішно!');
+                    closeModal('claimModal');
+                    await loadDashboardData();
+                } else {
+                    throw new Error(result.rawLog || 'Transaction failed');
+                }
             } catch (error) {
                 console.error('Claim error:', error);
                 alert('Помилка claim: ' + error.message);
@@ -1143,9 +1230,43 @@
         
         async function claimAllRewards() {
             try {
-                alert('Функція claim всіх винагород в розробці. Використовуйте головну сторінку.');
+                // Get all validators with rewards
+                const response = await fetch(`${REST_URL}/cosmos/distribution/v1beta1/delegators/${userAddress}/rewards`);
+                const data = await response.json();
                 
-                await loadDashboardData();
+                if (!data.rewards || data.rewards.length === 0) {
+                    alert('Немає винагород для збору');
+                    return;
+                }
+                
+                const msgs = data.rewards
+                    .filter(r => r.reward && r.reward.length > 0)
+                    .map(r => ({
+                        typeUrl: '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward',
+                        value: {
+                            delegatorAddress: userAddress,
+                            validatorAddress: r.validator_address
+                        }
+                    }));
+                
+                if (msgs.length === 0) {
+                    alert('Немає винагород для збору');
+                    return;
+                }
+                
+                const fee = {
+                    amount: [{ denom: DENOM, amount: String(5000 * msgs.length) }],
+                    gas: String(200000 * msgs.length)
+                };
+                
+                const result = await signAndBroadcast(msgs, fee, 'Claim All Rewards');
+                
+                if (result.code === 0) {
+                    alert(`✅ Зібрано винагороди з ${msgs.length} валідаторів!`);
+                    await loadDashboardData();
+                } else {
+                    throw new Error(result.rawLog || 'Transaction failed');
+                }
             } catch (error) {
                 console.error('Claim all error:', error);
                 alert('Помилка: ' + error.message);
@@ -1168,10 +1289,33 @@
             }
             
             try {
-                alert('Функція ределегування в розробці. Використовуйте головну сторінку.');
-                closeModal('redelegateModal');
+                const msg = {
+                    typeUrl: '/cosmos.staking.v1beta1.MsgBeginRedelegate',
+                    value: {
+                        delegatorAddress: userAddress,
+                        validatorSrcAddress: fromValidator,
+                        validatorDstAddress: toValidator,
+                        amount: {
+                            denom: DENOM,
+                            amount: toMicroTics(amount)
+                        }
+                    }
+                };
                 
-                await loadDashboardData();
+                const fee = {
+                    amount: [{ denom: DENOM, amount: '5000' }],
+                    gas: '200000'
+                };
+                
+                const result = await signAndBroadcast([msg], fee, 'Redelegate');
+                
+                if (result.code === 0) {
+                    alert('✅ Ределегування успішне!');
+                    closeModal('redelegateModal');
+                    await loadDashboardData();
+                } else {
+                    throw new Error(result.rawLog || 'Transaction failed');
+                }
             } catch (error) {
                 console.error('Redelegate error:', error);
                 alert('Помилка ределегування: ' + error.message);
@@ -1180,18 +1324,40 @@
         
         async function cancelUnbonding(validator, creationHeight) {
             try {
-                alert('Функція скасування unbonding в розробці. Використовуйте головну сторінку.');
-                
-                await loadDashboardData();
+                alert('Функція скасування unbonding в розробці');
             } catch (error) {
                 console.error('Cancel unbonding error:', error);
                 alert('Помилка: ' + error.message);
             }
         }
         
+        // ============ SIGN AND BROADCAST ============
+        async function signAndBroadcast(messages, fee, memo = '') {
+            try {
+                // Use Keplr's signAndBroadcast
+                const chainId = CHAIN_ID;
+                
+                const result = await keplr.signAndBroadcast(
+                    chainId,
+                    userAddress,
+                    messages,
+                    fee,
+                    memo
+                );
+                
+                return result;
+            } catch (error) {
+                console.error('Sign and broadcast error:', error);
+                throw error;
+            }
+        }
+        
         // ============ INITIALIZATION ============
-        window.addEventListener('load', () => {
-            checkWalletConnection();
+        window.addEventListener('load', async () => {
+            const connected = await connectToWallet();
+            if (connected) {
+                await loadDashboardData();
+            }
         });
     </script>
 </body>

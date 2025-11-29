@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Safari theme color - fixes pull-to-refresh background -->
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>QubeNode - Валідатор Qubetics</title>
     
     <!-- Favicon -->
@@ -61,11 +64,32 @@
             min-height: 100vh;
             overflow-x: hidden;
             position: static !important;
+            margin: 0;
+            padding: 0;
+            width: 100%;
         }
 
         html {
             background: #000000;
             background-color: #000000 !important;
+            /* Fix Safari pull-to-refresh blue background */
+            -webkit-overflow-scrolling: touch;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        /* Override Safari's default overscroll color */
+        html::before {
+            content: '';
+            position: fixed;
+            top: -100vh;
+            left: 0;
+            right: 0;
+            height: 100vh;
+            background: #000000;
+            z-index: -1;
         }
 
         .bg-animation {
@@ -1286,6 +1310,10 @@
             .container {
                 position: relative;
                 z-index: 1;
+                max-width: none !important;  /* Remove desktop max-width */
+                width: 100% !important;       /* Full width on mobile */
+                padding: 8px !important;      /* Minimal padding */
+                margin: 0 !important;         /* No centering margin */
             }
 
             .top-left-menu, .top-contacts {
@@ -2054,16 +2082,18 @@
 
             /* 📱 MOBILE DASHBOARD OPTIMIZATION 📱 */
             
-            /* Dashboard modal - wider on mobile */
+            /* Dashboard modal - full width on mobile like competitor */
             #dashboardModal .modal-content {
-                width: 98% !important;
-                max-width: 98% !important;
-                padding: 8px !important;  /* Було: 15px */
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 0 !important;  /* No padding - let modal-body handle it */
+                margin: 0 !important;
+                border-radius: 0 !important;  /* No rounded corners on mobile */
             }
             
-            /* Dashboard modal body - reduce padding */
+            /* Dashboard modal body - minimal padding */
             #dashboardModal .modal-body {
-                padding: 10px !important;  /* Було: 25px 20px */
+                padding: 8px !important;  /* Було: 10px */
             }
             
             /* Reduce all section paddings inside dashboard */
@@ -2139,14 +2169,16 @@
                 font-size: 0.9em !important;
             }
             
-            /* Custom modals - wider on mobile */
+            /* Custom modals - full width on mobile */
             #customStakeModal > div,
             #customSwitchModal > div,
             #customUnbondModal > div,
             #customClaimModal > div {
-                width: 98% !important;  /* Було: 96% */
-                max-width: 98% !important;
-                padding: 15px !important;  /* Було: 20px */
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 12px !important;  /* Було: 15px */
+                margin: 0 !important;
+                border-radius: 0 !important;  /* No rounded corners */
             }
         }
 

@@ -1335,16 +1335,16 @@
                 justify-content: center;
                 gap: 15px;
                 margin-bottom: 30px;
-                margin-top: 0;
+                margin-top: 80px;  /* ДОДАНО: опустити вниз щоб не налазило на кнопки */
             }
 
             .qubetics-brand img {
-                width: 60px;
+                width: 60px;  /* ПОВЕРНУТО: 60px */
                 height: 60px;
             }
 
             .qubetics-brand span {
-                font-size: 1.1em;
+                font-size: 1.1em;  /* ПОВЕРНУТО: 1.1em */
                 letter-spacing: 1px;
             }
 
@@ -2179,6 +2179,28 @@
                 padding: 12px !important;  /* Було: 15px */
                 margin: 0 !important;
                 border-radius: 0 !important;  /* No rounded corners */
+            }
+            
+            /* 📱 MAKE MODAL BLOCKS FULL-WIDTH ON MOBILE 📱 */
+            /* Key Functions $TICS - wide blocks like "Why Choose QubeNode" */
+            #ticsModal .modal-body div[style*="grid"] {
+                display: grid !important;
+                grid-template-columns: 1fr !important;  /* 1 column instead of 2 */
+                gap: 20px !important;
+            }
+            
+            /* Ecosystem modal - wide blocks */
+            #ecosystemModal .modal-body div[style*="grid"] {
+                display: grid !important;
+                grid-template-columns: 1fr !important;
+                gap: 20px !important;
+            }
+            
+            /* Any other modal grids - make full width */
+            .modal-body div[style*="grid-template-columns"] {
+                display: grid !important;
+                grid-template-columns: 1fr !important;
+                gap: 20px !important;
             }
         }
 

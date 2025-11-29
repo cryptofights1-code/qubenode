@@ -2540,23 +2540,23 @@
 
     <div class="container">
         <div class="top-left-menu">
-            <button class="ecosystem-button" onclick="openModal('ecosystemModal')">
+            <button class="ecosystem-button" onclick="window.location.href='ecosystem.html'">
                 <span>🌐</span>
                 <span>Про Екосистему</span>
             </button>
-            <button class="ecosystem-button" onclick="openModal('ticsModal')">
+            <button class="ecosystem-button" onclick="window.location.href='tics.html'">
                 <span>💎</span>
                 <span>Монета TICS</span>
             </button>
-            <button class="ecosystem-button" onclick="openModal('calcModal')">
+            <button class="ecosystem-button" onclick="window.location.href='calculator.html'">
                 <span>🧮</span>
                 <span>Калькулятор</span>
             </button>
-            <button class="ecosystem-button" onclick="openModal('delegatorModal')">
+            <button class="ecosystem-button" onclick="window.location.href='how-to-delegate.html'">
                 <span>🤝</span>
                 <span>Стати делегатором</span>
             </button>
-            <button class="ecosystem-button" onclick="openModal('faqModal')">
+            <button class="ecosystem-button" onclick="window.location.href='faq.html'">
                 <span>❓</span>
                 <span>FAQ</span>
             </button>
@@ -5549,23 +5549,12 @@
                 
                 if (result.success) {
                     headerWalletConnected = true;
-                    await updateHeaderWalletDisplay();
                     
-                    // Hide wallet connection buttons in modal
-                    const walletSection = document.getElementById('walletSection');
-                    const walletStatus = document.getElementById('walletStatus');
-                    const stakingActions = document.getElementById('stakingActions');
-                    const dashboard = document.getElementById('delegatorDashboard');
+                    // Get wallet info
+                    const walletInfo = cosmosStaking.getWalletInfo();
                     
-                    if (walletSection) walletSection.style.display = 'none';
-                    if (walletStatus) walletStatus.style.display = 'none';
-                    if (stakingActions) stakingActions.style.display = 'none';
-                    
-                    // Show dashboard in modal (way 3)
-                    if (dashboard) {
-                        dashboard.style.display = 'block';
-                        await updateDashboardData();
-                    }
+                    // Redirect to dashboard with wallet params
+                    window.location.href = `dashboard.html?wallet=${walletType}&address=${walletInfo.address}`;
                 }
             } catch (error) {
                 console.error('Header wallet connection error:', error);
@@ -5602,7 +5591,7 @@
                 const dropdown = document.getElementById('headerWalletDropdown');
                 if (dropdown) {
                     dropdown.innerHTML = `
-                        <button class="wallet-option" onclick="openModal('delegatorModal'); event.stopPropagation();">
+                        <button class="wallet-option" onclick="window.location.href='dashboard.html?wallet=${walletInfo.walletType}&address=${address}'; event.stopPropagation();">
                             <span>📊</span>
                             <span>Переглянути дашборд</span>
                         </button>

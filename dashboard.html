@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#000000">
+    <title>Dashboard - QubeNode Validator</title>
+    
+    <!-- Prevent pull-to-refresh blue background -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Prevent pull-to-refresh */
+        html {
+            overscroll-behavior: none;
+            background: #000;
+        }
+        
+        html::before {
+            content: '';
+            position: fixed;
+            top: -100vh;
+            left: 0;
+            right: 0;
+            height: 100vh;
+            background: #000;
+            z-index: -1;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+            overscroll-behavior: none;
+        }
+        
+        .container {
+            max-width: none;
+            margin: 0 auto;
+            padding: 8px;
+        }
+        
+        .back-button {
+            background: linear-gradient(135deg, #00D4FF, #00FFF0);
+            border: none;
+            color: #000;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 20px 0;
+            transition: all 0.3s;
+        }
+        
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.4);
+        }
+        
+        .page-header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+        }
+        
+        .page-title {
+            color: #00FFF0;
+            font-size: 2em;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        .wallet-info {
+            background: rgba(0, 212, 255, 0.1);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .wallet-address {
+            color: #00FFF0;
+            font-size: 0.9em;
+            word-break: break-all;
+        }
+        
+        .disconnect-btn {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid rgba(255, 0, 0, 0.4);
+            color: #ff6b6b;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .disconnect-btn:hover {
+            background: rgba(255, 0, 0, 0.3);
+        }
+        
+        /* Dashboard Stats */
+        .dashboard-section {
+            background: rgba(15, 23, 42, 0.6);
+            border: 2px solid rgba(0, 212, 255, 0.2);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            color: #00FFF0;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(0, 212, 255, 0.05));
+            border: 2px solid rgba(0, 212, 255, 0.4);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .stat-card.green {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.05));
+            border-color: rgba(34, 197, 94, 0.4);
+        }
+        
+        .stat-card.red {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05));
+            border-color: rgba(239, 68, 68, 0.4);
+        }
+        
+        .stat-label {
+            color: #94a3b8;
+            font-size: 0.8em;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .stat-value {
+            font-size: 1.6em;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+        
+        .stat-value.cyan { color: #00D4FF; }
+        .stat-value.green { color: #22c55e; }
+        .stat-value.red { color: #ef4444; }
+        
+        .stat-unit {
+            color: #64748b;
+            font-size: 0.8em;
+        }
+        
+        /* Forecast Grid */
+        .forecast-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
+        }
+        
+        .forecast-card {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(34, 197, 94, 0.04));
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+        }
+        
+        .forecast-label {
+            color: #86efac;
+            font-size: 0.75em;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+        
+        .forecast-value {
+            color: #4ade80;
+            font-size: 1.2em;
+            font-weight: 700;
+        }
+        
+        /* Quick Actions */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+        }
+        
+        .action-btn {
+            padding: 14px 20px;
+            border-radius: 12px;
+            border: 2px solid;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-size: 0.95em;
+        }
+        
+        .action-btn.primary {
+            background: rgba(0, 212, 255, 0.15);
+            border-color: rgba(0, 212, 255, 0.4);
+            color: #00FFF0;
+        }
+        
+        .action-btn.primary:hover {
+            background: rgba(0, 212, 255, 0.25);
+            transform: translateY(-2px);
+        }
+        
+        .action-btn.success {
+            background: rgba(34, 197, 94, 0.15);
+            border-color: rgba(34, 197, 94, 0.4);
+            color: #22c55e;
+        }
+        
+        .action-btn.success:hover {
+            background: rgba(34, 197, 94, 0.25);
+            transform: translateY(-2px);
+        }
+        
+        /* Delegations List */
+        .delegation-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+        
+        .delegation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .validator-name {
+            color: #00FFF0;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+        
+        .delegation-amount {
+            color: #22c55e;
+            font-size: 1.3em;
+            font-weight: 700;
+        }
+        
+        .delegation-actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .del-action-btn {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid;
+            font-size: 0.85em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .del-action-btn.blue {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: rgba(0, 212, 255, 0.3);
+            color: #00D4FF;
+        }
+        
+        .del-action-btn.green {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: rgba(34, 197, 94, 0.3);
+            color: #22c55e;
+        }
+        
+        .del-action-btn.red {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+        
+        .del-action-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        /* Unbonding Entry */
+        .unbonding-entry {
+            background: rgba(239, 68, 68, 0.05);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+        
+        .unbonding-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .unbonding-amount {
+            color: #ef4444;
+            font-size: 1.2em;
+            font-weight: 700;
+        }
+        
+        .completion-time {
+            color: #cbd5e1;
+            font-size: 0.85em;
+        }
+        
+        .time-remaining {
+            background: rgba(239, 68, 68, 0.1);
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        
+        .cancel-unbond-btn {
+            width: 100%;
+            padding: 12px;
+            background: rgba(239, 68, 68, 0.15);
+            border: 2px solid rgba(239, 68, 68, 0.4);
+            border-radius: 10px;
+            color: #ef4444;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .cancel-unbond-btn:hover {
+            background: rgba(239, 68, 68, 0.25);
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.9);
+            animation: fadeIn 0.3s;
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #0a0e1a 0%, #000000 100%);
+            margin: 5% auto;
+            padding: 0;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            animation: slideDown 0.3s;
+        }
+        
+        .modal-header {
+            padding: 25px 30px;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            color: #00FFF0;
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+        
+        .close-button {
+            color: #94a3b8;
+            font-size: 2em;
+            font-weight: 300;
+            cursor: pointer;
+            background: none;
+            border: none;
+            transition: all 0.3s;
+        }
+        
+        .close-button:hover {
+            color: #00FFF0;
+            transform: rotate(90deg);
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            color: #cbd5e1;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 14px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1em;
+            font-family: 'Space Grotesk', sans-serif;
+            transition: all 0.3s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: rgba(0, 212, 255, 0.6);
+            background: rgba(0, 212, 255, 0.05);
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #00D4FF, #00FFF0);
+            border: none;
+            border-radius: 12px;
+            color: #000;
+            font-weight: 700;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 212, 255, 0.4);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .page-title { font-size: 1.6em; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .forecast-grid { grid-template-columns: repeat(2, 1fr); }
+            .actions-grid { grid-template-columns: 1fr; }
+            .delegation-actions { grid-template-columns: 1fr; }
+            .modal-content { width: 100%; margin: 0; border-radius: 0; max-width: none; height: 100%; }
+            .modal-body { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Back Button -->
+        <a href="index.html" class="back-button">← Назад на головну</a>
+        
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">💎 Дашборд Делегатора</h1>
+            <p style="color: #94a3b8;">Керуйте своїм стейкінгом</p>
+        </div>
+        
+        <!-- Wallet Info -->
+        <div class="wallet-info">
+            <div>
+                <div style="color: #94a3b8; font-size: 0.85em; margin-bottom: 5px;">Підключено:</div>
+                <div class="wallet-address" id="walletAddress">Завантаження...</div>
+            </div>
+            <button class="disconnect-btn" onclick="disconnectWallet()">Відключити</button>
+        </div>
+        
+        <!-- Dashboard Stats -->
+        <div class="dashboard-section">
+            <h3 class="section-title">
+                <span>📊</span>
+                <span>Ваша статистика</span>
+            </h3>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">💰 БАЛАНС</div>
+                    <div class="stat-value cyan" id="dashBalance">0.00</div>
+                    <div class="stat-unit">TICS</div>
+                </div>
+                
+                <div class="stat-card green">
+                    <div class="stat-label">🤝 ДЕЛЕГОВАНО</div>
+                    <div class="stat-value green" id="dashDelegated">0.00</div>
+                    <div class="stat-unit">TICS</div>
+                </div>
+                
+                <div class="stat-card green">
+                    <div class="stat-label">✨ ВИНАГОРОДИ</div>
+                    <div class="stat-value green" id="dashRewards">0.00</div>
+                    <div class="stat-unit">TICS</div>
+                </div>
+                
+                <div class="stat-card red">
+                    <div class="stat-label">⏳ UNBONDING</div>
+                    <div class="stat-value red" id="dashUnbonding">0.00</div>
+                    <div class="stat-unit">TICS (14 днів)</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Rewards Forecast -->
+        <div class="dashboard-section">
+            <h3 class="section-title">
+                <span>📈</span>
+                <span>Прогноз винагород</span>
+            </h3>
+            
+            <div class="forecast-grid" id="dashRewardsForecast">
+                <div class="forecast-card">
+                    <div class="forecast-label">На день</div>
+                    <div class="forecast-value"><span id="forecastDaily">0.00</span> TICS</div>
+                </div>
+                
+                <div class="forecast-card">
+                    <div class="forecast-label">На тиждень</div>
+                    <div class="forecast-value"><span id="forecastWeekly">0.00</span> TICS</div>
+                </div>
+                
+                <div class="forecast-card">
+                    <div class="forecast-label">На місяць</div>
+                    <div class="forecast-value"><span id="forecastMonthly">0.00</span> TICS</div>
+                </div>
+                
+                <div class="forecast-card">
+                    <div class="forecast-label">На рік</div>
+                    <div class="forecast-value"><span id="forecastYearly">0.00</span> TICS</div>
+                </div>
+            </div>
+            
+            <p style="color: #64748b; font-size: 0.75em; margin-top: 10px; text-align: center;">
+                * APY ~30%, комісія валідатора вже врахована. Розрахунки наведені без урахування складного відсотка.
+            </p>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="dashboard-section">
+            <h3 class="section-title">
+                <span>💎</span>
+                <span>Швидкі дії</span>
+            </h3>
+            
+            <div class="actions-grid">
+                <button class="action-btn primary" onclick="openDelegateModal()">
+                    🚀 Делегувати до QubeNode
+                </button>
+                
+                <button class="action-btn success" onclick="claimAllRewards()">
+                    ✨ Зібрати всі винагороди
+                </button>
+            </div>
+        </div>
+        
+        <!-- My Delegations -->
+        <div class="dashboard-section">
+            <h3 class="section-title">
+                <span>📋</span>
+                <span>Мої делегації</span>
+            </h3>
+            
+            <div id="delegationsList">
+                <p style="color: #94a3b8; text-align: center;">Завантаження делегацій...</p>
+            </div>
+        </div>
+        
+        <!-- Unbonding Delegations -->
+        <div class="dashboard-section" id="unbondingSection" style="display: none;">
+            <h3 class="section-title">
+                <span>⏳</span>
+                <span>Unbonding Delegations</span>
+            </h3>
+            
+            <div id="unbondingList">
+                <!-- Will be populated by JS -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Delegate Modal -->
+    <div id="delegateModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">🚀 Делегувати до QubeNode</h2>
+                <button class="close-button" onclick="closeModal('delegateModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Сума (TICS)</label>
+                    <input type="number" id="delegateAmount" class="form-input" placeholder="0.00" step="0.01" min="0">
+                    <p style="color: #64748b; font-size: 0.85em; margin-top: 5px;">
+                        Доступно: <span id="availableBalance">0.00</span> TICS
+                    </p>
+                </div>
+                
+                <button class="submit-btn" onclick="executeDelegation()">Делегувати</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Unbond Modal -->
+    <div id="unbondModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">⏳ Unbond</h2>
+                <button class="close-button" onclick="closeModal('unbondModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: #cbd5e1; margin-bottom: 20px;">
+                    Розблокування токенів займає <strong style="color: #ef4444;">14 днів</strong>. 
+                    Під час цього періоду винагороди не нараховуються.
+                </p>
+                
+                <div class="form-group">
+                    <label class="form-label">Сума (TICS)</label>
+                    <input type="number" id="unbondAmount" class="form-input" placeholder="0.00" step="0.01" min="0">
+                    <input type="hidden" id="unbondValidator">
+                    <p style="color: #64748b; font-size: 0.85em; margin-top: 5px;">
+                        Делеговано: <span id="unbondAvailable">0.00</span> TICS
+                    </p>
+                </div>
+                
+                <button class="submit-btn" onclick="executeUnbond()">Підтвердити Unbond</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Claim Rewards Modal -->
+    <div id="claimModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">✨ Зібрати винагороди</h2>
+                <button class="close-button" onclick="closeModal('claimModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: #cbd5e1; margin-bottom: 20px;">
+                    Винагороди від <strong style="color: #00FFF0;" id="claimValidator">валідатора</strong>
+                </p>
+                
+                <div style="background: rgba(34, 197, 94, 0.1); border: 2px solid rgba(34, 197, 94, 0.3); border-radius: 12px; padding: 20px; margin-bottom: 20px; text-align: center;">
+                    <div style="color: #86efac; font-size: 0.9em; margin-bottom: 5px;">Доступно</div>
+                    <div style="color: #22c55e; font-size: 2em; font-weight: 700;">
+                        <span id="claimAmount">0.00</span> TICS
+                    </div>
+                </div>
+                
+                <button class="submit-btn" onclick="executeClaimRewards()">Зібрати винагороди</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Redelegate Modal -->
+    <div id="redelegateModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">🔄 Ределегувати</h2>
+                <button class="close-button" onclick="closeModal('redelegateModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: #cbd5e1; margin-bottom: 20px;">
+                    Переделегувати токени на іншого валідатора без періоду очікування
+                </p>
+                
+                <div class="form-group">
+                    <label class="form-label">Валідатор джерело</label>
+                    <input type="text" id="redelegateFrom" class="form-input" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Новий валідатор</label>
+                    <select id="redelegateTo" class="form-input">
+                        <option value="">Оберіть валідатора...</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Сума (TICS)</label>
+                    <input type="number" id="redelegateAmount" class="form-input" placeholder="0.00" step="0.01" min="0">
+                    <p style="color: #64748b; font-size: 0.85em; margin-top: 5px;">
+                        Доступно: <span id="redelegateAvailable">0.00</span> TICS
+                    </p>
+                </div>
+                
+                <button class="submit-btn" onclick="executeRedelegate()">Підтвердити ределегування</button>
+            </div>
+        </div>
+    </div>
+
+    
+    <script>
+        // ============ CONFIGURATION ============
+        const CHAIN_ID = 'qubetics_9030-1';
+        const RPC_URL = 'https://rpc.qubetics.com';
+        const REST_URL = 'https://api.qubetics.com';
+        const VALIDATOR_ADDRESS = 'qubevaloper1eqkv0a5nxzk4z3h3nj6m3y8l0k9g2f5d4c3b2a';
+        const QUBENODE_OPERATOR = 'qubevaloper10lmgzhtyjp7mhgp0t4r7qrmrk93vlpfvdmrz78';
+        
+        // ============ GLOBAL STATE ============
+        let connectedWallet = null;
+        let userAddress = null;
+        let allDelegations = [];
+        let allUnbonding = [];
+        
+        // ============ UTILITY FUNCTIONS ============
+        function formatNumber(num) {
+            if (!num) return '0.00';
+            return parseFloat(num).toLocaleString('uk-UA', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+        
+        function fromMicroTics(amount) {
+            return parseFloat(amount) / 1000000;
+        }
+        
+        function toMicroTics(amount) {
+            return Math.floor(parseFloat(amount) * 1000000).toString();
+        }
+        
+        // ============ MODAL FUNCTIONS ============
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        // Close modal on outside click
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+        
+        // ============ WALLET CONNECTION ============
+        async function checkWalletConnection() {
+            // Check if wallet already connected in main page
+            const urlParams = new URLSearchParams(window.location.search);
+            const wallet = urlParams.get('wallet');
+            const address = urlParams.get('address');
+            
+            if (wallet && address) {
+                connectedWallet = wallet;
+                userAddress = address;
+                document.getElementById('walletAddress').textContent = address;
+                await loadDashboardData();
+            } else {
+                // Redirect to main page to connect wallet
+                alert('Будь ласка, підключіть гаманець на головній сторінці');
+                window.location.href = 'index.html';
+            }
+        }
+        
+        function disconnectWallet() {
+            connectedWallet = null;
+            userAddress = null;
+            window.location.href = 'index.html';
+        }
+        
+        // ============ DATA LOADING ============
+        async function loadDashboardData() {
+            try {
+                await Promise.all([
+                    loadBalance(),
+                    loadDelegations(),
+                    loadRewards(),
+                    loadUnbonding()
+                ]);
+                
+                calculateForecast();
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            }
+        }
+        
+        async function loadBalance() {
+            try {
+                const response = await fetch(`${REST_URL}/cosmos/bank/v1beta1/balances/${userAddress}`);
+                const data = await response.json();
+                
+                const ticsBalance = data.balances?.find(b => b.denom === 'aunit');
+                const balance = ticsBalance ? fromMicroTics(ticsBalance.amount) : 0;
+                
+                document.getElementById('dashBalance').textContent = formatNumber(balance);
+                document.getElementById('availableBalance').textContent = formatNumber(balance);
+            } catch (error) {
+                console.error('Error loading balance:', error);
+                document.getElementById('dashBalance').textContent = '0.00';
+            }
+        }
+        
+        async function loadDelegations() {
+            try {
+                const response = await fetch(`${REST_URL}/cosmos/staking/v1beta1/delegations/${userAddress}`);
+                const data = await response.json();
+                
+                allDelegations = data.delegation_responses || [];
+                
+                let totalDelegated = 0;
+                allDelegations.forEach(del => {
+                    totalDelegated += fromMicroTics(del.balance.amount);
+                });
+                
+                document.getElementById('dashDelegated').textContent = formatNumber(totalDelegated);
+                
+                renderDelegations();
+            } catch (error) {
+                console.error('Error loading delegations:', error);
+                document.getElementById('dashDelegated').textContent = '0.00';
+            }
+        }
+        
+        async function loadRewards() {
+            try {
+                const response = await fetch(`${REST_URL}/cosmos/distribution/v1beta1/delegators/${userAddress}/rewards`);
+                const data = await response.json();
+                
+                let totalRewards = 0;
+                if (data.total && data.total.length > 0) {
+                    const ticsReward = data.total.find(r => r.denom === 'aunit');
+                    totalRewards = ticsReward ? fromMicroTics(ticsReward.amount) : 0;
+                }
+                
+                document.getElementById('dashRewards').textContent = formatNumber(totalRewards);
+            } catch (error) {
+                console.error('Error loading rewards:', error);
+                document.getElementById('dashRewards').textContent = '0.00';
+            }
+        }
+        
+        async function loadUnbonding() {
+            try {
+                const response = await fetch(`${REST_URL}/cosmos/staking/v1beta1/delegators/${userAddress}/unbonding_delegations`);
+                const data = await response.json();
+                
+                allUnbonding = data.unbonding_responses || [];
+                
+                let totalUnbonding = 0;
+                allUnbonding.forEach(unbond => {
+                    unbond.entries.forEach(entry => {
+                        totalUnbonding += fromMicroTics(entry.balance);
+                    });
+                });
+                
+                document.getElementById('dashUnbonding').textContent = formatNumber(totalUnbonding);
+                
+                if (allUnbonding.length > 0) {
+                    document.getElementById('unbondingSection').style.display = 'block';
+                    renderUnbonding();
+                }
+            } catch (error) {
+                console.error('Error loading unbonding:', error);
+                document.getElementById('dashUnbonding').textContent = '0.00';
+            }
+        }
+        
+        function renderDelegations() {
+            const container = document.getElementById('delegationsList');
+            
+            if (allDelegations.length === 0) {
+                container.innerHTML = '<p style="color: #94a3b8; text-align: center;">У вас немає активних делегацій</p>';
+                return;
+            }
+            
+            container.innerHTML = allDelegations.map(del => {
+                const amount = fromMicroTics(del.balance.amount);
+                const validatorAddr = del.delegation.validator_address;
+                const validatorName = validatorAddr.substring(0, 20) + '...';
+                
+                return `
+                    <div class="delegation-item">
+                        <div class="delegation-header">
+                            <div class="validator-name">${validatorName}</div>
+                            <div class="delegation-amount">${formatNumber(amount)} TICS</div>
+                        </div>
+                        
+                        <div class="delegation-actions">
+                            <button class="del-action-btn blue" onclick="openStakeMore('${validatorAddr}', ${amount})">
+                                💎 Stake More
+                            </button>
+                            
+                            <button class="del-action-btn green" onclick="openClaimModal('${validatorAddr}')">
+                                ✨ Claim
+                            </button>
+                            
+                            <button class="del-action-btn red" onclick="openUnbondModal('${validatorAddr}', ${amount})">
+                                ⏳ Unbond
+                            </button>
+                        </div>
+                        
+                        <button class="del-action-btn blue" onclick="openRedelegateModal('${validatorAddr}', ${amount})" style="margin-top: 8px; width: 100%;">
+                            🔄 Switch Validator
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function renderUnbonding() {
+            const container = document.getElementById('unbondingList');
+            
+            let html = '';
+            allUnbonding.forEach(unbond => {
+                const validatorAddr = unbond.validator_address;
+                const validatorName = validatorAddr.substring(0, 20) + '...';
+                
+                unbond.entries.forEach(entry => {
+                    const amount = fromMicroTics(entry.balance);
+                    const completionTime = new Date(entry.completion_time);
+                    const now = new Date();
+                    const timeLeft = Math.max(0, Math.ceil((completionTime - now) / (1000 * 60 * 60 * 24)));
+                    
+                    html += `
+                        <div class="unbonding-entry">
+                            <div class="unbonding-header">
+                                <div>
+                                    <div style="color: #cbd5e1; font-size: 0.9em; margin-bottom: 5px;">З валідатора:</div>
+                                    <div style="color: #00FFF0; font-weight: 600;">${validatorName}</div>
+                                </div>
+                                <div class="unbonding-amount">${formatNumber(amount)} TICS</div>
+                            </div>
+                            
+                            <div class="time-remaining">
+                                <div style="color: #ef4444; font-weight: 600; font-size: 0.9em;">
+                                    ⏳ Залишилось: ${timeLeft} днів
+                                </div>
+                                <div class="completion-time">
+                                    Завершення: ${completionTime.toLocaleDateString('uk-UA')}
+                                </div>
+                            </div>
+                            
+                            <button class="cancel-unbond-btn" onclick="cancelUnbonding('${validatorAddr}', '${entry.creation_height}')">
+                                ❌ Скасувати Unbonding
+                            </button>
+                        </div>
+                    `;
+                });
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        function calculateForecast() {
+            const delegatedText = document.getElementById('dashDelegated').textContent;
+            const delegated = parseFloat(delegatedText.replace(/,/g, '')) || 0;
+            
+            const APY = 0.30; // 30%
+            const COMMISSION = 0.05; // 5%
+            const NET_APY = APY * (1 - COMMISSION);
+            
+            const daily = delegated * (NET_APY / 365);
+            const weekly = daily * 7;
+            const monthly = daily * 30;
+            const yearly = delegated * NET_APY;
+            
+            document.getElementById('forecastDaily').textContent = formatNumber(daily);
+            document.getElementById('forecastWeekly').textContent = formatNumber(weekly);
+            document.getElementById('forecastMonthly').textContent = formatNumber(monthly);
+            document.getElementById('forecastYearly').textContent = formatNumber(yearly);
+        }
+        
+        // ============ MODAL HANDLERS ============
+        function openDelegateModal() {
+            openModal('delegateModal');
+        }
+        
+        function openUnbondModal(validatorAddr, currentAmount) {
+            document.getElementById('unbondValidator').value = validatorAddr;
+            document.getElementById('unbondAvailable').textContent = formatNumber(currentAmount);
+            openModal('unbondModal');
+        }
+        
+        function openClaimModal(validatorAddr) {
+            // Load rewards for this validator
+            fetch(`${REST_URL}/cosmos/distribution/v1beta1/delegators/${userAddress}/rewards/${validatorAddr}`)
+                .then(res => res.json())
+                .then(data => {
+                    let rewards = 0;
+                    if (data.rewards && data.rewards.length > 0) {
+                        const ticsReward = data.rewards.find(r => r.denom === 'aunit');
+                        rewards = ticsReward ? fromMicroTics(ticsReward.amount) : 0;
+                    }
+                    
+                    document.getElementById('claimValidator').textContent = validatorAddr.substring(0, 20) + '...';
+                    document.getElementById('claimAmount').textContent = formatNumber(rewards);
+                    document.getElementById('claimModal').setAttribute('data-validator', validatorAddr);
+                    
+                    openModal('claimModal');
+                })
+                .catch(err => {
+                    console.error('Error loading rewards:', err);
+                    alert('Помилка завантаження винагород');
+                });
+        }
+        
+        function openRedelegateModal(validatorAddr, currentAmount) {
+            document.getElementById('redelegateFrom').value = validatorAddr;
+            document.getElementById('redelegateAvailable').textContent = formatNumber(currentAmount);
+            
+            // Load validators list
+            loadValidatorsList();
+            
+            openModal('redelegateModal');
+        }
+        
+        async function loadValidatorsList() {
+            try {
+                const response = await fetch(`${REST_URL}/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED`);
+                const data = await response.json();
+                
+                const select = document.getElementById('redelegateTo');
+                select.innerHTML = '<option value="">Оберіть валідатора...</option>';
+                
+                data.validators.forEach(val => {
+                    const moniker = val.description.moniker || val.operator_address;
+                    select.innerHTML += `<option value="${val.operator_address}">${moniker}</option>`;
+                });
+            } catch (error) {
+                console.error('Error loading validators:', error);
+            }
+        }
+        
+        // ============ TRANSACTION FUNCTIONS ============
+        async function executeDelegation() {
+            const amount = document.getElementById('delegateAmount').value;
+            
+            if (!amount || parseFloat(amount) <= 0) {
+                alert('Введіть коректну суму');
+                return;
+            }
+            
+            try {
+                if (!window.keplr && !window.cosmostation) {
+                    alert('Гаманець не знайдено. Підключіть Keplr або Cosmostation');
+                    return;
+                }
+                
+                // TODO: Implement actual transaction via Keplr/Cosmostation
+                alert('Функція делегування в розробці. Використовуйте головну сторінку для делегування.');
+                closeModal('delegateModal');
+                
+                // Refresh data
+                await loadDashboardData();
+            } catch (error) {
+                console.error('Delegation error:', error);
+                alert('Помилка делегування: ' + error.message);
+            }
+        }
+        
+        async function executeUnbond() {
+            const amount = document.getElementById('unbondAmount').value;
+            const validator = document.getElementById('unbondValidator').value;
+            
+            if (!amount || parseFloat(amount) <= 0) {
+                alert('Введіть коректну суму');
+                return;
+            }
+            
+            try {
+                alert('Функція unbond в розробці. Використовуйте головну сторінку.');
+                closeModal('unbondModal');
+                
+                await loadDashboardData();
+            } catch (error) {
+                console.error('Unbond error:', error);
+                alert('Помилка unbond: ' + error.message);
+            }
+        }
+        
+        async function executeClaimRewards() {
+            const validator = document.getElementById('claimModal').getAttribute('data-validator');
+            
+            try {
+                alert('Функція claim в розробці. Використовуйте головну сторінку.');
+                closeModal('claimModal');
+                
+                await loadDashboardData();
+            } catch (error) {
+                console.error('Claim error:', error);
+                alert('Помилка claim: ' + error.message);
+            }
+        }
+        
+        async function claimAllRewards() {
+            try {
+                alert('Функція claim всіх винагород в розробці. Використовуйте головну сторінку.');
+                
+                await loadDashboardData();
+            } catch (error) {
+                console.error('Claim all error:', error);
+                alert('Помилка: ' + error.message);
+            }
+        }
+        
+        async function executeRedelegate() {
+            const fromValidator = document.getElementById('redelegateFrom').value;
+            const toValidator = document.getElementById('redelegateTo').value;
+            const amount = document.getElementById('redelegateAmount').value;
+            
+            if (!toValidator) {
+                alert('Оберіть валідатора');
+                return;
+            }
+            
+            if (!amount || parseFloat(amount) <= 0) {
+                alert('Введіть коректну суму');
+                return;
+            }
+            
+            try {
+                alert('Функція ределегування в розробці. Використовуйте головну сторінку.');
+                closeModal('redelegateModal');
+                
+                await loadDashboardData();
+            } catch (error) {
+                console.error('Redelegate error:', error);
+                alert('Помилка ределегування: ' + error.message);
+            }
+        }
+        
+        async function cancelUnbonding(validator, creationHeight) {
+            try {
+                alert('Функція скасування unbonding в розробці. Використовуйте головну сторінку.');
+                
+                await loadDashboardData();
+            } catch (error) {
+                console.error('Cancel unbonding error:', error);
+                alert('Помилка: ' + error.message);
+            }
+        }
+        
+        // ============ INITIALIZATION ============
+        window.addEventListener('load', () => {
+            checkWalletConnection();
+        });
+    </script>
+</body>
+</html>

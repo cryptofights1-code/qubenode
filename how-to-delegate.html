@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Як делегувати - QubeNode</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { background: #000; color: #fff; font-family: 'Space Grotesk', sans-serif; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        header { text-align: center; padding: 20px 0; }
+        .back-button { background: linear-gradient(135deg, #00D4FF, #00FFF0); border: none; color: #000; padding: 12px 24px; border-radius: 10px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; margin-bottom: 20px; }
+        .page-title { color: #00FFF0; font-size: 2.5em; font-weight: 700; margin: 20px 0; }
+        .section { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 20px; padding: 40px; margin: 30px 0; }
+        .step-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .step-number { width: 45px; height: 45px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4em; font-weight: 800; color: #000; }
+        h3 { color: #00FFF0; font-size: 1.5em; margin: 0; }
+        p { color: #cbd5e1; font-size: 1.05em; line-height: 1.8; margin-bottom: 15px; }
+        .info-box { background: rgba(0, 212, 255, 0.05); border-left: 4px solid #00D4FF; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .warning-box { background: rgba(250, 204, 21, 0.1); border-left: 4px solid #facc15; padding: 15px 20px; border-radius: 8px; }
+        ul { color: #cbd5e1; margin: 0 0 20px 20px; line-height: 2; }
+        ul strong { color: #00D4FF; }
+        .link { color: #00D4FF; font-weight: 600; cursor: pointer; text-decoration: underline; }
+        @media (max-width: 768px) {
+            .container { padding: 10px; }
+            .page-title { font-size: 1.8em; }
+            .section { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="back-button">← Назад на головну</a>
+            <h1 class="page-title">Стати делегатором QubeNode</h1>
+            <p style="color: #94a3b8; font-size: 1.1em;">Два простих способи делегування $TICS</p>
+        </header>
+
+        <!-- Спосіб 1 -->
+        <div class="section">
+            <div class="step-header">
+                <div class="step-number">1</div>
+                <h3>Делегування через мобільний гаманець</h3>
+            </div>
+            
+            <p>Ви можете зробити делегування у гаманці <a href="index.html#keplr-guide" class="link">Keplr (інструкція)</a> або Cosmostation.</p>
+            
+            <div class="warning-box">
+                <p style="color: #fde047; margin: 0;">
+                    <strong>💡 Рекомендація:</strong> Радимо використовувати гаманець Keplr для мобільного делегування.
+                </p>
+            </div>
+        </div>
+
+        <!-- Спосіб 2 -->
+        <div class="section">
+            <div class="step-header">
+                <div class="step-number">2</div>
+                <h3>Делегування через QubeNode.space</h3>
+            </div>
+            
+            <p>Найпростіший спосіб — підключити гаманець прямо на <a href="index.html" class="link">головній сторінці</a> для миттєвого делегування.</p>
+            
+            <div class="info-box">
+                <p style="color: #00FFF0; font-weight: 600; margin-bottom: 12px; font-size: 1.05em;">
+                    💎 Після підключення гаманця ви зможете:
+                </p>
+                <ul>
+                    <li><strong>Переглянути дашборд делегатора</strong> — баланс, делегації, винагороди</li>
+                    <li><strong>Делегувати токени</strong> валідатору QubeNode</li>
+                    <li><strong>Ределегувати</strong> токени між валідаторами</li>
+                    <li><strong>Зібрати винагороди</strong> в будь-який момент</li>
+                    <li><strong>Зробити Undelegate</strong> (розблокування за 14 днів)</li>
+                    <li><strong>Скасувати активний Unbond</strong> під час періоду розблокування</li>
+                </ul>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="index.html#connect-wallet" style="display: inline-block; padding: 18px 40px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50px; color: #000; text-decoration: none; font-weight: 700; font-size: 1.2em; transition: all 0.3s;">
+                    🔷 Підключити гаманець зараз
+                </a>
+                <p style="color: #64748b; font-size: 0.85em; margin-top: 10px;">Після підключення відкриється дашборд делегатора</p>
+            </div>
+        </div>
+
+        <!-- Додаткова інформація -->
+        <div class="section">
+            <h3 style="margin-bottom: 20px;">Чому обрати QubeNode?</h3>
+            <div style="display: grid; gap: 20px;">
+                <div style="display: flex; gap: 15px; align-items: start;">
+                    <span style="font-size: 1.5em;">🛡️</span>
+                    <div>
+                        <h4 style="color: #00FFF0; margin-bottom: 8px;">Надійність</h4>
+                        <p style="margin: 0;">Високий uptime — ми забезпечуємо стабільну роботу ноди 24/7 з професійним моніторингом</p>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 15px; align-items: start;">
+                    <span style="font-size: 1.5em;">💎</span>
+                    <div>
+                        <h4 style="color: #00FFF0; margin-bottom: 8px;">Мінімальна комісія мережі</h4>
+                        <p style="margin: 0;">Фіксована комісія 5% — більше винагороди залишається у вас</p>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 15px; align-items: start;">
+                    <span style="font-size: 1.5em;">⚡</span>
+                    <div>
+                        <h4 style="color: #00FFF0; margin-bottom: 8px;">Продуктивність</h4>
+                        <p style="margin: 0;">Потужне обладнання та оптимізована конфігурація ноди для максимальної ефективності</p>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 15px; align-items: start;">
+                    <span style="font-size: 1.5em;">🤝</span>
+                    <div>
+                        <h4 style="color: #00FFF0; margin-bottom: 8px;">Підтримка</h4>
+                        <p style="margin: 0;">Швидка підтримка та відкрита комунікація з делегаторами</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

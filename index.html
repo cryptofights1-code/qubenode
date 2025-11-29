@@ -3086,6 +3086,23 @@
                         </div>
                     </div>
                     
+                    <!-- Quick Actions Section - FIRST ONE (before My Delegations) -->
+                    <div style="background: rgba(0, 212, 255, 0.08); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 12px; padding: 18px; margin-bottom: 15px;">
+                        <h4 style="color: #00FFF0; font-size: 1.1em; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                            <span>💎</span>
+                            <span>Швидкі дії</span>
+                        </h4>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button id="btnQuickStakeQubeNode" style="flex: 1; min-width: 200px; padding: 14px 20px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border: none; border-radius: 10px; color: #000; font-size: 1em; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                                <span style="font-size: 1.2em;">🚀</span>
+                                <span>Делегувати на QubeNode</span>
+                            </button>
+                            <button id="btnQuickClaimAllRewards" style="flex: 1; min-width: 200px; padding: 14px 20px; background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.1)); border: 2px solid rgba(34, 197, 94, 0.4); border-radius: 10px; color: #22c55e; font-size: 1em; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                                <span style="font-size: 1.2em;">💰</span>
+                                <span>Забрати всі винагороди (<span id="dashClaimableRewards">0.00</span> TICS)</span>
+                            </button>
+                        </div>
+                    </div>
                     
                     <!-- My Delegations Section - MOVED UP -->
                     <div style="background: rgba(0, 0, 0, 0.3); border-radius: 12px; padding: 18px; margin-bottom: 15px;">
@@ -3097,80 +3114,6 @@
                             <div style="padding: 15px; text-align: center; color: #94a3b8; font-size: 0.9em;">
                                 Завантаження делегувань...
                             </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Staking Actions Tabs - MOVED DOWN -->
-                    <div style="background: rgba(0, 0, 0, 0.3); border-radius: 12px; padding: 18px; margin-bottom: 15px;">
-                        <h4 style="color: #00FFF0; font-size: 1.1em; margin-bottom: 15px;">⚡ Швидкі дії</h4>
-                        
-                        <div style="display: flex; gap: 8px; margin-bottom: 15px; border-bottom: 2px solid rgba(0, 212, 255, 0.2); padding-bottom: 8px; flex-wrap: wrap;">
-                            <button onclick="showDashTab('delegate')" id="dashTabDelegate" class="dash-tab active" style="padding: 10px 16px; background: rgba(0, 212, 255, 0.2); border: none; border-radius: 8px; color: #00FFF0; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 0.9em;">Делегувати</button>
-                            <button onclick="showDashTab('redelegate')" id="dashTabRedelegate" class="dash-tab" style="padding: 10px 16px; background: transparent; border: none; border-radius: 8px; color: #94a3b8; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 0.9em;">Ределегувати</button>
-                            <button onclick="showDashTab('undelegate')" id="dashTabUndelegate" class="dash-tab" style="padding: 10px 16px; background: transparent; border: none; border-radius: 8px; color: #94a3b8; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 0.9em;">Розділегувати</button>
-                            <button onclick="showDashTab('claim')" id="dashTabClaim" class="dash-tab" style="padding: 10px 16px; background: transparent; border: none; border-radius: 8px; color: #94a3b8; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 0.9em;">Забрати винагороду</button>
-                        </div>
-                        
-                        <!-- Delegate Tab -->
-                        <div id="dashDelegateTab" class="dash-tab-content">
-                            <p style="color: #cbd5e1; margin-bottom: 12px; font-size: 0.85em;">Мінімальна сума: <strong style="color: #00FFF0;">0.1 TICS</strong></p>
-                            <div style="margin-bottom: 15px;">
-                                <label style="color: #94a3b8; font-size: 0.85em; margin-bottom: 6px; display: block;">Сума TICS:</label>
-                                <input type="number" id="dashDelegateAmount" placeholder="0.1" step="0.1" min="0.1" style="width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 8px; color: #fff; font-size: 1em;">
-                            </div>
-                            <button onclick="executeDashDelegate()" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border: none; border-radius: 10px; color: #000; font-size: 1em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
-                                💎 Делегувати на QubeNode
-                            </button>
-                        </div>
-                        
-                        <!-- Redelegate Tab -->
-                        <div id="dashRedelegateTab" class="dash-tab-content" style="display: none;">
-                            <p style="color: #cbd5e1; margin-bottom: 12px; font-size: 0.85em;">Переведіть делегування миттєво</p>
-                            
-                            <div style="margin-bottom: 12px;">
-                                <label style="color: #94a3b8; font-size: 0.85em; margin-bottom: 6px; display: block;">З якого валідатора:</label>
-                                <button id="selectFromValidator" onclick="openValidatorModal('from')" style="width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 8px; color: #fff; font-size: 0.95em; text-align: left; cursor: pointer; transition: all 0.3s;">
-                                    <span id="fromValidatorText">Оберіть валідатора</span>
-                                </button>
-                                <input type="hidden" id="dashRedelegateFrom" value="">
-                            </div>
-                            
-                            <div style="margin-bottom: 12px;">
-                                <label style="color: #94a3b8; font-size: 0.85em; margin-bottom: 6px; display: block;">Кому делегувати:</label>
-                                <button id="selectToValidator" onclick="openValidatorModal('to')" style="width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 8px; color: #fff; font-size: 0.95em; text-align: left; cursor: pointer; transition: all 0.3s;">
-                                    <span id="toValidatorText">Оберіть валідатора</span>
-                                </button>
-                                <input type="hidden" id="dashRedelegateTo" value="">
-                            </div>
-                            
-                            <div style="margin-bottom: 15px;">
-                                <label style="color: #94a3b8; font-size: 0.85em; margin-bottom: 6px; display: block;">Сума TICS:</label>
-                                <input type="number" id="dashRedelegateAmount" placeholder="0.1" step="0.1" min="0.1" style="width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 8px; color: #fff; font-size: 1em;">
-                            </div>
-                            
-                            <button onclick="executeDashRedelegate()" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #A855F7, #6366F1); border: none; border-radius: 10px; color: #fff; font-size: 1em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
-                                🔄 Ределегувати
-                            </button>
-                        </div>
-                        
-                        <!-- Undelegate Tab -->
-                        <div id="dashUndelegateTab" class="dash-tab-content" style="display: none;">
-                            <p style="color: #cbd5e1; margin-bottom: 12px; font-size: 0.85em;">Період unbonding: <strong style="color: #ef4444;">14 днів</strong></p>
-                            <div style="margin-bottom: 15px;">
-                                <label style="color: #94a3b8; font-size: 0.85em; margin-bottom: 6px; display: block;">Сума TICS:</label>
-                                <input type="number" id="dashUndelegateAmount" placeholder="0.1" step="0.1" min="0.1" style="width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 8px; color: #fff; font-size: 1em;">
-                            </div>
-                            <button onclick="executeDashUndelegate()" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #ef4444, #dc2626); border: none; border-radius: 10px; color: #fff; font-size: 1em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
-                                ⬇️ Розділегувати
-                            </button>
-                        </div>
-                        
-                        <!-- Claim Tab -->
-                        <div id="dashClaimTab" class="dash-tab-content" style="display: none;">
-                            <p style="color: #cbd5e1; margin-bottom: 12px; font-size: 0.85em;">Доступні винагороди: <strong style="color: #22c55e;"><span id="dashClaimableRewards">0.00</span> TICS</strong></p>
-                            <button onclick="executeDashClaim()" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #22c55e, #16a34a); border: none; border-radius: 10px; color: #fff; font-size: 1em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
-                                ✨ Забрати всі винагороди
-                            </button>
                         </div>
                     </div>
                     
@@ -4120,8 +4063,8 @@
             // Add QubeNode first if not the current validator
             if (fromValidatorAddress !== qubenodeAddr) {
                 validatorOptions += `
-                    <div class="validator-option" data-address="${qubenodeAddr}" style="background: rgba(255, 165, 0, 0.1); border: 2px solid rgba(255, 165, 0, 0.4); border-radius: 12px; padding: 16px; margin-bottom: 12px; cursor: pointer; transition: all 0.3s;">
-                        <div style="color: #FFA500; font-weight: 600; font-size: 1.1em; margin-bottom: 4px;">QubeNode 🏆</div>
+                    <div class="validator-option" data-address="${qubenodeAddr}" style="background: rgba(0, 212, 255, 0.12); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 12px; padding: 16px; margin-bottom: 12px; cursor: pointer; transition: all 0.3s;">
+                        <div style="color: #00D4FF; font-weight: 600; font-size: 1.1em; margin-bottom: 4px;">QubeNode 🏆</div>
                         <div style="color: #64748b; font-size: 0.8em; font-family: monospace;">${qubenodeAddr.substring(0, 30)}...</div>
                         <div style="color: #94a3b8; font-size: 0.85em; margin-top: 8px;">Commission: 5.00%</div>
                     </div>
@@ -4150,12 +4093,12 @@
             }
             
             modal.innerHTML = `
-                <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 2px solid rgba(168, 85, 247, 0.4); border-radius: 20px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);">
-                    <h3 style="color: #a855f7; font-size: 1.5em; margin: 0 0 20px 0; text-align: center;">🔄 Switch Validator</h3>
+                <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 20px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);">
+                    <h3 style="color: #00D4FF; font-size: 1.5em; margin: 0 0 20px 0; text-align: center;">🔄 Switch Validator</h3>
                     
-                    <div style="background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
-                        <div style="color: #a855f7; font-weight: 600; margin-bottom: 8px;">From:</div>
-                        <div style="color: #c084fc; font-size: 1.1em; font-weight: 700; margin-bottom: 4px;">${fromValidatorName}</div>
+                    <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+                        <div style="color: #00FFF0; font-weight: 600; margin-bottom: 8px;">From:</div>
+                        <div style="color: #00D4FF; font-size: 1.1em; font-weight: 700; margin-bottom: 4px;">${fromValidatorName}</div>
                         <div style="color: #64748b; font-size: 0.85em;">Staked: ${parseFloat(currentAmount).toFixed(4)} TICS</div>
                     </div>
                     
@@ -5655,7 +5598,25 @@
     if (typeof window.quickStakeQubeNode === 'function') {
         console.log('✅ Functions are loaded correctly!');
         
-        // Quick Actions buttons removed - no longer needed
+        // Attach event listeners to Quick Actions buttons (FIRST block - before My Delegations)
+        const btnQuickStakeQubeNode = document.getElementById('btnQuickStakeQubeNode');
+        const btnQuickClaimAllRewards = document.getElementById('btnQuickClaimAllRewards');
+        
+        if (btnQuickStakeQubeNode) {
+            btnQuickStakeQubeNode.addEventListener('click', function() {
+                console.log('🚀 Quick Stake QubeNode clicked!');
+                window.quickStakeQubeNode();
+            });
+            console.log('✅ btnQuickStakeQubeNode listener attached');
+        }
+        
+        if (btnQuickClaimAllRewards) {
+            btnQuickClaimAllRewards.addEventListener('click', function() {
+                console.log('💰 Quick Claim All Rewards clicked!');
+                window.quickClaimAllRewards();
+            });
+            console.log('✅ btnQuickClaimAllRewards listener attached');
+        }
     } else {
         console.error('❌ Functions are NOT loaded!');
     }

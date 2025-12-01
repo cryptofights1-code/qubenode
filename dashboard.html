@@ -148,10 +148,18 @@
                 <div style="text-align: center; color: #64748b; padding: 20px;">Завантаження делегацій...</div>
             </div>
         </div>
+        
+        <!-- Unbonding Delegations -->
+        <div class="section" id="unbondingSection" style="display: none;">
+            <h4 class="section-title"><span>⏳</span><span>Unbonding (очікування 14 днів)</span></h4>
+            <div class="delegation-list" id="unbondingList">
+                <div style="text-align: center; color: #64748b; padding: 20px;">Немає unbonding делегацій</div>
+            </div>
+        </div>
     </div>
     
     <script>
-        const QUBENODE_VALIDATOR = 'qubeticsvaloper10lmgzhtyjp7mhgp0t4r7qrmrk93vlpfvdmrz78';
+        const QUBENODE_VALIDATOR = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
         
         let cosmosStaking = null;
         let validatorNamesCache = {};
@@ -224,6 +232,9 @@
                 
                 // Load delegations
                 await loadDelegations(overview);
+                
+                // Load unbonding delegations
+                await loadUnbonding(overview);
                 
             } catch (error) {
                 console.error('Error loading data:', error);
@@ -338,8 +349,16 @@
             }
             
             try {
-                // Use delegate since we're adding more to existing delegation
-                const result = await cosmosStaking.delegate(parseFloat(amount), 'Stake more via QubeNode.space');
+                // Create temporary CosmosStakingService to delegate to specific validator
+                const stakingService = new CosmosStakingService(
+                    cosmosStaking.walletManager,
+                    cosmosStaking.chainClient,
+                    cosmosStaking.txBuilder
+                );
+                
+                const amountMinimal = (parseFloat(amount) * 1e18).toString();
+                const result = await stakingService.delegate(validatorAddress, amountMinimal, 'Stake more via QubeNode.space');
+                
                 alert('✅ Успішно! TX: ' + result.txHash);
                 await loadData();
             } catch (error) {
@@ -368,12 +387,74 @@
             }
             
             try {
-                const result = await cosmosStaking.undelegate(parseFloat(amount), 'Unbond via QubeNode.space');
+                // Create temporary CosmosStakingService to undelegate from specific validator
+                const stakingService = new CosmosStakingService(
+                    cosmosStaking.walletManager,
+                    cosmosStaking.chainClient,
+                    cosmosStaking.txBuilder
+                );
+                
+                const amountMinimal = (parseFloat(amount) * 1e18).toString();
+                const result = await stakingService.undelegate(validatorAddress, amountMinimal, 'Unbond via QubeNode.space');
+                
                 alert('✅ Unbond розпочато! TX: ' + result.txHash);
                 await loadData();
             } catch (error) {
                 alert('❌ Помилка: ' + error.message);
             }
+        }
+        
+        async function loadUnbonding(overview) {
+            const section = document.getElementById('unbondingSection');
+            const container = document.getElementById('unbondingList');
+            
+            if (!overview.unbondingDelegations || overview.unbondingDelegations.length === 0) {
+                section.style.display = 'none';
+                return;
+            }
+            
+            section.style.display = 'block';
+            let html = '';
+            
+            for (const unbonding of overview.unbondingDelegations) {
+                const valAddr = unbonding.validator_address;
+                
+                // Get validator name
+                let valName = validatorNamesCache[valAddr] || 'Завантаження...';
+                if (!validatorNamesCache[valAddr]) {
+                    loadValidatorName(valAddr);
+                }
+                
+                // Process entries
+                for (const entry of unbonding.entries) {
+                    const amount = formatTics(entry.balance);
+                    const completionTime = new Date(entry.completion_time);
+                    const now = new Date();
+                    const daysLeft = Math.ceil((completionTime - now) / (1000 * 60 * 60 * 24));
+                    
+                    html += `
+                        <div class="delegation-item" style="background: rgba(239, 68, 68, 0.05); border-color: rgba(239, 68, 68, 0.2);">
+                            <div class="delegation-header">
+                                <div>
+                                    <div class="validator-name" style="color: #ef4444;">${valName}</div>
+                                    <div style="color: #64748b; font-size: 0.75em; margin-top: 4px;">${valAddr.substring(0, 20)}...</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div class="delegation-amount" style="color: #ef4444;">${amount} TICS</div>
+                                    <div style="color: #fca5a5; font-size: 0.85em; margin-top: 4px;">
+                                        ${daysLeft > 0 ? `⏳ ${daysLeft} днів` : '✅ Готово'}
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="color: #94a3b8; font-size: 0.8em; margin-top: 8px;">
+                                Завершення: ${completionTime.toLocaleDateString('uk-UA')} ${completionTime.toLocaleTimeString('uk-UA')}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            container.innerHTML = html;
         }
         
         function disconnectWallet() {

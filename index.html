@@ -2481,7 +2481,7 @@
                     </defs>
                 </svg>
             </a>
-            <a href="mailto:support@qubenode.space" class="fixed-contact-icon">
+            <a href="/cdn-cgi/l/email-protection#50232520203f222410212532353e3f34357e2320313335" class="fixed-contact-icon">
                 <svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <rect x="11" y="16" width="28" height="18" rx="2" stroke="url(#iconGrad2)" stroke-width="3.5" fill="none"/>
                     <path d="M11 19L25 28L39 19" stroke="url(#iconGrad2)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -2585,7 +2585,7 @@
                 </svg>
                 <span>Telegram</span>
             </a>
-            <a href="mailto:support@qubenode.space" class="contact-link">
+            <a href="/cdn-cgi/l/email-protection#097a7c7979667b7d49787c6b6c67666d6c277a79686a6c" class="contact-link">
                 <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                     <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
                 </svg>
@@ -3581,7 +3581,7 @@
                         <p>Ви можете зв'язатися з нами через:</p>
                         <ul>
                             <li><strong><a href="https://t.me/+sRnz7RyoL4Q0MWEy" target="_blank" style="color: #00D4FF; text-decoration: none; border-bottom: 1px dashed #00D4FF;">Telegram</a>:</strong> Наша група підтримки завжди готова допомогти</li>
-                            <li><strong>Email:</strong> <a href="mailto:support@qubenode.space" style="color: #00D4FF; text-decoration: none; border-bottom: 1px dashed #00D4FF;">support@qubenode.space</a></li>
+                            <li><strong>Email:</strong> <a href="/cdn-cgi/l/email-protection#d7a4a2a7a7b8a5a397a6a2b5b2b9b8b3b2f9a4a7b6b4b2" style="color: #00D4FF; text-decoration: none; border-bottom: 1px dashed #00D4FF;"><span class="__cf_email__" data-cfemail="92e1e7e2e2fde0e6d2e3e7f0f7fcfdf6f7bce1e2f3f1f7">[email&#160;protected]</span></a></li>
                         </ul>
                     </div>
                 </div>
@@ -3973,6 +3973,80 @@
             if (event.target.classList.contains('modal')) {
                 event.target.classList.remove('show');
                 event.target.style.display = 'none';
+            }
+        }
+
+        // ============ HEADER WALLET FUNCTIONS (MUST BE DEFINED FIRST) ============
+        let headerWalletConnected = false;
+        
+        function toggleHeaderWalletDropdown(event) {
+            if (event) event.stopPropagation();
+            
+            const dropdown = document.getElementById('headerWalletDropdown');
+            if (dropdown) {
+                dropdown.classList.toggle('show');
+            }
+        }
+        
+        async function connectHeaderWallet(walletType) {
+            const dropdown = document.getElementById('headerWalletDropdown');
+            if (dropdown) dropdown.classList.remove('show');
+            
+            const headerBtn = document.getElementById('headerWalletBtn');
+            if (headerBtn) {
+                headerBtn.innerHTML = '<span>⏳</span><span>Підключення...</span>';
+                headerBtn.style.pointerEvents = 'none';
+            }
+            
+            try {
+                await initializeStaking();
+                const result = await cosmosStaking.connectWallet(walletType);
+                
+                if (result.success) {
+                    headerWalletConnected = true;
+                    
+                    // Get wallet info
+                    const walletInfo = cosmosStaking.getWalletInfo();
+                    
+                    // Redirect to dashboard with wallet params
+                    window.location.href = `dashboard.html?wallet=${walletType}&address=${walletInfo.address}`;
+                }
+            } catch (error) {
+                console.error('Header wallet connection error:', error);
+                alert('Помилка підключення: ' + error.message);
+                resetHeaderWalletButton();
+            } finally {
+                if (headerBtn) headerBtn.style.pointerEvents = 'auto';
+            }
+        }
+        
+        function resetHeaderWalletButton() {
+            const headerBtn = document.getElementById('headerWalletBtn');
+            if (headerBtn) {
+                headerBtn.innerHTML = '<span>💼</span><span>Підключити гаманець</span>';
+                headerBtn.classList.remove('wallet-connected');
+            }
+        }
+        
+        function disconnectHeaderWallet() {
+            headerWalletConnected = false;
+            if (cosmosStaking) {
+                cosmosStaking.disconnect();
+            }
+            resetHeaderWalletButton();
+            const dropdown = document.getElementById('headerWalletDropdown');
+            if (dropdown) {
+                dropdown.innerHTML = `
+                    <button class="wallet-option" onclick="connectHeaderWallet('keplr'); event.stopPropagation();">
+                        <span>🔷</span>
+                        <span>Keplr Wallet</span>
+                    </button>
+                    <button class="wallet-option" onclick="connectHeaderWallet('cosmostation'); event.stopPropagation();">
+                        <span>🔶</span>
+                        <span>Cosmostation</span>
+                    </button>
+                `;
+                dropdown.classList.remove('show');
             }
         }
 
@@ -5517,52 +5591,10 @@
             }
         }
 
-        // Header Wallet Button Functions
-        let headerWalletConnected = false;
+        // Header Wallet Additional Variables
         let allValidators = []; // Store all validators with names
         let validatorModalMode = ''; // 'from' or 'to'
         let validatorNamesCache = {}; // Cache validator names by address
-
-        function toggleHeaderWalletDropdown(event) {
-            if (event) event.stopPropagation();
-            
-            const dropdown = document.getElementById('headerWalletDropdown');
-            if (dropdown) {
-                dropdown.classList.toggle('show');
-            }
-        }
-
-        async function connectHeaderWallet(walletType) {
-            const dropdown = document.getElementById('headerWalletDropdown');
-            if (dropdown) dropdown.classList.remove('show');
-            
-            const headerBtn = document.getElementById('headerWalletBtn');
-            if (headerBtn) {
-                headerBtn.innerHTML = '<span>⏳</span><span>Підключення...</span>';
-                headerBtn.style.pointerEvents = 'none';
-            }
-            
-            try {
-                await initializeStaking();
-                const result = await cosmosStaking.connectWallet(walletType);
-                
-                if (result.success) {
-                    headerWalletConnected = true;
-                    
-                    // Get wallet info
-                    const walletInfo = cosmosStaking.getWalletInfo();
-                    
-                    // Redirect to dashboard with wallet params
-                    window.location.href = `dashboard.html?wallet=${walletType}&address=${walletInfo.address}`;
-                }
-            } catch (error) {
-                console.error('Header wallet connection error:', error);
-                alert('Помилка підключення: ' + error.message);
-                resetHeaderWalletButton();
-            } finally {
-                if (headerBtn) headerBtn.style.pointerEvents = 'auto';
-            }
-        }
 
         async function updateHeaderWalletDisplay() {
             try {
@@ -5606,76 +5638,6 @@
             } catch (error) {
                 console.error('Error updating header wallet display:', error);
                 resetHeaderWalletButton();
-            }
-        }
-
-        function resetHeaderWalletButton() {
-            headerWalletConnected = false;
-            const headerBtn = document.getElementById('headerWalletBtn');
-            headerBtn.innerHTML = `
-                <span>💼</span>
-                <span>Підключити гаманець</span>
-            `;
-            headerBtn.classList.remove('wallet-connected');
-            
-            // Restore dropdown to wallet selection
-            const dropdown = document.getElementById('headerWalletDropdown');
-            if (dropdown) {
-                dropdown.classList.remove('show');
-                dropdown.innerHTML = `
-                    <button class="wallet-option" onclick="connectHeaderWallet('keplr'); event.stopPropagation();">
-                        <span>🔷</span>
-                        <span>Keplr</span>
-                    </button>
-                    <button class="wallet-option" onclick="connectHeaderWallet('cosmostation'); event.stopPropagation();">
-                        <span>🔶</span>
-                        <span>Cosmostation</span>
-                    </button>
-                `;
-            }
-            
-            // Reset mobile button too
-            updateMobileWalletButton();
-        }
-
-        function disconnectHeaderWallet() {
-            if (confirm('Відключити гаманець?')) {
-                if (cosmosStaking) {
-                    cosmosStaking.disconnect();
-                }
-                resetHeaderWalletButton();
-                
-                // Reset ALL modal sections completely
-                const dashboard = document.getElementById('delegatorDashboard');
-                const stakingInterface = document.getElementById('stakingInterface');
-                const walletSection = document.getElementById('walletSection');
-                const walletStatus = document.getElementById('walletStatus');
-                const stakingActions = document.getElementById('stakingActions');
-                
-                if (dashboard) dashboard.style.display = 'none';
-                if (stakingInterface) stakingInterface.style.display = 'block';
-                if (walletSection) walletSection.style.display = 'block';
-                
-                // HIDE old wallet status and staking actions
-                if (walletStatus) walletStatus.style.display = 'none';
-                if (stakingActions) stakingActions.style.display = 'none';
-                
-                // Reset wallet buttons
-                const keplrBtn = document.getElementById('connectKeplrBtn');
-                const cosmostationBtn = document.getElementById('connectCosmostationBtn');
-                if (keplrBtn) {
-                    keplrBtn.disabled = false;
-                    keplrBtn.innerHTML = '<span style="font-size: 1.3em;">🔷</span><span>Keplr Wallet</span>';
-                }
-                if (cosmostationBtn) {
-                    cosmostationBtn.disabled = false;
-                    cosmostationBtn.innerHTML = '<span style="font-size: 1.3em;">🔶</span><span>Cosmostation</span>';
-                }
-                
-                const dropdown = document.getElementById('headerWalletDropdown');
-                if (dropdown) {
-                    dropdown.classList.remove('show');
-                }
             }
         }
 
@@ -5759,7 +5721,7 @@
     </script>
 
     <!-- Cosmos Staking Module Integration - Load in correct order -->
-    <script src="chain-config.js"></script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="chain-config.js"></script>
     <script src="wallet-manager.js"></script>
     <script src="chain-client.js"></script>
     <script src="transaction-builder.js"></script>
@@ -5790,16 +5752,4 @@
         }
         
         if (btnQuickClaimAllRewards) {
-            btnQuickClaimAllRewards.addEventListener('click', function() {
-                console.log('💰 Quick Claim All Rewards clicked!');
-                window.quickClaimAllRewards();
-            });
-            console.log('✅ btnQuickClaimAllRewards listener attached');
-        }
-    } else {
-        console.error('❌ Functions are NOT loaded!');
-    }
-    </script>
-
-</body>
-</html>
+            btnQuickClaimAllRewards.addEventListener('clic

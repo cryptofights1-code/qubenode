@@ -750,9 +750,9 @@
         // ============ CONFIGURATION ============
         const CHAIN_ID = 'qubetics_9030-1';
         const RPC_URL = 'https://rpc.qubetics.com';
-        const REST_URL = 'https://api.qubetics.com';
-        const DENOM = 'aunit';
-        const QUBENODE_VALIDATOR = 'qubevaloper10lmgzhtyjp7mhgp0t4r7qrmrk93vlpfvdmrz78';
+        const REST_URL = 'https://swagger.qubetics.com';
+        const DENOM = 'tics';
+        const QUBENODE_VALIDATOR = 'qubeticsvaloper10lmgzhtyjp7mhgp0t4r7qrmrk93vlpfvdmrz78';
         
         // ============ GLOBAL STATE ============
         let keplrAPI = null;
@@ -1360,5 +1360,13 @@
             }
         });
     </script>
+    
+    <!-- Cosmos Staking Module Integration - Required for wallet connectivity -->
+    <script src="chain-config.js"></script>
+    <script src="wallet-manager.js"></script>
+    <script src="chain-client.js"></script>
+    <script src="transaction-builder.js"></script>
+    <script src="staking-service.js"></script>
+    <script src="cosmos-staking.js"></script>
 </body>
 </html>

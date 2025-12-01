@@ -75,7 +75,7 @@ const QUBETICS_CHAIN_CONFIG = {
 
 // QubeNode Validator Configuration
 const VALIDATOR_CONFIG = {
-    operatorAddress: 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld',
+    operatorAddress: 'qubeticsvaloper10lmgzhtyjp7mhgp0t4r7qrmrk93vlpfvdmrz78',
     name: 'QubeNode',
     commission: 5,
     minDelegation: 0.1,

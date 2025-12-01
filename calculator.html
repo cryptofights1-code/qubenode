@@ -370,16 +370,31 @@
         async function fetchTicsPrice() {
             try {
                 const response = await fetch('https://api.mexc.com/api/v3/ticker/24hr?symbol=TICSUSDT');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
                 const data = await response.json();
+                
                 if (data && data.lastPrice) {
                     currentTicsPrice = parseFloat(data.lastPrice);
                     document.getElementById('currentPriceDisplay').textContent = currentTicsPrice.toFixed(4);
                     if (document.getElementById('calcResults').style.display !== 'none') {
                         calculateAuto();
                     }
+                    console.log('✅ TICS price loaded:', currentTicsPrice);
+                } else {
+                    console.warn('⚠️ Invalid price data from MEXC');
                 }
             } catch (error) {
-                console.error('Error fetching TICS price:', error);
+                console.error('❌ Error fetching TICS price:', error);
+                // Use default price if fetch fails
+                if (!currentTicsPrice || currentTicsPrice === 0.038) {
+                    currentTicsPrice = 0.038; // Fallback price
+                    document.getElementById('currentPriceDisplay').textContent = currentTicsPrice.toFixed(4);
+                    console.log('Using fallback price:', currentTicsPrice);
+                }
             }
         }
         

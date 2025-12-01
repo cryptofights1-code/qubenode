@@ -388,7 +388,12 @@
                 
                 if (data && data.lastPrice) {
                     currentTicsPrice = parseFloat(data.lastPrice);
-                    document.getElementById('currentPriceDisplay').textContent = currentTicsPrice.toFixed(4);
+                    const priceElement = document.getElementById('currentPriceDisplay');
+                    if (priceElement) {
+                        priceElement.textContent = currentTicsPrice.toFixed(4);
+                        priceElement.style.color = '#00FFF0'; // Highlight update
+                        setTimeout(() => priceElement.style.color = '', 500);
+                    }
                     if (document.getElementById('calcResults').style.display !== 'none') {
                         calculateAuto();
                     }

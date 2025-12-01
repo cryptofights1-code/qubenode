@@ -158,6 +158,77 @@
         </div>
     </div>
     
+    <!-- Modals -->
+    <!-- Stake More Modal -->
+    <div id="stakeMoreModal" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8);">
+        <div class="modal-content" style="background: #0f172a; margin: 10% auto; padding: 0; border: 1px solid rgba(0,212,255,0.3); border-radius: 16px; width: 90%; max-width: 500px;">
+            <div class="modal-header" style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; color: #00D4FF;">💎 Stake More</h3>
+                <span class="close" onclick="closeModal('stakeMoreModal')" style="color: #64748b; font-size: 28px; cursor: pointer;">&times;</span>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <p>Валідатор: <span id="stakeMoreValidator" style="color: #00D4FF; word-break: break-all;"></span></p>
+                <div style="margin-top: 20px;">
+                    <label style="color: #94a3b8;">Кількість TICS:</label>
+                    <input type="number" id="stakeMoreAmount" placeholder="0.0" style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; margin-top: 8px; font-size: 16px;">
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 10px; justify-content: flex-end;">
+                <button onclick="closeModal('stakeMoreModal')" style="padding: 12px 24px; background: #64748b; border: none; border-radius: 8px; color: white; cursor: pointer; font-size: 14px;">Скасувати</button>
+                <button onclick="confirmStakeMore()" style="padding: 12px 24px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border: none; border-radius: 8px; color: #000; font-weight: 600; cursor: pointer; font-size: 14px;">Делегувати</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Unbond Modal -->
+    <div id="unbondModal" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8);">
+        <div class="modal-content" style="background: #0f172a; margin: 10% auto; padding: 0; border: 1px solid rgba(239,68,68,0.3); border-radius: 16px; width: 90%; max-width: 500px;">
+            <div class="modal-header" style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; color: #ef4444;">⛔ Unbond</h3>
+                <span class="close" onclick="closeModal('unbondModal')" style="color: #64748b; font-size: 28px; cursor: pointer;">&times;</span>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <p>Валідатор: <span id="unbondValidator" style="color: #00D4FF; word-break: break-all;"></span></p>
+                <p style="color: #fca5a5; margin-top: 10px;">⚠️ Період очікування: 14 днів</p>
+                <div style="margin-top: 20px;">
+                    <label style="color: #94a3b8;">Кількість TICS:</label>
+                    <input type="number" id="unbondAmount" placeholder="0.0" style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; margin-top: 8px; font-size: 16px;">
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 10px; justify-content: flex-end;">
+                <button onclick="closeModal('unbondModal')" style="padding: 12px 24px; background: #64748b; border: none; border-radius: 8px; color: white; cursor: pointer; font-size: 14px;">Скасувати</button>
+                <button onclick="confirmUnbond()" style="padding: 12px 24px; background: linear-gradient(135deg, #ef4444, #dc2626); border: none; border-radius: 8px; color: white; font-weight: 600; cursor: pointer; font-size: 14px;">Unbond</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Switch Validator Modal -->
+    <div id="switchValidatorModal" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8);">
+        <div class="modal-content" style="background: #0f172a; margin: 10% auto; padding: 0; border: 1px solid rgba(245,158,11,0.3); border-radius: 16px; width: 90%; max-width: 500px;">
+            <div class="modal-header" style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; color: #f59e0b;">🔄 Switch Validator</h3>
+                <span class="close" onclick="closeModal('switchValidatorModal')" style="color: #64748b; font-size: 28px; cursor: pointer;">&times;</span>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <p>З валідатора: <span id="switchFromValidator" style="color: #00D4FF; word-break: break-all;"></span></p>
+                <div style="margin-top: 20px;">
+                    <label style="color: #94a3b8;">Кількість TICS:</label>
+                    <input type="number" id="switchAmount" placeholder="0.0" style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; margin-top: 8px; font-size: 16px;">
+                </div>
+                <div style="margin-top: 20px;">
+                    <label style="color: #94a3b8;">На валідатора:</label>
+                    <select id="switchToValidator" style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; margin-top: 8px; font-size: 14px;">
+                        <option value="">Завантаження валідаторів...</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 10px; justify-content: flex-end;">
+                <button onclick="closeModal('switchValidatorModal')" style="padding: 12px 24px; background: #64748b; border: none; border-radius: 8px; color: white; cursor: pointer; font-size: 14px;">Скасувати</button>
+                <button onclick="confirmSwitch()" style="padding: 12px 24px; background: linear-gradient(135deg, #f59e0b, #f97316); border: none; border-radius: 8px; color: white; font-weight: 600; cursor: pointer; font-size: 14px;">Перемістити</button>
+            </div>
+        </div>
+    </div>
+    
     <script>
         const QUBENODE_VALIDATOR = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
         
@@ -288,7 +359,7 @@
                         </div>
                         <div class="delegation-actions">
                             <button class="btn-stake" onclick="stakeMore('${valAddr}')">💎 Stake More</button>
-                            <button class="btn-claim" onclick="claimRewards('${valAddr}')">✨ Claim</button>
+                            <button class="btn-switch" onclick="switchValidator('${valAddr}')" style="background: linear-gradient(135deg, #f59e0b, #f97316); border: none;">🔄 Switch Validator</button>
                             <button class="btn-unbond" onclick="unbond('${valAddr}')">⛔ Unbond</button>
                         </div>
                     </div>
@@ -342,27 +413,122 @@
             }
         }
         
+        let currentValidatorAddress = '';
+        let allValidators = [];
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
         async function stakeMore(validatorAddress) {
-            const amount = prompt('Введіть кількість TICS:');
+            console.log('🎯 Stake More clicked for validator:', validatorAddress);
+            currentValidatorAddress = validatorAddress;
+            
+            // Get validator name
+            const valName = validatorNamesCache[validatorAddress] || validatorAddress;
+            document.getElementById('stakeMoreValidator').textContent = valName;
+            document.getElementById('stakeMoreAmount').value = '';
+            document.getElementById('stakeMoreModal').style.display = 'block';
+        }
+        
+        async function confirmStakeMore() {
+            const amount = document.getElementById('stakeMoreAmount').value;
             if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
+                alert('Введіть правильну кількість');
                 return;
             }
+            
+            closeModal('stakeMoreModal');
             
             try {
                 const amountMinimal = (parseFloat(amount) * 1e18).toString();
                 
-                // Use CosmosStakingService directly with specific validator
+                console.log('📤 Delegating to:', currentValidatorAddress);
+                console.log('💰 Amount:', amount, 'TICS');
+                
                 const walletManager = cosmosStaking.walletManager;
                 const chainClient = cosmosStaking.chainClient;
                 const txBuilder = cosmosStaking.txBuilder;
                 
                 const stakingService = new CosmosStakingService(walletManager, chainClient, txBuilder);
-                const result = await stakingService.delegate(validatorAddress, amountMinimal, 'Stake more via QubeNode.space');
+                const result = await stakingService.delegate(currentValidatorAddress, amountMinimal, 'Stake more via QubeNode.space');
                 
                 alert('✅ Успішно! TX: ' + result.txHash);
                 await loadData();
             } catch (error) {
                 console.error('Stake error:', error);
+                alert('❌ Помилка: ' + error.message);
+            }
+        }
+        
+        async function switchValidator(validatorAddress) {
+            console.log('🔄 Switch Validator clicked for:', validatorAddress);
+            currentValidatorAddress = validatorAddress;
+            
+            const valName = validatorNamesCache[validatorAddress] || validatorAddress;
+            document.getElementById('switchFromValidator').textContent = valName;
+            document.getElementById('switchAmount').value = '';
+            
+            // Load all validators
+            await loadAllValidators();
+            
+            document.getElementById('switchValidatorModal').style.display = 'block';
+        }
+        
+        async function loadAllValidators() {
+            try {
+                const response = await fetch('https://swagger.qubetics.com/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED');
+                const data = await response.json();
+                allValidators = data.validators || [];
+                
+                const select = document.getElementById('switchToValidator');
+                select.innerHTML = '<option value="">Виберіть валідатора...</option>';
+                
+                for (const val of allValidators) {
+                    if (val.operator_address !== currentValidatorAddress) {
+                        const name = val.description.moniker || val.operator_address;
+                        select.innerHTML += `<option value="${val.operator_address}">${name}</option>`;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading validators:', error);
+            }
+        }
+        
+        async function confirmSwitch() {
+            const amount = document.getElementById('switchAmount').value;
+            const toValidator = document.getElementById('switchToValidator').value;
+            
+            if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
+                alert('Введіть правильну кількість');
+                return;
+            }
+            
+            if (!toValidator) {
+                alert('Виберіть валідатора');
+                return;
+            }
+            
+            closeModal('switchValidatorModal');
+            
+            try {
+                const amountMinimal = (parseFloat(amount) * 1e18).toString();
+                
+                console.log('📤 Redelegating from:', currentValidatorAddress);
+                console.log('📥 Redelegating to:', toValidator);
+                console.log('💰 Amount:', amount, 'TICS');
+                
+                const walletManager = cosmosStaking.walletManager;
+                const chainClient = cosmosStaking.chainClient;
+                const txBuilder = cosmosStaking.txBuilder;
+                
+                const stakingService = new CosmosStakingService(walletManager, chainClient, txBuilder);
+                const result = await stakingService.redelegate(currentValidatorAddress, toValidator, amountMinimal, 'Switch validator via QubeNode.space');
+                
+                alert('✅ Успішно! TX: ' + result.txHash);
+                await loadData();
+            } catch (error) {
+                console.error('Redelegate error:', error);
                 alert('❌ Помилка: ' + error.message);
             }
         }
@@ -386,25 +552,36 @@
         }
         
         async function unbond(validatorAddress) {
-            const amount = prompt('Введіть кількість TICS для unbond (період очікування 14 днів):');
+            console.log('⛔ Unbond clicked for validator:', validatorAddress);
+            currentValidatorAddress = validatorAddress;
+            
+            const valName = validatorNamesCache[validatorAddress] || validatorAddress;
+            document.getElementById('unbondValidator').textContent = valName;
+            document.getElementById('unbondAmount').value = '';
+            document.getElementById('unbondModal').style.display = 'block';
+        }
+        
+        async function confirmUnbond() {
+            const amount = document.getElementById('unbondAmount').value;
             if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
+                alert('Введіть правильну кількість');
                 return;
             }
             
-            if (!confirm(`Розблокувати ${amount} TICS? Очікування: 14 днів`)) {
-                return;
-            }
+            closeModal('unbondModal');
             
             try {
                 const amountMinimal = (parseFloat(amount) * 1e18).toString();
                 
-                // Use CosmosStakingService directly with specific validator
+                console.log('📤 Unbonding from:', currentValidatorAddress);
+                console.log('💰 Amount:', amount, 'TICS');
+                
                 const walletManager = cosmosStaking.walletManager;
                 const chainClient = cosmosStaking.chainClient;
                 const txBuilder = cosmosStaking.txBuilder;
                 
                 const stakingService = new CosmosStakingService(walletManager, chainClient, txBuilder);
-                const result = await stakingService.undelegate(validatorAddress, amountMinimal, 'Unbond via QubeNode.space');
+                const result = await stakingService.undelegate(currentValidatorAddress, amountMinimal, 'Unbond via QubeNode.space');
                 
                 alert('✅ Unbond розпочато! TX: ' + result.txHash);
                 await loadData();

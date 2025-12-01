@@ -7,26 +7,48 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { background: #000; color: #fff; font-family: 'Space Grotesk', sans-serif; }
-        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
-        header { text-align: center; padding: 20px 0; }
-        .back-button { background: linear-gradient(135deg, #00D4FF, #00FFF0); border: none; color: #000; padding: 12px 24px; border-radius: 10px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; margin-bottom: 20px; }
+        html, body { background: #000; color: #fff; font-family: 'Space Grotesk', sans-serif; min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        header { text-align: center; padding: 20px 0; margin-bottom: 20px; }
+        .back-button { background: linear-gradient(135deg, #00D4FF, #00FFF0); border: none; color: #000; padding: 12px 24px; border-radius: 10px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; margin-bottom: 20px; transition: all 0.3s; }
         .page-title { color: #00FFF0; font-size: 2.5em; font-weight: 700; margin: 20px 0; }
-        .calc-section { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 20px; padding: 40px; }
-        .input-group { margin-bottom: 30px; }
-        .input-group label { display: block; color: #00D4FF; font-weight: 600; margin-bottom: 12px; }
-        .input-group input, .input-group select { width: 100%; padding: 12px; background: rgba(0, 212, 255, 0.1); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 10px; color: #fff; font-size: 1em; }
-        .preset-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
-        .preset-buttons button { padding: 10px 20px; background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 10px; color: #00FFF0; cursor: pointer; }
-        .results { background: rgba(0, 212, 255, 0.05); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 15px; padding: 30px; margin-top: 30px; }
-        .result-row { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid rgba(0, 212, 255, 0.1); }
-        .result-label { color: #94a3b8; font-size: 1.1em; }
-        .result-value { color: #00FFF0; font-size: 1.2em; font-weight: 700; }
+        .calc-container { background: rgba(0, 212, 255, 0.03); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 20px; padding: 40px; }
+        .preset-buttons { margin-bottom: 30px; text-align: center; }
+        .preset-buttons label { display: block; color: #00D4FF; font-weight: 600; margin-bottom: 12px; }
+        .preset-grid { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+        .preset-btn { padding: 10px 20px; background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 10px; color: #00FFF0; cursor: pointer; transition: all 0.3s; font-size: 0.95em; font-weight: 600; }
+        .preset-btn:hover { background: rgba(0, 212, 255, 0.2); transform: translateY(-2px); }
+        .input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .input-group label { display: block; color: #00D4FF; font-weight: 600; margin-bottom: 8px; }
+        .calc-input { width: 100%; padding: 15px; background: rgba(0, 212, 255, 0.05); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 12px; color: #fff; font-size: 1em; font-family: 'Space Grotesk', sans-serif; }
+        .calc-input:focus { outline: none; border-color: rgba(0, 212, 255, 0.5); background: rgba(0, 212, 255, 0.08); }
+        .price-hint { color: #64748b; font-size: 0.8em; margin-top: 4px; }
+        #calcResults { display: none; }
+        .summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .summary-card { background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(74, 222, 128, 0.08)); border: 1px solid rgba(34, 197, 94, 0.35); border-radius: 15px; padding: 20px; text-align: center; }
+        .summary-card.highlight { background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(74, 222, 128, 0.1)); border: 2px solid rgba(34, 197, 94, 0.4); }
+        .card-label { color: #94a3b8; font-size: 0.9em; margin-bottom: 8px; }
+        .card-value { color: #22c55e; font-size: 1.5em; font-weight: 700; }
+        .card-value.large { font-size: 1.6em; }
+        .card-usd { color: #86efac; font-size: 0.85em; margin-top: 5px; }
+        .detailed-breakdown { background: rgba(34, 197, 94, 0.05); border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 15px; padding: 25px; margin-bottom: 20px; }
+        .breakdown-title { color: #22c55e; margin-bottom: 20px; font-size: 1.2em; }
+        .breakdown-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(34, 197, 94, 0.15); }
+        .breakdown-row.highlight { border-bottom: 2px solid rgba(34, 197, 94, 0.3); padding: 15px 0 5px 0; margin-top: 10px; }
+        .breakdown-label { color: #94a3b8; }
+        .breakdown-value { font-weight: 600; }
+        .comparison-box { background: rgba(34, 197, 94, 0.05); border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 15px; padding: 25px; display: none; }
+        .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px; }
+        .benefit-box { padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 10px; margin-top: 15px; }
+        .benefit-box .label { color: #22c55e; font-weight: 600; }
+        .benefit-box .value { color: #fff; font-size: 1.2em; margin-top: 5px; }
         @media (max-width: 768px) {
             .container { padding: 10px; }
             .page-title { font-size: 1.8em; }
-            .calc-section { padding: 20px; }
-            .preset-buttons { flex-direction: column; }
+            .calc-container { padding: 20px; }
+            .input-grid { grid-template-columns: 1fr; }
+            .summary-cards { grid-template-columns: repeat(2, 1fr); }
+            .comparison-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -38,107 +60,332 @@
             <p style="color: #94a3b8; font-size: 1.1em;">Розрахуйте свої майбутні винагороди</p>
         </header>
 
-        <div class="calc-section">
-            <div class="input-group">
-                <label>Сума делегування (TICS):</label>
-                <input type="number" id="amount" placeholder="Наприклад: 1000" oninput="calculate()">
-                <div class="preset-buttons">
-                    <button onclick="setAmount(100)">100 TICS</button>
-                    <button onclick="setAmount(1000)">1,000 TICS</button>
-                    <button onclick="setAmount(5000)">5,000 TICS</button>
-                    <button onclick="setAmount(10000)">10,000 TICS</button>
+        <div class="calc-container">
+            <!-- Preset Buttons -->
+            <div class="preset-buttons">
+                <label>Швидкий вибір суми:</label>
+                <div class="preset-grid">
+                    <button class="preset-btn" onclick="setAmount(100)">100 TICS</button>
+                    <button class="preset-btn" onclick="setAmount(1000)">1,000 TICS</button>
+                    <button class="preset-btn" onclick="setAmount(5000)">5,000 TICS</button>
+                    <button class="preset-btn" onclick="setAmount(10000)">10,000 TICS</button>
+                    <button class="preset-btn" onclick="setAmount(50000)">50,000 TICS</button>
                 </div>
             </div>
 
-            <div class="input-group">
-                <label>Період (місяців):</label>
-                <select id="period" onchange="calculate()">
-                    <option value="1">1 місяць</option>
-                    <option value="3">3 місяці</option>
-                    <option value="6" selected>6 місяців</option>
-                    <option value="12">1 рік</option>
-                    <option value="24">2 роки</option>
-                    <option value="36">3 роки</option>
-                </select>
+            <!-- Input Fields -->
+            <div class="input-grid">
+                <div class="input-group">
+                    <label>Кількість $TICS</label>
+                    <input type="number" id="amount" class="calc-input" placeholder="Введіть кількість монет" oninput="calculateAuto()">
+                </div>
+                
+                <div class="input-group">
+                    <label>Період</label>
+                    <select id="period" class="calc-input" onchange="usePeriod()">
+                        <option value="">-- Вибрати --</option>
+                        <option value="1">1 місяць</option>
+                        <option value="3">3 місяці</option>
+                        <option value="6">6 місяців</option>
+                        <option value="12" selected>1 рік</option>
+                        <option value="24">2 роки</option>
+                        <option value="36">3 роки</option>
+                        <option value="48">4 роки</option>
+                        <option value="60">5 років</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label>Або днів</label>
+                    <input type="number" id="customDays" class="calc-input" placeholder="Введіть кількість днів" oninput="useCustomDays()">
+                </div>
+                
+                <div class="input-group">
+                    <label>Ціна $TICS (USD)</label>
+                    <input type="number" id="customPrice" class="calc-input" placeholder="Авто з MEXC" step="0.0001" oninput="useCustomPrice()">
+                    <div class="price-hint">Поточна: $<span id="currentPriceDisplay">0.0472</span></div>
+                </div>
+                
+                <div class="input-group">
+                    <label>Реінвестування</label>
+                    <select id="compoundFrequency" class="calc-input" onchange="calculateAuto()">
+                        <option value="none">Без реінвестування</option>
+                        <option value="daily">Щоденне (вручну)</option>
+                        <option value="weekly">Щотижневе (вручну)</option>
+                        <option value="monthly">Щомісячне (вручну)</option>
+                        <option value="quarterly">Щоквартальне (вручну)</option>
+                    </select>
+                </div>
             </div>
 
-            <div class="input-group">
-                <label>Реінвестування:</label>
-                <select id="compound" onchange="calculate()">
-                    <option value="none">Без реінвестування</option>
-                    <option value="monthly" selected>Щомісячне</option>
-                    <option value="weekly">Щотижневе</option>
-                    <option value="daily">Щоденне</option>
-                </select>
-            </div>
+            <!-- Results Section -->
+            <div id="calcResults">
+                <!-- Summary Cards -->
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <div class="card-label">Щоденний дохід</div>
+                        <div class="card-value" id="dailyResult">--</div>
+                        <div class="card-usd" id="dailyUSD">--</div>
+                    </div>
+                    
+                    <div class="summary-card">
+                        <div class="card-label">Тижневий дохід</div>
+                        <div class="card-value" id="weeklyResult">--</div>
+                        <div class="card-usd" id="weeklyUSD">--</div>
+                    </div>
+                    
+                    <div class="summary-card">
+                        <div class="card-label">Місячний дохід</div>
+                        <div class="card-value" id="monthlyResult">--</div>
+                        <div class="card-usd" id="monthlyUSD">--</div>
+                    </div>
+                    
+                    <div class="summary-card highlight">
+                        <div class="card-label">Загальний дохід</div>
+                        <div class="card-value large" id="totalResult">--</div>
+                        <div class="card-usd" id="totalUSD">--</div>
+                    </div>
+                </div>
 
-            <div class="results" id="results" style="display: none;">
-                <h3 style="color: #00FFF0; margin-bottom: 20px;">Результати розрахунку</h3>
-                <div class="result-row">
-                    <span class="result-label">Початкова сума:</span>
-                    <span class="result-value" id="initialAmount">0 TICS</span>
+                <!-- Detailed Breakdown -->
+                <div class="detailed-breakdown">
+                    <h4 class="breakdown-title">📊 Детальний розрахунок</h4>
+                    
+                    <div class="breakdown-row">
+                        <span class="breakdown-label">Тіло депозиту (Principal):</span>
+                        <span class="breakdown-value" id="initialAmount">--</span>
+                    </div>
+                    
+                    <div class="breakdown-row">
+                        <span class="breakdown-label">Період стейкінгу:</span>
+                        <span class="breakdown-value" id="periodText">--</span>
+                    </div>
+                    
+                    <div class="breakdown-row">
+                        <span class="breakdown-label">APY (базова ставка):</span>
+                        <span class="breakdown-value" style="color: #22c55e;">30%</span>
+                    </div>
+                    
+                    <div class="breakdown-row">
+                        <span class="breakdown-label">Комісія валідатора (%):</span>
+                        <span class="breakdown-value" style="color: #fbbf24;">5%</span>
+                    </div>
+                    
+                    <div class="breakdown-row">
+                        <span class="breakdown-label">Ваш реальний APY:</span>
+                        <span class="breakdown-value" style="color: #22c55e; font-size: 1.05em;">28.5%</span>
+                    </div>
+                    
+                    <div class="breakdown-row">
+                        <span class="breakdown-label">Реінвестування:</span>
+                        <span class="breakdown-value" id="compoundText">--</span>
+                    </div>
+                    
+                    <div class="breakdown-row">
+                        <span class="breakdown-label">Загальна винагорода:</span>
+                        <span class="breakdown-value" style="color: #22c55e; font-size: 1.05em;" id="totalRewardAmount">--</span>
+                    </div>
+                    
+                    <div class="breakdown-row">
+                        <span class="breakdown-label">Комісія валідатора (сума):</span>
+                        <span class="breakdown-value" style="color: #fbbf24;" id="validatorCommissionAmount">--</span>
+                    </div>
+                    
+                    <div class="breakdown-row">
+                        <span class="breakdown-label">Ваша винагорода (чиста):</span>
+                        <span class="breakdown-value" style="color: #22c55e; font-size: 1.05em;" id="netRewardAmount">--</span>
+                    </div>
+                    
+                    <div class="breakdown-row highlight">
+                        <span class="breakdown-label" style="color: #22c55e; font-size: 1.15em; font-weight: 700;">Кінцева сума:</span>
+                        <span class="breakdown-value" style="color: #22c55e; font-size: 1.15em;" id="finalAmount">--</span>
+                    </div>
                 </div>
-                <div class="result-row">
-                    <span class="result-label">Загальна винагорода:</span>
-                    <span class="result-value" id="totalReward">0 TICS</span>
-                </div>
-                <div class="result-row" style="border-bottom: none;">
-                    <span class="result-label">Підсумкова сума:</span>
-                    <span class="result-value" style="font-size: 1.5em; color: #4ade80;" id="finalAmount">0 TICS</span>
-                </div>
-                <div style="margin-top: 20px; padding: 15px; background: rgba(250, 204, 21, 0.1); border-left: 4px solid #facc15; border-radius: 8px;">
-                    <p style="color: #fde047; font-size: 0.9em; margin: 0;">
-                        <strong>💡 Примітка:</strong> Розрахунки базуються на APY ~30% з комісією валідатора 5%. Фактичні винагороди можуть відрізнятися в залежності від мережі.
-                    </p>
+
+                <!-- Comparison -->
+                <div id="compoundComparison" class="comparison-box">
+                    <h4 class="breakdown-title">💡 Порівняння: без реінвестування vs з реінвестуванням</h4>
+                    
+                    <div class="comparison-grid">
+                        <div>
+                            <div style="color: #94a3b8; margin-bottom: 10px;">Без реінвестування:</div>
+                            <div style="color: #fff; font-size: 1.3em; font-weight: 600;" id="withoutCompound">--</div>
+                        </div>
+                        <div>
+                            <div style="color: #94a3b8; margin-bottom: 10px;">З реінвестуванням:</div>
+                            <div style="color: #22c55e; font-size: 1.3em; font-weight: 700;" id="withCompound">--</div>
+                        </div>
+                    </div>
+                    
+                    <div class="benefit-box">
+                        <div class="label">Додатковий прибуток з реінвестуванням:</div>
+                        <div class="value" id="compoundBenefit">--</div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        let currentTicsPrice = 0.047190;
+        let userCustomPrice = null;
+        
         function setAmount(value) {
             document.getElementById('amount').value = value;
-            calculate();
+            calculateAuto();
         }
-
-        function calculate() {
+        
+        function usePeriod() {
+            const period = document.getElementById('period').value;
+            if (period) {
+                document.getElementById('customDays').value = '';
+                calculateAuto();
+            }
+        }
+        
+        function useCustomDays() {
+            const days = parseInt(document.getElementById('customDays').value);
+            if (days && days > 0) {
+                document.getElementById('period').value = '';
+                calculateAuto();
+            }
+        }
+        
+        function useCustomPrice() {
+            const price = parseFloat(document.getElementById('customPrice').value);
+            if (price && price > 0) {
+                userCustomPrice = price;
+                calculateAuto();
+            } else {
+                userCustomPrice = null;
+                calculateAuto();
+            }
+        }
+        
+        function calculateAuto() {
             const amount = parseFloat(document.getElementById('amount').value);
-            const period = parseInt(document.getElementById('period').value);
-            const compound = document.getElementById('compound').value;
-
-            if (!amount || amount <= 0 || !period) {
-                document.getElementById('results').style.display = 'none';
+            let period = parseInt(document.getElementById('period').value);
+            const customDays = parseInt(document.getElementById('customDays').value);
+            const compoundFreq = document.getElementById('compoundFrequency').value;
+            
+            if (customDays && customDays > 0) {
+                period = customDays / 30;
+            }
+            
+            if (!amount || amount <= 0 || !period || period <= 0) {
+                document.getElementById('calcResults').style.display = 'none';
                 return;
             }
-
+            
+            const priceToUse = userCustomPrice || currentTicsPrice;
+            
             const APY = 30;
             const COMMISSION = 5;
             const NET_APY = APY * (1 - COMMISSION / 100);
             const ANNUAL_RATE = NET_APY / 100;
-
-            let finalAmount, totalReward;
-
-            if (compound === 'none') {
+            
+            let finalAmount, totalReward, compoundsPerYear, compoundText;
+            
+            if (compoundFreq === 'none') {
                 const monthlyRate = ANNUAL_RATE / 12;
-                totalReward = amount * monthlyRate * period;
+                const monthlyReward = amount * monthlyRate;
+                totalReward = monthlyReward * period;
                 finalAmount = amount + totalReward;
+                compoundText = 'Без реінвестування';
             } else {
-                let compoundsPerYear;
-                if (compound === 'daily') compoundsPerYear = 365;
-                else if (compound === 'weekly') compoundsPerYear = 52;
-                else if (compound === 'monthly') compoundsPerYear = 12;
-
+                switch(compoundFreq) {
+                    case 'daily': compoundsPerYear = 365; compoundText = 'Щоденне (вручну)'; break;
+                    case 'weekly': compoundsPerYear = 52; compoundText = 'Щотижневе (вручну)'; break;
+                    case 'monthly': compoundsPerYear = 12; compoundText = 'Щомісячне (вручну)'; break;
+                    case 'quarterly': compoundsPerYear = 4; compoundText = 'Щоквартальне (вручну)'; break;
+                }
+                
                 const ratePerPeriod = ANNUAL_RATE / compoundsPerYear;
                 const totalPeriods = compoundsPerYear * (period / 12);
                 finalAmount = amount * Math.pow(1 + ratePerPeriod, totalPeriods);
                 totalReward = finalAmount - amount;
             }
-
-            document.getElementById('initialAmount').textContent = amount.toLocaleString('uk-UA', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' TICS';
-            document.getElementById('totalReward').textContent = totalReward.toLocaleString('uk-UA', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' TICS';
-            document.getElementById('finalAmount').textContent = finalAmount.toLocaleString('uk-UA', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' TICS';
-            document.getElementById('results').style.display = 'block';
+            
+            const daysInPeriod = (period / 12) * 365;
+            const dailyReward = totalReward / daysInPeriod;
+            const weeklyReward = dailyReward * 7;
+            const monthlyReward = totalReward / period;
+            
+            document.getElementById('calcResults').style.display = 'block';
+            
+            document.getElementById('dailyResult').textContent = dailyReward.toFixed(2) + ' TICS';
+            document.getElementById('dailyUSD').textContent = '$' + (dailyReward * priceToUse).toFixed(2);
+            
+            document.getElementById('weeklyResult').textContent = weeklyReward.toFixed(2) + ' TICS';
+            document.getElementById('weeklyUSD').textContent = '$' + (weeklyReward * priceToUse).toFixed(2);
+            
+            document.getElementById('monthlyResult').textContent = monthlyReward.toFixed(2) + ' TICS';
+            document.getElementById('monthlyUSD').textContent = '$' + (monthlyReward * priceToUse).toFixed(2);
+            
+            document.getElementById('totalResult').textContent = totalReward.toFixed(2) + ' TICS';
+            document.getElementById('totalUSD').textContent = '$' + (totalReward * priceToUse).toFixed(2);
+            
+            const netReward = totalReward;
+            const grossReward = netReward / 0.95;
+            const validatorCommission = grossReward - netReward;
+            
+            document.getElementById('initialAmount').textContent = amount.toLocaleString() + ' TICS ($' + (amount * priceToUse).toFixed(2) + ')';
+            document.getElementById('periodText').textContent = getPeriodText(period, customDays);
+            document.getElementById('compoundText').textContent = compoundText;
+            
+            document.getElementById('totalRewardAmount').textContent = grossReward.toFixed(2) + ' TICS ($' + (grossReward * priceToUse).toFixed(2) + ')';
+            document.getElementById('validatorCommissionAmount').textContent = validatorCommission.toFixed(2) + ' TICS ($' + (validatorCommission * priceToUse).toFixed(2) + ')';
+            document.getElementById('netRewardAmount').textContent = netReward.toFixed(2) + ' TICS ($' + (netReward * priceToUse).toFixed(2) + ')';
+            document.getElementById('finalAmount').textContent = finalAmount.toFixed(2) + ' TICS ($' + (finalAmount * priceToUse).toFixed(2) + ')';
+            
+            if (compoundFreq !== 'none') {
+                const monthlyRate = ANNUAL_RATE / 12;
+                const withoutCompoundReward = amount * monthlyRate * period;
+                const withoutCompoundFinal = amount + withoutCompoundReward;
+                const benefit = finalAmount - withoutCompoundFinal;
+                
+                document.getElementById('compoundComparison').style.display = 'block';
+                document.getElementById('withoutCompound').textContent = withoutCompoundFinal.toFixed(2) + ' TICS';
+                document.getElementById('withCompound').textContent = finalAmount.toFixed(2) + ' TICS';
+                document.getElementById('compoundBenefit').textContent = '+' + benefit.toFixed(2) + ' TICS ($' + (benefit * priceToUse).toFixed(2) + ')';
+            } else {
+                document.getElementById('compoundComparison').style.display = 'none';
+            }
         }
+        
+        function getPeriodText(months, customDays) {
+            if (customDays && customDays > 0) return customDays + ' днів';
+            if (months === 1) return '1 місяць';
+            if (months === 3) return '3 місяці';
+            if (months === 6) return '6 місяців';
+            if (months === 12) return '1 рік';
+            if (months === 24) return '2 роки';
+            if (months === 36) return '3 роки';
+            if (months === 48) return '4 роки';
+            if (months === 60) return '5 років';
+            return months.toFixed(1) + ' місяців';
+        }
+        
+        // Fetch price from MEXC
+        async function fetchTicsPrice() {
+            try {
+                const response = await fetch('https://api.mexc.com/api/v3/ticker/24hr?symbol=TICSUSDT');
+                const data = await response.json();
+                if (data && data.lastPrice) {
+                    currentTicsPrice = parseFloat(data.lastPrice);
+                    document.getElementById('currentPriceDisplay').textContent = currentTicsPrice.toFixed(4);
+                    if (document.getElementById('calcResults').style.display !== 'none') {
+                        calculateAuto();
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching TICS price:', error);
+            }
+        }
+        
+        // Fetch price on load and every 30 seconds
+        fetchTicsPrice();
+        setInterval(fetchTicsPrice, 30000);
     </script>
 </body>
 </html>

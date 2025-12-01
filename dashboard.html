@@ -755,7 +755,7 @@
         const QUBENODE_VALIDATOR = 'qubevaloper10lmgzhtyjp7mhgp0t4r7qrmrk93vlpfvdmrz78';
         
         // ============ GLOBAL STATE ============
-        let keplr = null;
+        let keplrAPI = null;
         let offlineSigner = null;
         let userAddress = null;
         let walletType = null;
@@ -814,7 +814,7 @@
                         throw new Error('Keplr не знайдено');
                     }
                     await window.keplr.enable(CHAIN_ID);
-                    keplr = window.keplr;
+                    keplrAPI = window.keplr;
                     offlineSigner = window.keplr.getOfflineSigner(CHAIN_ID);
                 } else if (walletType === 'cosmostation') {
                     if (!window.cosmostation) {
@@ -822,7 +822,7 @@
                     }
                     const provider = window.cosmostation.providers.keplr;
                     await provider.enable(CHAIN_ID);
-                    keplr = provider;
+                    keplrAPI = provider;
                     offlineSigner = provider.getOfflineSigner(CHAIN_ID);
                 }
                 
@@ -1337,7 +1337,7 @@
                 // Use Keplr's signAndBroadcast
                 const chainId = CHAIN_ID;
                 
-                const result = await keplr.signAndBroadcast(
+                const result = await keplrAPI.signAndBroadcast(
                     chainId,
                     userAddress,
                     messages,

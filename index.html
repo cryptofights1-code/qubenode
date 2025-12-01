@@ -2470,9 +2470,15 @@
             }
             
             try {
-                // Wait for modules to load
+                // Wait for modules to load (max 5 seconds)
+                let attempts = 0;
+                while (typeof CosmosStakingModule === 'undefined' && attempts < 50) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    attempts++;
+                }
+                
                 if (typeof CosmosStakingModule === 'undefined') {
-                    throw new Error('Модулі ще завантажуються. Спробуйте через секунду.');
+                    throw new Error('Модулі не завантажились. Перезавантажте сторінку.');
                 }
                 
                 await initializeStaking();

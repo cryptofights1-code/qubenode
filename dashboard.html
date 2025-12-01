@@ -349,29 +349,38 @@
             }
             
             try {
-                // Create temporary CosmosStakingService to delegate to specific validator
-                const stakingService = new CosmosStakingService(
-                    cosmosStaking.walletManager,
-                    cosmosStaking.chainClient,
-                    cosmosStaking.txBuilder
-                );
-                
                 const amountMinimal = (parseFloat(amount) * 1e18).toString();
+                
+                // Use CosmosStakingService directly with specific validator
+                const walletManager = cosmosStaking.walletManager;
+                const chainClient = cosmosStaking.chainClient;
+                const txBuilder = cosmosStaking.txBuilder;
+                
+                const stakingService = new CosmosStakingService(walletManager, chainClient, txBuilder);
                 const result = await stakingService.delegate(validatorAddress, amountMinimal, 'Stake more via QubeNode.space');
                 
                 alert('✅ Успішно! TX: ' + result.txHash);
                 await loadData();
             } catch (error) {
+                console.error('Stake error:', error);
                 alert('❌ Помилка: ' + error.message);
             }
         }
         
         async function claimRewards(validatorAddress) {
             try {
-                const result = await cosmosStaking.claimRewards('Claim via QubeNode.space');
+                // Use CosmosStakingService directly with specific validator
+                const walletManager = cosmosStaking.walletManager;
+                const chainClient = cosmosStaking.chainClient;
+                const txBuilder = cosmosStaking.txBuilder;
+                
+                const stakingService = new CosmosStakingService(walletManager, chainClient, txBuilder);
+                const result = await stakingService.claimRewards(validatorAddress, 'Claim via QubeNode.space');
+                
                 alert('✅ Винагороди зібрано! TX: ' + result.txHash);
                 await loadData();
             } catch (error) {
+                console.error('Claim error:', error);
                 alert('❌ Помилка: ' + error.message);
             }
         }
@@ -387,19 +396,47 @@
             }
             
             try {
-                // Create temporary CosmosStakingService to undelegate from specific validator
-                const stakingService = new CosmosStakingService(
-                    cosmosStaking.walletManager,
-                    cosmosStaking.chainClient,
-                    cosmosStaking.txBuilder
-                );
-                
                 const amountMinimal = (parseFloat(amount) * 1e18).toString();
+                
+                // Use CosmosStakingService directly with specific validator
+                const walletManager = cosmosStaking.walletManager;
+                const chainClient = cosmosStaking.chainClient;
+                const txBuilder = cosmosStaking.txBuilder;
+                
+                const stakingService = new CosmosStakingService(walletManager, chainClient, txBuilder);
                 const result = await stakingService.undelegate(validatorAddress, amountMinimal, 'Unbond via QubeNode.space');
                 
                 alert('✅ Unbond розпочато! TX: ' + result.txHash);
                 await loadData();
             } catch (error) {
+                console.error('Unbond error:', error);
+                alert('❌ Помилка: ' + error.message);
+            }
+        }
+        
+        async function cancelUnbonding(validatorAddress, amount, creationHeight) {
+            if (!confirm(`Скасувати unbond ${formatTics(amount)} TICS? Токени повернуться в делегацію.`)) {
+                return;
+            }
+            
+            try {
+                // Use CosmosStakingService directly
+                const walletManager = cosmosStaking.walletManager;
+                const chainClient = cosmosStaking.chainClient;
+                const txBuilder = cosmosStaking.txBuilder;
+                
+                const stakingService = new CosmosStakingService(walletManager, chainClient, txBuilder);
+                const result = await stakingService.cancelUnbonding(
+                    validatorAddress, 
+                    amount, 
+                    creationHeight, 
+                    'Cancel unbond via QubeNode.space'
+                );
+                
+                alert('✅ Unbond скасовано! TX: ' + result.txHash);
+                await loadData();
+            } catch (error) {
+                console.error('Cancel unbonding error:', error);
                 alert('❌ Помилка: ' + error.message);
             }
         }
@@ -431,6 +468,7 @@
                     const completionTime = new Date(entry.completion_time);
                     const now = new Date();
                     const daysLeft = Math.ceil((completionTime - now) / (1000 * 60 * 60 * 24));
+                    const creationHeight = entry.creation_height || entry.initial_balance; // Fallback
                     
                     html += `
                         <div class="delegation-item" style="background: rgba(239, 68, 68, 0.05); border-color: rgba(239, 68, 68, 0.2);">
@@ -449,6 +487,14 @@
                             <div style="color: #94a3b8; font-size: 0.8em; margin-top: 8px;">
                                 Завершення: ${completionTime.toLocaleDateString('uk-UA')} ${completionTime.toLocaleTimeString('uk-UA')}
                             </div>
+                            ${daysLeft > 0 ? `
+                            <div style="margin-top: 12px;">
+                                <button onclick="cancelUnbonding('${valAddr}', '${entry.balance}', '${creationHeight}')" 
+                                        style="padding: 8px 16px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; color: #ef4444; cursor: pointer; font-size: 0.9em; transition: all 0.3s;">
+                                    ❌ Скасувати Unbond
+                                </button>
+                            </div>
+                            ` : ''}
                         </div>
                     `;
                 }

@@ -749,7 +749,7 @@
     <script>
         // ============ CONFIGURATION ============
         const CHAIN_ID = 'qubetics_9030-1';
-        const RPC_URL = 'https://rpc.qubetics.com';
+        const RPC_URL = 'https://tendermint.qubetics.com:443';
         const REST_URL = 'https://swagger.qubetics.com';
         const DENOM = 'tics';
         const QUBENODE_VALIDATOR = 'qubeticsvaloper10lmgzhtyjp7mhgp0t4r7qrmrk93vlpfvdmrz78';
@@ -1145,7 +1145,7 @@
                 };
                 
                 const fee = {
-                    amount: [{ denom: DENOM, amount: '5000' }],
+                    amount: [{ denom: DENOM, amount: '25000000000000' }],
                     gas: '200000'
                 };
                 
@@ -1187,7 +1187,7 @@
                 };
                 
                 const fee = {
-                    amount: [{ denom: DENOM, amount: '5000' }],
+                    amount: [{ denom: DENOM, amount: '25000000000000' }],
                     gas: '200000'
                 };
                 
@@ -1219,7 +1219,7 @@
                 };
                 
                 const fee = {
-                    amount: [{ denom: DENOM, amount: '5000' }],
+                    amount: [{ denom: DENOM, amount: '25000000000000' }],
                     gas: '200000'
                 };
                 
@@ -1313,7 +1313,7 @@
                 };
                 
                 const fee = {
-                    amount: [{ denom: DENOM, amount: '5000' }],
+                    amount: [{ denom: DENOM, amount: '25000000000000' }],
                     gas: '200000'
                 };
                 
@@ -1344,11 +1344,24 @@
         // ============ SIGN AND BROADCAST ============
         async function signAndBroadcast(messages, fee, memo = '') {
             try {
-                // Use Keplr's signAndBroadcast
                 const chainId = CHAIN_ID;
                 
-                const result = await keplrAPI.signAndBroadcast(
-                    chainId,
+                // Get offlineSigner from Keplr
+                if (!offlineSigner) {
+                    throw new Error('Wallet not connected');
+                }
+                
+                // Import required libraries
+                const { SigningStargateClient } = window.stargate;
+                
+                // Create signing client
+                const client = await SigningStargateClient.connectWithSigner(
+                    RPC_URL,
+                    offlineSigner
+                );
+                
+                // Sign and broadcast
+                const result = await client.signAndBroadcast(
                     userAddress,
                     messages,
                     fee,
@@ -1370,6 +1383,9 @@
             }
         });
     </script>
+    
+    <!-- CosmJS Library for transactions -->
+    <script src="https://cdn.jsdelivr.net/npm/@cosmjs/stargate@0.32.2/build/index.js"></script>
     
     <!-- Cosmos Staking Module Integration - Required for wallet connectivity -->
     <script src="chain-config.js"></script>

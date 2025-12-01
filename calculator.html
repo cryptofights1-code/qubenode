@@ -366,16 +366,25 @@
             return months.toFixed(1) + ' місяців';
         }
         
-        // Fetch price from MEXC
+        // Fetch price from MEXC (using CORS proxy like in sync.js)
         async function fetchTicsPrice() {
             try {
-                const response = await fetch('https://api.mexc.com/api/v3/ticker/24hr?symbol=TICSUSDT');
+                console.log('🔄 Fetching TICS price from MEXC...');
+                
+                // Use CORS proxy like in sync.js
+                const corsProxy = "https://corsproxy.io/?";
+                const mexcUrl = "https://api.mexc.com/api/v3/ticker/24hr?symbol=TICSUSDT";
+                const proxiedUrl = corsProxy + encodeURIComponent(mexcUrl);
+                
+                const response = await fetch(proxiedUrl);
                 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 
                 const data = await response.json();
+                
+                console.log('📊 MEXC response:', data);
                 
                 if (data && data.lastPrice) {
                     currentTicsPrice = parseFloat(data.lastPrice);
@@ -386,15 +395,19 @@
                     console.log('✅ TICS price loaded:', currentTicsPrice);
                 } else {
                     console.warn('⚠️ Invalid price data from MEXC');
+                    setFallbackPrice();
                 }
             } catch (error) {
                 console.error('❌ Error fetching TICS price:', error);
-                // Use default price if fetch fails
-                if (!currentTicsPrice || currentTicsPrice === 0.038) {
-                    currentTicsPrice = 0.038; // Fallback price
-                    document.getElementById('currentPriceDisplay').textContent = currentTicsPrice.toFixed(4);
-                    console.log('Using fallback price:', currentTicsPrice);
-                }
+                setFallbackPrice();
+            }
+        }
+        
+        function setFallbackPrice() {
+            if (!currentTicsPrice || currentTicsPrice === 0.038) {
+                currentTicsPrice = 0.038;
+                document.getElementById('currentPriceDisplay').textContent = currentTicsPrice.toFixed(4);
+                console.log('Using fallback price:', currentTicsPrice);
             }
         }
         

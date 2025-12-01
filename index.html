@@ -2448,6 +2448,59 @@
     </style>
 </head>
 <body>
+    <!-- Header Wallet Functions - MUST Load First -->
+    <script>
+        let headerWalletConnected = false;
+        
+        function toggleHeaderWalletDropdown(event) {
+            if (event) event.stopPropagation();
+            const dropdown = document.getElementById('headerWalletDropdown');
+            if (dropdown) dropdown.classList.toggle('show');
+        }
+        
+        async function connectHeaderWallet(walletType) {
+            const dropdown = document.getElementById('headerWalletDropdown');
+            if (dropdown) dropdown.classList.remove('show');
+            
+            const headerBtn = document.getElementById('headerWalletBtn');
+            if (headerBtn) {
+                headerBtn.innerHTML = '<span>⏳</span><span>Підключення...</span>';
+                headerBtn.style.pointerEvents = 'none';
+            }
+            
+            try {
+                await initializeStaking();
+                const result = await cosmosStaking.connectWallet(walletType);
+                
+                if (result.success) {
+                    headerWalletConnected = true;
+                    const walletInfo = cosmosStaking.getWalletInfo();
+                    window.location.href = `dashboard.html?wallet=${walletType}&address=${walletInfo.address}`;
+                }
+            } catch (error) {
+                console.error('Header wallet connection error:', error);
+                alert('Помилка підключення: ' + error.message);
+                resetHeaderWalletButton();
+            } finally {
+                if (headerBtn) headerBtn.style.pointerEvents = 'auto';
+            }
+        }
+        
+        function resetHeaderWalletButton() {
+            const headerBtn = document.getElementById('headerWalletBtn');
+            if (headerBtn) {
+                headerBtn.innerHTML = '<span>💼</span><span>Підключити гаманець</span>';
+                headerBtn.classList.remove('wallet-connected');
+            }
+        }
+        
+        function disconnectHeaderWallet() {
+            headerWalletConnected = false;
+            if (typeof cosmosStaking !== 'undefined' && cosmosStaking) cosmosStaking.disconnect();
+            resetHeaderWalletButton();
+        }
+    </script>
+    
     <!-- КОНТЕЙНЕР ДЛЯ ІКОНОК - ТІЛЬКИ ВГОРІ САЙТУ -->
     <div id="mobile-icons-container" style="position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important; width: 100% !important; height: 80px !important; z-index: 999999 !important; pointer-events: none !important; margin: 0 !important; padding: 0 !important;">
         <!-- Hamburger Menu - ЗЛІВА -->

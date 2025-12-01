@@ -764,21 +764,31 @@
         
         // ============ UTILITY FUNCTIONS ============
         function formatNumber(num) {
-            if (!num) return '0.00';
+            if (!num) return '0.000';
             const n = parseFloat(num);
-            if (isNaN(n)) return '0.00';
+            if (isNaN(n)) return '0.000';
             return n.toLocaleString('uk-UA', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
+                minimumFractionDigits: 3,
+                maximumFractionDigits: 3
             });
         }
         
         function fromMicroTics(amount) {
-            return parseFloat(amount) / 1000000;
+            return parseFloat(amount) / 1e18; // 18 decimals, NOT 6!
         }
         
         function toMicroTics(amount) {
-            return Math.floor(parseFloat(amount) * 1000000).toString();
+            return (parseFloat(amount) * 1e18).toString();
+        }
+        
+        function formatNumber(num) {
+            if (!num) return '0.000';
+            const n = parseFloat(num);
+            if (isNaN(n)) return '0.000';
+            return n.toLocaleString('uk-UA', {
+                minimumFractionDigits: 3,
+                maximumFractionDigits: 3
+            });
         }
         
         // ============ MODAL FUNCTIONS ============

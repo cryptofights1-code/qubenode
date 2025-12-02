@@ -791,21 +791,27 @@
                 }
                 
                 html += `
-                    <div class="delegation-item">
-                        <div class="delegation-header">
+                    <div style="background: #0d1829; border: 1px solid rgba(255,255,255,0.05); border-left: 3px solid #22c55e; border-radius: 12px; padding: 20px; margin-bottom: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
                             <div>
-                                <div class="validator-name">${valName}</div>
-                                <div style="color: #64748b; font-size: 12px; margin-top: 4px;">${valAddr.substring(0, 25)}...</div>
+                                <div style="color: #00D4FF; font-size: 18px; font-weight: 600; margin-bottom: 4px;">${valName}</div>
+                                <div style="color: #64748b; font-size: 12px;">${valAddr.substring(0, 25)}...</div>
                             </div>
                             <div style="text-align: right;">
-                                <div class="delegation-amount">${amount} TICS</div>
-                                <div class="pending-rewards">💰 Pending Rewards<br>${rewards} TICS</div>
+                                <div style="color: #00FFF0; font-size: 22px; font-weight: 700; margin-bottom: 4px;">${amount} TICS</div>
+                                <div style="color: #94a3b8; font-size: 11px;">TICS Staked</div>
                             </div>
                         </div>
-                        <div class="delegation-actions">
-                            <button class="btn-action btn-stake" onclick="stakeMore('${valAddr}', '${amount}')">💎 Stake More</button>
-                            <button class="btn-action btn-switch" onclick="switchValidator('${valAddr}', '${amount}')">🔄 Switch Validator</button>
-                            <button class="btn-action btn-unbond" onclick="unbond('${valAddr}', '${amount}')">🔓 Unbond</button>
+                        <div style="background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); border-radius: 8px; padding: 12px; margin-bottom: 16px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div style="color: #86efac; font-size: 13px;">💰 Pending Rewards</div>
+                                <div style="color: #86efac; font-size: 16px; font-weight: 600;">${rewards} TICS</div>
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                            <button onclick="stakeMore('${valAddr}', '${amount}')" style="padding: 12px; background: linear-gradient(135deg, #0ea5e9, #0284c7); border: none; border-radius: 8px; color: white; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s;">💎 Stake More</button>
+                            <button onclick="switchValidator('${valAddr}', '${amount}')" style="padding: 12px; background: linear-gradient(135deg, #6b7280, #4b5563); border: none; border-radius: 8px; color: white; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s;">🔄 Switch Validator</button>
+                            <button onclick="unbond('${valAddr}', '${amount}')" style="padding: 12px; background: linear-gradient(135deg, #991b1b, #7f1d1d); border: none; border-radius: 8px; color: white; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s;">🔓 Unbond</button>
                         </div>
                     </div>
                 `;
@@ -831,7 +837,24 @@
             const section = document.getElementById('unbondingSection');
             const container = document.getElementById('unbondingList');
             
-            if (!overview.unbondingDelegations || overview.unbondingDelegations.length === 0) {
+            console.log('🔍 Unbonding data:', overview.unbondingDelegations);
+            
+            let unbondingData = overview.unbondingDelegations;
+            
+            // Якщо немає даних в overview, спробуємо прямий запит
+            if (!unbondingData || unbondingData.length === 0) {
+                try {
+                    const address = cosmosStaking.walletManager.getAddress();
+                    const response = await fetch(`https://swagger.qubetics.com/cosmos/staking/v1beta1/delegators/${address}/unbonding_delegations`);
+                    const data = await response.json();
+                    unbondingData = data.unbonding_responses || [];
+                    console.log('🔄 Fetched unbonding directly from API:', unbondingData);
+                } catch (error) {
+                    console.error('Error fetching unbonding:', error);
+                }
+            }
+            
+            if (!unbondingData || unbondingData.length === 0) {
                 section.style.display = 'none';
                 return;
             }
@@ -839,7 +862,7 @@
             section.style.display = 'block';
             let html = '';
             
-            for (const unbonding of overview.unbondingDelegations) {
+            for (const unbonding of unbondingData) {
                 const valAddr = unbonding.validator_address;
                 let valName = validatorNamesCache[valAddr] || 'Завантаження...';
                 if (!validatorNamesCache[valAddr]) {
@@ -857,10 +880,10 @@
                     const creationHeight = entry.creation_height || entry.initial_balance;
                     
                     html += `
-                        <div class="delegation-item" style="border-color: rgba(239,68,68,0.3);">
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="background: #0d1829; border: 1px solid rgba(239,68,68,0.2); border-left: 3px solid #ef4444; border-radius: 12px; padding: 20px; margin-bottom: 16px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                                 <div>
-                                    <div style="color: #94a3b8; font-size: 13px; margin-bottom: 4px;">From: ${valName}</div>
+                                    <div style="color: #94a3b8; font-size: 12px; margin-bottom: 4px;">From: ${valName}</div>
                                     <div style="color: #64748b; font-size: 11px; margin-bottom: 8px;">${valAddr.substring(0, 25)}...</div>
                                     <div style="color: #ef4444; font-size: 24px; font-weight: 700;">${amount} TICS</div>
                                 </div>
@@ -870,7 +893,7 @@
                                     <div style="color: #64748b; font-size: 11px;">Completion:<br>${completionTime.toLocaleDateString('uk-UA')}, ${completionTime.toLocaleTimeString('uk-UA', {hour: '2-digit', minute: '2-digit'})}</div>
                                 </div>
                             </div>
-                            ${days >= 0 && hours >= 0 ? `<button onclick="cancelUnbonding('${valAddr}', '${entry.balance}', '${creationHeight}')" style="width: 100%; padding: 10px; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; color: #ef4444; cursor: pointer; font-weight: 600; margin-top: 12px;">Cancel Unbonding</button>` : ''}
+                            ${days >= 0 && hours >= 0 ? `<button onclick="cancelUnbonding('${valAddr}', '${entry.balance}', '${creationHeight}')" style="width: 100%; padding: 12px; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; color: #ef4444; cursor: pointer; font-weight: 600; font-size: 14px;">Cancel Unbonding</button>` : ''}
                         </div>
                     `;
                 }
@@ -893,7 +916,7 @@
         function showSuccess(title, txHash) {
             document.getElementById('successTitle').textContent = title;
             document.getElementById('successTxHash').textContent = txHash;
-            document.getElementById('successExplorerLink').href = `https://ticsscan.com/tx/${txHash}`;
+            document.getElementById('successExplorerLink').href = `https://native.ticsscan.com/txn/${txHash}`;
             document.getElementById('successModal').style.display = 'block';
         }
         

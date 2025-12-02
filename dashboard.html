@@ -13,15 +13,39 @@
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            background: #000000;
             color: white;
             min-height: 100vh;
             padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Animated background like index.html */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: radial-gradient(ellipse at 50% 50%, rgba(0, 212, 255, 0.15) 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 20%, rgba(0, 255, 240, 0.15) 0%, transparent 50%),
+                        radial-gradient(ellipse at 20% 80%, rgba(0, 128, 255, 0.15) 0%, transparent 50%);
+            animation: bgShift 20s ease infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes bgShift {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(5deg); }
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
         
         .dashboard-header {
@@ -409,6 +433,9 @@
     </style>
 </head>
 <body>
+    <!-- Animated Background -->
+    <div class="bg-animation"></div>
+    
     <div class="container">
         <!-- Header -->
         <div class="dashboard-header">
@@ -795,7 +822,7 @@
                         <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
                             <div>
                                 <div style="color: #00D4FF; font-size: 18px; font-weight: 600; margin-bottom: 4px;">${valName}</div>
-                                <div style="color: #64748b; font-size: 12px;">${valAddr.substring(0, 25)}...</div>
+                                <div style="color: #64748b; font-size: 12px;">${valAddr.substring(0, 16)}...${valAddr.substring(valAddr.length - 6)}</div>
                             </div>
                             <div style="text-align: right;">
                                 <div style="color: #00FFF0; font-size: 22px; font-weight: 700; margin-bottom: 4px;">${amount}</div>
@@ -884,7 +911,7 @@
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                                 <div>
                                     <div style="color: #94a3b8; font-size: 12px; margin-bottom: 4px;">From: ${valName}</div>
-                                    <div style="color: #64748b; font-size: 11px; margin-bottom: 8px;">${valAddr.substring(0, 25)}...</div>
+                                    <div style="color: #64748b; font-size: 11px; margin-bottom: 8px;">${valAddr.substring(0, 16)}...${valAddr.substring(valAddr.length - 6)}</div>
                                     <div style="color: #ef4444; font-size: 24px; font-weight: 700;">${amount} TICS</div>
                                 </div>
                                 <div style="text-align: right;">
@@ -916,7 +943,7 @@
         function showSuccess(title, txHash) {
             document.getElementById('successTitle').textContent = title;
             document.getElementById('successTxHash').textContent = txHash;
-            document.getElementById('successExplorerLink').href = `https://native.ticsscan.com/txn/${txHash}`;
+            document.getElementById('successExplorerLink').href = `https://ticsscan.com/txn/${txHash}`;
             document.getElementById('successModal').style.display = 'block';
         }
         

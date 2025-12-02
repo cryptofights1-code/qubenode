@@ -943,7 +943,9 @@
         function showSuccess(title, txHash) {
             document.getElementById('successTitle').textContent = title;
             document.getElementById('successTxHash').textContent = txHash;
-            document.getElementById('successExplorerLink').href = `https://ticsscan.com/txn/${txHash}`;
+            // TicsScan потребує 0x префікс
+            const txHashWithPrefix = txHash.startsWith('0x') ? txHash : `0x${txHash}`;
+            document.getElementById('successExplorerLink').href = `https://ticsscan.com/txn/${txHashWithPrefix}`;
             document.getElementById('successModal').style.display = 'block';
         }
         

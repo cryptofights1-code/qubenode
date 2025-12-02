@@ -159,12 +159,12 @@
         }
         
         .btn-switch {
-            background: linear-gradient(135deg, #22c55e, #16a34a);
+            background: linear-gradient(135deg, #6b7280, #4b5563);
             color: white;
         }
         
         .btn-unbond {
-            background: linear-gradient(135deg, #6b7280, #4b5563);
+            background: linear-gradient(135deg, #991b1b, #7f1d1d);
             color: white;
         }
         
@@ -659,6 +659,28 @@
         </div>
     </div>
     
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content" style="border-color: rgba(34,197,94,0.6); max-width: 600px;">
+            <div class="modal-header" style="background: linear-gradient(135deg, rgba(34,197,94,0.2), rgba(34,197,94,0.05));">
+                <h3 style="color: #22c55e;">✅ Успішно! TX: <span id="successMessage"></span></h3>
+                <span class="close" onclick="closeModal('successModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div style="background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); border-radius: 12px; padding: 20px; text-align: center;">
+                    <div style="font-size: 48px; margin-bottom: 16px;">✅</div>
+                    <div style="color: #86efac; font-size: 18px; font-weight: 600; margin-bottom: 12px;" id="successTitle">Транзакція успішна!</div>
+                    <div style="color: #94a3b8; font-size: 14px; margin-bottom: 20px;">Hash транзакції:</div>
+                    <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; word-break: break-all; font-family: monospace; font-size: 13px; color: #00FFF0;" id="successTxHash"></div>
+                    <a id="successExplorerLink" href="#" target="_blank" style="display: inline-block; margin-top: 16px; padding: 10px 20px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 8px; color: #000; text-decoration: none; font-weight: 600;">🔍 Переглянути в Explorer</a>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-confirm cyan" onclick="closeModal('successModal')" style="width: 100%;">OK</button>
+            </div>
+        </div>
+    </div>
+    
     <script>
         const QUBENODE_VALIDATOR = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
         let cosmosStaking = null;
@@ -713,7 +735,11 @@
                 document.getElementById('balance').textContent = formatTics(overview.balance);
                 document.getElementById('delegated').textContent = formatTics(overview.totalDelegated);
                 document.getElementById('rewards').textContent = formatTics(overview.totalRewards);
-                document.getElementById('unbonding').textContent = formatTics(overview.totalUnbonding);
+                
+                // Fix NaN for unbonding
+                const unbondingAmount = overview.totalUnbonding && overview.totalUnbonding !== '0' ? formatTics(overview.totalUnbonding) : '0.000';
+                document.getElementById('unbonding').textContent = unbondingAmount;
+                
                 document.getElementById('quickClaimAmount').textContent = formatTics(overview.totalRewards);
                 
                 // Forecast
@@ -824,21 +850,27 @@
                     const amount = formatTics(entry.balance);
                     const completionTime = new Date(entry.completion_time);
                     const now = new Date();
-                    const daysLeft = Math.ceil((completionTime - now) / (1000 * 60 * 60 * 24));
-                    const hoursLeft = Math.ceil((completionTime - now) / (1000 * 60 * 60));
+                    const totalHours = Math.ceil((completionTime - now) / (1000 * 60 * 60));
+                    const days = Math.floor(totalHours / 24);
+                    const hours = totalHours % 24;
+                    const timeRemaining = days > 0 ? `${days}д ${hours}год` : `${hours}год`;
                     const creationHeight = entry.creation_height || entry.initial_balance;
                     
                     html += `
                         <div class="delegation-item" style="border-color: rgba(239,68,68,0.3);">
-                            <div style="color: #ef4444; font-size: 20px; font-weight: 600; margin-bottom: 8px;">${amount} TICS</div>
-                            <div style="color: #94a3b8; margin-bottom: 4px;">From: ${valName}</div>
-                            <div style="color: #64748b; font-size: 12px; margin-bottom: 12px;">${valAddr}</div>
-                            <div style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); border-radius: 8px; padding: 12px; margin-bottom: 12px;">
-                                <div style="color: #fca5a5; font-size: 14px; margin-bottom: 4px;">Time Remaining</div>
-                                <div style="color: #ef4444; font-size: 18px; font-weight: 600;">${hoursLeft}h</div>
-                                <div style="color: #64748b; font-size: 12px; margin-top: 4px;">Completion: ${completionTime.toLocaleDateString('uk-UA')}, ${completionTime.toLocaleTimeString('uk-UA', {hour: '2-digit', minute: '2-digit'})}</div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <div style="color: #94a3b8; font-size: 13px; margin-bottom: 4px;">From: ${valName}</div>
+                                    <div style="color: #64748b; font-size: 11px; margin-bottom: 8px;">${valAddr.substring(0, 25)}...</div>
+                                    <div style="color: #ef4444; font-size: 24px; font-weight: 700;">${amount} TICS</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="color: #fca5a5; font-size: 12px; margin-bottom: 4px;">Time Remaining</div>
+                                    <div style="color: #ef4444; font-size: 20px; font-weight: 700; margin-bottom: 4px;">${timeRemaining}</div>
+                                    <div style="color: #64748b; font-size: 11px;">Completion:<br>${completionTime.toLocaleDateString('uk-UA')}, ${completionTime.toLocaleTimeString('uk-UA', {hour: '2-digit', minute: '2-digit'})}</div>
+                                </div>
                             </div>
-                            ${daysLeft > 0 ? `<button onclick="cancelUnbonding('${valAddr}', '${entry.balance}', '${creationHeight}')" style="width: 100%; padding: 12px; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; color: #ef4444; cursor: pointer; font-weight: 600;">Cancel Unbonding</button>` : ''}
+                            ${days >= 0 && hours >= 0 ? `<button onclick="cancelUnbonding('${valAddr}', '${entry.balance}', '${creationHeight}')" style="width: 100%; padding: 10px; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; color: #ef4444; cursor: pointer; font-weight: 600; margin-top: 12px;">Cancel Unbonding</button>` : ''}
                         </div>
                     `;
                 }
@@ -848,12 +880,21 @@
         }
         
         function formatTics(amount) {
+            if (!amount || amount === '0' || amount === 0) return '0.000';
             const tics = parseFloat(amount) / 1e18;
+            if (isNaN(tics)) return '0.000';
             return tics.toFixed(3);
         }
         
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
+        }
+        
+        function showSuccess(title, txHash) {
+            document.getElementById('successTitle').textContent = title;
+            document.getElementById('successTxHash').textContent = txHash;
+            document.getElementById('successExplorerLink').href = `https://ticsscan.com/tx/${txHash}`;
+            document.getElementById('successModal').style.display = 'block';
         }
         
         // Stake More
@@ -894,7 +935,7 @@
                 const stakingService = new CosmosStakingService(walletManager, chainClient, txBuilder);
                 const result = await stakingService.delegate(currentValidatorAddress, amountMinimal, 'Stake more via QubeNode.space');
                 
-                alert('✅ Успішно! TX: ' + result.txHash);
+                showSuccess('Делегування успішне!', result.txHash);
                 await loadData();
             } catch (error) {
                 console.error('Stake error:', error);
@@ -953,7 +994,7 @@
             
             try {
                 const result = await cosmosStaking.claimRewards('Claim all via QubeNode.space');
-                alert('✅ Винагороди зібрано! TX: ' + result.txHash);
+                showSuccess('Винагороди зібрано!', result.txHash);
                 await loadData();
             } catch (error) {
                 console.error('Claim error:', error);
@@ -1063,7 +1104,7 @@
                 const stakingService = new CosmosStakingService(walletManager, chainClient, txBuilder);
                 const result = await stakingService.redelegate(currentValidatorAddress, selectedSwitchValidator, amountMinimal, 'Switch validator via QubeNode.space');
                 
-                alert('✅ Успішно! TX: ' + result.txHash);
+                showSuccess('Валідатора змінено!', result.txHash);
                 await loadData();
             } catch (error) {
                 console.error('Redelegate error:', error);
@@ -1107,7 +1148,7 @@
                 const stakingService = new CosmosStakingService(walletManager, chainClient, txBuilder);
                 const result = await stakingService.undelegate(currentValidatorAddress, amountMinimal, 'Unbond via QubeNode.space');
                 
-                alert('✅ Unbond розпочато! TX: ' + result.txHash);
+                showSuccess('Unstake розпочато! Токени будуть доступні через 14 днів', result.txHash);
                 await loadData();
             } catch (error) {
                 console.error('Unbond error:', error);
@@ -1134,7 +1175,7 @@
                     'Cancel unbond via QubeNode.space'
                 );
                 
-                alert('✅ Unbond скасовано! TX: ' + result.txHash);
+                showSuccess('Unbond скасовано! Токени повернулися в стейкінг', result.txHash);
                 await loadData();
             } catch (error) {
                 console.error('Cancel unbonding error:', error);
@@ -1148,6 +1189,18 @@
         
         // Start
         init();
+        
+        // Auto-refresh every 10 seconds
+        setInterval(async () => {
+            if (cosmosStaking) {
+                try {
+                    await loadData();
+                    console.log('🔄 Dashboard auto-refreshed');
+                } catch (error) {
+                    console.error('Auto-refresh error:', error);
+                }
+            }
+        }, 10000);
     </script>
     
     <script src="chain-config.js"></script>

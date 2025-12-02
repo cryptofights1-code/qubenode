@@ -262,7 +262,9 @@ class CosmosStakingModule {
     }
 
     ticsToMinimal(tics) {
-        return (parseFloat(tics) * 1e18).toFixed(0);
+        const result = String((parseFloat(tics) * 1e18).toFixed(0));
+        console.log(`🔍 ticsToMinimal: ${tics} TICS -> ${result} minimal`);
+        return result;
     }
 
     minimalToTics(minimal) {

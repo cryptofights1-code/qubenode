@@ -36,6 +36,10 @@ class CosmosStakingService {
         const encoder = new TextEncoder();
         const parts = [];
         
+        console.log('🔍 encodeCoin called with:', coin);
+        console.log('   coin.amount:', coin.amount);
+        console.log('   coin.amount type:', typeof coin.amount);
+        
         const denomBytes = encoder.encode(coin.denom);
         parts.push(new Uint8Array([0x0a, denomBytes.length]));
         parts.push(denomBytes);
@@ -166,9 +170,12 @@ class CosmosStakingService {
     }
 
     encodeTxBody(messages, memo) {
+        console.log('🔍 encodeTxBody - messages:', messages);
         const parts = [];
         
         for (const msg of messages) {
+            console.log('🔍 Processing message:', msg);
+            console.log('🔍 Message value:', JSON.stringify(msg.value, null, 2));
             const anyBytes = this.encodeAny(msg.typeUrl, this.encodeMessageValue(msg.typeUrl, msg.value));
             parts.push(new Uint8Array([0x0a]));
             const lengthBytes = this.encodeVarint(anyBytes.length);
@@ -319,6 +326,7 @@ class CosmosStakingService {
             const address = this.walletManager.getAddress();
 
             console.log('📝 Preparing Protobuf transaction...');
+            console.log('🔍 Messages to encode:', JSON.stringify(messages, null, 2));
 
             const account = await this.chainClient.getAccount(address);
 
@@ -457,8 +465,16 @@ class CosmosStakingService {
     async undelegate(validatorAddress, amount, memo = '') {
         try {
             const delegatorAddress = this.walletManager.getAddress();
+            
+            console.log('🔍 StakingService.undelegate called with:');
+            console.log('   Amount received:', amount);
+            console.log('   Amount type:', typeof amount);
+            console.log('   Amount value:', amount);
 
             const msg = this.txBuilder.createUndelegateMsg(delegatorAddress, validatorAddress, amount);
+            
+            console.log('🔍 Message created:', JSON.stringify(msg, null, 2));
+            
             const gasLimit = this.chainClient.chainConfig.gas.undelegate;
             
             const gasPrice = this.chainClient.chainConfig.feeCurrencies[0].gasPriceStep.average;

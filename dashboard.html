@@ -1068,7 +1068,7 @@
             closeModal('stakeMoreModal');
             
             try {
-                const amountMinimal = (parseFloat(amount) * 1e18).toFixed(0);
+                const amountMinimal = String((parseFloat(amount) * 1e18).toFixed(0));
                 
                 console.log('📤 Delegating to:', currentValidatorAddress);
                 console.log('💰 Amount:', amount, 'TICS');
@@ -1240,7 +1240,7 @@
             closeModal('switchValidatorModal2');
             
             try {
-                const amountMinimal = (parseFloat(amount) * 1e18).toFixed(0);
+                const amountMinimal = String((parseFloat(amount) * 1e18).toFixed(0));
                 
                 console.log('📤 Redelegating from:', currentValidatorAddress);
                 console.log('📥 Redelegating to:', selectedSwitchValidator);
@@ -1285,7 +1285,7 @@
             closeModal('unbondModal');
             
             try {
-                const amountMinimal = (parseFloat(amount) * 1e18).toFixed(0);
+                const amountMinimal = String((parseFloat(amount) * 1e18).toFixed(0));
                 
                 console.log('📤 Unbonding from:', currentValidatorAddress);
                 console.log('💰 Amount:', amount, 'TICS');

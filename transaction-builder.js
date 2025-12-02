@@ -9,6 +9,9 @@ class CosmosTransactionBuilder {
     }
 
     createDelegateMsg(delegatorAddress, validatorAddress, amount) {
+        // CRITICAL: Ensure amount is string, not number (prevent exponential notation)
+        const amountStr = typeof amount === 'number' ? amount.toFixed(0) : String(amount);
+        
         return {
             typeUrl: '/cosmos.staking.v1beta1.MsgDelegate',
             value: {
@@ -16,13 +19,18 @@ class CosmosTransactionBuilder {
                 validatorAddress: validatorAddress,
                 amount: {
                     denom: this.chainConfig.stakeCurrency.coinMinimalDenom,
-                    amount: amount
+                    amount: amountStr
                 }
             }
         };
     }
 
     createUndelegateMsg(delegatorAddress, validatorAddress, amount) {
+        // CRITICAL: Ensure amount is string, not number (prevent exponential notation)
+        const amountStr = typeof amount === 'number' ? amount.toFixed(0) : String(amount);
+        console.log('🔍 createUndelegateMsg - amount received:', amount, 'type:', typeof amount);
+        console.log('🔍 createUndelegateMsg - amount converted:', amountStr, 'type:', typeof amountStr);
+        
         return {
             typeUrl: '/cosmos.staking.v1beta1.MsgUndelegate',
             value: {
@@ -30,13 +38,16 @@ class CosmosTransactionBuilder {
                 validatorAddress: validatorAddress,
                 amount: {
                     denom: this.chainConfig.stakeCurrency.coinMinimalDenom,
-                    amount: amount
+                    amount: amountStr
                 }
             }
         };
     }
 
     createRedelegateMsg(delegatorAddress, validatorSrcAddress, validatorDstAddress, amount) {
+        // CRITICAL: Ensure amount is string, not number (prevent exponential notation)
+        const amountStr = typeof amount === 'number' ? amount.toFixed(0) : String(amount);
+        
         return {
             typeUrl: '/cosmos.staking.v1beta1.MsgBeginRedelegate',
             value: {
@@ -45,7 +56,7 @@ class CosmosTransactionBuilder {
                 validatorDstAddress: validatorDstAddress,
                 amount: {
                     denom: this.chainConfig.stakeCurrency.coinMinimalDenom,
-                    amount: amount
+                    amount: amountStr
                 }
             }
         };
@@ -62,6 +73,9 @@ class CosmosTransactionBuilder {
     }
 
     createCancelUnbondingMsg(delegatorAddress, validatorAddress, amount, creationHeight) {
+        // CRITICAL: Ensure amount is string, not number (prevent exponential notation)
+        const amountStr = typeof amount === 'number' ? amount.toFixed(0) : String(amount);
+        
         return {
             typeUrl: '/cosmos.staking.v1beta1.MsgCancelUnbondingDelegation',
             value: {
@@ -69,7 +83,7 @@ class CosmosTransactionBuilder {
                 validatorAddress: validatorAddress,
                 amount: {
                     denom: this.chainConfig.stakeCurrency.coinMinimalDenom,
-                    amount: amount
+                    amount: amountStr
                 },
                 creationHeight: creationHeight
             }

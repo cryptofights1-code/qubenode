@@ -613,12 +613,14 @@ class CosmosStakingService {
 
             const totalDelegated = this.chainClient.calculateTotalDelegated(delegations);
             const totalRewards = this.chainClient.calculateTotalRewards(rewards);
+            const totalUnbonding = this.chainClient.calculateTotalUnbonding(unbonding);
 
             const overview = {
                 address,
                 balance: balance.amount,
                 totalDelegated,
                 totalRewards,
+                totalUnbonding,
                 delegations,
                 rewards,
                 unbondingDelegations: unbonding

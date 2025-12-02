@@ -219,6 +219,24 @@ class CosmosChainClient {
         return Math.floor(amount).toString();
     }
 
+    calculateTotalUnbonding(unbondingDelegations) {
+        if (!unbondingDelegations || unbondingDelegations.length === 0) return '0';
+
+        let total = BigInt(0);
+
+        for (const unbonding of unbondingDelegations) {
+            if (unbonding.entries && unbonding.entries.length > 0) {
+                for (const entry of unbonding.entries) {
+                    if (entry.balance) {
+                        total += BigInt(entry.balance);
+                    }
+                }
+            }
+        }
+
+        return total.toString();
+    }
+
     async getAllValidators() {
         try {
             console.log('📋 Fetching all validators...');

@@ -9,8 +9,9 @@ class CosmosTransactionBuilder {
     }
 
     createDelegateMsg(delegatorAddress, validatorAddress, amount) {
-        // CRITICAL: Ensure amount is string, not number (prevent exponential notation)
-        const amountStr = typeof amount === 'number' ? amount.toFixed(0) : String(amount);
+        // CRITICAL: Parse to number first, then convert with toFixed to avoid exponential notation
+        const amountNum = typeof amount === 'string' ? parseFloat(amount) : amount;
+        const amountStr = amountNum.toFixed(0);
         
         return {
             typeUrl: '/cosmos.staking.v1beta1.MsgDelegate',
@@ -26,9 +27,11 @@ class CosmosTransactionBuilder {
     }
 
     createUndelegateMsg(delegatorAddress, validatorAddress, amount) {
-        // CRITICAL: Ensure amount is string, not number (prevent exponential notation)
-        const amountStr = typeof amount === 'number' ? amount.toFixed(0) : String(amount);
+        // CRITICAL: Parse to number first, then convert with toFixed to avoid exponential notation
+        const amountNum = typeof amount === 'string' ? parseFloat(amount) : amount;
+        const amountStr = amountNum.toFixed(0);
         console.log('🔍 createUndelegateMsg - amount received:', amount, 'type:', typeof amount);
+        console.log('🔍 createUndelegateMsg - amount parsed:', amountNum);
         console.log('🔍 createUndelegateMsg - amount converted:', amountStr, 'type:', typeof amountStr);
         
         return {
@@ -45,8 +48,9 @@ class CosmosTransactionBuilder {
     }
 
     createRedelegateMsg(delegatorAddress, validatorSrcAddress, validatorDstAddress, amount) {
-        // CRITICAL: Ensure amount is string, not number (prevent exponential notation)
-        const amountStr = typeof amount === 'number' ? amount.toFixed(0) : String(amount);
+        // CRITICAL: Parse to number first, then convert with toFixed to avoid exponential notation
+        const amountNum = typeof amount === 'string' ? parseFloat(amount) : amount;
+        const amountStr = amountNum.toFixed(0);
         
         return {
             typeUrl: '/cosmos.staking.v1beta1.MsgBeginRedelegate',
@@ -73,8 +77,9 @@ class CosmosTransactionBuilder {
     }
 
     createCancelUnbondingMsg(delegatorAddress, validatorAddress, amount, creationHeight) {
-        // CRITICAL: Ensure amount is string, not number (prevent exponential notation)
-        const amountStr = typeof amount === 'number' ? amount.toFixed(0) : String(amount);
+        // CRITICAL: Parse to number first, then convert with toFixed to avoid exponential notation
+        const amountNum = typeof amount === 'string' ? parseFloat(amount) : amount;
+        const amountStr = amountNum.toFixed(0);
         
         return {
             typeUrl: '/cosmos.staking.v1beta1.MsgCancelUnbondingDelegation',

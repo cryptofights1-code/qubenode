@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Екосистема Qubetics - QubeNode</title>
+    <title>Про Екосистему Qubetics - QubeNode</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -26,315 +26,824 @@
             background: #000000;
             background-color: #000000 !important;
             -webkit-overflow-scrolling: touch;
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            overflow-x: hidden;
-        }
-
-        /* Override Safari's default overscroll color */
-        html::before {
-            content: '';
-            position: fixed;
-            top: -100vh;
-            left: 0;
-            right: 0;
-            height: 100vh;
-            background: #000000;
-            z-index: -1;
+            scroll-behavior: smooth;
         }
 
         body {
             font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: #000000;
-            background-color: #000000 !important;
             color: #ffffff;
-            line-height: 1.6;
-            min-height: 100vh;
+            line-height: 1.8;
             overflow-x: hidden;
-            position: static !important;
-            margin: 0;
-            padding: 0;
-            width: 100%;
         }
 
-        .container {
+        /* Animated background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: radial-gradient(ellipse at 50% 50%, rgba(0, 212, 255, 0.15) 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 20%, rgba(0, 255, 240, 0.15) 0%, transparent 50%),
+                        radial-gradient(ellipse at 20% 80%, rgba(0, 128, 255, 0.15) 0%, transparent 50%);
+            animation: bgShift 20s ease infinite;
+            pointer-events: none;
+        }
+
+        @keyframes bgShift {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(5deg); }
+        }
+
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Content wrapper */
+        .content {
+            position: relative;
+            z-index: 2;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 40px 20px;
         }
 
-        /* Header */
-        header {
-            padding: 20px 0;
-            text-align: center;
-            position: relative;
-        }
-
+        /* Back button */
         .back-button {
-            position: absolute;
-            left: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: linear-gradient(135deg, #00D4FF, #00FFF0);
-            border: none;
-            color: #000;
-            padding: 12px 24px;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            font-size: 0.95em;
+            padding: 12px 24px;
+            background: rgba(0, 212, 255, 0.15);
+            border: 1px solid rgba(0, 212, 255, 0.4);
+            border-radius: 12px;
+            color: #00D4FF;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s;
+            margin-bottom: 40px;
         }
 
         .back-button:hover {
-            transform: translateY(-50%) scale(1.05);
-            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.4);
+            background: rgba(0, 212, 255, 0.25);
+            transform: translateX(-5px);
         }
 
-        .page-title {
-            color: #00FFF0;
-            font-size: 2.5em;
-            font-weight: 700;
-            margin-bottom: 10px;
+        /* Hero section */
+        .hero {
             text-align: center;
+            padding: 60px 20px;
+            margin-bottom: 60px;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards;
         }
 
-        .page-subtitle {
+        .hero h1 {
+            font-size: clamp(32px, 5vw, 56px);
+            color: #00D4FF;
+            margin-bottom: 30px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .hero-text {
+            font-size: clamp(16px, 2vw, 20px);
             color: #94a3b8;
-            font-size: 1.1em;
+            max-width: 1200px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* Network image */
+        .network-image {
+            margin: 60px 0;
             text-align: center;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
         }
 
-        /* Content */
-        .content-section {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(0, 212, 255, 0.2);
+        .network-image.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .network-image img {
+            max-width: 100%;
+            height: auto;
             border-radius: 20px;
-            padding: 40px;
-            margin: 30px 0;
+            box-shadow: 0 20px 60px rgba(0, 212, 255, 0.3);
         }
 
-        h2 {
+        /* Goals grid */
+        .goals-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin: 60px 0;
+        }
+
+        .goal-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .goal-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .goal-card:hover {
+            background: rgba(15, 23, 42, 0.9);
+            border-color: rgba(0, 212, 255, 0.6);
+            transform: translateY(-5px);
+        }
+
+        .goal-card h3 {
             color: #00FFF0;
-            font-size: 2em;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        /* Section blocks */
+        .section-block {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(100, 116, 139, 0.3);
+            border-radius: 20px;
+            padding: 50px;
+            margin: 40px 0;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .section-block.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-block h2 {
+            color: #00D4FF;
+            font-size: clamp(28px, 4vw, 40px);
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-block p {
+            color: #cbd5e1;
+            font-size: 18px;
+            line-height: 1.8;
             margin-bottom: 20px;
-            font-weight: 700;
         }
 
-        h3 {
-            color: #00FFF0;
-            font-size: 1.5em;
-            margin: 30px 0 15px 0;
+        .section-block strong {
+            color: #ffffff;
+        }
+
+        /* Simple text sections (without boxes) */
+        .simple-text {
+            margin: 80px 0;
+            padding: 0 20px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .simple-text.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .simple-text h2 {
+            color: #00D4FF;
+            font-size: clamp(32px, 4vw, 52px);
+            margin-bottom: 40px;
+            font-weight: 700;
+            line-height: 1.2;
+            background: linear-gradient(135deg, #00D4FF 0%, #00FFF0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .simple-text p {
+            color: #94a3b8;
+            font-size: clamp(17px, 2vw, 20px);
+            line-height: 1.8;
+            margin-bottom: 25px;
+            font-weight: 400;
+        }
+
+        .simple-text strong {
+            color: #e2e8f0;
             font-weight: 600;
         }
 
-        p {
+        .simple-list {
+            margin: 40px 0;
+            display: grid;
+            gap: 20px;
+        }
+
+        .simple-list p {
             color: #cbd5e1;
-            font-size: 1.05em;
+            font-size: clamp(17px, 2vw, 20px);
+            line-height: 1.6;
+            margin: 0;
+            padding-left: 30px;
+            position: relative;
+            font-weight: 400;
+        }
+
+        .simple-list p::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #00FFF0;
+            font-size: 28px;
+            line-height: 1;
+        }
+
+        /* Key feature highlight */
+        .key-feature {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 128, 255, 0.1) 100%);
+            border: 2px solid rgba(0, 212, 255, 0.4);
+        }
+
+        .key-feature:hover {
+            border-color: rgba(0, 212, 255, 0.6);
+            box-shadow: 0 20px 60px rgba(0, 212, 255, 0.2);
+        }
+
+        /* Two column layout */
+        .two-column {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .column-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(100, 116, 139, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .column-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .column-card:hover {
+            background: rgba(15, 23, 42, 0.9);
+            border-color: rgba(0, 212, 255, 0.5);
+            transform: translateY(-5px);
+        }
+
+        .column-card h3 {
+            color: #00D4FF;
+            font-size: clamp(24px, 3vw, 32px);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .column-card p {
+            color: #cbd5e1;
+            font-size: 16px;
             line-height: 1.8;
             margin-bottom: 15px;
         }
 
-        /* Grid for features */
-        .features-grid {
+        /* Bullet list */
+        .bullet-list {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .bullet-list li {
+            color: #cbd5e1;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .bullet-list li::before {
+            content: "•";
+            color: #00FFF0;
+            font-size: 24px;
+            position: absolute;
+            left: 0;
+            top: -2px;
+        }
+
+        /* Wallet downloads */
+        .wallet-downloads {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
             margin-top: 30px;
         }
 
-        .feature-card {
-            background: rgba(0, 212, 255, 0.05);
-            border: 1px solid rgba(0, 212, 255, 0.2);
-            border-radius: 15px;
-            padding: 25px;
-            transition: all 0.3s;
-        }
-
-        .feature-card:hover {
-            background: rgba(0, 212, 255, 0.1);
-            border-color: rgba(0, 212, 255, 0.4);
-            transform: translateY(-5px);
-        }
-
-        .feature-title {
-            color: #00FFF0;
-            font-size: 1.1em;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        .feature-description {
-            color: #94a3b8;
-            font-size: 0.95em;
-            line-height: 1.7;
-            margin: 0;
-        }
-
-        /* Footer links */
-        .footer-links {
+        .download-btn {
             display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-top: 40px;
-            padding: 40px 0;
-        }
-
-        .footer-link {
-            display: inline-flex;
             align-items: center;
-            gap: 12px;
-            padding: 18px 40px;
-            background: rgba(0, 212, 255, 0.1);
-            border: 2px solid rgba(0, 212, 255, 0.3);
-            border-radius: 50px;
-            color: #00D4FF;
+            gap: 8px;
+            padding: 10px 12px;
+            background: rgba(0, 212, 255, 0.15);
+            border: 1px solid rgba(0, 212, 255, 0.4);
+            border-radius: 12px;
+            color: #ffffff;
             text-decoration: none;
             font-weight: 600;
-            font-size: 1.1em;
             transition: all 0.3s;
+            font-size: 13px;
         }
 
-        .footer-link:hover {
-            background: rgba(0, 212, 255, 0.2);
-            border-color: rgba(0, 212, 255, 0.6);
+        .download-btn:hover {
+            background: rgba(0, 212, 255, 0.25);
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 212, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
         }
 
-        /* Mobile responsive */
+        .download-icon {
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .download-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .download-btn > div {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .download-btn > div > div:first-child {
+            font-size: 9px;
+            opacity: 0.7;
+            line-height: 1;
+        }
+
+        .download-btn > div > div:last-child {
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1;
+        }
+
+        /* Final section */
+        .final-section {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.15) 0%, rgba(0, 128, 255, 0.15) 100%);
+            border: 2px solid rgba(0, 212, 255, 0.5);
+            border-radius: 20px;
+            padding: 60px;
+            margin: 60px 0;
+            text-align: center;
+        }
+
+        .final-section h2 {
+            color: #00D4FF;
+            font-size: clamp(32px, 4vw, 48px);
+            margin-bottom: 30px;
+        }
+
+        .final-section p {
+            color: #cbd5e1;
+            font-size: 18px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .final-list {
+            list-style: none;
+            max-width: 800px;
+            margin: 30px auto;
+            text-align: left;
+        }
+
+        .final-list li {
+            color: #cbd5e1;
+            font-size: 17px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            padding-left: 35px;
+            position: relative;
+        }
+
+        .final-list li::before {
+            content: "•";
+            color: #00FFF0;
+            font-size: 28px;
+            position: absolute;
+            left: 0;
+            top: -5px;
+        }
+
+        /* Mobile responsiveness */
         @media (max-width: 768px) {
-            .container {
-                padding: 8px;
+            body {
+                overflow-x: hidden !important;
             }
 
-            .page-title {
-                font-size: 1.8em;
-                margin-top: 60px;
+            .content {
+                padding: 20px 15px !important;
+                max-width: 100% !important;
             }
 
-            .back-button {
-                position: static;
-                transform: none;
+            .hero {
+                padding: 40px 15px !important;
+            }
+
+            .hero h1 {
+                font-size: 32px !important;
+                margin-bottom: 20px !important;
+            }
+
+            .hero-text {
+                font-size: 16px !important;
+                line-height: 1.6 !important;
+            }
+
+            .network-image {
+                margin: 40px 0 !important;
+            }
+
+            .simple-text {
+                margin: 50px 0;
+                padding: 0 10px;
+            }
+
+            .simple-text h2 {
+                font-size: 28px;
+                margin-bottom: 25px;
+            }
+
+            .simple-text p {
+                font-size: 16px;
+                line-height: 1.7;
                 margin-bottom: 20px;
-                width: 100%;
-                justify-content: center;
             }
 
-            .back-button:hover {
-                transform: scale(1.02);
+            .simple-list {
+                margin: 30px 0;
+                gap: 15px;
             }
 
-            .content-section {
-                padding: 20px;
+            .simple-list p {
+                font-size: 16px;
+                padding-left: 25px;
             }
 
-            .features-grid {
+            .simple-list p::before {
+                font-size: 24px;
+            }
+
+            .section-block {
+                padding: 30px 20px;
+                margin: 30px 0;
+            }
+
+            .section-block h2 {
+                font-size: 24px;
+            }
+
+            .section-block p {
+                font-size: 16px;
+            }
+
+            .bullet-list li {
+                font-size: 15px;
+            }
+
+            .column-card {
+                padding: 25px 20px;
+            }
+
+            .column-card h3 {
+                font-size: 22px;
+            }
+
+            .column-card p {
+                font-size: 15px;
+            }
+
+            .two-column {
                 grid-template-columns: 1fr;
                 gap: 20px;
             }
 
-            h2 {
-                font-size: 1.5em;
+            .wallet-downloads {
+                grid-template-columns: 1fr;
+                gap: 15px;
             }
 
-            h3 {
-                font-size: 1.2em;
+            .download-btn {
+                justify-content: flex-start;
+                padding: 12px 20px;
+                font-size: 15px;
             }
 
-            p {
-                font-size: 0.95em;
+            .download-icon {
+                width: 24px;
+                height: 24px;
             }
+
+            .back-button {
+                font-size: 14px;
+                padding: 10px 20px;
+                margin-bottom: 30px;
+            }
+        }
+
+        /* Tablet responsiveness */
+        @media (max-width: 1200px) and (min-width: 769px) {
+            .content {
+                max-width: 95%;
+                padding: 30px 20px;
+            }
+
+            .two-column {
+                gap: 25px;
+            }
+        }
+
+        /* Scroll animation trigger */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <a href="index.html" class="back-button">
-                ← Назад на головну
-            </a>
-            <h1 class="page-title">Про Екосистему Qubetics</h1>
-            <p class="page-subtitle">Перша у світі Layer-1 Web3-агрегована блокчейн-екосистема</p>
-        </header>
+    <!-- Animated Background -->
+    <div class="bg-animation"></div>
+    <div class="grid-overlay"></div>
 
-        <div class="content-section">
-            <h3>Що таке Qubetics?</h3>
-            <p>Qubetics — це перша у світі Layer-1 Web3-агрегована блокчейн-екосистема, створена для об'єднання Bitcoin, Ethereum, Solana та інших провідних мереж у єдину платформу. Побудована на Cosmos SDK з повною сумісністю EVM, мережа Qubetics вже працює і активно розвивається, маючи на меті вирішити проблему фрагментації блокчейну через забезпечення безшовної міжланцюгової взаємодії.</p>
-            
-            <h3>Чому це важливо</h3>
-            <p>Традиційні блокчейни працюють ізольовано, створюючи бар'єри для обміну даними та обмежуючи масштабованість. Qubetics вирішує це через безшовне з'єднання мереж — дозволяючи активам, даним та додаткам вільно переміщуватися через ланцюги з єдиної платформи без використання традиційних мостів.</p>
-            
-            <h3>Майбутні Технології та Інновації</h3>
-            
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-title">⚡ Протокол Абстракції Ланцюгів (CAP)</div>
-                    <p class="feature-description">CAP - це революційний протокол Qubetics для міжланцюгових переказів на основі намірів (intent-based). Без мостів, обмінів чи кастодіальних ризиків - активи залишаються в смарт-контрактних сховищах до підтвердження розрахунку. Децентралізована мережа Solver забезпечує безшовну ліквідність через кілька ланцюгів.</p>
-                </div>
+    <!-- Content -->
+    <div class="content">
+        <!-- Back Button -->
+        <a href="index.html" class="back-button">
+            🏠 На головну
+        </a>
+
+        <!-- Hero Section -->
+        <div class="hero">
+            <h1>Про Qubetics</h1>
+            <p class="hero-text">
+                <strong>Qubetics — це нове покоління блокчейну, перша у світі Layer-1 Web3-екосистема, яка об'єднає провідні мережі, такі як Bitcoin, Ethereum, Solana та інші в одну платформу.</strong>
+            </p>
+            <p class="hero-text" style="margin-top: 20px;">
+                Мережа створена на Cosmos SDK і підтримує EVM-сумісність, що дозволить активам, даним та додаткам вільно переміщатися між різними блокчейнами без мостів, сторонніх сервісів чи складних технічних рішень.
+            </p>
+        </div>
+
+        <!-- Network Image -->
+        <div class="network-image animate-on-scroll">
+            <img src="cross-network-blockchain-optimized.png" alt="Qubetics Cross-Network Blockchain">
+        </div>
+
+        <!-- Goals - Simple Text -->
+        <div class="simple-text animate-on-scroll" style="text-align: center;">
+            <h2>Qubetics прагне стати основою для:</h2>
+            <div class="simple-list" style="max-width: 800px; margin: 40px auto; text-align: left;">
+                <p>фінансових сервісів нового покоління</p>
+                <p>швидких міжнародних платежів</p>
+                <p>децентралізованих застосунків</p>
+                <p>токенізації реальних активів</p>
+            </div>
+        </div>
+
+        <!-- Why Important - Simple Text -->
+        <div class="simple-text animate-on-scroll" style="text-align: center;">
+            <h2>Чому це важливо</h2>
+            <div style="max-width: 1000px; margin: 0 auto; text-align: left;">
+                <p>
+                    <strong>Традиційні блокчейни працюють ізольовано — вони не можуть повноцінно обмінюватися даними та активами між собою.</strong><br>
+                    Це створює бар'єри, ризики, затримки та ускладнює масштабування.
+                </p>
+                <p>
+                    <strong>Qubetics вирішує цю проблему, об'єднуючи різні мережі в одну безшовну платформу.</strong><br>
+                    Активи, дані та додатки можуть вільно переміщуватися між ланцюгами без мостів, посередників і технічної складності — мережі працюють разом «як одна система».
+                </p>
+            </div>
+        </div>
+
+        <!-- Technologies Header - Simple Text -->
+        <div class="simple-text animate-on-scroll" style="text-align: center; margin: 80px 0 60px 0;">
+            <h2>💡 Майбутні Технології та Інновації</h2>
+        </div>
+
+        <!-- CAP - Full Width -->
+        <div class="section-block key-feature animate-on-scroll">
+            <h2>⚡ Протокол Абстракції Ланцюгів (CAP)</h2>
+            <p>
+                <strong>CAP стане ключовою технологією Qubetics, яка забезпечить прості та безпечні міжланцюгові операції без використання традиційних мостів.</strong><br>
+                Користувач просто обиратиме дію, яку хоче виконати, а децентралізована мережа Solver автоматично підбиратиме найкращий спосіб її реалізації через кілька блокчейнів.
+            </p>
+            <p>
+                У ході міжмережевих операцій активи залишатимуться у безпечному середовищі до моменту підтвердження транзакції.<br>
+                Це мінімізує ризики, пов'язані з переміщенням коштів між різними мережами, та робитиме процес значно надійнішим і прозорішим.
+            </p>
+            <p>
+                <strong>У майбутньому CAP дозволить виконувати дії між різними блокчейнами "в один клік", забезпечуючи справжню Web3-взаємодію.</strong><br>
+                Це стане фундаментом, який об'єднає провідні екосистеми в єдину платформу Qubetics.
+            </p>
+        </div>
+
+        <!-- dVPN - Full Width -->
+        <div class="section-block key-feature animate-on-scroll">
+            <h2>🔒 Децентралізована VPN (dVPN)</h2>
+            <p>
+                <strong>Qubetics dVPN забезпечить приватність, безпеку та стійкість до цензури.</strong><br>
+                На відміну від традиційних VPN, які працюють через компанію, dVPN використовує розподілену мережу вузлів.
+            </p>
+            <p><strong>Це означає:</strong></p>
+            <ul class="bullet-list">
+                <li>ніхто не може слідкувати за користувачем</li>
+                <li>неможливо зібрати або викрасти дані</li>
+                <li>трафік неможливо заблокувати чи контролювати</li>
+                <li>користувачі можуть заробляти $TICS, надаючи пропускну здатність</li>
+            </ul>
+        </div>
+
+        <!-- QubeQode + Wallet -->
+        <div class="two-column">
+            <div class="column-card animate-on-scroll">
+                <h3>🛠 QubeQode IDE</h3>
+                <p>
+                    <strong>QubeQode — це інструмент для створення блокчейн-додатків без коду.</strong><br>
+                    Просто перетягуєш елементи, AI допомагає побудувати логіку — і твій dApp готовий.
+                </p>
+                <p>Ідеально для розробників, стартапів та новачків.</p>
+            </div>
+
+            <div class="column-card animate-on-scroll">
+                <h3>💳 Гаманець Qubetics</h3>
+                <p>
+                    <strong>Qubetics Wallet стане вашим універсальним інструментом для Web3:</strong><br>
+                    зберігання активів, підключення до додатків, реальні фінансові сервіси та зручний інтерфейс.
+                </p>
+                <p>У планах — інтеграція платіжних карток (фізичних та віртуальних), Apple Pay, Google Pay.</p>
                 
-                <div class="feature-card">
-                    <div class="feature-title">💳 Гаманець Qubetics</div>
-                    <p class="feature-description">Більше ніж просто крипто-гаманець — це ваш шлях до повсякденних цифрових фінансів. Гаманець Qubetics поєднує некастодіальну безпеку з реальною корисністю через інтегровані дебетові картки, віртуальні картки та підтримку Apple Pay і Google Pay.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-title">🔒 Децентралізована VPN (dVPN)</div>
-                    <p class="feature-description">Peer-to-peer VPN мережа, де користувачі діляться пропускною здатністю та заробляють монети $TICS за надання підключення. На відміну від централізованих VPN, Qubetics dVPN працює в розподіленій мережі без єдиної точки контролю.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-title">💎 Маркетплейс Токенізованих Активів</div>
-                    <p class="feature-description">Перетворюйте реальні активи в торгові цифрові токени на блокчейні. Володійте частковими частками нерухомості, торгуйте правами інтелектуальної власності або інвестуйте в токенізовані цінні папери з повною прозорістю.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-title">🛠️ QubeQode IDE</div>
-                    <p class="feature-description">Платформа розробки на базі AI, яка робить створення блокчейн-додатків доступним для всіх. З компонентами drag-and-drop та допомогою AI, підприємці можуть створювати складні dApps без написання коду.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-title">💵 Стейблкоїн QUSD</div>
-                    <p class="feature-description">Повністю забезпечений стейблкоїн, прив'язаний до долара США, забезпечений резервами USDT та USDC. QUSD забезпечує миттєві, недорогі міжнародні платежі та служить стабільним засобом обміну в екосистемі Qubetics.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-title">⚛️ Квантово-Стійка Безпека</div>
-                    <p class="feature-description">Qubetics проактивно впроваджує пост-квантові криптографічні алгоритми для захисту активів користувачів від майбутніх квантових атак. Ця перспективна модель безпеки використовує криптографію на основі решіток та квантово-стійкі схеми підписів.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-title">💰 Міжнародні Розрахунки</div>
-                    <p class="feature-description">Qubetics дає змогу банкам та фінансовим установам здійснювати майже миттєві міжнародні платежі, використовуючи монети $TICS. Усуваючи посередників, мережа значно зменшує витрати та час транзакцій з днів до секунд, забезпечуючи повну прозорість та регуляторну відповідність.</p>
+                <div class="wallet-downloads">
+                    <a href="https://apps.apple.com/ua/app/qubetics-wallet/id6746333540?l=uk" target="_blank" class="download-btn">
+                        <span class="download-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                            </svg>
+                        </span>
+                        <div>
+                            <div style="font-size: 11px; opacity: 0.7;">GET IT ON</div>
+                            <div style="font-size: 16px; font-weight: 600;">App Store</div>
+                        </div>
+                    </a>
+                    <a href="https://play.google.com/store/apps/details?id=com.qubetics.wallet" target="_blank" class="download-btn">
+                        <span class="download-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
+                            </svg>
+                        </span>
+                        <div>
+                            <div style="font-size: 11px; opacity: 0.7;">GET IT ON</div>
+                            <div style="font-size: 16px; font-weight: 600;">Google Play</div>
+                        </div>
+                    </a>
+                    <a href="https://chromewebstore.google.com/detail/qubetics-wallet/oabinpbnodlcmbnohnnbnbjpfkpclhim" target="_blank" class="download-btn">
+                        <span class="download-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12C4,14.21 4.89,16.21 6.34,17.66L8.27,14.53C7.5,13.76 7,12.72 7,11.6C7,9.28 8.87,7.4 11.2,7.4C12.12,7.4 12.97,7.72 13.66,8.25L15.59,5.12C14.5,4.42 13.29,4 12,4M18.73,7.34L16.8,10.47C17.5,11.24 18,12.28 18,13.4C18,15.72 16.13,17.6 13.8,17.6C12.88,17.6 12.03,17.28 11.34,16.75L9.41,19.88C10.5,20.58 11.71,21 13,21A8,8 0 0,0 20,13C20,10.79 19.11,8.79 17.66,7.34H18.73Z"/>
+                            </svg>
+                        </span>
+                        <div>
+                            <div style="font-size: 11px; opacity: 0.7;">Available in</div>
+                            <div style="font-size: 16px; font-weight: 600;">Chrome Web Store</div>
+                        </div>
+                    </a>
                 </div>
             </div>
-            
-            <h3 style="margin-top: 50px;">Чому Qubetics - це Майбутнє Блокчейну</h3>
-            <p>Qubetics представляє майбутнє блокчейну — першу у світі Layer-1 Web3-агреговану екосистему, яка об'єднає провідні мережі, включаючи Bitcoin, Ethereum, Solana та інші, в одну безшовну платформу. Поки більшість блокчейнів працюють ізольовано, Qubetics вирішить проблему фрагментації завдяки революційному Протоколу Абстракції Ланцюгів (CAP), забезпечуючи справжню міжланцюгову взаємодію без численних гаманців і складних мостів.</p>
-            
-            <p>Qubetics Wallet відкриє доступ до всього світу Web3 через один гаманець. Міжнародні платежі більше не повинні тривати днями та коштувати дорого — на Qubetics вони стануть швидкими та зручними.</p>
-            
-            <p>Децентралізована VPN гарантуватиме приватність і свободу доступу до інтернету, інструменти розробки з підтримкою AI демократизують створення dApp, а квантово-стійка безпека захистить майбутнє користувачів.</p>
-            
-            <p>Qubetics — це не просто ще один блокчейн. Це міст між традиційними фінансами та Web3-інноваціями, підсилений консенсусом Delegated Proof of Stake та сильною екосистемою валідаторів і делегаторів. Мережа не просто обіцяє майбутнє — вона активно будує його вже сьогодні, роблячи блокчейн доступним і корисним для мільйонів людей у всьому світі.</p>
         </div>
 
-        <div class="footer-links">
-            <a href="https://www.qubetics.com" class="footer-link" target="_blank">
-                <span>🌐</span>
-                <span>Офіційний Сайт</span>
-            </a>
-            <a href="https://www.qubetics.com/documents/whitepaper.pdf?_gl=1*1al7y33*_gcl_au*MTU0NDc2NTgyOC4xNzU5NjE4NzA3" class="footer-link" target="_blank">
-                <span>📄</span>
-                <span>Читати Whitepaper</span>
-            </a>
+        <!-- Marketplace + QUSD -->
+        <div class="two-column">
+            <div class="column-card animate-on-scroll">
+                <h3>💎 Маркетплейс Токенізованих Активів</h3>
+                <p>
+                    Платформа дозволятиме перетворювати реальні активи (нерухомість, цінні папери, IP-права) у цифрові токени та торгувати ними на блокчейні.
+                </p>
+                <p><strong>Простий спосіб інвестувати у новий клас активів.</strong></p>
+            </div>
+
+            <div class="column-card animate-on-scroll">
+                <h3>💵 Стейблкоїн QUSD</h3>
+                <p>
+                    <strong>QUSD стане стабільним токеном, прив'язаним до долара США у співвідношенні 1:1 та забезпеченим резервами USDT і USDC.</strong>
+                </p>
+                <p>
+                    У майбутньому QUSD виконуватиме роль зручного засобу обміну всередині екосистеми Qubetics та основи для швидких міжнародних платежів.
+                </p>
+            </div>
+        </div>
+
+        <!-- International Payments -->
+        <div class="section-block animate-on-scroll">
+            <h2>🌍 Міжнародні Розрахунки</h2>
+            <p>
+                У майбутньому Qubetics дозволить банкам та фінансовим установам здійснювати міжнародні платежі через єдину блокчейн-платформу, використовуючи інструменти та токени, розгорнуті в мережі Qubetics.
+            </p>
+            <p>
+                <strong>Мережа усуватиме посередників і забезпечуватиме прозорий процес розрахунків, що допоможе суттєво скоротити час виконання транзакцій у порівнянні з традиційними системами.</strong>
+            </p>
+        </div>
+
+        <!-- Final Section - Simple Text -->
+        <div class="simple-text animate-on-scroll" style="text-align: center; margin: 80px 0;">
+            <h2>Чому Qubetics — це Майбутнє Блокчейну</h2>
+            <div style="max-width: 1000px; margin: 0 auto;">
+                <p>
+                    <strong>Qubetics — це не просто ще один блокчейн.</strong><br>
+                    Це платформа, яка поєднає традиційні фінанси, Web3-інновації та практичні інструменти для щоденного використання.
+                </p>
+                <p><strong>У майбутньому екосистема Qubetics охоплюватиме:</strong></p>
+                <div class="simple-list" style="max-width: 800px; margin: 30px auto; text-align: left;">
+                    <p>міжмережеву взаємодію через революційний CAP</p>
+                    <p>єдиний зручний гаманець для всіх Web3-можливостей</p>
+                    <p>децентралізовану VPN для приватності та свободи в інтернеті</p>
+                    <p>інструменти для створення додатків з підтримкою AI</p>
+                    <p>елементи квантово-стійкої безпеки</p>
+                    <p>міжнародні розрахунки на одній платформі</p>
+                    <p>токенізацію реальних активів</p>
+                </div>
+                <p style="margin-top: 40px; font-size: clamp(18px, 2vw, 22px); color: #00FFF0; line-height: 1.6;">
+                    <strong>Qubetics будує майбутнє вже сьогодні — роблячи блокчейн простим, корисним і доступним для мільйонів людей по всьому світу.</strong>
+                </p>
+            </div>
         </div>
     </div>
+
+    <!-- Scroll Animation Script -->
+    <script>
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all animated elements
+        document.querySelectorAll('.animate-on-scroll, .network-image, .section-block, .column-card, .simple-text').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
 </body>
 </html>

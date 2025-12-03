@@ -109,23 +109,25 @@
         }
 
         .hero h1 {
-            font-size: clamp(40px, 6vw, 64px);
+            font-size: clamp(48px, 7vw, 72px);
             font-weight: 700;
             margin-bottom: 20px;
-            background: linear-gradient(135deg, #00D4FF 0%, #00FFF0 100%);
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #94a3b8 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            line-height: 1.2;
+            line-height: 1.1;
         }
 
         .hero-subtitle {
-            font-size: clamp(18px, 2.5vw, 24px);
-            color: #94a3b8;
+            font-size: clamp(20px, 2.8vw, 28px);
+            color: #64748b;
             max-width: 800px;
             margin: 0 auto;
-            line-height: 1.6;
-            font-weight: 500;
+            line-height: 1.5;
+            font-weight: 400;
+            letter-spacing: -0.01em;
         }
 
         /* Intro Text */
@@ -145,10 +147,12 @@
         }
 
         .intro-text p {
-            font-size: clamp(18px, 2vw, 22px);
-            color: #cbd5e1;
-            line-height: 1.8;
+            font-size: clamp(19px, 2.2vw, 24px);
+            color: #94a3b8;
+            line-height: 1.7;
             margin-bottom: 20px;
+            font-weight: 400;
+            letter-spacing: -0.01em;
         }
 
         .intro-text strong {
@@ -156,7 +160,7 @@
             font-weight: 600;
         }
 
-        /* Section Title */
+        /* Section Title - Clean Typography */
         .section-title {
             text-align: center;
             margin: 60px 0 40px 0;
@@ -171,9 +175,10 @@
         }
 
         .section-title h2 {
-            font-size: clamp(32px, 4vw, 48px);
+            font-size: clamp(36px, 4.5vw, 52px);
             font-weight: 700;
-            background: linear-gradient(135deg, #00D4FF 0%, #00FFF0 100%);
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -182,61 +187,68 @@
 
         .section-title p {
             font-size: clamp(16px, 2vw, 20px);
-            color: #94a3b8;
+            color: #64748b;
+            font-weight: 400;
         }
 
-        /* Features Grid - Floating Cards */
+        /* Features Grid - Glass Morphism Premium */
         .features-list {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 30px;
+            gap: 25px;
             max-width: 1200px;
             margin: 50px auto;
             padding: 0 20px;
         }
 
         .feature-item {
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.6) 100%);
-            border-radius: 20px;
-            padding: 35px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 40px;
             position: relative;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             opacity: 0;
             overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
         }
 
-        /* Animated gradient border */
+        /* Rainbow gradient border on hover */
         .feature-item::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: 20px;
-            padding: 2px;
-            background: linear-gradient(135deg, #00D4FF, #00FFF0, #00D4FF);
+            inset: 0;
+            border-radius: 24px;
+            padding: 1px;
+            background: linear-gradient(135deg, 
+                rgba(0, 212, 255, 0.5),
+                rgba(0, 255, 240, 0.5),
+                rgba(0, 212, 255, 0.5)
+            );
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
             mask-composite: exclude;
-            opacity: 0.5;
+            opacity: 0;
             transition: opacity 0.4s;
         }
 
-        /* Inner glow effect */
+        /* Shimmer effect */
         .feature-item::after {
             content: '';
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(0, 212, 255, 0.3) 0%, transparent 70%);
-            transform: translate(-50%, -50%);
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            pointer-events: none;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(255, 255, 255, 0.05) 50%,
+                transparent 70%
+            );
+            transform: translateX(-100%);
+            transition: transform 0.6s;
         }
 
         .feature-item:nth-child(odd) {
@@ -253,76 +265,62 @@
         }
 
         .feature-item:hover {
-            transform: translateY(-15px) scale(1.02);
-            box-shadow: 0 25px 60px rgba(0, 212, 255, 0.4),
-                        0 0 80px rgba(0, 212, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(0, 212, 255, 0.3);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0, 212, 255, 0.15);
         }
 
         .feature-item:hover::before {
             opacity: 1;
-            animation: borderRotate 3s linear infinite;
         }
 
         .feature-item:hover::after {
-            width: 300px;
-            height: 300px;
-        }
-
-        @keyframes borderRotate {
-            0% {
-                background: linear-gradient(135deg, #00D4FF, #00FFF0, #00D4FF);
-            }
-            25% {
-                background: linear-gradient(225deg, #00FFF0, #00D4FF, #00FFF0);
-            }
-            50% {
-                background: linear-gradient(315deg, #00D4FF, #00FFF0, #00D4FF);
-            }
-            75% {
-                background: linear-gradient(45deg, #00FFF0, #00D4FF, #00FFF0);
-            }
-            100% {
-                background: linear-gradient(135deg, #00D4FF, #00FFF0, #00D4FF);
-            }
+            transform: translateX(100%);
         }
 
         .feature-item h3 {
-            color: #00FFF0;
-            font-size: clamp(20px, 2.2vw, 24px);
-            margin-bottom: 15px;
+            color: #f8fafc;
+            font-size: clamp(21px, 2.3vw, 26px);
+            margin-bottom: 16px;
             font-weight: 600;
+            letter-spacing: -0.02em;
+            line-height: 1.3;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 14px;
             position: relative;
             z-index: 1;
         }
 
         .feature-icon-svg {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             fill: none;
             stroke: #00FFF0;
-            stroke-width: 2;
+            stroke-width: 1.8;
             stroke-linecap: round;
             stroke-linejoin: round;
             flex-shrink: 0;
-            filter: drop-shadow(0 0 8px rgba(0, 255, 240, 0.6));
+            opacity: 0.9;
             transition: all 0.3s;
         }
 
         .feature-item:hover .feature-icon-svg {
-            transform: scale(1.1) rotate(5deg);
-            filter: drop-shadow(0 0 15px rgba(0, 255, 240, 0.9));
+            opacity: 1;
+            transform: scale(1.08);
+            filter: drop-shadow(0 0 12px rgba(0, 255, 240, 0.6));
         }
 
         .feature-item p {
-            color: #cbd5e1;
-            font-size: clamp(15px, 1.6vw, 17px);
+            color: #94a3b8;
+            font-size: clamp(16px, 1.7vw, 18px);
             line-height: 1.7;
             margin: 0;
             position: relative;
             z-index: 1;
+            font-weight: 400;
+            letter-spacing: -0.01em;
         }
 
         /* Exchanges Section */
@@ -518,11 +516,11 @@
             }
 
             .hero h1 {
-                font-size: 36px !important;
+                font-size: 40px !important;
             }
 
             .hero-subtitle {
-                font-size: 16px !important;
+                font-size: 18px !important;
             }
 
             .intro-text {
@@ -530,7 +528,7 @@
             }
 
             .intro-text p {
-                font-size: 16px !important;
+                font-size: 17px !important;
             }
 
             .section-title {
@@ -538,7 +536,7 @@
             }
 
             .section-title h2 {
-                font-size: 28px !important;
+                font-size: 32px !important;
             }
 
             .features-list {
@@ -548,7 +546,12 @@
             }
 
             .feature-item {
-                padding: 25px !important;
+                padding: 30px !important;
+                border-radius: 20px !important;
+            }
+
+            .feature-item::before {
+                border-radius: 20px !important;
             }
 
             .feature-item:nth-child(odd),
@@ -561,17 +564,17 @@
             }
 
             .feature-item:hover {
-                transform: translateY(-10px) scale(1.01) !important;
+                transform: translateY(-5px) !important;
             }
 
             .feature-item h3 {
-                font-size: 18px !important;
+                font-size: 19px !important;
                 gap: 12px !important;
             }
 
             .feature-icon-svg {
-                width: 28px !important;
-                height: 28px !important;
+                width: 26px !important;
+                height: 26px !important;
             }
 
             .feature-item p {
@@ -659,7 +662,7 @@
 
         <!-- Key Functions Title -->
         <div class="section-title animate-on-scroll">
-            <h2>🔑 Ключові Функції $TICS</h2>
+            <h2>Ключові Функції $TICS</h2>
         </div>
 
         <!-- Features Grid -->

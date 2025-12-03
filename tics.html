@@ -156,8 +156,8 @@
         }
 
         .intro-text strong {
-            color: #e2e8f0;
-            font-weight: 600;
+            color: #94a3b8;
+            font-weight: 400;
         }
 
         /* Section Title - Clean Typography */
@@ -178,7 +178,7 @@
             font-size: clamp(36px, 4.5vw, 52px);
             font-weight: 700;
             letter-spacing: -0.02em;
-            background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
+            background: linear-gradient(135deg, #00D4FF 0%, #00FFF0 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -195,6 +195,7 @@
         .features-list {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
+            grid-auto-rows: 1fr;
             gap: 25px;
             max-width: 1200px;
             margin: 50px auto;
@@ -212,6 +213,8 @@
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             opacity: 0;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         /* Rainbow gradient border on hover */
@@ -282,34 +285,19 @@
         .feature-item h3 {
             color: #f8fafc;
             font-size: clamp(21px, 2.3vw, 26px);
-            margin-bottom: 16px;
+            margin-bottom: 20px;
             font-weight: 600;
             letter-spacing: -0.02em;
             line-height: 1.3;
+            min-height: 68px;
             display: flex;
-            align-items: center;
-            gap: 14px;
+            align-items: flex-start;
             position: relative;
             z-index: 1;
         }
 
         .feature-icon-svg {
-            width: 28px;
-            height: 28px;
-            fill: none;
-            stroke: #00FFF0;
-            stroke-width: 1.8;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            flex-shrink: 0;
-            opacity: 0.9;
-            transition: all 0.3s;
-        }
-
-        .feature-item:hover .feature-icon-svg {
-            opacity: 1;
-            transform: scale(1.08);
-            filter: drop-shadow(0 0 12px rgba(0, 255, 240, 0.6));
+            display: none;
         }
 
         .feature-item p {
@@ -655,8 +643,8 @@
         <!-- Intro Text -->
         <div class="intro-text animate-on-scroll">
             <p>
-                <strong>$TICS — це нативна монета блокчейну Qubetics, яка виконуватиме ключові функції мережі.</strong>
-                Вона забезпечуватиме роботу екосистеми, слугуватиме інструментом для транзакцій, стейкінгу та участі у майбутніх сервісах Qubetics.
+                <strong>$TICS — це нативна монета блокчейну Qubetics, яка виконує ключові функції мережі.</strong>
+                Вона забезпечує роботу екосистеми, слугує інструментом для транзакцій, стейкінгу та участі у майбутніх сервісах Qubetics.
             </p>
         </div>
 
@@ -668,66 +656,32 @@
         <!-- Features Grid -->
         <div class="features-list">
             <div class="feature-item animate-on-scroll">
-                <h3>
-                    <svg class="feature-icon-svg" viewBox="0 0 24 24">
-                        <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                    </svg>
-                    Газ для Операцій
-                </h3>
+                <h3>Газ для Операцій</h3>
                 <p>$TICS використовується для оплати транзакцій та взаємодії зі смарт-контрактами в мережі Qubetics.</p>
             </div>
 
             <div class="feature-item animate-on-scroll" style="transition-delay: 0.1s;">
-                <h3>
-                    <svg class="feature-icon-svg" viewBox="0 0 24 24">
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                    </svg>
-                    Стейкінг та Безпека Мережі
-                </h3>
+                <h3>Стейкінг та Безпека Мережі</h3>
                 <p>Делегування $TICS валідаторам забезпечує безпеку блокчейну через консенсус Delegated Proof of Stake (DPoS). Валідатори та делегатори отримують винагороди за підтримку мережі.</p>
             </div>
 
             <div class="feature-item animate-on-scroll" style="transition-delay: 0.2s;">
-                <h3>
-                    <svg class="feature-icon-svg" viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="10"/>
-                        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-                    </svg>
-                    Роль у Протоколі Абстракції Ланцюгів (CAP)
-                </h3>
+                <h3>Роль у Протоколі Абстракції Ланцюгів (CAP)</h3>
                 <p>$TICS відіграватиме важливу роль у роботі міжланцюгових операцій, які в майбутньому виконуватимуться через протокол CAP. Монета використовуватиметься як один із інструментів екосистеми під час виконання намірів (intents) та взаємодії між різними блокчейнами.</p>
             </div>
 
             <div class="feature-item animate-on-scroll" style="transition-delay: 0.3s;">
-                <h3>
-                    <svg class="feature-icon-svg" viewBox="0 0 24 24">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                    </svg>
-                    Децентралізована VPN (dVPN)
-                </h3>
+                <h3>Децентралізована VPN (dVPN)</h3>
                 <p>$TICS буде служити валютою для оплати в децентралізованій VPN мережі. Оператори вузлів будуть заробляти $TICS за надання пропускної здатності, а користувачі будуть платити за приватний та безпечний доступ до інтернету.</p>
             </div>
 
             <div class="feature-item animate-on-scroll" style="transition-delay: 0.4s;">
-                <h3>
-                    <svg class="feature-icon-svg" viewBox="0 0 24 24">
-                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-                        <line x1="12" y1="22.08" x2="12" y2="12"/>
-                    </svg>
-                    Маркетплейс Токенізованих Активів
-                </h3>
+                <h3>Маркетплейс Токенізованих Активів</h3>
                 <p>$TICS буде одним із засобів обміну на маркетплейсі токенізованих активів, де користувачі зможуть купувати та продавати часткові частки нерухомості, цінних паперів та інтелектуальної власності.</p>
             </div>
 
             <div class="feature-item animate-on-scroll" style="transition-delay: 0.5s;">
-                <h3>
-                    <svg class="feature-icon-svg" viewBox="0 0 24 24">
-                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-                    </svg>
-                    DeFi та dApps
-                </h3>
+                <h3>DeFi та dApps</h3>
                 <p>Монета стане частиною екосистеми децентралізованих додатків, створених на Qubetics, включаючи майбутні фінансові сервіси та інші Web3-рішення.</p>
             </div>
         </div>

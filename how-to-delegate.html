@@ -32,7 +32,7 @@
 <body>
     <div class="container">
         <header>
-            <a href="index.html" class="back-button">← Назад на головну</a>
+            <a href="/main" class="back-button">← Назад на головну</a>
             <h1 class="page-title">Стати делегатором QubeNode</h1>
             <p style="color: #94a3b8; font-size: 1.1em;">Два простих способи делегування $TICS</p>
         </header>
@@ -60,7 +60,7 @@
                 <h3>Делегування через QubeNode.space</h3>
             </div>
             
-            <p>Найпростіший спосіб — підключити гаманець прямо на <a href="index.html" class="link">головній сторінці</a> для миттєвого делегування.</p>
+            <p>Найпростіший спосіб — підключити гаманець прямо на <a href="/main" class="link">головній сторінці</a> для миттєвого делегування.</p>
             
             <div class="info-box">
                 <p style="color: #00FFF0; font-weight: 600; margin-bottom: 12px; font-size: 1.05em;">
@@ -171,7 +171,7 @@
                 }
                 
                 // Redirect to dashboard with wallet info
-                window.location.href = `dashboard.html?wallet=${walletType}&address=${address}`;
+                window.location.href = `/dashboard?wallet=${walletType}&address=${address}`;
                 
             } catch (error) {
                 console.error('Wallet connection error:', error);

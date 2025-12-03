@@ -2487,7 +2487,7 @@
                 if (result.success) {
                     headerWalletConnected = true;
                     const walletInfo = cosmosStaking.getWalletInfo();
-                    window.location.href = `dashboard.html?wallet=${walletType}&address=${walletInfo.address}`;
+                    window.location.href = `/dashboard?wallet=${walletType}&address=${walletInfo.address}`;
                 }
             } catch (error) {
                 console.error('Header wallet connection error:', error);
@@ -2612,23 +2612,23 @@
 
     <div class="container">
         <div class="top-left-menu">
-            <button class="ecosystem-button" onclick="window.location.href='ecosystem.html'">
+            <button class="ecosystem-button" onclick="window.location.href='/ecosystem'">
                 <span>🌐</span>
                 <span>Про Екосистему</span>
             </button>
-            <button class="ecosystem-button" onclick="window.location.href='tics.html'">
+            <button class="ecosystem-button" onclick="window.location.href='/tics'">
                 <span>💎</span>
                 <span>Монета TICS</span>
             </button>
-            <button class="ecosystem-button" onclick="window.location.href='calculator.html'">
+            <button class="ecosystem-button" onclick="window.location.href='/calculator'">
                 <span>🧮</span>
                 <span>Калькулятор</span>
             </button>
-            <button class="ecosystem-button" onclick="window.location.href='how-to-delegate.html'">
+            <button class="ecosystem-button" onclick="window.location.href='/how-to-delegate'">
                 <span>🤝</span>
                 <span>Стати делегатором</span>
             </button>
-            <button class="ecosystem-button" onclick="window.location.href='faq.html'">
+            <button class="ecosystem-button" onclick="window.location.href='/faq'">
                 <span>❓</span>
                 <span>FAQ</span>
             </button>
@@ -4081,7 +4081,7 @@
                     const walletInfo = cosmosStaking.getWalletInfo();
                     
                     // Redirect to dashboard with wallet params
-                    window.location.href = `dashboard.html?wallet=${walletType}&address=${walletInfo.address}`;
+                    window.location.href = `/dashboard?wallet=${walletType}&address=${walletInfo.address}`;
                 }
             } catch (error) {
                 console.error('Header wallet connection error:', error);
@@ -5694,7 +5694,7 @@
                 const dropdown = document.getElementById('headerWalletDropdown');
                 if (dropdown) {
                     dropdown.innerHTML = `
-                        <button class="wallet-option" onclick="window.location.href='dashboard.html?wallet=${walletInfo.walletType}&address=${address}'; event.stopPropagation();">
+                        <button class="wallet-option" onclick="window.location.href='/dashboard?wallet=${walletInfo.walletType}&address=${address}'; event.stopPropagation();">
                             <span>📊</span>
                             <span>Переглянути дашборд</span>
                         </button>
@@ -5789,11 +5789,8 @@
 
     </script>
 
-
-    </script>
-
     <!-- Cosmos Staking Module Integration - Load in correct order -->
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="chain-config.js"></script>
+    <script src="chain-config.js"></script>
     <script src="wallet-manager.js"></script>
     <script src="chain-client.js"></script>
     <script src="transaction-builder.js"></script>
@@ -5816,4 +5813,20 @@
         const btnQuickClaimAllRewards = document.getElementById('btnQuickClaimAllRewards');
         
         if (btnQuickStakeQubeNode) {
-            btnQuickStakeQubeNode.addEventListener('click', fu
+            btnQuickStakeQubeNode.addEventListener('click', function() {
+                window.quickStakeQubeNode();
+            });
+        }
+        
+        if (btnQuickClaimAllRewards) {
+            btnQuickClaimAllRewards.addEventListener('click', function() {
+                window.quickClaimAllRewards();
+            });
+        }
+    } else {
+        console.error('❌ Functions not loaded!');
+    }
+    </script>
+
+</body>
+</html>

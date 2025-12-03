@@ -35,11 +35,11 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(135deg, 
-                #000814 0%, 
-                #001d3d 25%, 
-                #003566 50%, 
-                #001d3d 75%, 
-                #000814 100%);
+                rgba(15, 23, 42, 0.95) 0%, 
+                rgba(30, 41, 59, 0.9) 25%, 
+                rgba(51, 65, 85, 0.85) 50%, 
+                rgba(30, 41, 59, 0.9) 75%, 
+                rgba(15, 23, 42, 0.95) 100%);
             background-size: 400% 400%;
             animation: bgShift 20s ease infinite;
             z-index: 0;
@@ -71,7 +71,7 @@
             z-index: 2;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 20px 20px;
         }
 
         /* Back Button */
@@ -99,7 +99,7 @@
         /* Hero Section */
         .hero {
             text-align: center;
-            padding: 60px 20px;
+            padding: 20px 20px 40px 20px;
             margin-bottom: 40px;
             opacity: 0;
             animation: fadeIn 1s ease forwards;
@@ -191,37 +191,55 @@
         /* Features Grid */
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
             margin: 50px 0;
         }
 
         .feature-card {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(0, 212, 255, 0.2);
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.6) 100%);
+            border: 1px solid rgba(0, 212, 255, 0.3);
             border-radius: 20px;
-            padding: 35px;
-            transition: all 0.3s;
+            padding: 40px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             opacity: 0;
-            transform: translateY(30px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .feature-card:hover::before {
+            left: 100%;
+        }
+
+        .feature-card:nth-child(odd) {
+            transform: translateX(-50px);
+        }
+
+        .feature-card:nth-child(even) {
+            transform: translateX(50px);
         }
 
         .feature-card.visible {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateX(0);
         }
 
         .feature-card:hover {
-            background: rgba(15, 23, 42, 0.9);
-            border-color: rgba(0, 212, 255, 0.5);
-            transform: translateY(-8px);
-            box-shadow: 0 15px 40px rgba(0, 212, 255, 0.2);
-        }
-
-        .feature-icon {
-            font-size: 36px;
-            margin-bottom: 15px;
-            display: block;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.8) 100%);
+            border-color: rgba(0, 212, 255, 0.6);
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(0, 212, 255, 0.25);
         }
 
         .feature-card h3 {
@@ -252,11 +270,11 @@
             background: rgba(15, 23, 42, 0.4);
             border: 1px solid rgba(0, 212, 255, 0.15);
             border-radius: 16px;
-            padding: 25px;
+            padding: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 120px;
+            height: 140px;
             transition: all 0.3s;
             opacity: 0;
             transform: translateY(30px);
@@ -276,7 +294,7 @@
 
         .exchange-item img {
             max-width: 100%;
-            max-height: 80px;
+            max-height: 100px;
             width: auto;
             height: auto;
             object-fit: contain;
@@ -328,6 +346,10 @@
         .tokenomics-section.visible {
             opacity: 1;
             transform: translateY(0);
+        }
+
+        .tokenomics-section .section-title {
+            display: none;
         }
 
         .tokenomics-image {
@@ -457,7 +479,16 @@
             }
 
             .feature-card {
-                padding: 25px !important;
+                padding: 30px !important;
+            }
+
+            .feature-card:nth-child(odd),
+            .feature-card:nth-child(even) {
+                transform: translateY(30px);
+            }
+
+            .feature-card.visible {
+                transform: translateY(0) !important;
             }
 
             .feature-card h3 {
@@ -547,37 +578,31 @@
         <!-- Features Grid -->
         <div class="features-grid">
             <div class="feature-card animate-on-scroll">
-                <span class="feature-icon">⛽</span>
                 <h3>Газ для Операцій</h3>
                 <p>$TICS використовується для оплати транзакцій та взаємодії зі смарт-контрактами в мережі Qubetics.</p>
             </div>
 
             <div class="feature-card animate-on-scroll" style="transition-delay: 0.1s;">
-                <span class="feature-icon">🔒</span>
                 <h3>Стейкінг та Безпека Мережі</h3>
                 <p>Делегування $TICS валідаторам забезпечує безпеку блокчейну через консенсус Delegated Proof of Stake (DPoS). Валідатори та делегатори отримують винагороди за підтримку мережі.</p>
             </div>
 
             <div class="feature-card animate-on-scroll" style="transition-delay: 0.2s;">
-                <span class="feature-icon">🌉</span>
                 <h3>Роль у Протоколі Абстракції Ланцюгів (CAP)</h3>
                 <p>$TICS відіграватиме важливу роль у роботі міжланцюгових операцій, які в майбутньому виконуватимуться через протокол CAP. Монета використовуватиметься як один із інструментів екосистеми під час виконання намірів (intents) та взаємодії між різними блокчейнами.</p>
             </div>
 
             <div class="feature-card animate-on-scroll" style="transition-delay: 0.3s;">
-                <span class="feature-icon">🔐</span>
                 <h3>Децентралізована VPN (dVPN)</h3>
                 <p>$TICS буде служити валютою для оплати в децентралізованій VPN мережі. Оператори вузлів будуть заробляти $TICS за надання пропускної здатності, а користувачі будуть платити за приватний та безпечний доступ до інтернету.</p>
             </div>
 
             <div class="feature-card animate-on-scroll" style="transition-delay: 0.4s;">
-                <span class="feature-icon">💎</span>
                 <h3>Маркетплейс Токенізованих Активів</h3>
                 <p>$TICS буде одним із засобів обміну на маркетплейсі токенізованих активів, де користувачі зможуть купувати та продавати часткові частки нерухомості, цінних паперів та інтелектуальної власності.</p>
             </div>
 
             <div class="feature-card animate-on-scroll" style="transition-delay: 0.5s;">
-                <span class="feature-icon">⚡</span>
                 <h3>DeFi та dApps</h3>
                 <p>Монета стане частиною екосистеми децентралізованих додатків, створених на Qubetics, включаючи майбутні фінансові сервіси та інші Web3-рішення.</p>
             </div>
@@ -631,7 +656,7 @@
                 <span>Blockchain Qubetics</span>
             </a>
             <a href="https://qubenode.space/how-to-delegate.html" target="_blank" class="cta-btn cta-secondary">
-                <span class="cta-icon">🚀</span>
+                <span class="cta-icon">💎</span>
                 <span>Делегувати зараз</span>
             </a>
         </div>

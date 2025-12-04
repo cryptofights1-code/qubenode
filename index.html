@@ -2490,7 +2490,7 @@
                     window.location.href = `dashboard.html?wallet=${walletType}&address=${walletInfo.address}`;
                 }
             } catch (error) {
-                console.error('Header wallet connection error:', error);
+                // console.error('Header wallet connection error:', error);
                 alert('Помилка підключення: ' + error.message);
                 resetHeaderWalletButton();
             } finally {
@@ -2583,26 +2583,26 @@
     <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobileMenu">
         <div class="mobile-menu-items">
-            <a href="ecosystem.html" class="mobile-menu-item" style="text-decoration: none;">
+            <button class="mobile-menu-item" data-modal="ecosystemModal" type="button">
                 <span>🌐</span>
                 <span>Про Екосистему</span>
-            </a>
-            <a href="tics.html" class="mobile-menu-item" style="text-decoration: none;">
+            </button>
+            <button class="mobile-menu-item" data-modal="ticsModal" type="button">
                 <span>💎</span>
                 <span>Монета TICS</span>
-            </a>
-            <a href="calculator.html" class="mobile-menu-item" style="text-decoration: none;">
+            </button>
+            <button class="mobile-menu-item" data-modal="calcModal" type="button">
                 <span>🧮</span>
                 <span>Калькулятор</span>
-            </a>
-            <a href="how-to-delegate.html" class="mobile-menu-item" style="text-decoration: none;">
+            </button>
+            <button class="mobile-menu-item" data-modal="delegatorModal" type="button">
                 <span>🤝</span>
                 <span>Стати делегатором</span>
-            </a>
-            <a href="faq.html" class="mobile-menu-item" style="text-decoration: none;">
+            </button>
+            <button class="mobile-menu-item" data-modal="faqModal" type="button">
                 <span>❓</span>
                 <span>FAQ</span>
-            </a>
+            </button>
             <button class="mobile-menu-item" id="mobileWalletBtn" onclick="handleMobileWalletClick()" type="button">
                 <span>💼</span>
                 <span>Підключити гаманець</span>
@@ -3672,6 +3672,7 @@
         </div>
     </div>
 
+    <script>
         // FAQ Accordion Toggle
         function toggleFaq(button) {
             const faqItem = button.parentElement;
@@ -3783,7 +3784,7 @@
                             img.style.maxHeight = '100px';
                         });
                         
-                        console.log('✅ Exchange images resized to 100px on mobile');
+                        // console.log('✅ Exchange images resized to 100px on mobile');
                     }, 100);
                 }
                 
@@ -4007,15 +4008,6 @@
 
         // Bind menu items using data-modal attribute
         document.addEventListener('DOMContentLoaded', function() {
-            // NEW: Handle mobile menu links - close menu when link is clicked
-            var menuLinks = document.querySelectorAll('.mobile-menu-item[href]');
-            menuLinks.forEach(function(link) {
-                link.addEventListener('click', function() {
-                    document.getElementById('menu-toggle').checked = false;
-                });
-            });
-            
-            // LEGACY: Handle modal buttons (for wallet button etc)
             var menuItems = document.querySelectorAll('.mobile-menu-item[data-modal]');
             
             menuItems.forEach(function(item) {
@@ -4093,7 +4085,7 @@
                     window.location.href = `dashboard.html?wallet=${walletType}&address=${walletInfo.address}`;
                 }
             } catch (error) {
-                console.error('Header wallet connection error:', error);
+                // console.error('Header wallet connection error:', error);
                 alert('Помилка підключення: ' + error.message);
                 resetHeaderWalletButton();
             } finally {
@@ -4151,7 +4143,7 @@
                     typeof VALIDATOR_CONFIG !== 'undefined') {
                     stakingModuleReady = true;
                     clearInterval(checkModules);
-                    console.log('✅ Cosmos Staking Module ready');
+                    // console.log('✅ Cosmos Staking Module ready');
                 }
             }, 100);
         });
@@ -4205,7 +4197,7 @@
                     await updateHeaderWalletDisplay();
                 }
             } catch (error) {
-                console.error('Connection error:', error);
+                // console.error('Connection error:', error);
                 alert('Помилка підключення: ' + error.message);
                 
                 // Reset buttons
@@ -4841,7 +4833,7 @@
                 
                 // Calculate unbonding - FIXED to use unbondingDelegations
                 let unbonding = '0';
-                console.log('Unbonding data:', overview.unbondingDelegations); // Debug
+                // console.log('Unbonding data:', overview.unbondingDelegations); // Debug
                 
                 if (overview.unbondingDelegations && Array.isArray(overview.unbondingDelegations) && overview.unbondingDelegations.length > 0) {
                     let totalUnbonding = BigInt(0);
@@ -4882,7 +4874,7 @@
                     updateUnbondingList(overview);
                 }
             } catch (error) {
-                console.error('Error updating dashboard data:', error);
+                // console.error('Error updating dashboard data:', error);
             }
         }
 
@@ -5015,18 +5007,18 @@
                 const maxRefreshes = 6;
                 const refreshInterval = setInterval(async () => {
                     refreshCount++;
-                    console.log(`🔄 Auto-refresh #${refreshCount} after delegate...`);
+                    // console.log(`🔄 Auto-refresh #${refreshCount} after delegate...`);
                     await updateDashboardData();
                     
                     if (refreshCount >= maxRefreshes) {
                         clearInterval(refreshInterval);
-                        console.log('✅ Auto-refresh completed');
+                        // console.log('✅ Auto-refresh completed');
                     }
                 }, 5000);
                 
                 // First immediate refresh after 3 seconds
                 setTimeout(async () => {
-                    console.log('🔄 Initial refresh after delegate...');
+                    // console.log('🔄 Initial refresh after delegate...');
                     await updateDashboardData();
                 }, 3000);
                 
@@ -5062,18 +5054,18 @@
                 const maxRefreshes = 6;
                 const refreshInterval = setInterval(async () => {
                     refreshCount++;
-                    console.log(`🔄 Auto-refresh #${refreshCount} after undelegate...`);
+                    // console.log(`🔄 Auto-refresh #${refreshCount} after undelegate...`);
                     await updateDashboardData();
                     
                     if (refreshCount >= maxRefreshes) {
                         clearInterval(refreshInterval);
-                        console.log('✅ Auto-refresh completed');
+                        // console.log('✅ Auto-refresh completed');
                     }
                 }, 5000);
                 
                 // First immediate refresh after 3 seconds
                 setTimeout(async () => {
-                    console.log('🔄 Initial refresh after undelegate...');
+                    // console.log('🔄 Initial refresh after undelegate...');
                     await updateDashboardData();
                 }, 3000);
                 
@@ -5095,18 +5087,18 @@
                 const maxRefreshes = 6;
                 const refreshInterval = setInterval(async () => {
                     refreshCount++;
-                    console.log(`🔄 Auto-refresh #${refreshCount} after claim rewards...`);
+                    // console.log(`🔄 Auto-refresh #${refreshCount} after claim rewards...`);
                     await updateDashboardData();
                     
                     if (refreshCount >= maxRefreshes) {
                         clearInterval(refreshInterval);
-                        console.log('✅ Auto-refresh completed');
+                        // console.log('✅ Auto-refresh completed');
                     }
                 }, 5000);
                 
                 // First immediate refresh after 3 seconds
                 setTimeout(async () => {
-                    console.log('🔄 Initial refresh after claim rewards...');
+                    // console.log('🔄 Initial refresh after claim rewards...');
                     await updateDashboardData();
                 }, 3000);
                 
@@ -5299,7 +5291,7 @@
             document.querySelectorAll('.btn-stake-more').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const validator = this.getAttribute('data-validator');
-                    console.log('🚀 Stake more clicked for:', validator);
+                    // console.log('🚀 Stake more clicked for:', validator);
                     window.quickStakeMore(validator);
                 });
             });
@@ -5307,7 +5299,7 @@
             document.querySelectorAll('.btn-switch-validator').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const validator = this.getAttribute('data-validator');
-                    console.log('🔄 Switch validator clicked for:', validator);
+                    // console.log('🔄 Switch validator clicked for:', validator);
                     window.quickSwitchValidator(validator);
                 });
             });
@@ -5315,7 +5307,7 @@
             document.querySelectorAll('.btn-unbond').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const validator = this.getAttribute('data-validator');
-                    console.log('🔓 Unbond clicked for:', validator);
+                    // console.log('🔓 Unbond clicked for:', validator);
                     window.quickUnbond(validator);
                 });
             });
@@ -5351,7 +5343,7 @@
                 document.getElementById('forecastMonthly').textContent = monthlyReward.toFixed(2);
                 document.getElementById('forecastYearly').textContent = yearlyReward.toFixed(2);
             } catch (error) {
-                console.error('Error updating rewards forecast:', error);
+                // console.error('Error updating rewards forecast:', error);
             }
         }
 
@@ -5384,10 +5376,10 @@
                         validatorNamesCache[valAddress] = valName;
                     });
                     
-                    console.log(`✅ Loaded ${allValidators.length} validators`);
+                    // console.log(`✅ Loaded ${allValidators.length} validators`);
                 }
             } catch (error) {
-                console.error('Error loading validators:', error);
+                // console.error('Error loading validators:', error);
             }
         }
 
@@ -5518,18 +5510,18 @@
                 const maxRefreshes = 12;
                 const refreshInterval = setInterval(async () => {
                     refreshCount++;
-                    console.log(`🔄 Auto-refresh #${refreshCount} after redelegate...`);
+                    // console.log(`🔄 Auto-refresh #${refreshCount} after redelegate...`);
                     await updateDashboardData();
                     
                     if (refreshCount >= maxRefreshes) {
                         clearInterval(refreshInterval);
-                        console.log('✅ Auto-refresh completed');
+                        // console.log('✅ Auto-refresh completed');
                     }
                 }, 5000); // Every 5 seconds
                 
                 // First immediate refresh after 3 seconds
                 setTimeout(async () => {
-                    console.log('🔄 Initial refresh after redelegate...');
+                    // console.log('🔄 Initial refresh after redelegate...');
                     await updateDashboardData();
                 }, 3000);
                 
@@ -5551,7 +5543,7 @@
                 document.getElementById('walletRewards').textContent = parseFloat(rewards).toFixed(4);
                 document.getElementById('claimableRewards').textContent = parseFloat(rewards).toFixed(4);
             } catch (error) {
-                console.error('Error updating staking data:', error);
+                // console.error('Error updating staking data:', error);
             }
         }
 
@@ -5717,7 +5709,7 @@
                 // Update mobile button too
                 updateMobileWalletButton();
             } catch (error) {
-                console.error('Error updating header wallet display:', error);
+                // console.error('Error updating header wallet display:', error);
                 resetHeaderWalletButton();
             }
         }
@@ -5798,11 +5790,8 @@
 
     </script>
 
-
-    </script>
-
     <!-- Cosmos Staking Module Integration - Load in correct order -->
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="chain-config.js"></script>
+    <script src="chain-config.js"></script>
     <script src="wallet-manager.js"></script>
     <script src="chain-client.js"></script>
     <script src="transaction-builder.js"></script>
@@ -5812,17 +5801,37 @@
 
     <script>
     // TEST: Verify functions are loaded
-    console.log('🔧 Testing function definitions...');
-    console.log('quickStakeMore type:', typeof window.quickStakeMore);
-    console.log('quickStakeQubeNode type:', typeof window.quickStakeQubeNode);
-    console.log('quickClaimAllRewards type:', typeof window.quickClaimAllRewards);
+    // console.log('🔧 Testing function definitions...');
+    // console.log('quickStakeMore type:', typeof window.quickStakeMore);
+    // console.log('quickStakeQubeNode type:', typeof window.quickStakeQubeNode);
+    // console.log('quickClaimAllRewards type:', typeof window.quickClaimAllRewards);
     
     if (typeof window.quickStakeQubeNode === 'function') {
-        console.log('✅ Functions are loaded correctly!');
+        // console.log('✅ Functions are loaded correctly!');
         
         // Attach event listeners to Quick Actions buttons (FIRST block - before My Delegations)
         const btnQuickStakeQubeNode = document.getElementById('btnQuickStakeQubeNode');
         const btnQuickClaimAllRewards = document.getElementById('btnQuickClaimAllRewards');
         
         if (btnQuickStakeQubeNode) {
-            btnQuickStakeQubeNode.addEventListener('click', fu
+            btnQuickStakeQubeNode.addEventListener('click', function() {
+                // console.log('🚀 Quick Stake QubeNode clicked!');
+                window.quickStakeQubeNode();
+            });
+            // console.log('✅ btnQuickStakeQubeNode listener attached');
+        }
+        
+        if (btnQuickClaimAllRewards) {
+            btnQuickClaimAllRewards.addEventListener('click', function() {
+                // console.log('💰 Quick Claim All Rewards clicked!');
+                window.quickClaimAllRewards();
+            });
+            // console.log('✅ btnQuickClaimAllRewards listener attached');
+        }
+    } else {
+        // console.error('❌ Functions are NOT loaded!');
+    }
+    </script>
+
+</body>
+</html>

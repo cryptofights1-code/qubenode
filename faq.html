@@ -7,36 +7,235 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { background: #000; color: #fff; font-family: 'Space Grotesk', sans-serif; }
-        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        
+        html {
+            background: #000000;
+            background-color: #000000 !important;
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000000;
+            color: #ffffff;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Animated background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: radial-gradient(ellipse at 50% 50%, rgba(0, 212, 255, 0.15) 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 20%, rgba(0, 255, 240, 0.15) 0%, transparent 50%),
+                        radial-gradient(ellipse at 20% 80%, rgba(0, 128, 255, 0.15) 0%, transparent 50%);
+            animation: bgShift 20s ease infinite;
+            pointer-events: none;
+        }
+
+        @keyframes bgShift {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(5deg); }
+        }
+
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .container { 
+            position: relative;
+            z-index: 2;
+            max-width: 900px; 
+            margin: 0 auto; 
+            padding: 20px; 
+        }
         header { text-align: center; padding: 20px 0; }
-        .back-button { background: linear-gradient(135deg, #00D4FF, #00FFF0); border: none; color: #000; padding: 12px 24px; border-radius: 10px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; margin-bottom: 20px; }
-        .page-title { color: #00FFF0; font-size: 2.5em; font-weight: 700; margin: 20px 0; }
-        .section { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 20px; padding: 40px; }
-        .intro { font-size: 1.2em; margin-bottom: 40px; color: #cbd5e1; }
-        .faq-item { margin-bottom: 15px; background: rgba(0, 212, 255, 0.05); border: 1px solid rgba(0, 212, 255, 0.15); border-radius: 12px; overflow: hidden; }
-        .faq-question { width: 100%; padding: 20px; background: transparent; border: none; color: #00FFF0; font-size: 1.1em; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-align: left; transition: all 0.3s; }
-        .faq-question:hover { background: rgba(0, 212, 255, 0.1); }
-        .faq-icon { transition: transform 0.3s; font-size: 0.8em; }
-        .faq-question.active .faq-icon { transform: rotate(180deg); }
-        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; padding: 0 20px; }
-        .faq-answer.active { max-height: 1000px; padding: 0 20px 20px 20px; }
-        .faq-answer p { color: #cbd5e1; line-height: 1.8; margin-bottom: 15px; }
-        .faq-answer ul { color: #cbd5e1; margin-left: 20px; line-height: 2; }
-        .faq-answer strong { color: #00FFF0; }
-        .faq-answer a { color: #00D4FF; text-decoration: none; border-bottom: 1px dashed #00D4FF; }
-        .footer-links { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-top: 40px; }
-        .footer-link { display: inline-flex; align-items: center; gap: 12px; padding: 18px 40px; background: rgba(0, 212, 255, 0.1); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 50px; color: #00D4FF; text-decoration: none; font-weight: 600; font-size: 1.1em; transition: all 0.3s; }
-        .footer-link:hover { background: rgba(0, 212, 255, 0.2); transform: translateY(-3px); }
+        .back-button { 
+            background: linear-gradient(135deg, #00D4FF, #00FFF0); 
+            border: none; 
+            color: #000; 
+            padding: 12px 24px; 
+            border-radius: 10px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            text-decoration: none; 
+            display: inline-block; 
+            margin-bottom: 20px; 
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+        }
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4);
+        }
+        .page-title { 
+            color: #00FFF0; 
+            font-size: 2.8em; 
+            font-weight: 700; 
+            margin: 20px 0;
+            text-shadow: 0 0 30px rgba(0, 255, 240, 0.3);
+        }
+        .section { 
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.7) 0%, rgba(10, 15, 30, 0.8) 100%);
+            border: 1px solid rgba(0, 212, 255, 0.25); 
+            border-radius: 25px; 
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        .intro { 
+            font-size: 1.2em; 
+            margin-bottom: 40px; 
+            color: #94a3b8;
+            text-align: center;
+        }
+        .faq-item { 
+            margin-bottom: 18px; 
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.08) 0%, rgba(0, 212, 255, 0.03) 100%);
+            border: 1px solid rgba(0, 212, 255, 0.2); 
+            border-radius: 15px; 
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        .faq-item:hover {
+            border-color: rgba(0, 212, 255, 0.4);
+            transform: translateX(5px);
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.15);
+        }
+        .faq-question { 
+            width: 100%; 
+            padding: 22px 25px; 
+            background: transparent; 
+            border: none; 
+            color: #00FFF0; 
+            font-size: 1.15em; 
+            font-weight: 600; 
+            cursor: pointer; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            text-align: left; 
+            transition: all 0.3s;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .faq-question:hover { 
+            background: rgba(0, 212, 255, 0.12);
+            padding-left: 30px;
+        }
+        .faq-question.active {
+            background: rgba(0, 212, 255, 0.15);
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+        }
+        .faq-icon { 
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.9em;
+            color: #00D4FF;
+        }
+        .faq-question.active .faq-icon { 
+            transform: rotate(180deg);
+            color: #00FFF0;
+        }
+        .faq-answer { 
+            max-height: 0; 
+            overflow: hidden; 
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.4s;
+            padding: 0 25px; 
+        }
+        .faq-answer.active { 
+            max-height: 1500px; 
+            padding: 5px 25px 25px 25px;
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .faq-answer p { 
+            color: #cbd5e1; 
+            line-height: 1.9; 
+            margin-bottom: 15px;
+            font-size: 1.05em;
+        }
+        .faq-answer ul { 
+            color: #cbd5e1; 
+            margin-left: 25px; 
+            line-height: 2.2;
+            font-size: 1.05em;
+        }
+        .faq-answer ul li {
+            margin-bottom: 8px;
+        }
+        .faq-answer strong { 
+            color: #00FFF0;
+            font-weight: 600;
+        }
+        .faq-answer a { 
+            color: #00D4FF; 
+            text-decoration: none; 
+            border-bottom: 1px dashed #00D4FF;
+            transition: all 0.3s;
+            padding-bottom: 2px;
+        }
+        .faq-answer a:hover {
+            color: #00FFF0;
+            border-bottom-color: #00FFF0;
+        }
+        .footer-links { 
+            display: flex; 
+            gap: 20px; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            margin-top: 50px; 
+        }
+        .footer-link { 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 12px; 
+            padding: 20px 45px; 
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.15) 0%, rgba(0, 212, 255, 0.08) 100%);
+            border: 2px solid rgba(0, 212, 255, 0.35); 
+            border-radius: 50px; 
+            color: #00FFF0; 
+            text-decoration: none; 
+            font-weight: 600; 
+            font-size: 1.15em; 
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.2);
+        }
+        .footer-link:hover { 
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.25) 0%, rgba(0, 212, 255, 0.15) 100%);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+            border-color: rgba(0, 212, 255, 0.5);
+        }
         @media (max-width: 768px) {
             .container { padding: 10px; }
-            .page-title { font-size: 1.8em; }
-            .section { padding: 20px; }
-            .faq-question { font-size: 1em; padding: 15px; }
+            .page-title { font-size: 2em; }
+            .section { padding: 25px 20px; }
+            .faq-question { font-size: 1.05em; padding: 18px 20px; }
+            .faq-answer.active { padding: 5px 20px 20px 20px; }
+            .footer-link { padding: 16px 30px; font-size: 1.05em; }
         }
     </style>
 </head>
 <body>
+    <!-- Animated background -->
+    <div class="bg-animation"></div>
+    <div class="grid-overlay"></div>
+    
     <div class="container">
         <header>
             <a href="index.html" class="back-button">← Назад на головну</a>
@@ -45,7 +244,6 @@
         </header>
 
         <div class="section">
-            <p class="intro">Знайдіть відповіді на найпоширеніші питання про делегування та стейкінг з QubeNode</p>
             
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
@@ -160,7 +358,11 @@
                         <li><strong><a href="https://www.lbank.com/uk/trade/tics_usdt" target="_blank">LBank</a></strong></li>
                         <li><strong><a href="https://www.coinstore.com/spot/TICSUSDT?ts=1760907955300" target="_blank">Coinstore</a></strong></li>
                     </ul>
-                    <p>Також можна придбати монети безпосередньо через гаманець Qubetics.</p>
+                    <p>Також можна придбати монети через мости (bridges):</p>
+                    <ul>
+                        <li><strong><a href="https://dapp.bridgers.xyz/?ref=qubetics.com#/?sourceFlag=widget-acb" target="_blank">SWFT Blockchain</a></strong> — швидкий міст для обміну криптовалют</li>
+                        <li><strong><a href="https://qube.blazpay.com/bridge" target="_blank">BlazPay</a></strong> — зручний міст для Qubetics</li>
+                    </ul>
                 </div>
             </div>
 
@@ -173,7 +375,7 @@
                     <p>Ви можете зв'язатися з нами через:</p>
                     <ul>
                         <li><strong><a href="https://t.me/+sRnz7RyoL4Q0MWEy" target="_blank">Telegram</a>:</strong> Наша група підтримки завжди готова допомогти</li>
-                        <li><strong>Email:</strong> <a href="/cdn-cgi/l/email-protection#3f4c4a4f4f504d4b7f4e4a5d5a51505b5a114c4f5e5c5a"><span class="__cf_email__" data-cfemail="5724222727382523172622353239383332792427363432">[email&#160;protected]</span></a></li>
+                        <li><strong>Email:</strong> <a href="/cdn-cgi/l/email-protection#f98f9895909d988d968bd7888c9b9c97969d9cb99e94989095d79a9694"><span class="__cf_email__" data-cfemail="087e6964616c697c677a26797d6a6d66676c6d486f65696164266b6765">[email&#160;protected]</span></a></li>
                     </ul>
                 </div>
             </div>
@@ -181,7 +383,7 @@
 
         <div class="footer-links">
             <a href="how-to-delegate.html" class="footer-link">
-                <span>🚀</span>
+                <span>💎</span>
                 <span>Почати стейкінг</span>
             </a>
             <a href="https://t.me/+sRnz7RyoL4Q0MWEy" class="footer-link" target="_blank">
@@ -191,7 +393,7 @@
         </div>
     </div>
 
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         function toggleFaq(button) {
             const answer = button.nextElementSibling;
             const isActive = button.classList.contains('active');
@@ -199,15 +401,4 @@
             // Close all other answers
             document.querySelectorAll('.faq-question').forEach(q => {
                 q.classList.remove('active');
-                q.nextElementSibling.classList.remove('active');
-            });
-            
-            // Toggle current answer
-            if (!isActive) {
-                button.classList.add('active');
-                answer.classList.add('active');
-            }
-        }
-    </script>
-</body>
-</html>
+                q.nextElementSibling.classList.r

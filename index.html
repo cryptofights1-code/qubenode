@@ -1302,11 +1302,6 @@
             }
 
             /* Hide blue background animation on mobile */
-            .bg-animation,
-            .grid-overlay {
-                display: none !important;
-            }
-
             .container {
                 position: relative;
                 z-index: 1;
@@ -1333,35 +1328,35 @@
             .qubetics-brand {
                 flex-direction: row;
                 justify-content: center;
-                gap: 15px;
-                margin-bottom: 30px;
-                margin-top: 80px;  /* ДОДАНО: опустити вниз щоб не налазило на кнопки */
+                gap: 10px;
+                margin-bottom: 20px;
+                margin-top: 80px;
             }
 
             .qubetics-brand img {
-                width: 60px;  /* ПОВЕРНУТО: 60px */
-                height: 60px;
+                width: 45px;
+                height: 45px;
             }
 
             .qubetics-brand span {
-                font-size: 1.1em;  /* ПОВЕРНУТО: 1.1em */
+                font-size: 0.9em;
                 letter-spacing: 1px;
             }
 
             .brand-container {
                 flex-direction: row;
                 justify-content: center;
-                gap: 15px;
-                margin-bottom: 15px;
+                gap: 20px;
+                margin-bottom: 20px;
             }
 
             .brand-container img {
-                width: 70px;
-                height: 70px;
+                width: 100px;
+                height: 100px;
             }
 
             .validator-name {
-                font-size: 3em;
+                font-size: 4.5em;
                 letter-spacing: -1px;
                 text-align: center;
             }
@@ -1381,31 +1376,33 @@
             }
 
             .status-badge-extended {
-                max-width: 100%;
-                padding: 12px 15px;
+                max-width: 85%;
+                padding: 10px 12px;
+                margin: 0 auto;
             }
 
             .status-badge-header {
-                flex-direction: column;
+                flex-direction: row;
                 gap: 8px;
-                font-size: 0.85em;
-                margin-bottom: 10px;
+                font-size: 0.8em;
+                margin-bottom: 8px;
                 align-items: center;
             }
 
             .block-info {
-                font-size: 0.75em;
+                font-size: 0.7em;
                 text-align: center;
+                margin-bottom: 6px !important;
             }
 
             .blocks-chain-inline {
-                height: 28px;
+                height: 40px;
                 flex: 1;
             }
 
             .blocks-track-inline {
                 gap: 3px;
-                height: 28px;
+                height: 40px;
                 max-width: 100%;
             }
 
@@ -4737,9 +4734,27 @@
                 return;
             }
             
-            // Show wallet selection
+            // Auto-detect wallet from browser
+            let walletType = null;
+            
+            // Check for Keplr in-app browser
+            if (window.keplr) {
+                walletType = 'keplr';
+            }
+            // Check for Cosmostation in-app browser
+            else if (window.cosmostation) {
+                walletType = 'cosmostation';
+            }
+            
+            // If wallet detected, connect automatically
+            if (walletType) {
+                connectHeaderWallet(walletType);
+                return;
+            }
+            
+            // If no wallet detected (regular browser), show selection
             const walletChoice = confirm('Оберіть гаманець:\n\nНатисніть OK для Keplr\nНатисніть Скасувати для Cosmostation');
-            const walletType = walletChoice ? 'keplr' : 'cosmostation';
+            walletType = walletChoice ? 'keplr' : 'cosmostation';
             
             connectHeaderWallet(walletType);
         }

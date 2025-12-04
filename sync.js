@@ -1,10 +1,10 @@
-// === QubeNode Live Sync Script v2.9.0 ===
+// === QubeNode Live Sync Script v2.9.1 ===
 // Includes: validator info, delegators, inflation, uptime, validator rank, TICS price from MEXC
-// v2.9.0: Blocks animation - 33 blocks for mobile (perfect fit for iPhone SE)
+// v2.9.1: Mobile blocks optimized for 85% width - 25 blocks
 // New commission text: "Від 30% APY → 28.5% ваш дохід"
 // Rank format: "#7" (only position, "by voting power")
 
-console.log('🚀 QubeNode Sync v2.9.0 LOADED - 33 blocks for mobile');
+console.log('🚀 QubeNode Sync v2.9.1 LOADED - 25 blocks for mobile (85% width)');
 
 const API_BASE = "https://swagger.qubetics.com";
 const RPC_BASE = "https://rpc.qubenode.space";
@@ -399,7 +399,7 @@ function initBlockAnimation() {
   if (isMobile) {
     // МОБІЛЬНА ВЕРСІЯ: фіксована кількість паличок для всіх пристроїв
     containerWidth = container.offsetWidth || (window.innerWidth - 40);
-    blocksCount = 33; // Оптимальна кількість для більшості мобільних
+    blocksCount = 25; // Оптимізовано для 85% ширини вікна на мобільних
     
     // Динамічно розраховуємо ширину паличку та gap щоб заповнити контейнер
     // Формула: containerWidth = (blocksCount × blockWidth) + ((blocksCount - 1) × gap)

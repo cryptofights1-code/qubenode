@@ -76,10 +76,134 @@
         ul { color: #cbd5e1; margin: 0 0 20px 20px; line-height: 2; }
         ul strong { color: #00D4FF; }
         .link { color: #00D4FF; font-weight: 600; cursor: pointer; text-decoration: underline; }
+        
+        /* Modal styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-content {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 20px;
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            padding: 40px;
+        }
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #ef4444;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .modal-close:hover {
+            background: rgba(239, 68, 68, 0.3);
+            transform: rotate(90deg);
+        }
+        .modal-title {
+            color: #00FFF0;
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .modal-subtitle {
+            color: #94a3b8;
+            font-size: 1em;
+            margin-bottom: 30px;
+        }
+        .instruction-step {
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            gap: 15px;
+            align-items: start;
+        }
+        .step-num {
+            min-width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #00D4FF, #00FFF0);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #000;
+            font-size: 1.1em;
+        }
+        .step-content {
+            flex: 1;
+        }
+        .step-content strong {
+            color: #00FFF0;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .step-content .highlight {
+            color: #ef4444;
+            font-weight: 600;
+        }
+        .step-content .cyan {
+            color: #00FFF0;
+            font-weight: 600;
+        }
+        .success-box {
+            background: rgba(34, 197, 94, 0.1);
+            border: 2px solid rgba(34, 197, 94, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .success-box .icon {
+            font-size: 2em;
+        }
+        .success-box .text {
+            color: #22c55e;
+            font-weight: 600;
+        }
+        .final-note {
+            background: rgba(250, 204, 21, 0.1);
+            border-left: 4px solid #facc15;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            color: #fde047;
+        }
         @media (max-width: 768px) {
             .container { padding: 10px; }
             .page-title { font-size: 1.8em; }
             .section { padding: 20px; }
+            .modal-content { padding: 30px 20px; }
+            .modal-title { font-size: 1.5em; }
         }
     </style>
 </head>
@@ -102,7 +226,7 @@
                 <h3>Делегування через мобільний гаманець</h3>
             </div>
             
-            <p>Ви можете зробити делегування у гаманці <a href="index.html#keplr-guide" class="link">Keplr (інструкція)</a> або Cosmostation.</p>
+            <p>Ви можете зробити делегування у гаманці <span style="color: #67e8f9;">Keplr</span> (<a href="#" class="link" onclick="openKeplrModal(); return false;">інструкція</a>) або <span style="color: #67e8f9;">Cosmostation</span>.</p>
             
             <div class="warning-box">
                 <p style="color: #fde047; margin: 0;">
@@ -118,7 +242,7 @@
                 <h3>Делегування на сайті QubeNode.space</h3>
             </div>
             
-            <p>Підключіть на сайті гаманець через браузерні розширення Keplr або Cosmostation для миттєвого делегування.</p>
+            <p>Підключіть на сайті гаманець через браузерні розширення <span style="color: #67e8f9;">Keplr</span> або <span style="color: #67e8f9;">Cosmostation</span> для миттєвого делегування.</p>
             
             <div class="info-box">
                 <p style="color: #00FFF0; font-weight: 600; margin-bottom: 12px; font-size: 1.05em;">
@@ -240,6 +364,135 @@
                     '<span>🔶</span><span>Cosmostation</span>';
             }
         }
+    </script>
+    
+    <!-- Keplr Instruction Modal -->
+    <div id="keplrModal" class="modal-overlay" onclick="if(event.target === this) closeKeplrModal()">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeKeplrModal()">×</button>
+            
+            <h2 class="modal-title">📱 Як делегувати через Keplr Mobile</h2>
+            <p class="modal-subtitle">Покрокова інструкція для делегування $TICS через мобільний додаток Keplr:</p>
+            
+            <div class="instruction-step">
+                <div class="step-num">1</div>
+                <div class="step-content">
+                    <strong>Завантаж Keplr Wallet із App Store або Play Store</strong>
+                </div>
+            </div>
+            
+            <div class="instruction-step">
+                <div class="step-num">2</div>
+                <div class="step-content">
+                    <strong>Створи новий гаманець</strong>
+                </div>
+            </div>
+            
+            <div class="instruction-step">
+                <div class="step-num">3</div>
+                <div class="step-content">
+                    <strong>Надійно збережи свою seed-фразу та пароль. <span class="highlight">Ніколи не діліся ними з кимось</span></strong>
+                </div>
+            </div>
+            
+            <div class="instruction-step">
+                <div class="step-num">4</div>
+                <div class="step-content">
+                    <strong>Додай Qubetics Mainnet: знайди Qubetics і увімкни його</strong>
+                </div>
+            </div>
+            
+            <div class="instruction-step">
+                <div class="step-num">5</div>
+                <div class="step-content">
+                    <strong>На головному екрані натисни <span class="cyan">Deposit →</span> знайди Qubetics → скопіюй свою адресу гаманця Qubetics Mainnet (вибираємо <span class="cyan">EVM адресу</span>, вона починається з <span class="cyan">0x...</span>)</strong>
+                </div>
+            </div>
+            
+            <div class="instruction-step">
+                <div class="step-num">6</div>
+                <div class="step-content">
+                    <strong>Надішли $TICS на скопійовану адресу</strong>
+                </div>
+            </div>
+            
+            <div class="instruction-step">
+                <div class="step-num">7</div>
+                <div class="step-content">
+                    <strong>Коли транзакція завершиться й ти побачиш $TICS у своєму гаманці Keplr, натисни <span class="cyan">Qubetics Mainnet</span> на головному екрані</strong>
+                </div>
+            </div>
+            
+            <div class="instruction-step">
+                <div class="step-num">8</div>
+                <div class="step-content">
+                    <strong>Натисни <span class="cyan">Stake</span></strong>
+                </div>
+            </div>
+            
+            <div class="instruction-step">
+                <div class="step-num">9</div>
+                <div class="step-content">
+                    <strong>Натисни <span class="cyan">Stake</span> ще раз</strong>
+                </div>
+            </div>
+            
+            <div class="instruction-step">
+                <div class="step-num">10</div>
+                <div class="step-content">
+                    <strong>Обери валідатор <span class="cyan">QubeNode</span></strong>
+                </div>
+            </div>
+            
+            <div class="instruction-step">
+                <div class="step-num">11</div>
+                <div class="step-content">
+                    <strong>Натисни <span class="cyan">Stake</span></strong>
+                </div>
+            </div>
+            
+            <div class="instruction-step">
+                <div class="step-num">12</div>
+                <div class="step-content">
+                    <strong>Введи суму для стейкінгу (поле <span class="cyan">Memo</span> залишаємо пустим) → натисни <span class="cyan">Next</span></strong>
+                </div>
+            </div>
+            
+            <div class="instruction-step">
+                <div class="step-num">13</div>
+                <div class="step-content">
+                    <strong>Підтверди транзакцію</strong>
+                </div>
+            </div>
+            
+            <div class="success-box">
+                <div class="icon">✅</div>
+                <div class="text">Готово! Ти офіційно займаєшся стейкінгом</div>
+            </div>
+            
+            <div class="final-note">
+                <strong>✨ Тепер ти будеш отримувати винагороди автоматично після кожного створеного блоку!</strong>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function openKeplrModal() {
+            document.getElementById('keplrModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeKeplrModal() {
+            document.getElementById('keplrModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        // Close modal on ESC key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeKeplrModal();
+            }
+        });
     </script>
 </body>
 </html>

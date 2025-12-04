@@ -274,11 +274,14 @@ async function updateUptime() {
 
 // === TICS PRICE FROM MEXC (with CORS proxy) ===
 async function updateTicsPrice() {
+  // Check if we're on the main page or calculator
   const priceEl = document.getElementById("ticsPrice");
   const changeEl = document.getElementById("ticsChange");
+  const calcPriceEl = document.getElementById("currentPriceDisplay");
   
-  if (!priceEl || !changeEl) {
-    console.warn('⚠️ Price elements not found');
+  // If no elements found at all, skip
+  if (!priceEl && !changeEl && !calcPriceEl) {
+    console.warn('⚠️ No price elements found on this page');
     return;
   }
 
@@ -299,31 +302,45 @@ async function updateTicsPrice() {
       const price = parseFloat(data.lastPrice);
       const change24h = parseFloat(data.priceChangePercent);
       
-      priceEl.textContent = "$" + price.toFixed(5); // 5 знаків замість 6
-      const changeText = (change24h >= 0 ? "+" : "") + change24h.toFixed(2) + "%";
-      changeEl.textContent = changeText;
+      // Update main page elements if they exist
+      if (priceEl) {
+        priceEl.textContent = "$" + price.toFixed(5); // 5 знаків замість 6
+      }
       
-      const changeValue = changeEl.parentElement;
-      changeValue.style.color = change24h >= 0 ? "#22c55e" : "#ef4444";
+      if (changeEl) {
+        const changeText = (change24h >= 0 ? "+" : "") + change24h.toFixed(2) + "%";
+        changeEl.textContent = changeText;
+        const changeValue = changeEl.parentElement;
+        if (changeValue) {
+          changeValue.style.color = change24h >= 0 ? "#22c55e" : "#ef4444";
+        }
+      }
       
-      // Update calculator price
+      // Update calculator element if it exists
+      if (calcPriceEl) {
+        calcPriceEl.textContent = price.toFixed(4);
+      }
+      
+      // Update calculator price via function
       if (typeof updateCalculatorPrice === 'function') {
         updateCalculatorPrice(price);
       }
       
-      console.log(`✅ TICS price: $${price.toFixed(5)} (${changeText})`);
+      console.log(`✅ TICS price: $${price.toFixed(5)} (${change24h >= 0 ? "+" : ""}${change24h.toFixed(2)}%)`);
       return;
     }
     
     console.error('❌ MEXC returned data without lastPrice');
-    priceEl.textContent = "--";
-    changeEl.textContent = "--";
+    if (priceEl) priceEl.textContent = "--";
+    if (changeEl) changeEl.textContent = "--";
+    if (calcPriceEl) calcPriceEl.textContent = "0.0472";
     
   } catch (e) {
     console.error("❌ TICS price error:", e.message);
     console.error("Full error:", e);
-    priceEl.textContent = "--";
-    changeEl.textContent = "--";
+    if (priceEl) priceEl.textContent = "--";
+    if (changeEl) changeEl.textContent = "--";
+    if (calcPriceEl) calcPriceEl.textContent = "0.0472";
   }
 }
 
@@ -453,9 +470,21 @@ async function updateAll() {
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('🚀 QubeNode Sync v2.5 initialized');
+  console.log('🚀 QubeNode Sync v2.9.0 initialized');
   
-  // БЛОКУЄМО всі ::before та ::after для stat-value
+  // Check if we're on the calculator page (has currentPriceDisplay element)
+  const isCalculator = document.getElementById('currentPriceDisplay') !== null;
+  
+  if (isCalculator) {
+    console.log('📊 Calculator page detected - loading price only');
+    // On calculator, only update TICS price
+    updateTicsPrice();
+    // Update price every 15 seconds
+    setInterval(updateTicsPrice, 15000);
+    return; // Stop here, don't run validator updates
+  }
+  
+  // БЛОКУЄМО всі ::before та ::after для stat-value (main page only)
   const style = document.createElement('style');
   style.textContent = `
     #delegatedAmountContainer,

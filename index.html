@@ -1376,7 +1376,8 @@
             }
 
             .status-badge-extended {
-                max-width: 200px;
+                max-width: 260px !important;
+                width: 260px !important;
                 padding: 8px 10px;
                 margin: 0 auto;
             }
@@ -4719,6 +4720,8 @@
 
         // Mobile wallet button handler
         function handleMobileWalletClick() {
+            console.log('🔘 Button clicked!');
+            
             // Close mobile menu
             const menuToggle = document.getElementById('menu-toggle');
             const hamburger = document.querySelector('.hamburger');
@@ -4730,13 +4733,20 @@
             
             // If already connected, open delegator modal
             if (headerWalletConnected) {
+                console.log('✅ Already connected, opening modal');
                 setTimeout(() => openModal('delegatorModal'), 300);
                 return;
             }
             
-            // Direct connection - wallet browser always has window.keplr
+            // Direct connection
+            console.log('🔗 Connecting wallet...');
             setTimeout(() => {
-                connectHeaderWallet('keplr');
+                if (typeof connectHeaderWallet === 'function') {
+                    connectHeaderWallet('keplr');
+                } else {
+                    console.error('❌ connectHeaderWallet not found');
+                    alert('Помилка: функція підключення не знайдена');
+                }
             }, 300);
         }
 

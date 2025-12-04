@@ -1356,7 +1356,7 @@
             }
 
             .validator-name {
-                font-size: 4.5em;
+                font-size: 3.2em;
                 letter-spacing: -1px;
                 text-align: center;
             }
@@ -1376,7 +1376,7 @@
             }
 
             .status-badge-extended {
-                max-width: 85%;
+                max-width: 320px;
                 padding: 10px 12px;
                 margin: 0 auto;
             }
@@ -4734,29 +4734,45 @@
                 return;
             }
             
-            // Auto-detect wallet from browser
+            // Auto-detect wallet from browser with more checks
             let walletType = null;
             
-            // Check for Keplr in-app browser
-            if (window.keplr) {
+            // Check for Keplr (multiple ways)
+            if (window.keplr || window.getOfflineSigner || window.getOfflineSignerAuto) {
                 walletType = 'keplr';
+                console.log('✅ Keplr detected');
             }
-            // Check for Cosmostation in-app browser
-            else if (window.cosmostation) {
+            // Check for Cosmostation
+            else if (window.cosmostation || window.cosmosJSWallet) {
                 walletType = 'cosmostation';
+                console.log('✅ Cosmostation detected');
+            }
+            // Check user agent for wallet browsers
+            else {
+                const ua = navigator.userAgent.toLowerCase();
+                if (ua.includes('keplr')) {
+                    walletType = 'keplr';
+                    console.log('✅ Keplr detected via UA');
+                } else if (ua.includes('cosmostation')) {
+                    walletType = 'cosmostation';
+                    console.log('✅ Cosmostation detected via UA');
+                }
             }
             
             // If wallet detected, connect automatically
             if (walletType) {
-                connectHeaderWallet(walletType);
+                console.log(`🔗 Auto-connecting to ${walletType}`);
+                setTimeout(() => connectHeaderWallet(walletType), 300);
                 return;
             }
             
             // If no wallet detected (regular browser), show selection
-            const walletChoice = confirm('Оберіть гаманець:\n\nНатисніть OK для Keplr\nНатисніть Скасувати для Cosmostation');
-            walletType = walletChoice ? 'keplr' : 'cosmostation';
-            
-            connectHeaderWallet(walletType);
+            console.log('❌ No wallet detected, showing selection');
+            setTimeout(() => {
+                const walletChoice = confirm('Оберіть гаманець:\n\nНатисніть OK для Keplr\nНатисніть Скасувати для Cosmostation');
+                walletType = walletChoice ? 'keplr' : 'cosmostation';
+                connectHeaderWallet(walletType);
+            }, 300);
         }
 
         // Update mobile wallet button display

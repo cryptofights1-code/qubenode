@@ -1351,12 +1351,12 @@
             }
 
             .brand-container img {
-                width: 100px;
-                height: 100px;
+                width: 80px;
+                height: 80px;
             }
 
             .validator-name {
-                font-size: 3.2em;
+                font-size: 2.5em;
                 letter-spacing: -1px;
                 text-align: center;
             }
@@ -1376,8 +1376,8 @@
             }
 
             .status-badge-extended {
-                max-width: 320px;
-                padding: 10px 12px;
+                max-width: 280px;
+                padding: 8px 10px;
                 margin: 0 auto;
             }
 
@@ -4719,7 +4719,7 @@
 
         // Mobile wallet button handler
         function handleMobileWalletClick() {
-            // Close mobile menu via checkbox and styles
+            // Close mobile menu
             const menuToggle = document.getElementById('menu-toggle');
             const hamburger = document.querySelector('.hamburger');
             const mobileMenu = document.querySelector('.mobile-menu');
@@ -4734,44 +4734,18 @@
                 return;
             }
             
-            // Auto-detect wallet from browser with more checks
-            let walletType = null;
-            
-            // Check for Keplr (multiple ways)
-            if (window.keplr || window.getOfflineSigner || window.getOfflineSignerAuto) {
-                walletType = 'keplr';
-                console.log('✅ Keplr detected');
-            }
-            // Check for Cosmostation
-            else if (window.cosmostation || window.cosmosJSWallet) {
-                walletType = 'cosmostation';
-                console.log('✅ Cosmostation detected');
-            }
-            // Check user agent for wallet browsers
-            else {
-                const ua = navigator.userAgent.toLowerCase();
-                if (ua.includes('keplr')) {
-                    walletType = 'keplr';
-                    console.log('✅ Keplr detected via UA');
-                } else if (ua.includes('cosmostation')) {
-                    walletType = 'cosmostation';
-                    console.log('✅ Cosmostation detected via UA');
-                }
-            }
-            
-            // If wallet detected, connect automatically
-            if (walletType) {
-                console.log(`🔗 Auto-connecting to ${walletType}`);
-                setTimeout(() => connectHeaderWallet(walletType), 300);
-                return;
-            }
-            
-            // If no wallet detected (regular browser), show selection
-            console.log('❌ No wallet detected, showing selection');
+            // MOBILE: Always try to connect with Keplr first
+            // Mobile wallet browsers inject window.keplr
             setTimeout(() => {
-                const walletChoice = confirm('Оберіть гаманець:\n\nНатисніть OK для Keplr\nНатисніть Скасувати для Cosmostation');
-                walletType = walletChoice ? 'keplr' : 'cosmostation';
-                connectHeaderWallet(walletType);
+                console.log('🔗 Attempting Keplr connection...');
+                connectHeaderWallet('keplr').catch(err => {
+                    console.log('❌ Keplr failed, trying Cosmostation...', err);
+                    // If Keplr fails, try Cosmostation
+                    connectHeaderWallet('cosmostation').catch(err2 => {
+                        console.error('❌ Both wallets failed', err2);
+                        alert('Помилка: гаманець не знайдено. Відкрийте сайт через додаток Keplr або Cosmostation.');
+                    });
+                });
             }, 300);
         }
 

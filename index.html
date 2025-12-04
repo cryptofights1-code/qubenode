@@ -1351,12 +1351,12 @@
             }
 
             .brand-container img {
-                width: 80px;
-                height: 80px;
+                width: 90px;
+                height: 90px;
             }
 
             .validator-name {
-                font-size: 2.5em;
+                font-size: 2.8em;
                 letter-spacing: -1px;
                 text-align: center;
             }
@@ -1376,7 +1376,7 @@
             }
 
             .status-badge-extended {
-                max-width: 280px;
+                max-width: 200px;
                 padding: 8px 10px;
                 margin: 0 auto;
             }
@@ -4734,18 +4734,9 @@
                 return;
             }
             
-            // MOBILE: Always try to connect with Keplr first
-            // Mobile wallet browsers inject window.keplr
+            // Direct connection - wallet browser always has window.keplr
             setTimeout(() => {
-                console.log('🔗 Attempting Keplr connection...');
-                connectHeaderWallet('keplr').catch(err => {
-                    console.log('❌ Keplr failed, trying Cosmostation...', err);
-                    // If Keplr fails, try Cosmostation
-                    connectHeaderWallet('cosmostation').catch(err2 => {
-                        console.error('❌ Both wallets failed', err2);
-                        alert('Помилка: гаманець не знайдено. Відкрийте сайт через додаток Keplr або Cosmostation.');
-                    });
-                });
+                connectHeaderWallet('keplr');
             }, 300);
         }
 

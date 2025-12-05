@@ -4710,14 +4710,36 @@
 
         // ==================== JAVASCRIPT MOBILE MENU CONTROL ====================
         (function() {
+            console.log('🔧 Initializing mobile menu...');
+            
             const hamburgerBtn = document.getElementById('hamburger-btn');
             const mobileMenu = document.getElementById('mobileMenu');
             const menuOverlay = document.getElementById('menuOverlay');
+            
+            console.log('📋 Elements found:', {
+                hamburgerBtn: !!hamburgerBtn,
+                mobileMenu: !!mobileMenu,
+                menuOverlay: !!menuOverlay
+            });
+            
+            if (!hamburgerBtn) {
+                console.error('❌ Hamburger button not found!');
+                return;
+            }
+            if (!mobileMenu) {
+                console.error('❌ Mobile menu not found!');
+                return;
+            }
+            if (!menuOverlay) {
+                console.error('❌ Menu overlay not found!');
+                return;
+            }
             
             let isMenuOpen = false;
 
             function toggleMenu() {
                 isMenuOpen = !isMenuOpen;
+                console.log('🔄 Toggle menu, isOpen:', isMenuOpen);
                 
                 if (isMenuOpen) {
                     hamburgerBtn.classList.add('active');
@@ -4746,28 +4768,24 @@
             }
 
             // Hamburger button click
-            if (hamburgerBtn) {
-                hamburgerBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('🍔 Hamburger clicked');
-                    toggleMenu();
-                });
-            }
+            hamburgerBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🍔 Hamburger clicked!');
+                toggleMenu();
+            }, { passive: false });
 
             // Overlay click - close menu
-            if (menuOverlay) {
-                menuOverlay.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    console.log('🖱️ Overlay clicked');
-                    closeMenu();
-                });
-            }
+            menuOverlay.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('🖱️ Overlay clicked');
+                closeMenu();
+            });
 
             // Make closeMenu available globally
             window.closeMobileMenu = closeMenu;
 
-            console.log('✅ JavaScript mobile menu initialized');
+            console.log('✅ JavaScript mobile menu initialized successfully!');
         })();
         // ==================== END MOBILE MENU CONTROL ====================
 

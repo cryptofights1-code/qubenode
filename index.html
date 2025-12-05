@@ -4757,6 +4757,8 @@
             
             // Detect wallet
             let walletType = null;
+            let address = null;
+            
             if (window.keplr) {
                 console.log('✅ Keplr detected');
                 walletType = 'keplr';
@@ -4770,30 +4772,33 @@
                 return;
             }
             
-            // Connect wallet DIRECTLY on mobile (bypass popup)
-            console.log(`🔗 Attempting DIRECT connection to ${walletType}...`);
+            // Connect wallet using WORKING code from how-to-delegate.html
+            console.log(`🔗 Connecting ${walletType} using proven method...`);
             
             try {
-                // Use cosmosStaking directly for mobile
-                if (!cosmosStaking) {
-                    console.error('❌ cosmosStaking not initialized');
-                    alert('Помилка: Система стейкінгу не готова. Перезавантажте сторінку.');
-                    walletClickInProgress = false;
-                    return;
+                const CHAIN_ID = 'qubetics-1';
+                
+                if (walletType === 'keplr') {
+                    console.log('📱 Enabling Keplr...');
+                    await window.keplr.enable(CHAIN_ID);
+                    const offlineSigner = window.keplr.getOfflineSigner(CHAIN_ID);
+                    const accounts = await offlineSigner.getAccounts();
+                    address = accounts[0].address;
+                    console.log('✅ Keplr connected:', address);
+                    
+                } else if (walletType === 'cosmostation') {
+                    console.log('📱 Enabling Cosmostation...');
+                    const provider = window.cosmostation.providers.keplr;
+                    await provider.enable(CHAIN_ID);
+                    const offlineSigner = provider.getOfflineSigner(CHAIN_ID);
+                    const accounts = await offlineSigner.getAccounts();
+                    address = accounts[0].address;
+                    console.log('✅ Cosmostation connected:', address);
                 }
                 
-                // Direct connection
-                console.log(`📱 Connecting ${walletType} directly...`);
-                await cosmosStaking.connectWallet(walletType);
-                console.log('✅ Direct connection successful!');
-                
-                // Update header wallet state
-                headerWalletConnected = true;
-                
                 // Redirect to dashboard
-                const walletInfo = cosmosStaking.getWalletInfo();
                 console.log('✅ Redirecting to dashboard...');
-                window.location.href = `dashboard.html?wallet=${walletInfo.walletType}&address=${walletInfo.address}`;
+                window.location.href = `dashboard.html?wallet=${walletType}&address=${address}`;
                 
             } catch (error) {
                 console.error('❌ Connection error:', error);

@@ -266,7 +266,11 @@
             pointer-events: auto;
         }
 
-        /* Mobile menu will be controlled by CSS checkbox */
+        .mobile-menu-overlay.active {
+            opacity: 1;
+        }
+
+        /* CSS-only menu toggle with checkbox */
         #menu-toggle:checked ~ .mobile-menu {
             left: 0;
         }
@@ -2275,10 +2279,10 @@
     <!-- КОНТЕЙНЕР ДЛЯ ІКОНОК - ТІЛЬКИ ВГОРІ САЙТУ -->
     <div id="mobile-icons-container" style="position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important; width: 100% !important; height: 80px !important; z-index: 999999 !important; pointer-events: none !important; margin: 0 !important; padding: 0 !important;">
         <!-- Hamburger Menu - ЗЛІВА -->
-        <label for="menu-toggle" class="hamburger" style="position: absolute !important; top: 20px !important; left: 20px !important; pointer-events: auto !important; display: flex !important; width: 50px !important; height: 50px !important; flex-direction: column !important; justify-content: center !important; align-items: center !important; gap: 6px !important; background: transparent !important; border: none !important; z-index: 1000000 !important; cursor: pointer !important;">
-            <span style="display: block !important; width: 30px !important; height: 3.5px !important; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important; border-radius: 2px !important; transition: all 0.3s ease !important;"></span>
-            <span style="display: block !important; width: 30px !important; height: 3.5px !important; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important; border-radius: 2px !important; transition: all 0.3s ease !important;"></span>
-            <span style="display: block !important; width: 30px !important; height: 3.5px !important; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important; border-radius: 2px !important; transition: all 0.3s ease !important;"></span>
+        <label for="menu-toggle" class="hamburger" style="position: absolute !important; top: 20px !important; left: 20px !important; pointer-events: auto !important; display: flex !important; width: 50px !important; height: 50px !important; flex-direction: column !important; justify-content: center !important; align-items: center !important; gap: 6px !important; background: transparent !important; border: none !important; z-index: 1000000 !important;">
+            <span style="display: block !important; width: 30px !important; height: 3.5px !important; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important; border-radius: 2px !important;"></span>
+            <span style="display: block !important; width: 30px !important; height: 3.5px !important; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important; border-radius: 2px !important;"></span>
+            <span style="display: block !important; width: 30px !important; height: 3.5px !important; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important; border-radius: 2px !important;"></span>
         </label>
 
 
@@ -2319,16 +2323,10 @@
         </div>
     </div>
 
-    <!-- ОКРЕМА КНОПКА ПІДКЛЮЧЕННЯ ГАМАНЦЯ - ПОЗА ВСІМ -->
-    <button id="mobileWalletBtnFixed" style="position: fixed; top: 85px; right: 20px; width: 180px; padding: 12px 20px; background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(99, 102, 241, 0.2)); border: 2px solid rgba(0, 212, 255, 0.5); border-radius: 12px; color: #00FFF0; font-size: 16px; font-weight: 700; cursor: pointer; z-index: 10000000; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);">
-        <span>💼</span>
-        <span>Підключити</span>
-    </button>
-
     <div class="bg-animation"></div>
     <div class="grid-overlay"></div>
 
-    <!-- CSS-only Menu Toggle -->
+    <!-- CSS-ONLY Menu Toggle -->
     <input type="checkbox" id="menu-toggle" style="display: none;">
 
     <!-- Mobile Menu Overlay -->
@@ -2357,10 +2355,7 @@
                 <span>❓</span>
                 <span>FAQ</span>
             </button>
-            <button class="mobile-menu-item" id="mobileWalletBtn" data-action="connect-wallet" type="button" 
-                    onmousedown="handleMobileWalletClick(); return false;" 
-                    ontouchstart="handleMobileWalletClick(); return false;"
-                    onclick="handleMobileWalletClick(); return false;">
+            <button class="mobile-menu-item" id="mobileWalletBtn" data-action="connect-wallet" type="button" onclick="handleMobileWalletClick(); return false;">
                 <span>💼</span>
                 <span>Підключити гаманець</span>
             </button>
@@ -4719,69 +4714,114 @@
             }
         });
 
-        // Mobile wallet button handler - REDIRECT TO WORKING PAGE
+        // Mobile wallet button handler - SIMPLIFIED
         window.handleMobileWalletClick = async function() {
-            console.log('🔘 Redirecting to delegate page...');
-            
-            // Just redirect to the page that WORKS
-            window.location.href = 'how-to-delegate.html';
-        }
-
-        // FIXED WALLET BUTTON - WORKING CODE FROM how-to-delegate.html
-        document.addEventListener('DOMContentLoaded', function() {
-            const fixedBtn = document.getElementById('mobileWalletBtnFixed');
-            if (!fixedBtn) return;
-            
-            fixedBtn.addEventListener('click', async function() {
-                console.log('💼 Fixed wallet button clicked!');
-                
-                const CHAIN_ID = 'qubetics-1';
-                let walletType = null;
-                let address = null;
-                
-                // Detect wallet
-                if (window.keplr) {
-                    walletType = 'keplr';
-                } else if (window.cosmostation) {
-                    walletType = 'cosmostation';
-                } else {
-                    alert('Гаманець не знайдено.\n\nВідкрийте сайт через браузер Keplr або Cosmostation.');
-                    return;
-                }
-                
-                // Show loading
-                fixedBtn.innerHTML = '<span>⏳</span><span>Підключення...</span>';
-                fixedBtn.style.pointerEvents = 'none';
-                
-                try {
-                    if (walletType === 'keplr') {
-                        await window.keplr.enable(CHAIN_ID);
-                        const offlineSigner = window.keplr.getOfflineSigner(CHAIN_ID);
-                        const accounts = await offlineSigner.getAccounts();
-                        address = accounts[0].address;
-                    } else if (walletType === 'cosmostation') {
-                        const provider = window.cosmostation.providers.keplr;
-                        await provider.enable(CHAIN_ID);
-                        const offlineSigner = provider.getOfflineSigner(CHAIN_ID);
-                        const accounts = await offlineSigner.getAccounts();
-                        address = accounts[0].address;
-                    }
-                    
-                    // Redirect to dashboard
-                    window.location.href = `dashboard.html?wallet=${walletType}&address=${address}`;
-                    
-                } catch (error) {
-                    console.error('Connection error:', error);
-                    alert('Помилка підключення: ' + error.message);
-                    fixedBtn.innerHTML = '<span>💼</span><span>Підключити</span>';
-                    fixedBtn.style.pointerEvents = 'auto';
-                }
+            console.log('🔘 Mobile wallet button clicked!');
+            console.log('📊 Current state:', {
+                headerWalletConnected,
+                cosmosStaking: !!cosmosStaking,
+                hasKeplr: !!window.keplr,
+                hasCosmostation: !!window.cosmostation,
+                connectHeaderWallet: typeof connectHeaderWallet
             });
             
-            console.log('✅ Fixed wallet button initialized');
-        });
+            // Close mobile menu first
+            const menuToggle = document.getElementById('menu-toggle');
+            if (menuToggle) menuToggle.checked = false;
+            
+            // Small delay for menu animation
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            // If already connected, redirect to dashboard
+            if (headerWalletConnected && cosmosStaking) {
+                console.log('✅ Already connected, redirecting...');
+                try {
+                    const walletInfo = cosmosStaking.getWalletInfo();
+                    window.location.href = `dashboard.html?wallet=${walletInfo.walletType}&address=${walletInfo.address}`;
+                } catch (error) {
+                    console.error('Error getting wallet info:', error);
+                }
+                return;
+            }
+            
+            // Detect wallet
+            let walletType = null;
+            if (window.keplr) {
+                console.log('✅ Keplr detected');
+                walletType = 'keplr';
+            } else if (window.cosmostation) {
+                console.log('✅ Cosmostation detected');  
+                walletType = 'cosmostation';
+            } else {
+                console.error('❌ No wallet found');
+                alert('Гаманець не знайдено.\n\nБудь ласка, відкрийте сайт через браузер вашого гаманця (Keplr або Cosmostation).');
+                return;
+            }
+            
+            // Connect wallet
+            console.log(`🔗 Attempting to connect ${walletType}...`);
+            
+            try {
+                if (typeof connectHeaderWallet !== 'function') {
+                    throw new Error('connectHeaderWallet function not available');
+                }
+                
+                await connectHeaderWallet(walletType);
+                console.log('✅ Connection successful!');
+                
+            } catch (error) {
+                console.error('❌ Connection error:', error);
+                alert(`Помилка підключення:\n\n${error.message}\n\nСпробуйте перезавантажити сторінку.`);
+            }
+        }
         
         console.log('✅ handleMobileWalletClick function registered globally');
+
+        // Attach event listener to mobile wallet button - multiple approaches
+        function attachMobileWalletListener() {
+            const mobileWalletBtn = document.getElementById('mobileWalletBtn');
+            if (mobileWalletBtn) {
+                console.log('✅ Found mobileWalletBtn, attaching handlers');
+                
+                // Method 1: Click event
+                mobileWalletBtn.addEventListener('click', function(e) {
+                    console.log('🔘 Click detected!');
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleMobileWalletClick();
+                }, false);
+                
+                // Method 2: Touchend event (better for mobile)
+                mobileWalletBtn.addEventListener('touchend', function(e) {
+                    console.log('👆 Touch detected!');
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleMobileWalletClick();
+                }, false);
+                
+                // Method 3: Direct onclick as backup
+                mobileWalletBtn.onclick = function(e) {
+                    console.log('🖱️ onclick fired!');
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleMobileWalletClick();
+                };
+                
+                console.log('✅ All event handlers attached to mobile wallet button');
+            } else {
+                console.error('❌ mobileWalletBtn not found in DOM');
+            }
+        }
+        
+        // Try attaching immediately
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', attachMobileWalletListener);
+        } else {
+            attachMobileWalletListener();
+        }
+        
+        // Also try after a short delay as backup
+        setTimeout(attachMobileWalletListener, 500);
 
         // Update mobile wallet button display
         function updateMobileWalletButton() {

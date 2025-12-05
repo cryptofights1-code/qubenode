@@ -4766,25 +4766,38 @@
             } else {
                 console.error('❌ No wallet found');
                 alert('Гаманець не знайдено.\n\nБудь ласка, відкрийте сайт через браузер вашого гаманця (Keplr або Cosmostation).');
+                walletClickInProgress = false;
                 return;
             }
             
-            // Connect wallet
-            console.log(`🔗 Attempting to connect ${walletType}...`);
+            // Connect wallet DIRECTLY on mobile (bypass popup)
+            console.log(`🔗 Attempting DIRECT connection to ${walletType}...`);
             
             try {
-                if (typeof connectHeaderWallet !== 'function') {
-                    throw new Error('connectHeaderWallet function not available');
+                // Use cosmosStaking directly for mobile
+                if (!cosmosStaking) {
+                    console.error('❌ cosmosStaking not initialized');
+                    alert('Помилка: Система стейкінгу не готова. Перезавантажте сторінку.');
+                    walletClickInProgress = false;
+                    return;
                 }
                 
-                await connectHeaderWallet(walletType);
-                console.log('✅ Connection successful!');
+                // Direct connection
+                console.log(`📱 Connecting ${walletType} directly...`);
+                await cosmosStaking.connectWallet(walletType);
+                console.log('✅ Direct connection successful!');
+                
+                // Update header wallet state
+                headerWalletConnected = true;
+                
+                // Redirect to dashboard
+                const walletInfo = cosmosStaking.getWalletInfo();
+                console.log('✅ Redirecting to dashboard...');
+                window.location.href = `dashboard.html?wallet=${walletInfo.walletType}&address=${walletInfo.address}`;
                 
             } catch (error) {
                 console.error('❌ Connection error:', error);
-                alert(`Помилка підключення:\n\n${error.message}\n\nСпробуйте перезавантажити сторінку.`);
-            } finally {
-                // Reset flag after completion
+                alert(`Помилка підключення:\n\n${error.message}\n\nСпробуйте:\n1. Дозвольте доступ у гаманці\n2. Перезавантажте сторінку`);
                 walletClickInProgress = false;
             }
         }

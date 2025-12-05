@@ -4719,10 +4719,10 @@
         });
 
         // Mobile wallet button handler
-        function handleMobileWalletClick() {
-            console.log('🔘 Button clicked!');
+        async function handleMobileWalletClick() {
+            console.log('🔘 Mobile wallet button clicked');
             
-            // Close mobile menu
+            // Close menu
             const menuToggle = document.getElementById('menu-toggle');
             const hamburger = document.querySelector('.hamburger');
             const mobileMenu = document.querySelector('.mobile-menu');
@@ -4731,23 +4731,47 @@
             if (hamburger) hamburger.classList.remove('active');
             if (mobileMenu) mobileMenu.style.left = '-100%';
             
-            // If already connected, open delegator modal
+            // Wait for menu to close
+            await new Promise(resolve => setTimeout(resolve, 300));
+            
+            // Check if already connected
             if (headerWalletConnected) {
-                console.log('✅ Already connected, opening modal');
-                setTimeout(() => openModal('delegatorModal'), 300);
+                console.log('✅ Already connected');
+                openModal('delegatorModal');
                 return;
             }
             
-            // Direct connection
-            console.log('🔗 Connecting wallet...');
-            setTimeout(() => {
-                if (typeof connectHeaderWallet === 'function') {
-                    connectHeaderWallet('keplr');
-                } else {
-                    console.error('❌ connectHeaderWallet not found');
-                    alert('Помилка: функція підключення не знайдена');
+            // Initialize and connect
+            try {
+                console.log('🔗 Initializing staking...');
+                
+                // Initialize if needed
+                if (!cosmosStaking) {
+                    if (typeof CosmosStakingModule === 'undefined') {
+                        throw new Error('CosmosStakingModule not loaded');
+                    }
+                    cosmosStaking = new CosmosStakingModule();
+                    await cosmosStaking.initialize();
                 }
-            }, 300);
+                
+                console.log('🔗 Connecting Keplr...');
+                const result = await cosmosStaking.connectWallet('keplr');
+                
+                if (result.success) {
+                    console.log('✅ Connected!');
+                    headerWalletConnected = true;
+                    updateMobileWalletButton();
+                    
+                    // Redirect to dashboard
+                    const walletInfo = cosmosStaking.getWalletInfo();
+                    window.location.href = `dashboard.html?wallet=keplr&address=${walletInfo.address}`;
+                } else {
+                    throw new Error(result.error || 'Connection failed');
+                }
+            } catch (error) {
+                console.error('❌ Error:', error);
+                alert('Помилка підключення: ' + error.message + '\n\nВідкрийте сайт через додаток Keplr');
+            }
         }
 
         // Update mobile wallet button display

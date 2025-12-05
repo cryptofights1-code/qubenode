@@ -2273,14 +2273,15 @@
         }
     </script>
     
-    <!-- КОНТЕЙНЕР ДЛЯ ІКОНОК - ТІЛЬКИ ВГОРІ САЙТУ -->
+    <!-- Hamburger Menu Button - ПРЯМО В BODY БЕЗ КОНТЕЙНЕРА -->
+    <button id="hamburger-btn" class="hamburger" type="button" style="position: fixed !important; top: 20px !important; left: 20px !important; display: flex !important; width: 50px !important; height: 50px !important; flex-direction: column !important; justify-content: center !important; align-items: center !important; gap: 6px !important; background: transparent !important; border: none !important; z-index: 1000000 !important; cursor: pointer !important; -webkit-tap-highlight-color: transparent !important;">
+        <span style="display: block !important; width: 30px !important; height: 3.5px !important; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important; border-radius: 2px !important; transition: all 0.3s ease !important; pointer-events: none !important;"></span>
+        <span style="display: block !important; width: 30px !important; height: 3.5px !important; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important; border-radius: 2px !important; transition: all 0.3s ease !important; pointer-events: none !important;"></span>
+        <span style="display: block !important; width: 30px !important; height: 3.5px !important; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important; border-radius: 2px !important; transition: all 0.3s ease !important; pointer-events: none !important;"></span>
+    </button>
+
+    <!-- КОНТЕЙНЕР ДЛЯ КОНТАКТІВ - СПРАВА -->
     <div id="mobile-icons-container" style="position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important; width: 100% !important; height: 80px !important; z-index: 999999 !important; pointer-events: none !important; margin: 0 !important; padding: 0 !important;">
-        <!-- Hamburger Menu Button - ЗЛІВА -->
-        <button id="hamburger-btn" class="hamburger" type="button" style="position: absolute !important; top: 20px !important; left: 20px !important; pointer-events: auto !important; display: flex !important; width: 50px !important; height: 50px !important; flex-direction: column !important; justify-content: center !important; align-items: center !important; gap: 6px !important; background: transparent !important; border: none !important; z-index: 1000000 !important; cursor: pointer !important;">
-            <span style="display: block !important; width: 30px !important; height: 3.5px !important; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important; border-radius: 2px !important; transition: all 0.3s ease !important;"></span>
-            <span style="display: block !important; width: 30px !important; height: 3.5px !important; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important; border-radius: 2px !important; transition: all 0.3s ease !important;"></span>
-            <span style="display: block !important; width: 30px !important; height: 3.5px !important; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important; border-radius: 2px !important; transition: all 0.3s ease !important;"></span>
-        </button>
 
 
         <!-- Fixed Mobile Контакти Icons - СПРАВА ГОРИЗОНТАЛЬНО -->
@@ -4767,11 +4768,18 @@
                 }
             }
 
-            // Hamburger button click
+            // Hamburger button click - ADD BOTH CLICK AND TOUCHSTART
             hamburgerBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('🍔 Hamburger clicked!');
+                console.log('🍔 Hamburger CLICKED!');
+                toggleMenu();
+            });
+            
+            hamburgerBtn.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🍔 Hamburger TOUCHED!');
                 toggleMenu();
             }, { passive: false });
 

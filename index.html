@@ -2284,11 +2284,6 @@
 
         <!-- Fixed Mobile Контакти Icons - СПРАВА ГОРИЗОНТАЛЬНО -->
         <div class="fixed-mobile-contacts" style="position: absolute !important; top: 20px !important; right: 20px !important; display: flex !important; flex-direction: row !important; gap: 15px !important; pointer-events: auto !important; z-index: 1000000 !important;">
-            <!-- WALLET LINK - БЕЗ JAVASCRIPT, ПРОСТЕ ПОСИЛАННЯ -->
-            <a href="how-to-delegate.html" style="width: 50px !important; height: 50px !important; background: rgba(0, 212, 255, 0.15) !important; border: 2px solid rgba(0, 212, 255, 0.4) !important; border-radius: 50% !important; display: flex !important; align-items: center !important; justify-content: center !important; cursor: pointer !important; font-size: 24px !important; transition: all 0.3s !important; text-decoration: none !important;">
-                💼
-            </a>
-            
             <a href="https://t.me/+sRnz7RyoL4Q0MWEy" class="fixed-contact-icon" target="_blank">
                 <svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M10 25L18 27.5L21 37L27 30L36 37L39 12L10 25Z" stroke="url(#iconGrad)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
@@ -2323,6 +2318,12 @@
             </a>
         </div>
     </div>
+
+    <!-- ОКРЕМА КНОПКА ПІДКЛЮЧЕННЯ ГАМАНЦЯ - ПОЗА ВСІМ -->
+    <button id="mobileWalletBtnFixed" style="position: fixed; top: 85px; right: 20px; width: 180px; padding: 12px 20px; background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(99, 102, 241, 0.2)); border: 2px solid rgba(0, 212, 255, 0.5); border-radius: 12px; color: #00FFF0; font-size: 16px; font-weight: 700; cursor: pointer; z-index: 10000000; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);">
+        <span>💼</span>
+        <span>Підключити</span>
+    </button>
 
     <div class="bg-animation"></div>
     <div class="grid-overlay"></div>
@@ -4725,6 +4726,60 @@
             // Just redirect to the page that WORKS
             window.location.href = 'how-to-delegate.html';
         }
+
+        // FIXED WALLET BUTTON - WORKING CODE FROM how-to-delegate.html
+        document.addEventListener('DOMContentLoaded', function() {
+            const fixedBtn = document.getElementById('mobileWalletBtnFixed');
+            if (!fixedBtn) return;
+            
+            fixedBtn.addEventListener('click', async function() {
+                console.log('💼 Fixed wallet button clicked!');
+                
+                const CHAIN_ID = 'qubetics-1';
+                let walletType = null;
+                let address = null;
+                
+                // Detect wallet
+                if (window.keplr) {
+                    walletType = 'keplr';
+                } else if (window.cosmostation) {
+                    walletType = 'cosmostation';
+                } else {
+                    alert('Гаманець не знайдено.\n\nВідкрийте сайт через браузер Keplr або Cosmostation.');
+                    return;
+                }
+                
+                // Show loading
+                fixedBtn.innerHTML = '<span>⏳</span><span>Підключення...</span>';
+                fixedBtn.style.pointerEvents = 'none';
+                
+                try {
+                    if (walletType === 'keplr') {
+                        await window.keplr.enable(CHAIN_ID);
+                        const offlineSigner = window.keplr.getOfflineSigner(CHAIN_ID);
+                        const accounts = await offlineSigner.getAccounts();
+                        address = accounts[0].address;
+                    } else if (walletType === 'cosmostation') {
+                        const provider = window.cosmostation.providers.keplr;
+                        await provider.enable(CHAIN_ID);
+                        const offlineSigner = provider.getOfflineSigner(CHAIN_ID);
+                        const accounts = await offlineSigner.getAccounts();
+                        address = accounts[0].address;
+                    }
+                    
+                    // Redirect to dashboard
+                    window.location.href = `dashboard.html?wallet=${walletType}&address=${address}`;
+                    
+                } catch (error) {
+                    console.error('Connection error:', error);
+                    alert('Помилка підключення: ' + error.message);
+                    fixedBtn.innerHTML = '<span>💼</span><span>Підключити</span>';
+                    fixedBtn.style.pointerEvents = 'auto';
+                }
+            });
+            
+            console.log('✅ Fixed wallet button initialized');
+        });
         
         console.log('✅ handleMobileWalletClick function registered globally');
 

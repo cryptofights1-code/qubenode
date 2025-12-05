@@ -399,7 +399,7 @@ function initBlockAnimation() {
   if (isMobile) {
     // МОБІЛЬНА ВЕРСІЯ: фіксована кількість паличок для всіх пристроїв
     containerWidth = container.offsetWidth || (window.innerWidth - 40);
-    blocksCount = 32; // Збільшено для повного заповнення вікна
+    blocksCount = 30; // Оптимально для видимого вікна
     
     // Динамічно розраховуємо ширину паличку та gap щоб заповнити контейнер
     // Формула: containerWidth = (blocksCount × blockWidth) + ((blocksCount - 1) × gap)

@@ -2359,7 +2359,7 @@
                 <span>❓</span>
                 <span>FAQ</span>
             </button>
-            <button class="mobile-menu-item" id="mobileWalletBtn" onclick="handleMobileWalletClick()" type="button">
+            <button class="mobile-menu-item" id="mobileWalletBtn" data-action="connect-wallet" type="button">
                 <span>💼</span>
                 <span>Підключити гаманець</span>
             </button>
@@ -4780,6 +4780,52 @@
         }
         
         console.log('✅ handleMobileWalletClick function registered globally');
+
+        // Attach event listener to mobile wallet button - multiple approaches
+        function attachMobileWalletListener() {
+            const mobileWalletBtn = document.getElementById('mobileWalletBtn');
+            if (mobileWalletBtn) {
+                console.log('✅ Found mobileWalletBtn, attaching handlers');
+                
+                // Method 1: Click event
+                mobileWalletBtn.addEventListener('click', function(e) {
+                    console.log('🔘 Click detected!');
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleMobileWalletClick();
+                }, false);
+                
+                // Method 2: Touchend event (better for mobile)
+                mobileWalletBtn.addEventListener('touchend', function(e) {
+                    console.log('👆 Touch detected!');
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleMobileWalletClick();
+                }, false);
+                
+                // Method 3: Direct onclick as backup
+                mobileWalletBtn.onclick = function(e) {
+                    console.log('🖱️ onclick fired!');
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleMobileWalletClick();
+                };
+                
+                console.log('✅ All event handlers attached to mobile wallet button');
+            } else {
+                console.error('❌ mobileWalletBtn not found in DOM');
+            }
+        }
+        
+        // Try attaching immediately
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', attachMobileWalletListener);
+        } else {
+            attachMobileWalletListener();
+        }
+        
+        // Also try after a short delay as backup
+        setTimeout(attachMobileWalletListener, 500);
 
         // Update mobile wallet button display
         function updateMobileWalletButton() {

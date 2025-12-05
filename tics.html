@@ -559,11 +559,11 @@
                 grid-template-columns: 1fr !important;
                 padding: 0 15px !important;
                 gap: 0px !important;
-                margin: 15px auto !important; /* Зменшено з 20px */
+                margin: 15px auto 10px auto !important; /* Зменшено нижній margin */
             }
 
             .feature-item {
-                padding: 8px 0 !important;
+                padding: 5px 0 !important; /* Зменшено з 8px до 5px */
                 border-radius: 0 !important;
                 background: transparent !important;
                 border: none !important;
@@ -593,14 +593,16 @@
                 transform: none !important;
             }
             
-            /* Заголовки та текст без зайвих відступів */
+            /* Мінімальні відступи для заголовків та тексту */
             .feature-item h3 {
-                margin-bottom: 6px !important;
+                margin-bottom: 4px !important; /* Зменшено з 6px */
                 margin-top: 0 !important;
+                font-size: 18px !important; /* Трохи менший заголовок */
             }
             
             .feature-item p {
-                margin: 0 0 10px 0 !important;
+                margin: 0 0 8px 0 !important; /* Зменшено з 10px до 8px */
+                line-height: 1.5 !important; /* Компактніший текст */
             }
             
             .feature-item:last-child p {

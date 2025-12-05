@@ -4717,6 +4717,9 @@
         let walletClickInProgress = false;
         
         window.handleMobileWalletClick = async function() {
+            // TEST: Show alert immediately
+            alert('🧪 ТЕСТ: Функція викликана!');
+            
             // Prevent double-firing from multiple events
             if (walletClickInProgress) {
                 console.log('⏸️ Wallet click already in progress, skipping...');

@@ -2285,10 +2285,6 @@
             <span style="display: block !important; width: 30px !important; height: 3.5px !important; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important; border-radius: 2px !important;"></span>
         </label>
 
-        <!-- Connect Wallet Button - ЦЕНТР (між hamburger і telegram) -->
-        <button id="mobileConnectWallet" onclick="handleMobileWalletClick()" style="position: absolute !important; top: 20px !important; left: 50% !important; transform: translateX(-50%) !important; pointer-events: auto !important; display: none !important; padding: 12px 20px !important; background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(0, 212, 255, 0.05)) !important; border: 2px solid rgba(0, 212, 255, 0.4) !important; border-radius: 25px !important; color: #00D4FF !important; font-size: 0.85em !important; font-weight: 700 !important; white-space: nowrap !important; cursor: pointer !important; z-index: 1000000 !important; box-shadow: 0 2px 8px rgba(0, 212, 255, 0.3) !important; transition: all 0.3s ease !important;">
-            💎 Підключити
-        </button>
 
         <!-- Fixed Mobile Контакти Icons - СПРАВА ГОРИЗОНТАЛЬНО -->
         <div class="fixed-mobile-contacts" style="position: absolute !important; top: 20px !important; right: 20px !important; display: flex !important; flex-direction: row !important; gap: 15px !important; pointer-events: auto !important; z-index: 1000000 !important;">
@@ -2359,7 +2355,7 @@
                 <span>❓</span>
                 <span>FAQ</span>
             </button>
-            <button class="mobile-menu-item" id="mobileWalletBtn" data-action="connect-wallet" type="button">
+            <button class="mobile-menu-item" id="mobileWalletBtn" data-action="connect-wallet" type="button" onclick="handleMobileWalletClick(); return false;">
                 <span>💼</span>
                 <span>Підключити гаманець</span>
             </button>

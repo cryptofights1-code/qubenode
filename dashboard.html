@@ -444,6 +444,166 @@
             font-size: 32px;
             font-weight: 700;
         }
+        
+        /* MOBILE STYLES */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            /* Dashboard Header - правильне розміщення */
+            .dashboard-header {
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+            
+            .dashboard-header > div:first-child {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 15px;
+            }
+            
+            .dashboard-header h1 {
+                font-size: 1.5em !important;
+                text-align: center;
+                width: 100%;
+            }
+            
+            .dashboard-header a[href="index.html"] {
+                order: -1 !important; /* Кнопка "На головну" першою */
+                align-self: flex-start !important;
+            }
+            
+            .dashboard-header p {
+                font-size: 12px !important;
+                text-align: center;
+                width: 100%;
+            }
+            
+            .dashboard-header button {
+                width: 100%;
+                margin-top: 10px;
+            }
+            
+            /* Stats grid - краще на мобільному */
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+            
+            .stat-card {
+                padding: 15px 10px;
+            }
+            
+            .stat-value {
+                font-size: 18px !important;
+            }
+            
+            /* Quick Actions - виправлення дужок */
+            .quick-actions {
+                gap: 10px !important;
+            }
+            
+            .quick-action-btn {
+                padding: 12px 16px !important;
+                font-size: 13px !important;
+                white-space: normal !important;
+                min-height: 60px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+            }
+            
+            /* Delegations - 2 цифри після крапки */
+            .delegation-card {
+                padding: 15px !important;
+            }
+            
+            .delegation-amount {
+                font-size: 22px !important;
+                word-break: break-word;
+            }
+            
+            /* Кнопки делегацій - однакової ширини */
+            .delegation-actions {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                width: 100%;
+            }
+            
+            .delegation-actions button {
+                width: 100% !important;
+                padding: 10px !important;
+                font-size: 13px !important;
+            }
+            
+            /* МОДАЛЬНІ ВІКНА - оптимізація */
+            .modal-content {
+                width: 95% !important;
+                max-width: 95% !important;
+                padding: 20px 15px !important;
+                max-height: 90vh;
+                overflow-y: auto;
+                margin: 20px auto;
+            }
+            
+            .modal-header {
+                padding-right: 45px !important; /* Місце для хрестика */
+                margin-bottom: 15px !important;
+            }
+            
+            .modal-header h2 {
+                font-size: 1.3em !important;
+                word-wrap: break-word;
+            }
+            
+            .modal-close {
+                top: 15px !important;
+                right: 15px !important;
+                width: 35px !important;
+                height: 35px !important;
+                font-size: 24px !important;
+                z-index: 1000;
+            }
+            
+            /* Форми в модалках */
+            .modal-content input,
+            .modal-content select {
+                font-size: 16px !important; /* Запобігає zoom на iOS */
+            }
+            
+            /* Кнопки в модалках */
+            .modal-actions {
+                flex-direction: column !important;
+                gap: 10px !important;
+            }
+            
+            .modal-actions button {
+                width: 100% !important;
+            }
+            
+            /* Transaction Status Modal */
+            .transaction-status {
+                padding: 15px !important;
+            }
+            
+            .transaction-hash {
+                font-size: 11px !important;
+                word-break: break-all;
+            }
+            
+            /* Validator List в Switch Modal */
+            .validator-item {
+                padding: 12px !important;
+                font-size: 13px !important;
+            }
+            
+            .validator-commission {
+                font-size: 12px !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -952,7 +1112,10 @@
             if (!amount || amount === '0' || amount === 0) return '0.000';
             const tics = parseFloat(amount) / 1e18;
             if (isNaN(tics)) return '0.000';
-            return tics.toFixed(3);
+            
+            // На мобільному 2 цифри, на десктопі 3
+            const isMobile = window.innerWidth <= 768;
+            return tics.toFixed(isMobile ? 2 : 3);
         }
         
         function closeModal(modalId) {

@@ -83,11 +83,11 @@
             box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4);
         }
         .page-title { 
-            color: #00FFF0; 
+            color: #67e8f9; /* Менш яскравий відтінок */
             font-size: 2.8em; 
             font-weight: 700; 
             margin: 20px 0;
-            text-shadow: 0 0 30px rgba(0, 255, 240, 0.3);
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.2); /* Менш інтенсивна тінь */
         }
         .section { 
             background: linear-gradient(135deg, rgba(15, 23, 42, 0.7) 0%, rgba(10, 15, 30, 0.8) 100%);
@@ -120,7 +120,7 @@
             padding: 22px 25px; 
             background: transparent; 
             border: none; 
-            color: #00FFF0; 
+            color: #67e8f9; /* Менш яскравий відтінок */
             font-size: 1.15em; 
             font-weight: 600; 
             cursor: pointer; 
@@ -251,7 +251,18 @@
             .section { padding: 25px 20px; }
             .faq-question { font-size: 1.05em; padding: 18px 20px; }
             .faq-answer.active { padding: 5px 20px 20px 20px; }
-            .footer-link { padding: 16px 30px; font-size: 1.05em; }
+            
+            /* Кнопки внизу паралельно на мобільному */
+            .footer-links { 
+                flex-wrap: nowrap !important; /* Не переносити на новий рядок */
+                gap: 10px;
+            }
+            .footer-link { 
+                padding: 14px 20px; 
+                font-size: 0.95em;
+                flex: 1; /* Рівна ширина */
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -399,7 +410,7 @@
                     <p>Ви можете зв'язатися з нами через:</p>
                     <ul>
                         <li><strong><a href="https://t.me/+sRnz7RyoL4Q0MWEy" target="_blank">Telegram</a>:</strong> Наша група підтримки завжди готова допомогти</li>
-                        <li><strong>Email:</strong> <a href="mailto:validator.qubenode@gmail.com">validator.qubenode@gmail.com</a></li>
+                        <li><strong>Email:</strong> <a href="/cdn-cgi/l/email-protection#97e1f6fbfef3f6e3f8e5b9e6e2f5f2f9f8f3f2d7f0faf6fefbb9f4f8fa"><span class="__cf_email__" data-cfemail="baccdbd6d3dedbced5c894cbcfd8dfd4d5dedffaddd7dbd3d694d9d5d7">[email&#160;protected]</span></a></li>
                     </ul>
                 </div>
             </div>
@@ -422,7 +433,7 @@
         </footer>
     </div>
 
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         function toggleFaq(button) {
             const answer = button.nextElementSibling;
             const isActive = button.classList.contains('active');
@@ -430,15 +441,4 @@
             // Close all other answers
             document.querySelectorAll('.faq-question').forEach(q => {
                 q.classList.remove('active');
-                q.nextElementSibling.classList.remove('active');
-            });
-            
-            // Toggle current answer
-            if (!isActive) {
-                button.classList.add('active');
-                answer.classList.add('active');
-            }
-        }
-    </script>
-</body>
-</html>
+                q.nextElementSibling.classList.r

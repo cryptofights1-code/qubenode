@@ -4718,101 +4718,12 @@
             }
         });
 
-        // Mobile wallet button handler - SIMPLIFIED
-        let walletClickInProgress = false;
-        
+        // Mobile wallet button handler - REDIRECT TO WORKING PAGE
         window.handleMobileWalletClick = async function() {
-            // TEST: Show alert immediately
-            alert('🧪 ТЕСТ: Функція викликана!');
+            console.log('🔘 Redirecting to delegate page...');
             
-            // Prevent double-firing from multiple events
-            if (walletClickInProgress) {
-                console.log('⏸️ Wallet click already in progress, skipping...');
-                return;
-            }
-            
-            walletClickInProgress = true;
-            console.log('🔘 Mobile wallet button clicked!');
-            console.log('📊 Current state:', {
-                headerWalletConnected,
-                cosmosStaking: !!cosmosStaking,
-                hasKeplr: !!window.keplr,
-                hasCosmostation: !!window.cosmostation,
-                connectHeaderWallet: typeof connectHeaderWallet
-            });
-            
-            // Close mobile menu
-            const menuToggle = document.getElementById('menu-toggle');
-            if (menuToggle) {
-                menuToggle.checked = false;
-                console.log('📱 Menu closed via checkbox');
-            }
-            
-            // Small delay for menu animation
-            await new Promise(resolve => setTimeout(resolve, 150));
-            
-            // If already connected, redirect to dashboard
-            if (headerWalletConnected && cosmosStaking) {
-                console.log('✅ Already connected, redirecting...');
-                try {
-                    const walletInfo = cosmosStaking.getWalletInfo();
-                    window.location.href = `dashboard.html?wallet=${walletInfo.walletType}&address=${walletInfo.address}`;
-                } catch (error) {
-                    console.error('Error getting wallet info:', error);
-                }
-                return;
-            }
-            
-            // Detect wallet
-            let walletType = null;
-            let address = null;
-            
-            if (window.keplr) {
-                console.log('✅ Keplr detected');
-                walletType = 'keplr';
-            } else if (window.cosmostation) {
-                console.log('✅ Cosmostation detected');  
-                walletType = 'cosmostation';
-            } else {
-                console.error('❌ No wallet found');
-                alert('Гаманець не знайдено.\n\nБудь ласка, відкрийте сайт через браузер вашого гаманця (Keplr або Cosmostation).');
-                walletClickInProgress = false;
-                return;
-            }
-            
-            // Connect wallet using WORKING code from how-to-delegate.html
-            console.log(`🔗 Connecting ${walletType} using proven method...`);
-            
-            try {
-                const CHAIN_ID = 'qubetics-1';
-                
-                if (walletType === 'keplr') {
-                    console.log('📱 Enabling Keplr...');
-                    await window.keplr.enable(CHAIN_ID);
-                    const offlineSigner = window.keplr.getOfflineSigner(CHAIN_ID);
-                    const accounts = await offlineSigner.getAccounts();
-                    address = accounts[0].address;
-                    console.log('✅ Keplr connected:', address);
-                    
-                } else if (walletType === 'cosmostation') {
-                    console.log('📱 Enabling Cosmostation...');
-                    const provider = window.cosmostation.providers.keplr;
-                    await provider.enable(CHAIN_ID);
-                    const offlineSigner = provider.getOfflineSigner(CHAIN_ID);
-                    const accounts = await offlineSigner.getAccounts();
-                    address = accounts[0].address;
-                    console.log('✅ Cosmostation connected:', address);
-                }
-                
-                // Redirect to dashboard
-                console.log('✅ Redirecting to dashboard...');
-                window.location.href = `dashboard.html?wallet=${walletType}&address=${address}`;
-                
-            } catch (error) {
-                console.error('❌ Connection error:', error);
-                alert(`Помилка підключення:\n\n${error.message}\n\nСпробуйте:\n1. Дозвольте доступ у гаманці\n2. Перезавантажте сторінку`);
-                walletClickInProgress = false;
-            }
+            // Just redirect to the page that WORKS
+            window.location.href = 'how-to-delegate.html';
         }
         
         console.log('✅ handleMobileWalletClick function registered globally');

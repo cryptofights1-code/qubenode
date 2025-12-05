@@ -2273,15 +2273,14 @@
         }
     </script>
     
-    <!-- Hamburger Menu Button - ПРЯМО В BODY БЕЗ КОНТЕЙНЕРА -->
-    <button id="hamburger-btn" class="hamburger" type="button" style="position: fixed !important; top: 20px !important; left: 20px !important; display: flex !important; width: 50px !important; height: 50px !important; flex-direction: column !important; justify-content: center !important; align-items: center !important; gap: 6px !important; background: transparent !important; border: none !important; z-index: 1000000 !important; cursor: pointer !important; -webkit-tap-highlight-color: transparent !important;">
-        <span style="display: block !important; width: 30px !important; height: 3.5px !important; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important; border-radius: 2px !important; transition: all 0.3s ease !important; pointer-events: none !important;"></span>
-        <span style="display: block !important; width: 30px !important; height: 3.5px !important; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important; border-radius: 2px !important; transition: all 0.3s ease !important; pointer-events: none !important;"></span>
-        <span style="display: block !important; width: 30px !important; height: 3.5px !important; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important; border-radius: 2px !important; transition: all 0.3s ease !important; pointer-events: none !important;"></span>
-    </button>
-
-    <!-- КОНТЕЙНЕР ДЛЯ КОНТАКТІВ - СПРАВА -->
+    <!-- КОНТЕЙНЕР ДЛЯ ІКОНОК - ТІЛЬКИ ВГОРІ САЙТУ -->
     <div id="mobile-icons-container" style="position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important; width: 100% !important; height: 80px !important; z-index: 999999 !important; pointer-events: none !important; margin: 0 !important; padding: 0 !important;">
+        <!-- Hamburger Menu Button - ЗЛІВА -->
+        <button id="hamburger-btn" class="hamburger" type="button" style="position: absolute; top: 20px; left: 20px; pointer-events: auto; display: flex; width: 50px; height: 50px; flex-direction: column; justify-content: center; align-items: center; gap: 6px; background: transparent; border: none; z-index: 1000000; cursor: pointer; -webkit-tap-highlight-color: rgba(0,212,255,0.3); touch-action: manipulation;">
+            <span style="display: block; width: 30px; height: 3.5px; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%); border-radius: 2px; transition: all 0.3s ease; pointer-events: none;"></span>
+            <span style="display: block; width: 30px; height: 3.5px; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%); border-radius: 2px; transition: all 0.3s ease; pointer-events: none;"></span>
+            <span style="display: block; width: 30px; height: 3.5px; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%); border-radius: 2px; transition: all 0.3s ease; pointer-events: none;"></span>
+        </button>
 
 
         <!-- Fixed Mobile Контакти Icons - СПРАВА ГОРИЗОНТАЛЬНО -->
@@ -4768,20 +4767,22 @@
                 }
             }
 
-            // Hamburger button click - ADD BOTH CLICK AND TOUCHSTART
-            hamburgerBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('🍔 Hamburger CLICKED!');
-                toggleMenu();
-            });
+            // Hamburger button - use touchstart for mobile, click for desktop
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
             
-            hamburgerBtn.addEventListener('touchstart', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('🍔 Hamburger TOUCHED!');
-                toggleMenu();
-            }, { passive: false });
+            if (isMobile) {
+                console.log('📱 Mobile detected - using touchstart');
+                hamburgerBtn.addEventListener('touchstart', function(e) {
+                    console.log('👆 Touch detected!');
+                    toggleMenu();
+                }, { passive: true });
+            } else {
+                console.log('💻 Desktop detected - using click');
+                hamburgerBtn.addEventListener('click', function(e) {
+                    console.log('🖱️ Click detected!');
+                    toggleMenu();
+                });
+            }
 
             // Overlay click - close menu
             menuOverlay.addEventListener('click', function(e) {

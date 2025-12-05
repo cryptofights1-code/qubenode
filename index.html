@@ -4718,63 +4718,68 @@
             }
         });
 
-        // Mobile wallet button handler
-        async function handleMobileWalletClick() {
+        // Mobile wallet button handler - SIMPLIFIED
+        window.handleMobileWalletClick = async function() {
             console.log('🔘 Mobile wallet button clicked!');
+            console.log('📊 Current state:', {
+                headerWalletConnected,
+                cosmosStaking: !!cosmosStaking,
+                hasKeplr: !!window.keplr,
+                hasCosmostation: !!window.cosmostation,
+                connectHeaderWallet: typeof connectHeaderWallet
+            });
             
-            // Close mobile menu
+            // Close mobile menu first
             const menuToggle = document.getElementById('menu-toggle');
-            const hamburger = document.querySelector('.hamburger');
-            const mobileMenu = document.querySelector('.mobile-menu');
-            
             if (menuToggle) menuToggle.checked = false;
-            if (hamburger) hamburger.classList.remove('active');
-            if (mobileMenu) mobileMenu.style.left = '-100%';
+            
+            // Small delay for menu animation
+            await new Promise(resolve => setTimeout(resolve, 100));
             
             // If already connected, redirect to dashboard
             if (headerWalletConnected && cosmosStaking) {
-                console.log('✅ Already connected, redirecting to dashboard');
-                const walletInfo = cosmosStaking.getWalletInfo();
-                setTimeout(() => {
+                console.log('✅ Already connected, redirecting...');
+                try {
+                    const walletInfo = cosmosStaking.getWalletInfo();
                     window.location.href = `dashboard.html?wallet=${walletInfo.walletType}&address=${walletInfo.address}`;
-                }, 300);
+                } catch (error) {
+                    console.error('Error getting wallet info:', error);
+                }
                 return;
             }
             
-            // Auto-detect which wallet is available
-            console.log('🔍 Detecting available wallet...');
+            // Detect wallet
+            let walletType = null;
+            if (window.keplr) {
+                console.log('✅ Keplr detected');
+                walletType = 'keplr';
+            } else if (window.cosmostation) {
+                console.log('✅ Cosmostation detected');  
+                walletType = 'cosmostation';
+            } else {
+                console.error('❌ No wallet found');
+                alert('Гаманець не знайдено.\n\nБудь ласка, відкрийте сайт через браузер вашого гаманця (Keplr або Cosmostation).');
+                return;
+            }
             
-            setTimeout(async () => {
-                let walletToConnect = null;
-                
-                // Check which wallet is available
-                if (window.keplr) {
-                    console.log('✅ Keplr detected');
-                    walletToConnect = 'keplr';
-                } else if (window.cosmostation) {
-                    console.log('✅ Cosmostation detected');
-                    walletToConnect = 'cosmostation';
-                } else {
-                    console.error('❌ No wallet detected');
-                    alert('Гаманець не знайдено. Будь ласка, відкрийте сайт через браузер гаманця (Keplr або Cosmostation).');
-                    return;
+            // Connect wallet
+            console.log(`🔗 Attempting to connect ${walletType}...`);
+            
+            try {
+                if (typeof connectHeaderWallet !== 'function') {
+                    throw new Error('connectHeaderWallet function not available');
                 }
                 
-                console.log(`🔗 Connecting to ${walletToConnect}...`);
+                await connectHeaderWallet(walletType);
+                console.log('✅ Connection successful!');
                 
-                if (typeof connectHeaderWallet === 'function') {
-                    try {
-                        await connectHeaderWallet(walletToConnect);
-                    } catch (error) {
-                        console.error('❌ Connection failed:', error);
-                        alert('Помилка підключення: ' + error.message);
-                    }
-                } else {
-                    console.error('❌ connectHeaderWallet function not found');
-                    alert('Помилка: функція підключення не знайдена. Перезавантажте сторінку.');
-                }
-            }, 300);
+            } catch (error) {
+                console.error('❌ Connection error:', error);
+                alert(`Помилка підключення:\n\n${error.message}\n\nСпробуйте перезавантажити сторінку.`);
+            }
         }
+        
+        console.log('✅ handleMobileWalletClick function registered globally');
 
         // Update mobile wallet button display
         function updateMobileWalletButton() {

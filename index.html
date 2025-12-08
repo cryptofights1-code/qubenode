@@ -2410,11 +2410,11 @@
             <h2 class="wallet-modal-title">Підключити гаманець</h2>
             <p class="wallet-modal-subtitle">Оберіть ваш гаманець для підключення</p>
             <div class="wallet-buttons">
-                <button id="modalKeplrBtn" class="wallet-btn" onclick="connectWalletFromModal('keplr')">
+                <button id="modalKeplrBtn" class="wallet-btn">
                     <span style="font-size: 1.3em;">🔷</span>
                     <span>Keplr Wallet</span>
                 </button>
-                <button id="modalCosmostationBtn" class="wallet-btn" onclick="connectWalletFromModal('cosmostation')">
+                <button id="modalCosmostationBtn" class="wallet-btn">
                     <span style="font-size: 1.3em;">🔶</span>
                     <span>Cosmostation</span>
                 </button>
@@ -2422,10 +2422,9 @@
         </div>
     </div>
 
-    <!-- ОКРЕМА КНОПКА - ВІДКРИВАЄ МОДАЛ -->
-    <a href="javascript:void(0)" onclick="openWalletModal()" style="position: fixed; top: 85px; right: 20px; width: 180px; padding: 12px 20px; background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(99, 102, 241, 0.2)); border: 2px solid rgba(0, 212, 255, 0.5); border-radius: 12px; color: #00FFF0; font-size: 16px; font-weight: 700; cursor: pointer; z-index: 10000000; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3); text-decoration: none;">
-        <span>💼</span>
-        <span>Підключити</span>
+    <!-- ОКРЕМА КНОПКА - МІЖ МЕНЮ І ТЕЛЕГРАМ -->
+    <a id="walletConnectBtn" href="#" style="position: fixed; top: 20px; left: 85px; width: 50px; height: 50px; background: rgba(0, 212, 255, 0.15); border: 2px solid rgba(0, 212, 255, 0.5); border-radius: 50%; color: #00FFF0; font-size: 24px; cursor: pointer; z-index: 10000000; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3); text-decoration: none;">
+        💼
     </a>
 
     <div class="bg-animation"></div>
@@ -4828,15 +4827,21 @@
             openWalletModal();
         }
 
-        // WALLET MODAL FUNCTIONS - WORKING CODE FROM how-to-delegate.html
+        // WALLET MODAL FUNCTIONS - PURE JAVASCRIPT, NO onclick
         function openWalletModal() {
-            document.getElementById('walletModal').classList.add('active');
-            console.log('✅ Wallet modal opened');
+            const modal = document.getElementById('walletModal');
+            if (modal) {
+                modal.classList.add('active');
+                console.log('✅ Wallet modal opened');
+            }
         }
 
         function closeWalletModal() {
-            document.getElementById('walletModal').classList.remove('active');
-            console.log('✅ Wallet modal closed');
+            const modal = document.getElementById('walletModal');
+            if (modal) {
+                modal.classList.remove('active');
+                console.log('✅ Wallet modal closed');
+            }
         }
 
         async function connectWalletFromModal(walletType) {
@@ -4844,6 +4849,8 @@
             
             const CHAIN_ID = 'qubetics-1';
             const btn = document.getElementById(walletType === 'keplr' ? 'modalKeplrBtn' : 'modalCosmostationBtn');
+            
+            if (!btn) return;
             
             btn.innerHTML = '<span>⏳</span><span>Підключення...</span>';
             btn.style.pointerEvents = 'none';
@@ -4853,7 +4860,7 @@
                 
                 if (walletType === 'keplr') {
                     if (!window.keplr) {
-                        alert('Будь ласка, встановіть Keplr Wallet');
+                        alert('Будь ласка, встановіть Keplr Wallet або відкрийте сайт через браузер Keplr');
                         btn.style.pointerEvents = 'auto';
                         btn.innerHTML = '<span>🔷</span><span>Keplr Wallet</span>';
                         return;
@@ -4867,7 +4874,7 @@
                     
                 } else if (walletType === 'cosmostation') {
                     if (!window.cosmostation) {
-                        alert('Будь ласка, встановіть Cosmostation Wallet');
+                        alert('Будь ласка, встановіть Cosmostation Wallet або відкрийте сайт через браузер Cosmostation');
                         btn.style.pointerEvents = 'auto';
                         btn.innerHTML = '<span>🔶</span><span>Cosmostation</span>';
                         return;
@@ -4895,8 +4902,66 @@
             }
         }
 
-        // Close modal on overlay click
+        // INITIALIZE ALL EVENT LISTENERS ON DOM READY
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Initializing wallet connection...');
+            
+            // Main wallet button
+            const walletBtn = document.getElementById('walletConnectBtn');
+            if (walletBtn) {
+                // Try both click and touchstart
+                walletBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('💼 Wallet button CLICKED');
+                    openWalletModal();
+                });
+                
+                walletBtn.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    console.log('👆 Wallet button TOUCHED');
+                    openWalletModal();
+                }, { passive: false });
+                
+                console.log('✅ Wallet button listeners attached');
+            } else {
+                console.error('❌ Wallet button not found');
+            }
+            
+            // Modal close button
+            const closeBtn = document.querySelector('.wallet-modal-close');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', closeWalletModal);
+            }
+            
+            // Keplr button
+            const keplrBtn = document.getElementById('modalKeplrBtn');
+            if (keplrBtn) {
+                keplrBtn.addEventListener('click', function() {
+                    console.log('🔷 Keplr button clicked');
+                    connectWalletFromModal('keplr');
+                });
+                keplrBtn.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    console.log('👆 Keplr button touched');
+                    connectWalletFromModal('keplr');
+                }, { passive: false });
+            }
+            
+            // Cosmostation button
+            const cosmostationBtn = document.getElementById('modalCosmostationBtn');
+            if (cosmostationBtn) {
+                cosmostationBtn.addEventListener('click', function() {
+                    console.log('🔶 Cosmostation button clicked');
+                    connectWalletFromModal('cosmostation');
+                });
+                cosmostationBtn.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    console.log('👆 Cosmostation button touched');
+                    connectWalletFromModal('cosmostation');
+                }, { passive: false });
+            }
+            
+            // Close modal on overlay click
             const modal = document.getElementById('walletModal');
             if (modal) {
                 modal.addEventListener('click', function(e) {
@@ -4905,7 +4970,8 @@
                     }
                 });
             }
-            console.log('✅ Wallet modal initialized');
+            
+            console.log('✅ All wallet modal listeners initialized');
         });
         
         console.log('✅ handleMobileWalletClick function registered globally');

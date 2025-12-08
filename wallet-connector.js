@@ -233,13 +233,20 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('📦 Initializing QubeNode Wallet Connector...');
     window.walletConnector = new QubeNodeWalletConnector();
     
-    // Attach to mobile button
-    const mobileBtn = document.getElementById('mobileOnlyWalletBtn');
+    // Attach to mobile header button
+    const mobileBtn = document.getElementById('mobileHeaderWalletBtn');
     if (mobileBtn) {
         mobileBtn.addEventListener('click', () => {
             console.log('💼 Mobile wallet button clicked');
             window.walletConnector.showModal();
         });
-        console.log('✅ Mobile button connected to wallet connector');
+        
+        mobileBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            console.log('👆 Mobile wallet button touched');
+            window.walletConnector.showModal();
+        }, { passive: false });
+        
+        console.log('✅ Mobile header button connected to wallet connector');
     }
 });

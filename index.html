@@ -2422,38 +2422,43 @@
         </div>
     </div>
 
-    <!-- МОБІЛЬНА КНОПКА ГАМАНЦЯ - ТІЛЬКИ НА МОБІЛЬНОМУ -->
+    <!-- МОБІЛЬНА КНОПКА ГАМАНЦЯ - МІЖ ГАМБУРГЕРОМ І ТЕЛЕГРАМ -->
     <style>
-        #mobileOnlyWalletBtn {
-            display: none; /* Сховано на десктопі */
+        #mobileHeaderWalletBtn {
+            display: none;
         }
         @media (max-width: 768px) {
-            #mobileOnlyWalletBtn {
-                display: flex !important; /* Показати тільки на мобільному */
+            #mobileHeaderWalletBtn {
+                display: flex !important;
                 position: fixed;
-                bottom: 20px;
-                right: 20px;
-                width: 60px;
-                height: 60px;
-                background: linear-gradient(135deg, #00D4FF, #00FFF0);
-                border: none;
-                border-radius: 50%;
-                color: #000;
-                font-size: 28px;
+                top: 20px;
+                left: 85px;
+                right: 85px;
+                height: 50px;
+                background: linear-gradient(135deg, rgba(0, 255, 179, 0.15) 0%, rgba(0, 212, 255, 0.15) 25%, rgba(99, 102, 241, 0.15) 50%, rgba(168, 85, 247, 0.15) 75%, rgba(255, 214, 10, 0.15) 100%);
+                border: 2px solid;
+                border-image: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) 1;
+                border-radius: 12px;
+                color: #00FFF0;
+                font-size: 14px;
+                font-weight: 700;
                 cursor: pointer;
-                z-index: 999999999;
+                z-index: 999999;
                 align-items: center;
                 justify-content: center;
-                box-shadow: 0 4px 20px rgba(0, 212, 255, 0.6);
-                animation: pulse 2s infinite;
+                gap: 8px;
+                transition: all 0.3s;
             }
-            @keyframes pulse {
-                0%, 100% { transform: scale(1); }
-                50% { transform: scale(1.05); }
+            #mobileHeaderWalletBtn:active {
+                transform: scale(0.95);
+                background: linear-gradient(135deg, rgba(0, 255, 179, 0.25) 0%, rgba(0, 212, 255, 0.25) 25%, rgba(99, 102, 241, 0.25) 50%, rgba(168, 85, 247, 0.25) 75%, rgba(255, 214, 10, 0.25) 100%);
             }
         }
     </style>
-    <button id="mobileOnlyWalletBtn" type="button">💼</button>
+    <button id="mobileHeaderWalletBtn" type="button">
+        <span>💼</span>
+        <span>Підключити гаманець</span>
+    </button>
 
     <div class="bg-animation"></div>
     <div class="grid-overlay"></div>

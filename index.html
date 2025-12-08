@@ -193,11 +193,27 @@
             height: 100vh;
             background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
             border-right: 2px solid rgba(0, 212, 255, 0.3);
-            z-index: 99998;
+            z-index: 99999;
             padding: 80px 30px 30px;
             overflow-y: auto;
             transition: left 0.3s ease;
             box-shadow: 5px 0 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Dark overlay за меню */
+        .mobile-menu::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
         }
         
         .mobile-contact-icons {
@@ -255,7 +271,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(5px);
             z-index: 99997;
             opacity: 0;
             transition: opacity 0.3s ease;
@@ -2136,9 +2153,9 @@
             position: absolute;
             top: 15px;
             right: 15px;
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid rgba(239, 68, 68, 0.4);
-            color: #ef4444;
+            background: rgba(0, 255, 240, 0.1);
+            border: 1px solid rgba(0, 255, 240, 0.3);
+            color: #00FFF0;
             width: 35px;
             height: 35px;
             border-radius: 50%;
@@ -2150,7 +2167,8 @@
             transition: all 0.3s;
         }
         .wallet-modal-close:hover {
-            background: rgba(239, 68, 68, 0.3);
+            background: rgba(0, 255, 240, 0.2);
+            border-color: rgba(0, 255, 240, 0.5);
             transform: rotate(90deg);
         }
         .wallet-modal-title {
@@ -2411,11 +2429,11 @@
             <p class="wallet-modal-subtitle">Оберіть ваш гаманець для підключення</p>
             <div class="wallet-buttons">
                 <button id="modalKeplrBtn" class="wallet-btn">
-                    <span style="font-size: 1.3em;">🔷</span>
+                    <img src="keplr.png" alt="Keplr" style="width: 32px; height: 32px; border-radius: 8px;">
                     <span>Keplr Wallet</span>
                 </button>
                 <button id="modalCosmostationBtn" class="wallet-btn">
-                    <span style="font-size: 1.3em;">🔶</span>
+                    <img src="Cosmostation.png" alt="Cosmostation" style="width: 32px; height: 32px; border-radius: 8px;">
                     <span>Cosmostation</span>
                 </button>
             </div>
@@ -2431,34 +2449,31 @@
             #mobileHeaderWalletBtn {
                 display: flex !important;
                 position: fixed;
-                top: 20px;
-                left: 85px;
-                right: 85px;
-                height: 50px;
-                background: linear-gradient(135deg, rgba(0, 255, 179, 0.15) 0%, rgba(0, 212, 255, 0.15) 25%, rgba(99, 102, 241, 0.15) 50%, rgba(168, 85, 247, 0.15) 75%, rgba(255, 214, 10, 0.15) 100%);
-                border: 2px solid;
-                border-image: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) 1;
-                border-radius: 12px;
+                top: 25px;
+                left: 80px;
+                right: 80px;
+                height: 40px;
+                background: linear-gradient(135deg, rgba(0, 255, 179, 0.12) 0%, rgba(0, 212, 255, 0.12) 50%, rgba(99, 102, 241, 0.12) 100%);
+                border: 1.5px solid rgba(0, 255, 240, 0.4);
+                border-radius: 20px;
                 color: #00FFF0;
-                font-size: 14px;
-                font-weight: 700;
+                font-size: 13px;
+                font-weight: 600;
                 cursor: pointer;
                 z-index: 999999;
                 align-items: center;
                 justify-content: center;
-                gap: 8px;
                 transition: all 0.3s;
+                backdrop-filter: blur(10px);
             }
             #mobileHeaderWalletBtn:active {
-                transform: scale(0.95);
-                background: linear-gradient(135deg, rgba(0, 255, 179, 0.25) 0%, rgba(0, 212, 255, 0.25) 25%, rgba(99, 102, 241, 0.25) 50%, rgba(168, 85, 247, 0.25) 75%, rgba(255, 214, 10, 0.25) 100%);
+                transform: scale(0.96);
+                background: linear-gradient(135deg, rgba(0, 255, 179, 0.2) 0%, rgba(0, 212, 255, 0.2) 50%, rgba(99, 102, 241, 0.2) 100%);
+                border-color: rgba(0, 255, 240, 0.6);
             }
         }
     </style>
-    <button id="mobileHeaderWalletBtn" type="button">
-        <span>💼</span>
-        <span>Підключити гаманець</span>
-    </button>
+    <button id="mobileHeaderWalletBtn" type="button">Підключити гаманець</button>
 
     <div class="bg-animation"></div>
     <div class="grid-overlay"></div>

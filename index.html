@@ -193,7 +193,7 @@
             height: 100vh;
             background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
             border-right: 2px solid rgba(0, 212, 255, 0.3);
-            z-index: 99999;
+            z-index: 99999999;
             padding: 80px 30px 30px;
             overflow-y: auto;
             transition: left 0.3s ease;
@@ -256,7 +256,7 @@
             width: 100%;
             height: 100%;
             background: #000000;
-            z-index: 99998;
+            z-index: 9999999;
             opacity: 0;
             transition: opacity 0.3s ease;
             pointer-events: none;
@@ -2430,31 +2430,31 @@
         }
         @media (max-width: 768px) {
             #mobileHeaderWalletBtn {
-                display: flex !important;
-                position: fixed;
-                top: 24px;
-                left: 75px;
-                right: 75px;
-                height: 36px;
-                background: rgba(10, 10, 10, 0.85);
-                border: 1.5px solid;
-                border-image: linear-gradient(90deg, #00FFB3 0%, #00D4FF 50%, #A855F7 100%) 1;
-                border-radius: 18px;
-                color: #00FFF0;
-                font-size: 11px;
-                font-weight: 600;
-                cursor: pointer;
-                z-index: 99996;
-                align-items: center;
-                justify-content: center;
-                transition: all 0.3s;
-                backdrop-filter: blur(10px);
-                letter-spacing: 0.3px;
+                display: block !important;
+                position: fixed !important;
+                top: 22px !important;
+                left: 70px !important;
+                width: 200px !important;
+                height: 30px !important;
+                background: rgba(10, 10, 10, 0.9) !important;
+                border: 1px solid !important;
+                border-image: linear-gradient(90deg, #00FFB3, #00D4FF, #A855F7) 1 !important;
+                border-radius: 15px !important;
+                color: #00FFF0 !important;
+                font-size: 10px !important;
+                font-weight: 600 !important;
+                cursor: pointer !important;
+                z-index: 99995 !important;
+                text-align: center !important;
+                line-height: 30px !important;
+                transition: all 0.3s !important;
+                backdrop-filter: blur(10px) !important;
+                padding: 0 !important;
+                margin: 0 !important;
             }
             #mobileHeaderWalletBtn:active {
                 transform: scale(0.97);
-                background: rgba(10, 10, 10, 0.95);
-                border-width: 2px;
+                background: rgba(10, 10, 10, 1) !important;
             }
         }
     </style>

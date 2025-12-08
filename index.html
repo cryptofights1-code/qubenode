@@ -2422,10 +2422,38 @@
         </div>
     </div>
 
-    <!-- ОКРЕМА КНОПКА - МІЖ МЕНЮ І ТЕЛЕГРАМ -->
-    <a id="walletConnectBtn" href="#" style="position: fixed; top: 20px; left: 85px; width: 50px; height: 50px; background: rgba(0, 212, 255, 0.15); border: 2px solid rgba(0, 212, 255, 0.5); border-radius: 50%; color: #00FFF0; font-size: 24px; cursor: pointer; z-index: 10000000; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3); text-decoration: none;">
-        💼
-    </a>
+    <!-- МОБІЛЬНА КНОПКА ГАМАНЦЯ - ТІЛЬКИ НА МОБІЛЬНОМУ -->
+    <style>
+        #mobileOnlyWalletBtn {
+            display: none; /* Сховано на десктопі */
+        }
+        @media (max-width: 768px) {
+            #mobileOnlyWalletBtn {
+                display: flex !important; /* Показати тільки на мобільному */
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                width: 60px;
+                height: 60px;
+                background: linear-gradient(135deg, #00D4FF, #00FFF0);
+                border: none;
+                border-radius: 50%;
+                color: #000;
+                font-size: 28px;
+                cursor: pointer;
+                z-index: 999999999;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 4px 20px rgba(0, 212, 255, 0.6);
+                animation: pulse 2s infinite;
+            }
+            @keyframes pulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+            }
+        }
+    </style>
+    <button id="mobileOnlyWalletBtn" type="button">💼</button>
 
     <div class="bg-animation"></div>
     <div class="grid-overlay"></div>
@@ -2458,13 +2486,6 @@
             <button class="mobile-menu-item" onclick="window.location.href='faq.html'" type="button">
                 <span>❓</span>
                 <span>FAQ</span>
-            </button>
-            <button class="mobile-menu-item" id="mobileWalletBtn" data-action="connect-wallet" type="button" 
-                    onmousedown="handleMobileWalletClick(); return false;" 
-                    ontouchstart="handleMobileWalletClick(); return false;"
-                    onclick="handleMobileWalletClick(); return false;">
-                <span>💼</span>
-                <span>Підключити гаманець</span>
             </button>
         </div>
     </div>
@@ -4906,25 +4927,22 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 Initializing wallet connection...');
             
-            // Main wallet button
-            const walletBtn = document.getElementById('walletConnectBtn');
-            if (walletBtn) {
-                // Try both click and touchstart
-                walletBtn.addEventListener('click', function(e) {
+            // Mobile-only wallet button (bottom right, only visible on mobile)
+            const mobileOnlyBtn = document.getElementById('mobileOnlyWalletBtn');
+            if (mobileOnlyBtn) {
+                mobileOnlyBtn.addEventListener('click', function(e) {
                     e.preventDefault();
-                    console.log('💼 Wallet button CLICKED');
+                    console.log('💼 Mobile-only wallet button CLICKED');
                     openWalletModal();
                 });
                 
-                walletBtn.addEventListener('touchstart', function(e) {
+                mobileOnlyBtn.addEventListener('touchstart', function(e) {
                     e.preventDefault();
-                    console.log('👆 Wallet button TOUCHED');
+                    console.log('👆 Mobile-only wallet button TOUCHED');
                     openWalletModal();
                 }, { passive: false });
                 
-                console.log('✅ Wallet button listeners attached');
-            } else {
-                console.error('❌ Wallet button not found');
+                console.log('✅ Mobile-only wallet button listeners attached');
             }
             
             // Modal close button

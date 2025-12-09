@@ -64,7 +64,22 @@
             padding: 20px; 
         }
         header { text-align: center; padding: 20px 0; }
-        .back-button { background: linear-gradient(135deg, #00D4FF, #00FFF0); border: none; color: #000; padding: 12px 24px; border-radius: 10px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; margin-bottom: 20px; }
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: rgba(0, 212, 255, 0.15);
+            border: 1px solid rgba(0, 212, 255, 0.4);
+            border-radius: 12px;
+            color: #00D4FF;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s;
+            margin-bottom: 40px;
+        }
+        .back-button:hover { background: rgba(0, 212, 255, 0.25); transform: translateX(-5px); }
         .page-title { color: #00FFF0; font-size: 2.5em; font-weight: 700; margin: 20px 0; }
         .section { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 20px; padding: 40px; margin: 30px 0; }
         .step-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
@@ -246,8 +261,8 @@
     
     <div class="container">
         <header>
-            <a href="index.html" class="back-button">← Назад на головну</a>
-            <h1 class="page-title">Делегування на QubeNode</h1>
+            <a href="index.html" class="back-button">🏠 На головну</a>
+            <h1 class="page-title">Делегування у блокчейні Qubetics</h1>
             <p style="color: #94a3b8; font-size: 1.1em;">Два простих кроки</p>
         </header>
 
@@ -257,7 +272,7 @@
             
             <p style="color: #cbd5e1; line-height: 1.8; margin-bottom: 15px;">Ви можете зробити делегування у гаманці <span style="color: #67e8f9;">Keplr</span> (<a href="#" class="link" onclick="openKeplrModal(); return false;">інструкція</a>) або <span style="color: #67e8f9;">Cosmostation</span>.</p>
             
-            <p style="color: #cbd5e1; line-height: 1.8; margin-bottom: 15px;">Для зручності користувачів делегування доступне на сайті <span style="color: #67e8f9;">QubeNode.space</span>.</p>
+            <p style="color: #cbd5e1; line-height: 1.8; margin-bottom: 15px;">Для зручності користувачів делегування доступне на сайті валідатора <span style="color: #67e8f9;">QubeNode</span>.</p>
             
             <p style="color: #cbd5e1; line-height: 1.8; margin-bottom: 25px;">Підключіть на сайті гаманець <span style="color: #67e8f9;">Keplr</span> або <span style="color: #67e8f9;">Cosmostation</span> для миттєвого делегування.</p>
             

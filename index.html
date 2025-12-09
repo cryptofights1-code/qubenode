@@ -2423,7 +2423,7 @@
         </div>
     </div>
 
-    <!-- МОБІЛЬНА КНОПКА ГАМАНЦЯ В ХЕДЕРІ -->
+    <!-- МОБІЛЬНА КНОПКА ГАМАНЦЯ МІЖ ГАМБУРГЕРОМ І ТЕЛЕГРАМОМ -->
     <style>
         #mobileHeaderWalletBtn {
             display: none;
@@ -2432,29 +2432,32 @@
             #mobileHeaderWalletBtn {
                 display: inline-block !important;
                 position: fixed !important;
-                top: 20px !important;
-                left: 50% !important;
-                transform: translateX(-50%) !important;
+                top: 24px !important;
+                left: 85px !important;
+                right: 150px !important;
                 width: auto !important;
-                height: 36px !important;
-                background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(99, 102, 241, 0.15)) !important;
+                max-width: calc(100vw - 235px) !important;
+                height: 42px !important;
+                background: linear-gradient(135deg, rgba(0, 212, 255, 0.12), rgba(99, 102, 241, 0.12)) !important;
                 border: 1.5px solid transparent !important;
-                border-radius: 18px !important;
+                border-radius: 21px !important;
                 background-clip: padding-box !important;
                 color: #00D4FF !important;
-                font-size: 10px !important;
+                font-size: 11px !important;
                 font-weight: 600 !important;
                 cursor: pointer !important;
                 z-index: 999998 !important;
                 text-align: center !important;
-                line-height: 33px !important;
+                line-height: 39px !important;
                 transition: all 0.3s ease !important;
-                padding: 0 14px !important;
+                padding: 0 12px !important;
                 margin: 0 !important;
                 white-space: nowrap !important;
-                box-shadow: 0 2px 8px rgba(0, 212, 255, 0.2) !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                box-shadow: 0 2px 6px rgba(0, 212, 255, 0.15) !important;
                 font-family: 'Space Grotesk', sans-serif !important;
-                letter-spacing: 0.3px !important;
+                letter-spacing: 0.2px !important;
                 position: relative !important;
             }
             
@@ -2465,15 +2468,15 @@
                 left: -1.5px !important;
                 right: -1.5px !important;
                 bottom: -1.5px !important;
-                background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 50%, #6366F1 100%) !important;
-                border-radius: 18px !important;
+                background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 60%, #6366F1 100%) !important;
+                border-radius: 21px !important;
                 z-index: -1 !important;
-                opacity: 0.6 !important;
+                opacity: 0.5 !important;
             }
             
             #mobileHeaderWalletBtn:active {
-                transform: translateX(-50%) scale(0.95) !important;
-                box-shadow: 0 1px 4px rgba(0, 212, 255, 0.3) !important;
+                transform: scale(0.97) !important;
+                box-shadow: 0 1px 3px rgba(0, 212, 255, 0.2) !important;
             }
         }
     </style>

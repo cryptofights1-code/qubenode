@@ -1365,13 +1365,8 @@
             closeModal('claimAllModal');
             
             try {
-                // Build memo with validator names
-                const validatorsList = Object.keys(validatorNamesCache)
-                    .map(addr => validatorNamesCache[addr])
-                    .filter(name => name !== 'Unknown')
-                    .join(', ') || 'validators';
-                
-                const memoText = `Claim rewards from ${validatorsList} via QubeNode.space`;
+                // Simple memo to avoid length limit
+                const memoText = `Claim all rewards via QubeNode.space`;
                 const result = await cosmosStaking.claimRewards(memoText);
                 showSuccess('Винагороди зібрано!', result.txHash);
                 await loadData();

@@ -271,7 +271,7 @@
                     
                     <div class="breakdown-row">
                         <span class="breakdown-label">Ваш реальний APY:</span>
-                        <span class="breakdown-value" style="color: #22c55e; font-size: 1.05em;">28.5%</span>
+                        <span class="breakdown-value" style="color: #22c55e; font-size: 1.05em;" id="realAPY">28.5%</span>
                     </div>
                     
                     <div class="breakdown-row">
@@ -437,6 +437,17 @@
             document.getElementById('initialAmount').textContent = amount.toLocaleString() + ' TICS ($' + (amount * priceToUse).toFixed(2) + ')';
             document.getElementById('periodText').textContent = getPeriodText(period, customDays);
             document.getElementById('compoundText').textContent = compoundText;
+            
+            // Calculate real APY based on compounding
+            let realAPY;
+            if (compoundFreq === 'none') {
+                realAPY = NET_APY;
+            } else {
+                // Formula: Real APY = (1 + r/n)^n - 1, where r = annual rate, n = compounds per year
+                const ratePerPeriod = ANNUAL_RATE / compoundsPerYear;
+                realAPY = (Math.pow(1 + ratePerPeriod, compoundsPerYear) - 1) * 100;
+            }
+            document.getElementById('realAPY').textContent = realAPY.toFixed(2) + '%';
             
             document.getElementById('totalRewardAmount').textContent = grossReward.toFixed(2) + ' TICS ($' + (grossReward * priceToUse).toFixed(2) + ')';
             document.getElementById('validatorCommissionAmount').textContent = validatorCommission.toFixed(2) + ' TICS ($' + (validatorCommission * priceToUse).toFixed(2) + ')';

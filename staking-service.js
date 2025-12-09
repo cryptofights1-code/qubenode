@@ -527,12 +527,23 @@ class CosmosStakingService {
         }
     }
 
-    async claimRewards(validatorAddress, memo = '') {
+    async claimRewards(validatorAddressOrArray, memo = '') {
         try {
             const delegatorAddress = this.walletManager.getAddress();
-
-            const msg = this.txBuilder.createClaimRewardsMsg(delegatorAddress, validatorAddress);
-            const gasLimit = this.chainClient.chainConfig.gas.claimRewards;
+            
+            // Support both single validator and array of validators
+            const validatorAddresses = Array.isArray(validatorAddressOrArray) 
+                ? validatorAddressOrArray 
+                : [validatorAddressOrArray];
+            
+            // Create message for each validator
+            const messages = validatorAddresses.map(validatorAddress => 
+                this.txBuilder.createClaimRewardsMsg(delegatorAddress, validatorAddress)
+            );
+            
+            // Calculate gas based on number of validators
+            const baseGas = this.chainClient.chainConfig.gas.claimRewards;
+            const gasLimit = baseGas * validatorAddresses.length;
             
             const gasPrice = this.chainClient.chainConfig.feeCurrencies[0].gasPriceStep.average;
             const feeAmount = Math.ceil(gasLimit * gasPrice);
@@ -545,9 +556,9 @@ class CosmosStakingService {
                 gas: gasLimit.toString()
             };
 
-            console.log('📤 Broadcasting claim rewards...');
+            console.log(`📤 Broadcasting claim rewards from ${validatorAddresses.length} validator(s)...`);
 
-            const result = await this.signAndBroadcast([msg], fee, memo);
+            const result = await this.signAndBroadcast(messages, fee, memo);
 
             console.log('✅ Claim rewards successful:', result.txHash);
 

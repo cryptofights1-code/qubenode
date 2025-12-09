@@ -191,16 +191,19 @@ class CosmosStakingModule {
         }
     }
 
-    async claimRewards(memo = '') {
+    async claimRewards(memo = '', validatorAddresses = null) {
         try {
             if (!this.stakingService) {
                 throw new Error('Будь ласка, спочатку підключіть гаманець');
             }
 
             console.log('Claiming rewards...');
+            
+            // If no validator addresses provided, use default (QubeNode)
+            const validators = validatorAddresses || this.validatorConfig.operatorAddress;
 
             const result = await this.stakingService.claimRewards(
-                this.validatorConfig.operatorAddress,
+                validators,
                 memo
             );
 

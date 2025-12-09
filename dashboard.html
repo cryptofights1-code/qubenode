@@ -1365,9 +1365,23 @@
             closeModal('claimAllModal');
             
             try {
+                const overview = await cosmosStaking.refresh();
+                
+                // Get all validator addresses with rewards
+                const validatorAddresses = overview.rewards.rewards
+                    .filter(r => r.reward && r.reward.length > 0)
+                    .map(r => r.validator_address);
+                
+                if (validatorAddresses.length === 0) {
+                    alert('Немає винагород для збору');
+                    return;
+                }
+                
+                console.log('Claiming from validators:', validatorAddresses);
+                
                 // Simple memo to avoid length limit
                 const memoText = `Claim all rewards via QubeNode.space`;
-                const result = await cosmosStaking.claimRewards(memoText);
+                const result = await cosmosStaking.claimRewards(memoText, validatorAddresses);
                 showSuccess('Винагороди зібрано!', result.txHash);
                 await loadData();
             } catch (error) {

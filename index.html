@@ -2423,46 +2423,44 @@
         </div>
     </div>
 
-    <!-- МОБІЛЬНА КНОПКА ГАМАНЦЯ - МІЖ ГАМБУРГЕРОМ І ТЕЛЕГРАМ -->
+    <!-- МОБІЛЬНА КНОПКА ГАМАНЦЯ В ХЕДЕРІ -->
     <style>
         #mobileHeaderWalletBtn {
             display: none;
         }
         @media (max-width: 768px) {
             #mobileHeaderWalletBtn {
-                display: block !important;
+                display: inline-block !important;
                 position: fixed !important;
-                top: 18px !important;
-                left: 50%;
-                transform: translateX(-50%);
+                top: 15px !important;
+                right: 70px !important;
                 width: auto !important;
-                height: 36px !important;
-                background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 255, 240, 0.2)) !important;
-                border: 1.5px solid !important;
-                border-image: linear-gradient(90deg, #00FFB3, #00D4FF, #A855F7) 1 !important;
-                border-radius: 18px !important;
-                color: #00FFF0 !important;
+                height: 32px !important;
+                background: linear-gradient(135deg, #FF6B35, #F7931A, #FFC300) !important;
+                border: none !important;
+                border-radius: 20px !important;
+                color: #000000 !important;
                 font-size: 11px !important;
-                font-weight: 600 !important;
+                font-weight: 700 !important;
                 cursor: pointer !important;
                 z-index: 99999 !important;
                 text-align: center !important;
-                line-height: 36px !important;
-                transition: all 0.3s !important;
-                backdrop-filter: blur(10px) !important;
-                padding: 0 16px !important;
+                line-height: 32px !important;
+                transition: all 0.3s ease !important;
+                padding: 0 14px !important;
                 margin: 0 !important;
-                white-space: nowrap;
-                box-shadow: 0 4px 12px rgba(0, 212, 255, 0.2);
+                white-space: nowrap !important;
+                box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3) !important;
+                font-family: 'Space Grotesk', sans-serif !important;
+                letter-spacing: 0.3px !important;
             }
             #mobileHeaderWalletBtn:active {
-                transform: translateX(-50%) scale(0.95);
-                background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(0, 255, 240, 0.3)) !important;
-                box-shadow: 0 2px 8px rgba(0, 212, 255, 0.3);
+                transform: scale(0.95) !important;
+                box-shadow: 0 1px 4px rgba(255, 107, 53, 0.4) !important;
             }
         }
     </style>
-    <button id="mobileHeaderWalletBtn" type="button">Підключити гаманець</button>
+    <button id="mobileHeaderWalletBtn" type="button">Connect Wallet</button>
 
     <div class="bg-animation"></div>
     <div class="grid-overlay"></div>

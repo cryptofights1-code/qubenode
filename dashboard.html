@@ -789,7 +789,7 @@
                 </div>
                 
                 <div style="color: #94a3b8; font-size: 13px; margin-bottom: 10px; font-weight: 600;">Select Validator:</div>
-                <div id="validatorsList" style="max-height: 280px; overflow-y: auto;"></div>
+                <div id="validatorsList" style="max-height: 320px; overflow-y: auto;"></div>
             </div>
             <div class="modal-footer" style="padding: 12px 20px;">
                 <button class="btn-cancel" onclick="closeModal('switchValidatorModal')">Cancel</button>
@@ -1416,14 +1416,17 @@
                     const commission = (parseFloat(val.commission.commission_rates.rate) * 100).toFixed(2);
                     const isQubeNode = val.operator_address === qubenodeAddr;
                     
+                    // Shorten address: first 20 chars ... last 6 chars
+                    const shortAddr = val.operator_address.substring(0, 20) + '...' + val.operator_address.substring(val.operator_address.length - 6);
+                    
                     html += `
                         <div class="validator-list-item" onclick="selectValidator('${val.operator_address}', '${name}')" style="${isQubeNode ? 'background: linear-gradient(135deg, rgba(0,212,255,0.15), rgba(99,102,241,0.15)); border: 1.5px solid rgba(0,212,255,0.4);' : ''}">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <div>
+                                <div style="flex: 1; min-width: 0;">
                                     <div style="color: ${isQubeNode ? '#00FFF0' : 'white'}; font-weight: ${isQubeNode ? '700' : '600'}; margin-bottom: 4px; ${isQubeNode ? 'font-size: 15px;' : ''}">${name}${isQubeNode ? ' ⭐' : ''}</div>
-                                    <div style="color: #64748b; font-size: ${isQubeNode ? '11px' : '12px'};">${val.operator_address.substring(0, 30)}...</div>
+                                    <div style="color: #64748b; font-size: ${isQubeNode ? '10px' : '11px'}; overflow: hidden; text-overflow: ellipsis;">${shortAddr}</div>
                                 </div>
-                                <div style="color: ${isQubeNode ? '#00D4FF' : '#94a3b8'}; font-size: ${isQubeNode ? '12px' : '13px'}; font-weight: ${isQubeNode ? '600' : 'normal'};">Комісія: ${commission}%</div>
+                                <div style="color: ${isQubeNode ? '#00D4FF' : '#94a3b8'}; font-size: ${isQubeNode ? '11px' : '12px'}; font-weight: ${isQubeNode ? '600' : 'normal'}; margin-left: 10px; white-space: nowrap;">Комісія: ${commission}%</div>
                             </div>
                         </div>
                     `;

@@ -2432,29 +2432,33 @@
             #mobileHeaderWalletBtn {
                 display: block !important;
                 position: fixed !important;
-                top: 22px !important;
-                left: 70px !important;
-                width: 200px !important;
-                height: 30px !important;
-                background: rgba(10, 10, 10, 0.9) !important;
-                border: 1px solid !important;
+                top: 18px !important;
+                left: 50%;
+                transform: translateX(-50%);
+                width: auto !important;
+                height: 36px !important;
+                background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 255, 240, 0.2)) !important;
+                border: 1.5px solid !important;
                 border-image: linear-gradient(90deg, #00FFB3, #00D4FF, #A855F7) 1 !important;
-                border-radius: 15px !important;
+                border-radius: 18px !important;
                 color: #00FFF0 !important;
-                font-size: 10px !important;
+                font-size: 11px !important;
                 font-weight: 600 !important;
                 cursor: pointer !important;
-                z-index: 99995 !important;
+                z-index: 99999 !important;
                 text-align: center !important;
-                line-height: 30px !important;
+                line-height: 36px !important;
                 transition: all 0.3s !important;
                 backdrop-filter: blur(10px) !important;
-                padding: 0 !important;
+                padding: 0 16px !important;
                 margin: 0 !important;
+                white-space: nowrap;
+                box-shadow: 0 4px 12px rgba(0, 212, 255, 0.2);
             }
             #mobileHeaderWalletBtn:active {
-                transform: scale(0.97);
-                background: rgba(10, 10, 10, 1) !important;
+                transform: translateX(-50%) scale(0.95);
+                background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(0, 255, 240, 0.3)) !important;
+                box-shadow: 0 2px 8px rgba(0, 212, 255, 0.3);
             }
         }
     </style>
@@ -2524,11 +2528,11 @@
                 </button>
                 <div class="wallet-dropdown" id="headerWalletDropdown">
                     <button class="wallet-option" onclick="connectHeaderWallet('keplr'); event.stopPropagation();">
-                        <span>🔷</span>
+                        <img src="keplr.png" alt="Keplr" style="width: 24px; height: 24px; border-radius: 6px;">
                         <span>Keplr</span>
                     </button>
                     <button class="wallet-option" onclick="connectHeaderWallet('cosmostation'); event.stopPropagation();">
-                        <span>🔶</span>
+                        <img src="Cosmostation.png" alt="Cosmostation" style="width: 24px; height: 24px; border-radius: 6px;">
                         <span>Cosmostation</span>
                     </button>
                 </div>

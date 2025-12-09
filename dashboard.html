@@ -1379,8 +1379,27 @@
                 
                 console.log('Claiming from validators:', validatorAddresses);
                 
-                // Simple memo to avoid length limit
-                const memoText = `Claim all rewards via QubeNode.space`;
+                // Build memo with validator count and names (if short enough)
+                const validatorCount = validatorAddresses.length;
+                let memoText = `Claim from ${validatorCount} validator${validatorCount > 1 ? 's' : ''}`;
+                
+                // Try to add first few validator names if memo stays short
+                const firstNames = validatorAddresses
+                    .slice(0, 3) // First 3 validators
+                    .map(addr => validatorNamesCache[addr] || addr.substring(0, 15))
+                    .join(', ');
+                
+                const testMemo = `${memoText}: ${firstNames}${validatorCount > 3 ? '...' : ''} via QubeNode.space`;
+                
+                // Only use detailed memo if under 200 chars (safe limit)
+                if (testMemo.length < 200) {
+                    memoText = testMemo;
+                } else {
+                    memoText = `${memoText} via QubeNode.space`;
+                }
+                
+                console.log('Memo:', memoText);
+                
                 const result = await cosmosStaking.claimRewards(memoText, validatorAddresses);
                 showSuccess('Винагороди зібрано!', result.txHash);
                 await loadData();
@@ -1624,11 +1643,11 @@
         }, 10000);
     </script>
     
-    <script src="chain-config.js?v=6"></script>
-    <script src="wallet-manager.js?v=6"></script>
-    <script src="chain-client.js?v=6"></script>
-    <script src="transaction-builder.js?v=6"></script>
-    <script src="staking-service.js?v=6"></script>
-    <script src="cosmos-staking.js?v=6"></script>
+    <script src="chain-config.js?v=8"></script>
+    <script src="wallet-manager.js?v=8"></script>
+    <script src="chain-client.js?v=8"></script>
+    <script src="transaction-builder.js?v=8"></script>
+    <script src="staking-service.js?v=8"></script>
+    <script src="cosmos-staking.js?v=8"></script>
 </body>
 </html>

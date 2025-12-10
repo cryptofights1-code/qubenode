@@ -134,6 +134,15 @@ class QubeNodeWalletConnector {
         this.showConnecting('modalKeplrBtn');
         
         try {
+            // First, suggest the chain to Keplr (important for mobile to get validator names)
+            try {
+                await window.keplr.experimentalSuggestChain(this.QubeticsKeplrChain);
+                console.log('✅ Chain suggested to Keplr');
+            } catch (suggestError) {
+                console.log('Chain already exists or suggestion failed:', suggestError.message);
+                // Continue anyway, chain might already be added
+            }
+            
             // Enable Keplr
             await window.keplr.enable(this.QubeticsKeplrChain.chainId);
             
@@ -170,6 +179,14 @@ class QubeNodeWalletConnector {
         try {
             // Get Keplr-compatible provider from Cosmostation
             const provider = window.cosmostation.providers.keplr;
+            
+            // Suggest the chain first
+            try {
+                await provider.experimentalSuggestChain(this.QubeticsKeplrChain);
+                console.log('✅ Chain suggested to Cosmostation');
+            } catch (suggestError) {
+                console.log('Chain already exists or suggestion failed:', suggestError.message);
+            }
             
             // Enable the chain
             await provider.enable(this.QubeticsKeplrChain.chainId);

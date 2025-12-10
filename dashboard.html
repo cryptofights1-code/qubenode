@@ -1288,24 +1288,25 @@
             closeModal('stakeMoreModal');
             
             try {
-                const amountMinimal = String((parseFloat(amount) * 1e18).toFixed(0));
-                
                 console.log('📤 Delegating to:', currentValidatorAddress);
                 console.log('💰 Amount:', amount, 'TICS');
                 
-                const walletManager = cosmosStaking.walletManager;
-                const chainClient = cosmosStaking.chainClient;
-                const txBuilder = cosmosStaking.txBuilder;
-                
-                // Get validator name if available
+                // Get validator name for memo
                 let validatorName = 'Validator';
                 if (validatorNamesCache[currentValidatorAddress]) {
                     validatorName = validatorNamesCache[currentValidatorAddress];
                 }
                 
-                const stakingService = new CosmosStakingService(walletManager, chainClient, txBuilder);
                 const memoText = `Delegate to ${validatorName} via QubeNode.space`;
-                const result = await stakingService.delegate(currentValidatorAddress, amountMinimal, memoText);
+                
+                // IMPORTANT: For delegate to other validators, we need to temporarily switch validator config
+                const originalValidator = cosmosStaking.validatorConfig.operatorAddress;
+                cosmosStaking.validatorConfig.operatorAddress = currentValidatorAddress;
+                
+                const result = await cosmosStaking.delegate(parseFloat(amount), memoText);
+                
+                // Restore original validator
+                cosmosStaking.validatorConfig.operatorAddress = originalValidator;
                 
                 showSuccess('Делегування успішне!', result.txHash);
                 await loadData();
@@ -1643,11 +1644,11 @@
         }, 10000);
     </script>
     
-    <script src="chain-config.js?v=8"></script>
-    <script src="wallet-manager.js?v=8"></script>
-    <script src="chain-client.js?v=8"></script>
-    <script src="transaction-builder.js?v=8"></script>
-    <script src="staking-service.js?v=8"></script>
-    <script src="cosmos-staking.js?v=8"></script>
+    <script src="chain-config.js?v=9"></script>
+    <script src="wallet-manager.js?v=9"></script>
+    <script src="chain-client.js?v=9"></script>
+    <script src="transaction-builder.js?v=9"></script>
+    <script src="staking-service.js?v=9"></script>
+    <script src="cosmos-staking.js?v=9"></script>
 </body>
 </html>

@@ -518,19 +518,27 @@
             const grossReward = netReward / 0.95;
             const validatorCommission = grossReward - netReward;
             
-            // FIXED: Оригінальні кольори - НЕ ЗМІНЮВАТИ!
-            const LIGHT_GREEN = '#86efac';  // Світло-зелений для винагород і USD
-            const YELLOW_COLOR = '#fbbf24'; // Жовтий для комісії
+            // COLORS: USD must match TICS color EXACTLY
+            const WHITE = '#ffffff';        // Для білих значень
+            const GREEN = '#22c55e';        // Для зелених значень  
+            const YELLOW = '#fbbf24';       // Для жовтих значень
             
-            // FIXED: USD на новому рядку для кращого відображення на мобільному
-            document.getElementById('initialAmount').innerHTML = amount.toLocaleString() + ' TICS<br><span style="font-size: 0.85em; color: ' + LIGHT_GREEN + ';">($' + (amount * priceToUse).toFixed(2) + ')</span>';
+            // Тіло депозиту - БІЛИЙ TICS → БІЛИЙ USD
+            document.getElementById('initialAmount').innerHTML = amount.toLocaleString() + ' TICS<br><span style="font-size: 0.85em; color: ' + WHITE + ';">($' + (amount * priceToUse).toFixed(2) + ')</span>';
             document.getElementById('periodText').textContent = getPeriodText(period, customDays);
             document.getElementById('compoundText').textContent = compoundText;
             
-            document.getElementById('totalRewardAmount').innerHTML = grossReward.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: ' + LIGHT_GREEN + ';">($' + (grossReward * priceToUse).toFixed(2) + ')</span>';
-            document.getElementById('validatorCommissionAmount').innerHTML = validatorCommission.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: ' + YELLOW_COLOR + ';">($' + (validatorCommission * priceToUse).toFixed(2) + ')</span>';
-            document.getElementById('netRewardAmount').innerHTML = netReward.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: ' + LIGHT_GREEN + ';">($' + (netReward * priceToUse).toFixed(2) + ')</span>';
-            document.getElementById('finalAmount').innerHTML = finalAmount.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: ' + LIGHT_GREEN + ';">($' + (finalAmount * priceToUse).toFixed(2) + ')</span>';
+            // Загальна винагорода - ЗЕЛЕНИЙ TICS → ЗЕЛЕНИЙ USD
+            document.getElementById('totalRewardAmount').innerHTML = grossReward.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: ' + GREEN + ';">($' + (grossReward * priceToUse).toFixed(2) + ')</span>';
+            
+            // Комісія валідатора - ЖОВТИЙ TICS → ЖОВТИЙ USD
+            document.getElementById('validatorCommissionAmount').innerHTML = validatorCommission.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: ' + YELLOW + ';">($' + (validatorCommission * priceToUse).toFixed(2) + ')</span>';
+            
+            // Ваша винагорода (чиста) - ЗЕЛЕНИЙ TICS → ЗЕЛЕНИЙ USD
+            document.getElementById('netRewardAmount').innerHTML = netReward.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: ' + GREEN + ';">($' + (netReward * priceToUse).toFixed(2) + ')</span>';
+            
+            // Кінцева сума - ЗЕЛЕНИЙ TICS → ЗЕЛЕНИЙ USD
+            document.getElementById('finalAmount').innerHTML = finalAmount.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: ' + GREEN + ';">($' + (finalAmount * priceToUse).toFixed(2) + ')</span>';
             
             // FIXED: Calculate real APY based on compound frequency using NET_APY
             const NET_APY_DECIMAL = NET_APY / 100; // 28.5% -> 0.285
@@ -556,7 +564,7 @@
                 document.getElementById('withoutCompoundUSD').textContent = '$' + (withoutCompoundFinal * priceToUse).toFixed(2);
                 document.getElementById('withCompound').textContent = finalAmount.toFixed(2) + ' TICS';
                 document.getElementById('withCompoundUSD').textContent = '$' + (finalAmount * priceToUse).toFixed(2);
-                document.getElementById('compoundBenefit').innerHTML = '+' + benefit.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: ' + LIGHT_GREEN + ';">($' + (benefit * priceToUse).toFixed(2) + ')</span>';
+                document.getElementById('compoundBenefit').innerHTML = '+' + benefit.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: ' + GREEN + ';">($' + (benefit * priceToUse).toFixed(2) + ')</span>';
             } else {
                 document.getElementById('compoundComparison').style.display = 'none';
             }

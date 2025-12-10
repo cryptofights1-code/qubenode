@@ -674,10 +674,7 @@
                     🚀 Делегувати на QubeNode
                 </button>
                 <button class="btn-quick btn-claim-all" onclick="quickClaimAll()">
-                    <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
-                        <span>Забрати всі винагороди</span>
-                        <span style="font-size: 13px; opacity: 0.9;"><span id="quickClaimAmount">0.000</span> TICS</span>
-                    </div>
+                    💰 Забрати всі винагороди (<span id="quickClaimAmount">0.000</span> TICS)
                 </button>
             </div>
         </div>
@@ -702,37 +699,34 @@
     <!-- Stake More / Delegate Modal -->
     <div id="stakeMoreModal" class="modal">
         <div class="modal-content" style="border-color: rgba(0,212,255,0.4);">
-            <div class="modal-header" style="padding: 12px 20px; min-height: auto;">
-                <h3 style="color: #00D4FF; font-size: 18px; margin: 0; display: flex; align-items: center; gap: 8px;">
-                    <span style="font-size: 20px;">💎</span>
-                    <span>Делегувати TICS</span>
-                </h3>
+            <div class="modal-header">
+                <h3 style="color: #00D4FF;">💎 Делегувати TICS</h3>
                 <span class="close" onclick="closeModal('stakeMoreModal')">&times;</span>
             </div>
-            <div class="modal-body" style="padding: 15px 20px;">
-                <div class="validator-info-box" style="padding: 10px 12px; margin-bottom: 12px;">
-                    <div style="color: #00D4FF; font-size: 16px; font-weight: 600; margin-bottom: 3px;" id="stakeMoreValidatorName"></div>
-                    <div style="color: #64748b; font-size: 11px; word-break: break-all;" id="stakeMoreValidatorAddr"></div>
+            <div class="modal-body">
+                <div class="validator-info-box">
+                    <div style="color: #00D4FF; font-size: 18px; font-weight: 600; margin-bottom: 4px;" id="stakeMoreValidatorName"></div>
+                    <div style="color: #64748b; font-size: 13px; word-break: break-all;" id="stakeMoreValidatorAddr"></div>
                 </div>
                 
                 <div style="margin-bottom: 12px;">
-                    <label style="color: #94a3b8; font-size: 13px; display: block; margin-bottom: 6px;">Сума для делегування (TICS)</label>
+                    <label style="color: #94a3b8; font-size: 14px; display: block; margin-bottom: 8px;">Сума для делегування (TICS)</label>
                     <input type="number" id="stakeMoreAmount" placeholder="0.00" step="0.001">
                 </div>
                 
-                <div style="display: flex; justify-content: space-between; margin-bottom: 15px; color: #64748b; font-size: 12px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 20px; color: #64748b; font-size: 13px;">
                     <span>Мінімум: 0.1 TICS</span>
                     <span>Доступно: <span id="stakeMoreAvailable">0.000</span> TICS</span>
                 </div>
                 
-                <div style="background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); border-radius: 10px; padding: 10px;">
-                    <label style="display: flex; align-items: center; cursor: pointer; color: #86efac; font-size: 12px;">
-                        <input type="checkbox" checked style="width: 18px; height: 18px; margin-right: 8px; cursor: pointer; flex-shrink: 0;">
+                <div style="background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); border-radius: 12px; padding: 14px;">
+                    <label style="display: flex; align-items: center; cursor: pointer; color: #86efac; font-size: 14px;">
+                        <input type="checkbox" checked style="width: 20px; height: 20px; margin-right: 10px; cursor: pointer;">
                         <span>Почнете отримувати винагороди одразу після делегування</span>
                     </label>
                 </div>
             </div>
-            <div class="modal-footer" style="padding: 12px 20px;">
+            <div class="modal-footer">
                 <button class="btn-cancel" onclick="closeModal('stakeMoreModal')">Скасувати</button>
                 <button class="btn-confirm cyan" onclick="confirmStakeMore()">Делегувати</button>
             </div>
@@ -772,26 +766,23 @@
     <!-- Switch Validator Modal - Step 1 -->
     <div id="switchValidatorModal" class="modal">
         <div class="modal-content" style="border-color: rgba(0,212,255,0.4);">
-            <div class="modal-header" style="padding: 12px 20px; min-height: auto;">
-                <h3 style="color: #00D4FF; font-size: 18px; margin: 0; display: flex; align-items: center; gap: 8px;">
-                    <span style="font-size: 20px;">🔄</span>
-                    <span>Switch Validator</span>
-                </h3>
+            <div class="modal-header">
+                <h3 style="color: #00D4FF;">🔄 Switch Validator</h3>
                 <span class="close" onclick="closeModal('switchValidatorModal')">&times;</span>
             </div>
-            <div class="modal-body" style="padding: 15px 20px;">
-                <div style="margin-bottom: 15px;">
-                    <div style="color: #00D4FF; font-size: 13px; margin-bottom: 6px; font-weight: 600;">From:</div>
-                    <div class="validator-info-box" style="padding: 10px 12px;">
-                        <div style="color: #00D4FF; font-size: 16px; font-weight: 600; margin-bottom: 3px;" id="switchFromValidatorName"></div>
-                        <div style="color: #94a3b8; font-size: 11px;">Staked: <span id="switchFromStaked">0.0000</span> TICS</div>
+            <div class="modal-body">
+                <div style="margin-bottom: 20px;">
+                    <div style="color: #00D4FF; font-size: 14px; margin-bottom: 8px;">From:</div>
+                    <div class="validator-info-box">
+                        <div style="color: #00D4FF; font-size: 18px; font-weight: 600; margin-bottom: 4px;" id="switchFromValidatorName"></div>
+                        <div style="color: #94a3b8; font-size: 13px;">Staked: <span id="switchFromStaked">0.0000</span> TICS</div>
                     </div>
                 </div>
                 
-                <div style="color: #94a3b8; font-size: 13px; margin-bottom: 10px; font-weight: 600;">Select Validator:</div>
-                <div id="validatorsList" style="max-height: 320px; overflow-y: auto;"></div>
+                <div style="color: #94a3b8; font-size: 14px; margin-bottom: 12px;">Select Validator:</div>
+                <div id="validatorsList" style="max-height: 300px; overflow-y: auto;"></div>
             </div>
-            <div class="modal-footer" style="padding: 12px 20px;">
+            <div class="modal-footer">
                 <button class="btn-cancel" onclick="closeModal('switchValidatorModal')">Cancel</button>
                 <button class="btn-confirm cyan" onclick="switchValidatorStep2()">Next</button>
             </div>
@@ -801,43 +792,40 @@
     <!-- Switch Validator Modal - Step 2 -->
     <div id="switchValidatorModal2" class="modal">
         <div class="modal-content" style="border-color: rgba(0,212,255,0.4);">
-            <div class="modal-header" style="padding: 12px 20px; min-height: auto;">
-                <h3 style="color: #00D4FF; font-size: 18px; margin: 0; display: flex; align-items: center; gap: 8px;">
-                    <span style="font-size: 20px;">🔄</span>
-                    <span>Switch Validator</span>
-                </h3>
+            <div class="modal-header">
+                <h3 style="color: #00D4FF;">🔄 Switch Validator</h3>
                 <span class="close" onclick="closeModal('switchValidatorModal2')">&times;</span>
             </div>
-            <div class="modal-body" style="padding: 15px 20px;">
-                <div style="margin-bottom: 12px;">
-                    <div style="color: #00D4FF; font-size: 12px; margin-bottom: 5px; font-weight: 600;">From:</div>
-                    <div class="validator-info-box" style="padding: 8px 10px;">
-                        <div style="color: #00D4FF; font-size: 14px; font-weight: 600; margin-bottom: 2px;" id="switchFromValidatorName2"></div>
-                        <div style="color: #64748b; font-size: 10px; margin-bottom: 4px; word-break: break-all;" id="switchFromValidatorAddr2"></div>
-                        <div style="color: #94a3b8; font-size: 11px;">Staked: <span id="switchFromStaked2">0.0000</span> TICS</div>
+            <div class="modal-body">
+                <div style="margin-bottom: 20px;">
+                    <div style="color: #00D4FF; font-size: 14px; margin-bottom: 8px;">From:</div>
+                    <div class="validator-info-box">
+                        <div style="color: #00D4FF; font-size: 18px; font-weight: 600; margin-bottom: 4px;" id="switchFromValidatorName2"></div>
+                        <div style="color: #64748b; font-size: 11px; margin-bottom: 8px;" id="switchFromValidatorAddr2"></div>
+                        <div style="color: #94a3b8; font-size: 13px;">Staked: <span id="switchFromStaked2">0.0000</span> TICS</div>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <div style="color: #00D4FF; font-size: 14px; margin-bottom: 8px;">To:</div>
+                    <div class="validator-info-box">
+                        <div style="color: #00D4FF; font-size: 16px; font-weight: 600; margin-bottom: 4px;" id="switchToValidatorName"></div>
+                        <div style="color: #64748b; font-size: 11px; word-break: break-all;" id="switchToValidatorAddr"></div>
                     </div>
                 </div>
                 
                 <div style="margin-bottom: 12px;">
-                    <div style="color: #00D4FF; font-size: 12px; margin-bottom: 5px; font-weight: 600;">To:</div>
-                    <div class="validator-info-box" style="padding: 8px 10px;">
-                        <div style="color: #00D4FF; font-size: 14px; font-weight: 600; margin-bottom: 2px;" id="switchToValidatorName"></div>
-                        <div style="color: #64748b; font-size: 10px; word-break: break-all;" id="switchToValidatorAddr"></div>
-                    </div>
-                </div>
-                
-                <div style="margin-bottom: 10px;">
-                    <label style="color: #94a3b8; font-size: 13px; display: block; margin-bottom: 6px;">Amount (TICS)</label>
+                    <label style="color: #94a3b8; font-size: 14px; display: block; margin-bottom: 8px;">Amount (TICS)</label>
                     <input type="number" id="switchAmount" placeholder="0.00" step="0.001">
                 </div>
                 
-                <div style="text-align: right; margin-bottom: 15px; color: #64748b; font-size: 12px;">
+                <div style="text-align: right; margin-bottom: 20px; color: #64748b; font-size: 13px;">
                     Maximum: <span id="switchMaxAmount">0.0000</span> TICS
                 </div>
             </div>
-            <div class="modal-footer" style="padding: 12px 20px;">
+            <div class="modal-footer">
                 <button class="btn-cancel" onclick="closeModal('switchValidatorModal2')">Cancel</button>
-                <button class="btn-confirm cyan" onclick="confirmSwitch()">Switch</button>
+                <button class="btn-confirm cyan" onclick="confirmSwitch()">Next</button>
             </div>
         </div>
     </div>
@@ -845,35 +833,32 @@
     <!-- Unbond Modal -->
     <div id="unbondModal" class="modal">
         <div class="modal-content" style="border-color: rgba(239,68,68,0.4);">
-            <div class="modal-header" style="padding: 12px 20px; min-height: auto;">
-                <h3 style="color: #ef4444; font-size: 18px; margin: 0; display: flex; align-items: center; gap: 8px;">
-                    <span style="font-size: 20px;">🔓</span>
-                    <span>Unstake TICS</span>
-                </h3>
+            <div class="modal-header">
+                <h3 style="color: #ef4444;">🔓 Unstake TICS</h3>
                 <span class="close" onclick="closeModal('unbondModal')">&times;</span>
             </div>
-            <div class="modal-body" style="padding: 15px 20px;">
-                <div class="validator-info-box" style="background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.2); padding: 10px 12px; margin-bottom: 12px;">
-                    <div style="color: #ef4444; font-size: 16px; font-weight: 600; margin-bottom: 3px;" id="unbondValidatorName"></div>
-                    <div style="color: #94a3b8; font-size: 11px;">Staked: <span id="unbondStaked">0.0000</span> TICS</div>
+            <div class="modal-body">
+                <div class="validator-info-box" style="background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.2);">
+                    <div style="color: #ef4444; font-size: 18px; font-weight: 600; margin-bottom: 4px;" id="unbondValidatorName"></div>
+                    <div style="color: #94a3b8; font-size: 13px;">Staked: <span id="unbondStaked">0.0000</span> TICS</div>
                 </div>
                 
                 <div style="margin-bottom: 12px;">
-                    <label style="color: #94a3b8; font-size: 13px; display: block; margin-bottom: 6px;">Amount (TICS)</label>
+                    <label style="color: #94a3b8; font-size: 14px; display: block; margin-bottom: 8px;">Amount (TICS)</label>
                     <input type="number" id="unbondAmount" placeholder="0.00" step="0.001" style="border-color: rgba(239,68,68,0.3);">
                 </div>
                 
-                <div style="text-align: right; margin-bottom: 15px; color: #64748b; font-size: 12px;">
+                <div style="text-align: right; margin-bottom: 20px; color: #64748b; font-size: 13px;">
                     Staked: <span id="unbondMaxAmount">0.0000</span> TICS
                 </div>
                 
-                <div class="warning-box" style="padding: 10px 12px;">
-                    <div class="warning-item" style="font-size: 11px; margin-bottom: 6px;">⚠️ You will NOT earn rewards during unbonding</div>
-                    <div class="warning-item" style="font-size: 11px; margin-bottom: 6px;">⚠️ Tokens will be locked for 14 days</div>
-                    <div class="warning-item" style="font-size: 11px; margin-bottom: 0;">⚠️ You can cancel unbonding before completion</div>
+                <div class="warning-box">
+                    <div class="warning-item">⚠️ You will NOT earn rewards during unbonding</div>
+                    <div class="warning-item">⚠️ Tokens will be locked for 14 days</div>
+                    <div class="warning-item">⚠️ You can cancel unbonding before completion</div>
                 </div>
             </div>
-            <div class="modal-footer" style="padding: 12px 20px;">
+            <div class="modal-footer">
                 <button class="btn-cancel" onclick="closeModal('unbondModal')">Cancel</button>
                 <button class="btn-confirm red" onclick="confirmUnbond()">Unstake</button>
             </div>
@@ -1288,25 +1273,24 @@
             closeModal('stakeMoreModal');
             
             try {
+                const amountMinimal = String((parseFloat(amount) * 1e18).toFixed(0));
+                
                 console.log('📤 Delegating to:', currentValidatorAddress);
                 console.log('💰 Amount:', amount, 'TICS');
                 
-                // Get validator name for memo
+                const walletManager = cosmosStaking.walletManager;
+                const chainClient = cosmosStaking.chainClient;
+                const txBuilder = cosmosStaking.txBuilder;
+                
+                // Get validator name if available
                 let validatorName = 'Validator';
                 if (validatorNamesCache[currentValidatorAddress]) {
                     validatorName = validatorNamesCache[currentValidatorAddress];
                 }
                 
+                const stakingService = new CosmosStakingService(walletManager, chainClient, txBuilder);
                 const memoText = `Delegate to ${validatorName} via QubeNode.space`;
-                
-                // IMPORTANT: For delegate to other validators, we need to temporarily switch validator config
-                const originalValidator = cosmosStaking.validatorConfig.operatorAddress;
-                cosmosStaking.validatorConfig.operatorAddress = currentValidatorAddress;
-                
-                const result = await cosmosStaking.delegate(parseFloat(amount), memoText);
-                
-                // Restore original validator
-                cosmosStaking.validatorConfig.operatorAddress = originalValidator;
+                const result = await stakingService.delegate(currentValidatorAddress, amountMinimal, memoText);
                 
                 showSuccess('Делегування успішне!', result.txHash);
                 await loadData();
@@ -1366,42 +1350,14 @@
             closeModal('claimAllModal');
             
             try {
-                const overview = await cosmosStaking.refresh();
+                // Build memo with validator names
+                const validatorsList = Object.keys(validatorNamesCache)
+                    .map(addr => validatorNamesCache[addr])
+                    .filter(name => name !== 'Unknown')
+                    .join(', ') || 'validators';
                 
-                // Get all validator addresses with rewards
-                const validatorAddresses = overview.rewards.rewards
-                    .filter(r => r.reward && r.reward.length > 0)
-                    .map(r => r.validator_address);
-                
-                if (validatorAddresses.length === 0) {
-                    alert('Немає винагород для збору');
-                    return;
-                }
-                
-                console.log('Claiming from validators:', validatorAddresses);
-                
-                // Build memo with validator count and names (if short enough)
-                const validatorCount = validatorAddresses.length;
-                let memoText = `Claim from ${validatorCount} validator${validatorCount > 1 ? 's' : ''}`;
-                
-                // Try to add first few validator names if memo stays short
-                const firstNames = validatorAddresses
-                    .slice(0, 3) // First 3 validators
-                    .map(addr => validatorNamesCache[addr] || addr.substring(0, 15))
-                    .join(', ');
-                
-                const testMemo = `${memoText}: ${firstNames}${validatorCount > 3 ? '...' : ''} via QubeNode.space`;
-                
-                // Only use detailed memo if under 200 chars (safe limit)
-                if (testMemo.length < 200) {
-                    memoText = testMemo;
-                } else {
-                    memoText = `${memoText} via QubeNode.space`;
-                }
-                
-                console.log('Memo:', memoText);
-                
-                const result = await cosmosStaking.claimRewards(memoText, validatorAddresses);
+                const memoText = `Claim rewards from ${validatorsList} via QubeNode.space`;
+                const result = await cosmosStaking.claimRewards(memoText);
                 showSuccess('Винагороди зібрано!', result.txHash);
                 await loadData();
             } catch (error) {
@@ -1431,37 +1387,23 @@
                 const data = await response.json();
                 allValidators = data.validators || [];
                 
-                // Sort validators: QubeNode first, then others
-                const qubenodeAddr = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
-                const sortedValidators = allValidators.filter(v => v.operator_address !== currentValidatorAddress).sort((a, b) => {
-                    if (a.operator_address === qubenodeAddr) return -1;
-                    if (b.operator_address === qubenodeAddr) return 1;
-                    return 0;
-                });
-                
                 let html = '';
-                for (const val of sortedValidators) {
-                    const name = val.description.moniker || val.operator_address;
-                    const commission = (parseFloat(val.commission.commission_rates.rate) * 100).toFixed(2);
-                    const isQubeNode = val.operator_address === qubenodeAddr;
-                    
-                    // Shorten address: first 20 chars ... last 6 chars
-                    const shortAddr = val.operator_address.substring(0, 20) + '...' + val.operator_address.substring(val.operator_address.length - 6);
-                    
-                    html += `
-                        <div class="validator-list-item" onclick="selectValidator('${val.operator_address}', '${name}')" style="${isQubeNode ? 'background: linear-gradient(135deg, rgba(0,212,255,0.15), rgba(99,102,241,0.15)); border: 1.5px solid rgba(0,212,255,0.4);' : ''} padding: 10px 12px; margin-bottom: 8px; cursor: pointer; border-radius: 12px; transition: all 0.3s;">
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
-                                <div style="flex: 1; min-width: 0;">
-                                    <div style="color: ${isQubeNode ? '#00FFF0' : 'white'}; font-weight: ${isQubeNode ? '700' : '600'}; margin-bottom: 4px; font-size: ${isQubeNode ? '15px' : '14px'};">${name}${isQubeNode ? ' ⭐' : ''}</div>
-                                    <div style="color: #64748b; font-size: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${shortAddr}</div>
-                                </div>
-                                <div style="color: ${isQubeNode ? '#00D4FF' : '#94a3b8'}; font-size: 11px; font-weight: ${isQubeNode ? '600' : 'normal'}; white-space: nowrap; text-align: right;">
-                                    <div style="color: #64748b; font-size: 9px; margin-bottom: 2px;">Комісія</div>
-                                    <div>${commission}%</div>
+                for (const val of allValidators) {
+                    if (val.operator_address !== currentValidatorAddress) {
+                        const name = val.description.moniker || val.operator_address;
+                        const commission = (parseFloat(val.commission.commission_rates.rate) * 100).toFixed(2);
+                        html += `
+                            <div class="validator-list-item" onclick="selectValidator('${val.operator_address}', '${name}')">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <div style="color: white; font-weight: 600; margin-bottom: 4px;">${name}</div>
+                                        <div style="color: #64748b; font-size: 12px;">${val.operator_address.substring(0, 30)}...</div>
+                                    </div>
+                                    <div style="color: #94a3b8; font-size: 13px;">Комісія: ${commission}%</div>
                                 </div>
                             </div>
-                        </div>
-                    `;
+                        `;
+                    }
                 }
                 
                 document.getElementById('validatorsList').innerHTML = html;
@@ -1644,11 +1586,11 @@
         }, 10000);
     </script>
     
-    <script src="chain-config.js?v=9"></script>
-    <script src="wallet-manager.js?v=9"></script>
-    <script src="chain-client.js?v=9"></script>
-    <script src="transaction-builder.js?v=9"></script>
-    <script src="staking-service.js?v=9"></script>
-    <script src="cosmos-staking.js?v=9"></script>
+    <script src="chain-config.js?v=6"></script>
+    <script src="wallet-manager.js?v=6"></script>
+    <script src="chain-client.js?v=6"></script>
+    <script src="transaction-builder.js?v=6"></script>
+    <script src="staking-service.js?v=6"></script>
+    <script src="cosmos-staking.js?v=6"></script>
 </body>
 </html>

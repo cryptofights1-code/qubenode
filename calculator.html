@@ -289,9 +289,9 @@
                 </div>
                 
                 <div class="input-group">
-                    <label>Reinvestment</label>
+                    <label>Compounding</label>
                     <select id="compoundFrequency" class="calc-input" onchange="calculateAuto()">
-                        <option value="none">Without reinvestment</option>
+                        <option value="none">No compounding</option>
                         <option value="daily">Daily (manual)</option>
                         <option value="weekly">Weekly (manual)</option>
                         <option value="monthly">Monthly (manual)</option>
@@ -359,7 +359,7 @@
                     </div>
                     
                     <div class="breakdown-row">
-                        <span class="breakdown-label">Reinvestment:</span>
+                        <span class="breakdown-label">Compounding:</span>
                         <span class="breakdown-value" id="compoundText">--</span>
                     </div>
                     
@@ -386,23 +386,23 @@
 
                 <!-- Comparison -->
                 <div id="compoundComparison" class="comparison-box">
-                    <h4 class="breakdown-title">💡 Comparison: without reinvestment vs with reinvestment</h4>
+                    <h4 class="breakdown-title">💡 Comparison: no compounding vs with compounding</h4>
                     
                     <div class="comparison-grid">
                         <div>
-                            <div style="color: #94a3b8; margin-bottom: 10px;">Without reinvestment:</div>
+                            <div style="color: #94a3b8; margin-bottom: 10px;">No compounding:</div>
                             <div style="color: #fff; font-size: 1.3em; font-weight: 600;" id="withoutCompound">--</div>
-                            <div style="color: #64748b; font-size: 0.9em; margin-top: 5px;" id="withoutCompoundUSD">--</div>
+                            <div style="color: #fff; font-size: 0.9em; margin-top: 5px;" id="withoutCompoundUSD">--</div>
                         </div>
                         <div>
-                            <div style="color: #94a3b8; margin-bottom: 10px;">With reinvestment:</div>
+                            <div style="color: #94a3b8; margin-bottom: 10px;">With compounding:</div>
                             <div style="color: #22c55e; font-size: 1.3em; font-weight: 700;" id="withCompound">--</div>
-                            <div style="color: #86efac; font-size: 0.9em; margin-top: 5px;" id="withCompoundUSD">--</div>
+                            <div style="color: #22c55e; font-size: 0.9em; margin-top: 5px;" id="withCompoundUSD">--</div>
                         </div>
                     </div>
                     
                     <div class="benefit-box">
-                        <div class="label">Additional profit with reinvestment:</div>
+                        <div class="label">Additional profit with compounding:</div>
                         <div class="value" id="compoundBenefit">--</div>
                     </div>
                 </div>
@@ -480,7 +480,7 @@
                 const monthlyReward = amount * monthlyRate;
                 totalReward = monthlyReward * period;
                 finalAmount = amount + totalReward;
-                compoundText = 'Without reinvestment';
+                compoundText = 'No compounding';
             } else {
                 switch(compoundFreq) {
                     case 'daily': compoundsPerYear = 365; compoundText = 'Daily (manual)'; break;

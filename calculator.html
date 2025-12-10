@@ -110,25 +110,27 @@
         .summary-card.highlight { background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(74, 222, 128, 0.1)); border: 2px solid rgba(34, 197, 94, 0.4); }
         .card-label { 
             color: #94a3b8; 
-            font-size: 0.9em; 
-            margin-bottom: 8px;
-            text-align: center; /* FIXED: Центруємо текст */
+            font-size: 0.85em; /* FIXED: Менший розмір для довгих назв */
+            margin-bottom: 10px;
+            text-align: center;
             width: 100%;
+            line-height: 1.3; /* FIXED: Висота рядка для переносу */
         }
         .card-value { 
             color: #22c55e; 
-            font-size: 1.5em; 
+            font-size: 1.4em; /* FIXED: Трохи менше для балансу */
             font-weight: 700; 
-            margin: 5px 0;
+            margin: 8px 0;
             text-align: center;
             width: 100%;
-            word-break: break-word; /* FIXED: Довгі числа переносяться */
+            word-break: break-word;
+            line-height: 1.2;
         }
-        .card-value.large { font-size: 1.6em; }
+        .card-value.large { font-size: 1.5em; } /* FIXED: Менше для великих чисел */
         .card-usd { 
             color: #86efac; 
-            font-size: 0.85em; 
-            margin-top: 3px;
+            font-size: 0.8em; /* FIXED: Трохи менше */
+            margin-top: 5px;
             text-align: center;
             width: 100%;
         }
@@ -151,10 +153,10 @@
         }
         .breakdown-value { 
             font-weight: 600; 
-            text-align: right; /* FIXED: Завжди праворуч */
-            min-width: 140px; /* FIXED: Ширше для довгих чисел */
-            white-space: nowrap;
-            flex-shrink: 0; /* FIXED: Не стискається */
+            text-align: right;
+            min-width: 140px;
+            flex-shrink: 0;
+            line-height: 1.4; /* FIXED: Висота рядка для переносу */
         }
         .comparison-box { background: rgba(34, 197, 94, 0.05); border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 15px; padding: 25px; display: none; }
         .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px; }
@@ -195,17 +197,23 @@
                 gap: 12px;
             }
             .summary-card {
-                min-height: 130px; /* Менша висота на мобільному */
-                padding: 15px 10px; /* Менше padding */
+                min-height: 125px; /* FIXED: Менша висота */
+                padding: 12px 8px; /* FIXED: Менше padding */
             }
             .card-label {
-                font-size: 0.85em; /* Менший текст */
+                font-size: 0.8em; /* FIXED: Дуже маленький текст для довгих назв */
+                margin-bottom: 8px;
+                line-height: 1.2;
             }
             .card-value {
-                font-size: 1.3em; /* Менші цифри */
+                font-size: 1.2em; /* FIXED: Менші цифри */
+                margin: 6px 0;
             }
             .card-value.large {
-                font-size: 1.4em;
+                font-size: 1.3em; /* FIXED: Менше для великих чисел */
+            }
+            .card-usd {
+                font-size: 0.75em; /* FIXED: Дуже маленький USD */
             }
             .breakdown-row {
                 padding: 10px 0;
@@ -510,14 +518,15 @@
             const grossReward = netReward / 0.95;
             const validatorCommission = grossReward - netReward;
             
-            document.getElementById('initialAmount').textContent = amount.toLocaleString() + ' TICS ($' + (amount * priceToUse).toFixed(2) + ')';
+            // FIXED: USD на новому рядку для кращого відображення на мобільному
+            document.getElementById('initialAmount').innerHTML = amount.toLocaleString() + ' TICS<br><span style="font-size: 0.85em; color: #86efac;">($' + (amount * priceToUse).toFixed(2) + ')</span>';
             document.getElementById('periodText').textContent = getPeriodText(period, customDays);
             document.getElementById('compoundText').textContent = compoundText;
             
-            document.getElementById('totalRewardAmount').textContent = grossReward.toFixed(2) + ' TICS ($' + (grossReward * priceToUse).toFixed(2) + ')';
-            document.getElementById('validatorCommissionAmount').textContent = validatorCommission.toFixed(2) + ' TICS ($' + (validatorCommission * priceToUse).toFixed(2) + ')';
-            document.getElementById('netRewardAmount').textContent = netReward.toFixed(2) + ' TICS ($' + (netReward * priceToUse).toFixed(2) + ')';
-            document.getElementById('finalAmount').textContent = finalAmount.toFixed(2) + ' TICS ($' + (finalAmount * priceToUse).toFixed(2) + ')';
+            document.getElementById('totalRewardAmount').innerHTML = grossReward.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: #86efac;">($' + (grossReward * priceToUse).toFixed(2) + ')</span>';
+            document.getElementById('validatorCommissionAmount').innerHTML = validatorCommission.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: #fbbf24;">($' + (validatorCommission * priceToUse).toFixed(2) + ')</span>';
+            document.getElementById('netRewardAmount').innerHTML = netReward.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: #86efac;">($' + (netReward * priceToUse).toFixed(2) + ')</span>';
+            document.getElementById('finalAmount').innerHTML = finalAmount.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: #86efac;">($' + (finalAmount * priceToUse).toFixed(2) + ')</span>';
             
             if (compoundFreq !== 'none') {
                 const monthlyRate = ANNUAL_RATE / 12;
@@ -530,7 +539,7 @@
                 document.getElementById('withoutCompoundUSD').textContent = '$' + (withoutCompoundFinal * priceToUse).toFixed(2);
                 document.getElementById('withCompound').textContent = finalAmount.toFixed(2) + ' TICS';
                 document.getElementById('withCompoundUSD').textContent = '$' + (finalAmount * priceToUse).toFixed(2);
-                document.getElementById('compoundBenefit').textContent = '+' + benefit.toFixed(2) + ' TICS ($' + (benefit * priceToUse).toFixed(2) + ')';
+                document.getElementById('compoundBenefit').innerHTML = '+' + benefit.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: #86efac;">($' + (benefit * priceToUse).toFixed(2) + ')</span>';
             } else {
                 document.getElementById('compoundComparison').style.display = 'none';
             }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -499,7 +499,7 @@
                 font-size: 18px !important;
             }
             
-            /* Quick Actions - виправлення дужок */
+            /* Quick Actions - виправлення dужок */
             .quick-actions {
                 gap: 10px !important;
             }
@@ -525,7 +525,7 @@
                 word-break: break-word;
             }
             
-            /* Кнопки делегацій - однакової ширини */
+            /* Кнопки dелегацій - оdнакової ширини */
             .delegation-actions {
                 display: flex;
                 flex-direction: column;
@@ -550,7 +550,7 @@
             }
             
             .modal-header {
-                padding-right: 45px !important; /* Місце для хрестика */
+                padding-right: 45px !important; /* Місце dля хрестика */
                 margin-bottom: 15px !important;
             }
             
@@ -568,13 +568,13 @@
                 z-index: 1000;
             }
             
-            /* Форми в модалках */
+            /* Форми в моdалках */
             .modal-content input,
             .modal-content select {
                 font-size: 16px !important; /* Запобігає zoom на iOS */
             }
             
-            /* Кнопки в модалках */
+            /* Кнопки в моdалках */
             .modal-actions {
                 flex-direction: column !important;
                 gap: 10px !important;
@@ -615,25 +615,25 @@
         <!-- Header -->
         <div class="dashboard-header">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                <h1 style="color: #00D4FF; margin: 0;">💎 Ваш стейкінг дашборд</h1>
-                <a href="index.html" style="padding: 10px 20px; background: rgba(0,212,255,0.15); border: 1px solid rgba(0,212,255,0.4); border-radius: 8px; color: #00D4FF; text-decoration: none; font-weight: 600; transition: all 0.3s;" onmouseover="this.style.background='rgba(0,212,255,0.25)'" onmouseout="this.style.background='rgba(0,212,255,0.15)'">🏠 На головну</a>
+                <h1 style="color: #00D4FF; margin: 0;">💎 Your Staking Dashboard</h1>
+                <a href="index.html" style="padding: 10px 20px; background: rgba(0,212,255,0.15); border: 1px solid rgba(0,212,255,0.4); border-radius: 8px; color: #00D4FF; text-decoration: none; font-weight: 600; transition: all 0.3s;" onmouseover="this.style.background='rgba(0,212,255,0.25)'" onmouseout="this.style.background='rgba(0,212,255,0.15)'">🏠 To Main</a>
             </div>
-            <p style="color: #64748b; margin-bottom: 12px; word-break: break-all;">Адреса: <span id="walletAddress" style="color: #00FFF0;">Завантаження...</span></p>
-            <button onclick="disconnectWallet()" style="padding: 10px 20px; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4); border-radius: 8px; color: #ef4444; cursor: pointer; font-weight: 600; transition: all 0.3s;" onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.15)'">🚪 Від'єднати гаманець</button>
+            <p style="color: #64748b; margin-bottom: 12px; word-break: break-all;">Address: <span id="walletAddress" style="color: #00FFF0;">Loading...</span></p>
+            <button onclick="disconnectWallet()" style="padding: 10px 20px; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4); border-radius: 8px; color: #ef4444; cursor: pointer; font-weight: 600; transition: all 0.3s;" onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.15)'">🚪 Disconnect Wallet</button>
         </div>
         
         <!-- Stats -->
         <div class="stats-grid">
             <div class="stat-card" style="border-color: rgba(0,212,255,0.3);">
-                <div class="stat-label">💰 БАЛАНС</div>
+                <div class="stat-label">💰 BALANCE</div>
                 <div class="stat-value" style="color: #00D4FF;"><span id="balance">0.000</span> TICS</div>
             </div>
             <div class="stat-card" style="border-color: rgba(34,197,94,0.3);">
-                <div class="stat-label">💎 ДЕЛЕГОВАНО</div>
+                <div class="stat-label">💎 DELEGATED</div>
                 <div class="stat-value" style="color: #22c55e;"><span id="delegated">0.000</span> TICS</div>
             </div>
             <div class="stat-card" style="border-color: rgba(245,158,11,0.3);">
-                <div class="stat-label">✨ ВИНАГОРОДИ</div>
+                <div class="stat-label">✨ REWARDS</div>
                 <div class="stat-value" style="color: #f59e0b;"><span id="rewards">0.000</span> TICS</div>
             </div>
             <div class="stat-card" style="border-color: rgba(239,68,68,0.3);">
@@ -644,38 +644,38 @@
         
         <!-- Forecast -->
         <div class="section">
-            <h4 class="section-title">📊 Прогноз винагород</h4>
+            <h4 class="section-title">📊 Rewards Forecast</h4>
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-label">На день</div>
+                    <div class="stat-label">Per day</div>
                     <div class="stat-value" style="color: #86efac; font-size: 18px;"><span id="forecastDaily">0.000</span> TICS</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">На тиждень</div>
+                    <div class="stat-label">Per week</div>
                     <div class="stat-value" style="color: #86efac; font-size: 18px;"><span id="forecastWeekly">0.000</span> TICS</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">На місяць</div>
+                    <div class="stat-label">Per month</div>
                     <div class="stat-value" style="color: #86efac; font-size: 18px;"><span id="forecastMonthly">0.000</span> TICS</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">На рік</div>
+                    <div class="stat-label">Per year</div>
                     <div class="stat-value" style="color: #86efac; font-size: 18px;"><span id="forecastYearly">0.000</span> TICS</div>
                 </div>
             </div>
-            <p style="color: #64748b; font-size: 12px; margin-top: 16px;">* APY ~30%, комісія валідатора вже врахована. Розрахунок наведено без урахування складного відсотка.</p>
+            <p style="color: #64748b; font-size: 12px; margin-top: 16px;">* APY ~30%, validator commission already included. Calculation provided without compound interest.</p>
         </div>
         
         <!-- Quick Actions -->
         <div class="section">
-            <h4 class="section-title">💎 Швидкі дії</h4>
+            <h4 class="section-title">💎 Quick Actions</h4>
             <div class="quick-actions">
                 <button class="btn-quick btn-delegate" onclick="quickDelegateQubeNode()">
-                    🚀 Делегувати на QubeNode
+                    🚀 Delegate to QubeNode
                 </button>
                 <button class="btn-quick btn-claim-all" onclick="quickClaimAll()">
                     <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
-                        <span>Забрати всі винагороди</span>
+                        <span>Claim All Rewards</span>
                         <span style="font-size: 13px; opacity: 0.9;"><span id="quickClaimAmount">0.000</span> TICS</span>
                     </div>
                 </button>
@@ -684,9 +684,9 @@
         
         <!-- My Delegations -->
         <div class="section">
-            <h4 class="section-title">📋 Мої делегації</h4>
+            <h4 class="section-title">📋 My Delegations</h4>
             <div id="delegationsList">
-                <div style="text-align: center; color: #64748b; padding: 20px;">Завантаження делегацій...</div>
+                <div style="text-align: center; color: #64748b; padding: 20px;">Loading delegations...</div>
             </div>
         </div>
         
@@ -705,7 +705,7 @@
             <div class="modal-header" style="padding: 12px 20px; min-height: auto;">
                 <h3 style="color: #00D4FF; font-size: 18px; margin: 0; display: flex; align-items: center; gap: 8px;">
                     <span style="font-size: 20px;">💎</span>
-                    <span>Делегувати TICS</span>
+                    <span>Delegate TICS</span>
                 </h3>
                 <span class="close" onclick="closeModal('stakeMoreModal')">&times;</span>
             </div>
@@ -716,25 +716,25 @@
                 </div>
                 
                 <div style="margin-bottom: 12px;">
-                    <label style="color: #94a3b8; font-size: 13px; display: block; margin-bottom: 6px;">Сума для делегування (TICS)</label>
+                    <label style="color: #94a3b8; font-size: 13px; display: block; margin-bottom: 6px;">Amount to delegate (TICS)</label>
                     <input type="number" id="stakeMoreAmount" placeholder="0.00" step="0.001">
                 </div>
                 
                 <div style="display: flex; justify-content: space-between; margin-bottom: 15px; color: #64748b; font-size: 12px;">
-                    <span>Мінімум: 0.1 TICS</span>
-                    <span>Доступно: <span id="stakeMoreAvailable">0.000</span> TICS</span>
+                    <span>Minimum: 0.1 TICS</span>
+                    <span>Available: <span id="stakeMoreAvailable">0.000</span> TICS</span>
                 </div>
                 
                 <div style="background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); border-radius: 10px; padding: 10px;">
                     <label style="display: flex; align-items: center; cursor: pointer; color: #86efac; font-size: 12px;">
                         <input type="checkbox" checked style="width: 18px; height: 18px; margin-right: 8px; cursor: pointer; flex-shrink: 0;">
-                        <span>Почнете отримувати винагороди одразу після делегування</span>
+                        <span>You will start receiving rewards immediately after delegation</span>
                     </label>
                 </div>
             </div>
             <div class="modal-footer" style="padding: 12px 20px;">
-                <button class="btn-cancel" onclick="closeModal('stakeMoreModal')">Скасувати</button>
-                <button class="btn-confirm cyan" onclick="confirmStakeMore()">Делегувати</button>
+                <button class="btn-cancel" onclick="closeModal('stakeMoreModal')">Cancel</button>
+                <button class="btn-confirm cyan" onclick="confirmStakeMore()">Delegate</button>
             </div>
         </div>
     </div>
@@ -884,16 +884,16 @@
     <div id="successModal" class="modal">
         <div class="modal-content" style="border-color: rgba(34,197,94,0.6); max-width: 600px;">
             <div class="modal-header" style="background: linear-gradient(135deg, rgba(34,197,94,0.2), rgba(34,197,94,0.05));">
-                <h3 style="color: #22c55e;">✅ Успішно! TX: <span id="successMessage"></span></h3>
+                <h3 style="color: #22c55e;">✅ Success! TX: <span id="successMessage"></span></h3>
                 <span class="close" onclick="closeModal('successModal')">&times;</span>
             </div>
             <div class="modal-body">
                 <div style="background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); border-radius: 12px; padding: 20px; text-align: center;">
                     <div style="font-size: 48px; margin-bottom: 16px;">✅</div>
-                    <div style="color: #86efac; font-size: 18px; font-weight: 600; margin-bottom: 12px;" id="successTitle">Транзакція успішна!</div>
-                    <div style="color: #94a3b8; font-size: 14px; margin-bottom: 20px;">Hash транзакції:</div>
+                    <div style="color: #86efac; font-size: 18px; font-weight: 600; margin-bottom: 12px;" id="successTitle">Transaction successful!</div>
+                    <div style="color: #94a3b8; font-size: 14px; margin-bottom: 20px;">Transaction hash:</div>
                     <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; word-break: break-all; font-family: monospace; font-size: 13px; color: #00FFF0;" id="successTxHash"></div>
-                    <a id="successExplorerLink" href="#" target="_blank" style="display: inline-block; margin-top: 16px; padding: 10px 20px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 8px; color: #000; text-decoration: none; font-weight: 600;">🔍 Переглянути в Explorer</a>
+                    <a id="successExplorerLink" href="#" target="_blank" style="display: inline-block; margin-top: 16px; padding: 10px 20px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 8px; color: #000; text-decoration: none; font-weight: 600;">🔍 View in Explorer</a>
                 </div>
             </div>
             <div class="modal-footer">
@@ -917,7 +917,7 @@
             const address = urlParams.get('address');
             
             if (!walletType || !address) {
-                alert('Немає інформації про гаманець. Поверніться на головну.');
+                alert('No wallet information. Return to main page.');
                 window.location.href = 'index.html';
                 return;
             }
@@ -932,7 +932,7 @@
             }
             
             if (typeof CosmosStakingModule === 'undefined') {
-                alert('Помилка завантаження модулів');
+                alert('Error loading modules');
                 return;
             }
             
@@ -941,7 +941,7 @@
             
             const result = await cosmosStaking.connectWallet(walletType);
             if (!result.success) {
-                alert('Помилка підключення гаманця');
+                alert('Wallet connection error');
                 return;
             }
             
@@ -980,7 +980,7 @@
                 
             } catch (error) {
                 console.error('Error loading data:', error);
-                alert('Помилка завантаження даних: ' + error.message);
+                alert('Error loading data: ' + error.message);
             }
         }
         
@@ -988,7 +988,7 @@
             const container = document.getElementById('delegationsList');
             
             if (!overview.delegations || overview.delegations.length === 0) {
-                container.innerHTML = '<div style="text-align: center; color: #64748b; padding: 20px;">Делегацій не знайдено</div>';
+                container.innerHTML = '<div style="text-align: center; color: #64748b; padding: 20px;">No delegations found</div>';
                 return;
             }
             
@@ -998,7 +998,7 @@
                 const valAddr = del.delegation.validator_address;
                 const amount = formatTics(del.balance.amount);
                 
-                let valName = validatorNamesCache[valAddr] || 'Завантаження...';
+                let valName = validatorNamesCache[valAddr] || 'Loading...';
                 if (!validatorNamesCache[valAddr]) {
                     loadValidatorName(valAddr);
                 }
@@ -1086,7 +1086,7 @@
             
             let unbondingData = overview.unbondingDelegations;
             
-            // Якщо немає даних в overview, спробуємо прямий запит
+            // Якщо немає dаних в overview, спробуємо прямий запит
             if (!unbondingData || unbondingData.length === 0) {
                 try {
                     const address = cosmosStaking.walletManager.getAddress();
@@ -1109,7 +1109,7 @@
             
             for (const unbonding of unbondingData) {
                 const valAddr = unbonding.validator_address;
-                let valName = validatorNamesCache[valAddr] || 'Завантаження...';
+                let valName = validatorNamesCache[valAddr] || 'Loading...';
                 if (!validatorNamesCache[valAddr]) {
                     loadValidatorName(valAddr);
                 }
@@ -1121,7 +1121,7 @@
                     const totalHours = Math.ceil((completionTime - now) / (1000 * 60 * 60));
                     const days = Math.floor(totalHours / 24);
                     const hours = totalHours % 24;
-                    const timeRemaining = days > 0 ? `${days}д ${hours}год` : `${hours}год`;
+                    const timeRemaining = days > 0 ? `${days}d ${hours}h` : `${hours}h`;
                     const creationHeight = entry.creation_height || entry.initial_balance;
                     
                     html += `
@@ -1152,7 +1152,7 @@
             const tics = parseFloat(amount) / 1e18;
             if (isNaN(tics)) return '0.000';
             
-            // На мобільному 2 цифри, на десктопі 3
+            // На мобільному 2 цифри, на dесктопі 3
             const isMobile = window.innerWidth <= 768;
             return tics.toFixed(isMobile ? 2 : 3);
         }
@@ -1160,28 +1160,28 @@
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
             
-            // Очищення errorMessage та відновлення стану для successModal
+            // Очищення errorMessage та віdновлення стану dля successModal
             if (modalId === 'successModal') {
                 const errorMsg = document.getElementById('errorMessage');
                 if (errorMsg) {
                     errorMsg.remove();
                 }
-                // Повертаємо стандартний стан (на випадок наступного використання)
+                // Повертаємо станdартний стан (на випаdок наступного використання)
                 setTimeout(() => {
                     const titleElement = document.getElementById('successTitle');
                     if (titleElement) {
                         titleElement.style.color = '#22c55e';
-                        titleElement.textContent = 'Транзакція успішна!';
+                        titleElement.textContent = 'Transaction successful!';
                     }
                 }, 300);
             }
         }
         
         function showSuccess(title, txHash) {
-            // Додаємо 0x якщо його немає
+            // Доdаємо 0x якщо його немає
             const txHashWithPrefix = txHash.startsWith('0x') ? txHash : `0x${txHash}`;
             
-            document.getElementById('successTitle').textContent = '⏳ Перевірка статусу...';
+            document.getElementById('successTitle').textContent = '⏳ Checking status...';
             document.getElementById('successTitle').style.color = '#f59e0b';
             document.getElementById('successTxHash').textContent = txHashWithPrefix;
             document.getElementById('successExplorerLink').href = `https://ticsscan.com/txn/${txHashWithPrefix}`;
@@ -1194,11 +1194,11 @@
         async function checkTransactionStatus(txHash, originalTitle) {
             const txHashForApi = txHash.startsWith('0x') ? txHash.substring(2) : txHash;
             let attempts = 0;
-            const maxAttempts = 6; // 6 спроб по 2 секунди = 12 секунд
+            const maxAttempts = 6; // 6 attempts x 2 seconds = 12 seconds
             
             while (attempts < maxAttempts) {
                 try {
-                    await new Promise(resolve => setTimeout(resolve, 2000)); // Чекаємо 2 секунди
+                    await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds
                     attempts++;
                     
                     console.log(`🔍 Checking transaction status (attempt ${attempts}/${maxAttempts})...`);
@@ -1217,47 +1217,47 @@
                         continue;
                     }
                     
-                    // Транзакція знайдена, перевіряємо статус
+                    // Транзакція знайdена, перевіряємо статус
                     if (data.tx_response.code !== 0) {
                         // FAILED
                         const errorMsg = data.tx_response.raw_log || 'Transaction failed';
                         
-                        document.getElementById('successTitle').textContent = '❌ Транзакція не виконана';
+                        document.getElementById('successTitle').textContent = '❌ Transaction failed';
                         document.getElementById('successTitle').style.color = '#ef4444';
                         
-                        // Додаємо повідомлення про помилку
+                        // Доdаємо повіdомлення про помилку
                         const txHashElement = document.getElementById('successTxHash').parentElement;
                         if (!document.getElementById('errorMessage')) {
                             const errorDiv = document.createElement('div');
                             errorDiv.id = 'errorMessage';
                             errorDiv.style.cssText = 'background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; padding: 12px; margin-top: 16px; color: #fca5a5; font-size: 13px;';
-                            errorDiv.innerHTML = `<strong>Причина:</strong><br>${errorMsg}`;
+                            errorDiv.innerHTML = `<strong>Reason:</strong><br>${errorMsg}`;
                             txHashElement.parentElement.insertBefore(errorDiv, txHashElement.nextSibling);
                         }
                         
                         console.log('❌ Transaction failed:', errorMsg);
-                        return; // Виходимо з функції
+                        return; // Вихоdимо з функції
                         
                     } else {
                         // SUCCESS
                         document.getElementById('successTitle').textContent = originalTitle;
                         document.getElementById('successTitle').style.color = '#22c55e';
                         console.log('✅ Transaction confirmed successfully');
-                        return; // Виходимо з функції
+                        return; // Вихоdимо з функції
                     }
                     
                 } catch (error) {
                     console.error('Error checking transaction status:', error);
                     if (attempts >= maxAttempts) {
-                        // Якщо всі спроби вичерпані - показуємо попередження
-                        document.getElementById('successTitle').textContent = '⚠️ ' + originalTitle + ' (перевірте статус в explorer)';
+                        // Якщо всі спроби вичерпані - показуємо попереdження
+                        document.getElementById('successTitle').textContent = '⚠️ ' + originalTitle + ' (check status in explorer)';
                         document.getElementById('successTitle').style.color = '#f59e0b';
                     }
                 }
             }
             
-            // Якщо всі спроби вичерпані але транзакція не знайдена
-            document.getElementById('successTitle').textContent = '⚠️ ' + originalTitle + ' (перевірте статус в explorer)';
+            // Якщо всі спроби вичерпані але транзакція не знайdена
+            document.getElementById('successTitle').textContent = '⚠️ ' + originalTitle + ' (check status in explorer)';
             document.getElementById('successTitle').style.color = '#f59e0b';
             console.log('⚠️ Could not verify transaction status after all attempts');
         }
@@ -1281,7 +1281,7 @@
         async function confirmStakeMore() {
             const amount = document.getElementById('stakeMoreAmount').value;
             if (!amount || isNaN(amount) || parseFloat(amount) < 0.1) {
-                alert('Мінімальна сума: 0.1 TICS');
+                alert('Minimum amount: 0.1 TICS');
                 return;
             }
             
@@ -1304,11 +1304,11 @@
                 const stakingService = cosmosStaking.stakingService;
                 const result = await stakingService.delegate(currentValidatorAddress, amountMinimal, memoText);
                 
-                showSuccess('Делегування успішне!', result.txHash);
+                showSuccess('Delegation successful!', result.txHash);
                 await loadData();
             } catch (error) {
                 console.error('Stake error:', error);
-                alert('❌ Помилка: ' + error.message);
+                alert('❌ Error: ' + error.message);
             }
         }
         
@@ -1323,7 +1323,7 @@
                 const overview = await cosmosStaking.refresh();
                 
                 if (!overview.rewards || !overview.rewards.rewards || overview.rewards.rewards.length === 0) {
-                    alert('Немає винагород для збору');
+                    alert('No rewards to claim');
                     return;
                 }
                 
@@ -1354,7 +1354,7 @@
                 
             } catch (error) {
                 console.error('Error:', error);
-                alert('Помилка: ' + error.message);
+                alert('Error: ' + error.message);
             }
         }
         
@@ -1370,7 +1370,7 @@
                     .map(r => r.validator_address);
                 
                 if (validatorAddresses.length === 0) {
-                    alert('Немає винагород для збору');
+                    alert('No rewards to claim');
                     return;
                 }
                 
@@ -1398,11 +1398,11 @@
                 console.log('Memo:', memoText);
                 
                 const result = await cosmosStaking.claimRewards(memoText, validatorAddresses);
-                showSuccess('Винагороди зібрано!', result.txHash);
+                showSuccess('Rewards claimed!', result.txHash);
                 await loadData();
             } catch (error) {
                 console.error('Claim error:', error);
-                alert('❌ Помилка: ' + error.message);
+                alert('❌ Error: ' + error.message);
             }
         }
         
@@ -1452,7 +1452,7 @@
                                     <div style="color: #64748b; font-size: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${shortAddr}</div>
                                 </div>
                                 <div style="color: ${isQubeNode ? '#00D4FF' : '#94a3b8'}; font-size: 11px; font-weight: ${isQubeNode ? '600' : 'normal'}; white-space: nowrap; text-align: right;">
-                                    <div style="color: #64748b; font-size: 9px; margin-bottom: 2px;">Комісія</div>
+                                    <div style="color: #64748b; font-size: 9px; margin-bottom: 2px;">Commission</div>
                                     <div>${commission}%</div>
                                 </div>
                             </div>
@@ -1478,7 +1478,7 @@
         
         function switchValidatorStep2() {
             if (!selectedSwitchValidator) {
-                alert('Виберіть валідатора');
+                alert('Select validator');
                 return;
             }
             
@@ -1506,7 +1506,7 @@
         async function confirmSwitch() {
             const amount = document.getElementById('switchAmount').value;
             if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
-                alert('Введіть правильну кількість');
+                alert('Enter valid amount');
                 return;
             }
             
@@ -1531,11 +1531,11 @@
                 const memoText = `Redelegate from ${fromName} to ${toName} via QubeNode.space`;
                 const result = await stakingService.redelegate(currentValidatorAddress, selectedSwitchValidator, amountMinimal, memoText);
                 
-                showSuccess('Валідатора змінено!', result.txHash);
+                showSuccess('Validator switched!', result.txHash);
                 await loadData();
             } catch (error) {
                 console.error('Redelegate error:', error);
-                alert('❌ Помилка: ' + error.message);
+                alert('❌ Error: ' + error.message);
             }
         }
         
@@ -1556,7 +1556,7 @@
         async function confirmUnbond() {
             const amount = document.getElementById('unbondAmount').value;
             if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
-                alert('Введіть правильну кількість');
+                alert('Enter valid amount');
                 return;
             }
             
@@ -1581,17 +1581,17 @@
                 const memoText = `Undelegate from ${validatorName} via QubeNode.space`;
                 const result = await stakingService.undelegate(currentValidatorAddress, amountMinimal, memoText);
                 
-                showSuccess('Unstake розпочато! Токени будуть доступні через 14 днів', result.txHash);
+                showSuccess('Unstake started! Tokens will be available in 14 days', result.txHash);
                 await loadData();
             } catch (error) {
                 console.error('Unbond error:', error);
-                alert('❌ Помилка: ' + error.message);
+                alert('❌ Error: ' + error.message);
             }
         }
         
         // Cancel Unbonding
         async function cancelUnbonding(validatorAddress, amount, creationHeight) {
-            if (!confirm(`Скасувати unbond ${formatTics(amount)} TICS? Токени повернуться в делегацію.`)) {
+            if (!confirm(`Cancel unbond ${formatTics(amount)} TICS? Tokens will return to delegation.`)) {
                 return;
             }
             
@@ -1612,11 +1612,11 @@
                     memoText
                 );
                 
-                showSuccess('Unbond скасовано! Токени повернулися в стейкінг', result.txHash);
+                showSuccess('Unbond cancelled! Tokens returned to staking', result.txHash);
                 await loadData();
             } catch (error) {
                 console.error('Cancel unbonding error:', error);
-                alert('❌ Помилка: ' + error.message);
+                alert('❌ Error: ' + error.message);
             }
         }
         

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -274,144 +274,144 @@
     
     <div class="container">
         <header>
-            <a href="index.html" class="back-button">🏠 На головну</a>
-            <h1 class="page-title">❓ Часті питання (FAQ)</h1>
-            <p style="color: #94a3b8; font-size: 1.1em;">Знайдіть відповіді на найпоширеніші питання</p>
+            <a href="index.html" class="back-button">🏠 To Main</a>
+            <h1 class="page-title">❓ Frequently Asked Questions (FAQ)</h1>
+            <p style="color: #94a3b8; font-size: 1.1em;">Find answers to the most common questions</p>
         </header>
 
         <div class="section">
             
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
-                    <span>❓ Що таке стейкінг і як він працює?</span>
+                    <span>❓ What is staking and how does it work?</span>
                     <span class="faq-icon">▼</span>
                 </button>
                 <div class="faq-answer">
-                    <p>Стейкінг — це процес блокування ваших монет $TICS для підтримки роботи мережі Qubetics. Коли ви делегуєте монети валідатору, ви допомагаєте забезпечувати безпеку блокчейну та отримуєте винагороду за це. Ваші монети залишаються у вашому гаманці, але беруть участь у консенсусі мережі.</p>
+                    <p>Staking is the process of locking your $TICS coins to support the operation of the Qubetics network. When you delegate coins to a validator, you help ensure blockchain security and receive rewards for this. Your coins remain in your wallet but participate in network consensus.</p>
                 </div>
             </div>
 
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
-                    <span>❓ Коли я почну отримувати винагороду?</span>
+                    <span>❓ When will I start receiving rewards?</span>
                     <span class="faq-icon">▼</span>
                 </button>
                 <div class="faq-answer">
-                    <p>Винагорода нараховується <strong>автоматично після кожного створеного блоку</strong>. Перші нарахування можна побачити вже через кілька секунд після делегування. Ви можете переглядати свої винагороди в реальному часі через ваш гаманець або explorer мережі Qubetics.</p>
+                    <p>Rewards are credited <strong>automatically after each block is created</strong>. First accruals can be seen within a few seconds after delegation. You can view your rewards in real time through your wallet or Qubetics network explorer.</p>
                 </div>
             </div>
 
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
-                    <span>❓ Чи можу я забрати свої монети в будь-який час?</span>
+                    <span>❓ Can I withdraw my coins at any time?</span>
                     <span class="faq-icon">▼</span>
                 </button>
                 <div class="faq-answer">
-                    <p>Так, ви можете зробити <strong>unbond (розделегувати)</strong> монети в будь-який момент. Після unbond діє період очікування <strong>(unbonding period) тривалістю 14 днів</strong>, після чого монети повернуться у ваш гаманець згідно з правилами мережі Qubetics. Під час періоду unbonding монети не приносять винагороду.</p>
+                    <p>Yes, you can <strong>unbond (undelegate)</strong> coins at any time. After unbond, there is a waiting period <strong>(unbonding period) of 14 days</strong>, after which coins will return to your wallet according to Qubetics network rules. During the unbonding period, coins do not generate rewards.</p>
                 </div>
             </div>
 
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
-                    <span>❓ Чи є мінімальна сума для делегування?</span>
+                    <span>❓ Is there a minimum amount for delegation?</span>
                     <span class="faq-icon">▼</span>
                 </button>
                 <div class="faq-answer">
-                    <p>Мінімальної суми для делегування немає.</p>
+                    <p>There is no minimum amount for delegation.</p>
                 </div>
             </div>
 
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
-                    <span>❓ Чи безпечно делегувати монети?</span>
+                    <span>❓ Is it safe to delegate coins?</span>
                     <span class="faq-icon">▼</span>
                 </button>
                 <div class="faq-answer">
-                    <p><strong>Так, це абсолютно безпечно!</strong> При делегуванні ваші монети <strong>залишаються у вашому гаманці</strong>. Ви не передаєте монети валідатору, а лише делегуєте право на їх використання для валідації блоків. Тільки ви маєте доступ до своїх приватних ключів та можете керувати своїми коштами.</p>
+                    <p><strong>Yes, it is absolutely safe!</strong> When delegating, your coins <strong>remain in your wallet</strong>. You do not transfer coins to the validator, but only delegate the right to use them for block validation. Only you have access to your private keys and can manage your funds.</p>
                 </div>
             </div>
 
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
-                    <span>❓ Яка комісія валідатора QubeNode?</span>
+                    <span>❓ What is QubeNode validator commission?</span>
                     <span class="faq-icon">▼</span>
                 </button>
                 <div class="faq-answer">
-                    <p>Комісія валідатора QubeNode складає <strong>5%</strong> від винагороди мережі. Це найнижча можлива комісія мережі. Вона автоматично утримується з нарахованої винагороди, тому ви отримуєте вже чисту винагороду.</p>
-                    <p><strong>Приклад розрахунку:</strong></p>
-                    <p>Ви зробили делегування <strong>1000 монет</strong>. Винагорода мережі (APY) складає <strong>30%</strong> річних, отже за рік вся винагорода мережі складатиме <strong>300 монет</strong>. Звідси забираємо 5% комісію валідатора:</p>
-                    <p style="color: #00FFF0; font-weight: 600;">300 монет - 5% комісії = ваша чиста винагорода <strong>285 монет (28.5%)</strong> і винагорода валідатора <strong>15 монет (1.5%)</strong></p>
+                    <p>QubeNode validator commission is <strong>5%</strong> of network rewards. This is the lowest possible network commission. It is automatically deducted from accrued rewards, so you receive net rewards.</p>
+                    <p><strong>Calculation example:</strong></p>
+                    <p>You delegated <strong>1000 coins</strong>. Network reward (APY) is <strong>30%</strong> annual, so per year total network reward will be <strong>300 coins</strong>. From this we deduct 5% validator commission:</p>
+                    <p style="color: #00FFF0; font-weight: 600;">300 coins - 5% commission = your net reward <strong>285 coins (28.5%)</strong> and validator reward <strong>15 coins (1.5%)</strong></p>
                 </div>
             </div>
 
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
-                    <span>❓ Який APY (річна прибутковість)?</span>
+                    <span>❓ What is APY (annual yield)?</span>
                     <span class="faq-icon">▼</span>
                 </button>
                 <div class="faq-answer">
-                    <p>APY становить <strong>30%</strong> річних. Однак, варто зауважити, що APY є динамічним показником і може змінюватися в залежності від різних факторів, в тому числі загальної кількості застейканих монет у мережі.</p>
+                    <p>APY is <strong>30%</strong> annually. However, it is worth noting that APY is a dynamic indicator and may change depending on various factors, including the total amount of staked coins in the network.</p>
                 </div>
             </div>
 
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
-                    <span>❓ Які ризики існують у стейкінгу/делегуванні?</span>
+                    <span>❓ What risks exist in staking/delegation?</span>
                     <span class="faq-icon">▼</span>
                 </button>
                 <div class="faq-answer">
-                    <p>Основні ризики пов'язані з роботою валідатора:</p>
+                    <p>Main risks are related to validator operation:</p>
                     <ul>
-                        <li><strong>Downtime (простій):</strong> Якщо валідатор пропустить більше 50% з останніх 100,000 блоків, буде застосовано штраф у розмірі <strong>1%</strong>. Для прикладу, щоб пропустити 50,000 блоків, валідатор має не працювати приблизно <strong>79 годин (більше 3 днів)</strong>.</li>
+                        <li><strong>Downtime:</strong> If validator misses more than 50% of the last 100,000 blocks, a penalty of <strong>1%</strong> will be applied. For example, to miss 50,000 blocks, validator must be down for approximately <strong>79 hours (more than 3 days)</strong>.</li>
                     </ul>
-                    <p style="margin-top: 15px;"><strong>QubeNode забезпечує вашу безпеку:</strong> Потужна інфраструктура валідатора QubeNode забезпечує стабільну та надійну роботу. Ми використовуємо багаторівневий моніторинг, щоб мінімізувати будь-які ризики простою.</p>
+                    <p style="margin-top: 15px;"><strong>QubeNode ensures your security:</strong> Powerful QubeNode validator infrastructure ensures stable and reliable operation. We use multi-level monitoring to minimize any downtime risks.</p>
                 </div>
             </div>
 
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
-                    <span>❓ Які гаманці підтримують стейкінг Qubetics?</span>
+                    <span>❓ Which wallets support Qubetics staking?</span>
                     <span class="faq-icon">▼</span>
                 </button>
                 <div class="faq-answer">
-                    <p>Для стейкінга Qubetics ви можете використовувати:</p>
+                    <p>For Qubetics staking you can use:</p>
                     <ul>
-                        <li><strong>Keplr Wallet</strong> — популярний гаманець для Cosmos екосистеми</li>
-                        <li><strong>Cosmostation Wallet</strong> — зручний мобільний та веб-гаманець</li>
+                        <li><strong>Keplr Wallet</strong> — popular wallet for Cosmos ecosystem</li>
+                        <li><strong>Cosmostation Wallet</strong> — convenient mobile and web wallet</li>
                     </ul>
                 </div>
             </div>
 
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
-                    <span>❓ Де можна купити монети $TICS?</span>
+                    <span>❓ Where can I buy $TICS coins?</span>
                     <span class="faq-icon">▼</span>
                 </button>
                 <div class="faq-answer">
-                    <p>Монети $TICS доступні на наступних централізованих біржах:</p>
+                    <p>$TICS coins are available on the following centralized exchanges:</p>
                     <ul>
                         <li><strong><a href="https://www.mexc.com/uk-UA/exchange/TICS_USDT?_from=search_spot_trade" target="_blank">MEXC</a></strong></li>
                         <li><strong><a href="https://www.lbank.com/uk/trade/tics_usdt" target="_blank">LBank</a></strong></li>
                         <li><strong><a href="https://www.coinstore.com/spot/TICSUSDT?ts=1760907955300" target="_blank">Coinstore</a></strong></li>
                     </ul>
-                    <p>Також можна придбати монети через мости (bridges):</p>
+                    <p>You can also purchase coins through bridges:</p>
                     <ul>
-                        <li><strong><a href="https://dapp.bridgers.xyz/?ref=qubetics.com#/?sourceFlag=widget-acb" target="_blank">SWFT Blockchain</a></strong> — швидкий міст для обміну криптовалют</li>
-                        <li><strong><a href="https://qube.blazpay.com/bridge" target="_blank">BlazPay</a></strong> — зручний міст для Qubetics</li>
+                        <li><strong><a href="https://dapp.bridgers.xyz/?ref=qubetics.com#/?sourceFlag=widget-acb" target="_blank">SWFT Blockchain</a></strong> — fast bridge for cryptocurrency exchange</li>
+                        <li><strong><a href="https://qube.blazpay.com/bridge" target="_blank">BlazPay</a></strong> — convenient bridge for Qubetics</li>
                     </ul>
                 </div>
             </div>
 
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFaq(this)">
-                    <span>❓ Як зв'язатися з підтримкою QubeNode?</span>
+                    <span>❓ How to contact QubeNode support?</span>
                     <span class="faq-icon">▼</span>
                 </button>
                 <div class="faq-answer">
-                    <p>Ви можете зв'язатися з нами через:</p>
+                    <p>You can contact us through:</p>
                     <ul>
-                        <li><strong><a href="https://t.me/+sRnz7RyoL4Q0MWEy" target="_blank">Telegram</a>:</strong> Наша група підтримки завжди готова допомогти</li>
-                        <li><strong>Email:</strong> validator.qubenode@gmail.com</li>
+                        <li><strong><a href="https://t.me/+sRnz7RyoL4Q0MWEy" target="_blank">Telegram</a>:</strong> Our support team is always ready to help</li>
+                        <li><strong>Email:</strong> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="750314191c1114011a075b040017101b1a1110351218141c195b161a18">[email&#160;protected]</a></li>
                     </ul>
                 </div>
             </div>
@@ -420,21 +420,21 @@
         <div class="footer-links">
             <a href="how-to-delegate.html" class="footer-link">
                 <span>💎</span>
-                <span>Почати стейкінг</span>
+                <span>Start Staking</span>
             </a>
             <a href="https://t.me/+sRnz7RyoL4Q0MWEy" class="footer-link" target="_blank">
                 <span>💬</span>
-                <span>Підтримка</span>
+                <span>Support</span>
             </a>
         </div>
         
         <footer>
-            <p><strong>QubeNode</strong> - Професійний валідатор Qubetics Network</p>
-            <p>© 2025 QubeNode. Всі права захищено. | <a href="https://t.me/+sRnz7RyoL4Q0MWEy" target="_blank">Telegram</a></p>
+            <p><strong>QubeNode</strong> - Professional Qubetics Network validator</p>
+            <p>© 2025 QubeNode. All rights reserved. | <a href="https://t.me/+sRnz7RyoL4Q0MWEy" target="_blank">Telegram</a></p>
         </footer>
     </div>
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
     <script>
         function toggleFaq(button) {
             const answer = button.nextElementSibling;
@@ -444,14 +444,4 @@
             document.querySelectorAll('.faq-question').forEach(q => {
                 q.classList.remove('active');
                 q.nextElementSibling.classList.remove('active');
-            });
-            
-            // Toggle current answer
-            if (!isActive) {
-                button.classList.add('active');
-                answer.classList.add('active');
-            }
-        }
-    </script>
-</body>
-</html>
+      

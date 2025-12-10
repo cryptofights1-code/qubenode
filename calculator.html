@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Калькулятор Стейкінгу - QubeNode</title>
+    <title>Staking Calculator - QubeNode</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -237,15 +237,15 @@
     
     <div class="container">
         <header>
-            <a href="index.html" class="back-button">🏠 На головну</a>
-            <h1 class="page-title">💰 Калькулятор Стейкінгу</h1>
-            <p style="color: #94a3b8; font-size: 1.1em;">Розрахуйте свої майбутні винагороди</p>
+            <a href="index.html" class="back-button">🏠 To Main</a>
+            <h1 class="page-title">💰 Staking Calculator</h1>
+            <p style="color: #94a3b8; font-size: 1.1em;">Calculate your future rewards</p>
         </header>
 
         <div class="calc-container">
             <!-- Preset Buttons -->
             <div class="preset-buttons">
-                <label>Швидкий вибір суми:</label>
+                <label>Quick amount selection:</label>
                 <div class="preset-grid">
                     <button class="preset-btn" onclick="setAmount(100)">100 TICS</button>
                     <button class="preset-btn" onclick="setAmount(1000)">1,000 TICS</button>
@@ -258,44 +258,44 @@
             <!-- Input Fields -->
             <div class="input-grid">
                 <div class="input-group">
-                    <label>Кількість $TICS</label>
-                    <input type="number" id="amount" class="calc-input" placeholder="Введіть кількість монет" oninput="calculateAuto()">
+                    <label>Quantity $TICS</label>
+                    <input type="number" id="amount" class="calc-input" placeholder="Enter quantity of coins" oninput="calculateAuto()">
                 </div>
                 
                 <div class="input-group">
-                    <label>Період</label>
+                    <label>Period</label>
                     <select id="period" class="calc-input" onchange="usePeriod()">
-                        <option value="">-- Вибрати --</option>
-                        <option value="1">1 місяць</option>
-                        <option value="3">3 місяці</option>
-                        <option value="6">6 місяців</option>
-                        <option value="12" selected>1 рік</option>
-                        <option value="24">2 роки</option>
-                        <option value="36">3 роки</option>
-                        <option value="48">4 роки</option>
-                        <option value="60">5 років</option>
+                        <option value="">-- Select --</option>
+                        <option value="1">1 month</option>
+                        <option value="3">3 months</option>
+                        <option value="6">6 months</option>
+                        <option value="12" selected>1 year</option>
+                        <option value="24">2 years</option>
+                        <option value="36">3 years</option>
+                        <option value="48">4 years</option>
+                        <option value="60">5 years</option>
                     </select>
                 </div>
                 
                 <div class="input-group">
-                    <label>Або днів</label>
-                    <input type="number" id="customDays" class="calc-input" placeholder="Введіть кількість днів" oninput="useCustomDays()">
+                    <label>Or days</label>
+                    <input type="number" id="customDays" class="calc-input" placeholder="Enter number of days" oninput="useCustomDays()">
                 </div>
                 
                 <div class="input-group">
-                    <label>Ціна $TICS (USD)</label>
-                    <input type="number" id="customPrice" class="calc-input" placeholder="Авто з MEXC" step="0.0001" oninput="useCustomPrice()">
-                    <div class="price-hint">Поточна: $<span id="currentPriceDisplay">...</span></div>
+                    <label>$TICS Price (USD)</label>
+                    <input type="number" id="customPrice" class="calc-input" placeholder="Auto from MEXC" step="0.0001" oninput="useCustomPrice()">
+                    <div class="price-hint">Current: $<span id="currentPriceDisplay">...</span></div>
                 </div>
                 
                 <div class="input-group">
-                    <label>Реінвестування</label>
+                    <label>Reinvestment</label>
                     <select id="compoundFrequency" class="calc-input" onchange="calculateAuto()">
-                        <option value="none">Без реінвестування</option>
-                        <option value="daily">Щоденне (вручну)</option>
-                        <option value="weekly">Щотижневе (вручну)</option>
-                        <option value="monthly">Щомісячне (вручну)</option>
-                        <option value="quarterly">Щоквартальне (вручну)</option>
+                        <option value="none">Without reinvestment</option>
+                        <option value="daily">Daily (manual)</option>
+                        <option value="weekly">Weekly (manual)</option>
+                        <option value="monthly">Monthly (manual)</option>
+                        <option value="quarterly">Quarterly (manual)</option>
                     </select>
                 </div>
             </div>
@@ -305,25 +305,25 @@
                 <!-- Summary Cards -->
                 <div class="summary-cards">
                     <div class="summary-card">
-                        <div class="card-label">Щоденний дохід</div>
+                        <div class="card-label">Daily income</div>
                         <div class="card-value" id="dailyResult">--</div>
                         <div class="card-usd" id="dailyUSD">--</div>
                     </div>
                     
                     <div class="summary-card">
-                        <div class="card-label">Тижневий дохід</div>
+                        <div class="card-label">Weekly income</div>
                         <div class="card-value" id="weeklyResult">--</div>
                         <div class="card-usd" id="weeklyUSD">--</div>
                     </div>
                     
                     <div class="summary-card">
-                        <div class="card-label">Місячний дохід</div>
+                        <div class="card-label">Monthly income</div>
                         <div class="card-value" id="monthlyResult">--</div>
                         <div class="card-usd" id="monthlyUSD">--</div>
                     </div>
                     
                     <div class="summary-card highlight">
-                        <div class="card-label">Загальний дохід</div>
+                        <div class="card-label">Total income</div>
                         <div class="card-value large" id="totalResult">--</div>
                         <div class="card-usd" id="totalUSD">--</div>
                     </div>
@@ -331,78 +331,78 @@
 
                 <!-- Detailed Breakdown -->
                 <div class="detailed-breakdown">
-                    <h4 class="breakdown-title">📊 Детальний розрахунок</h4>
+                    <h4 class="breakdown-title">📊 Detailed calculation</h4>
                     
                     <div class="breakdown-row">
-                        <span class="breakdown-label">Тіло депозиту:</span>
+                        <span class="breakdown-label">Deposit body:</span>
                         <span class="breakdown-value" id="initialAmount">--</span>
                     </div>
                     
                     <div class="breakdown-row">
-                        <span class="breakdown-label">Період стейкінгу:</span>
+                        <span class="breakdown-label">Staking period:</span>
                         <span class="breakdown-value" id="periodText">--</span>
                     </div>
                     
                     <div class="breakdown-row">
-                        <span class="breakdown-label">APY (базова ставка):</span>
+                        <span class="breakdown-label">APY (base rate):</span>
                         <span class="breakdown-value" style="color: #22c55e;">30%</span>
                     </div>
                     
                     <div class="breakdown-row">
-                        <span class="breakdown-label">Комісія валідатора (%):</span>
+                        <span class="breakdown-label">Validator commission (%):</span>
                         <span class="breakdown-value" style="color: #fbbf24;">5%</span>
                     </div>
                     
                     <div class="breakdown-row">
-                        <span class="breakdown-label">Ваш реальний APY:</span>
+                        <span class="breakdown-label">Your real APY:</span>
                         <span class="breakdown-value" style="color: #22c55e; font-size: 1.05em;" id="realAPY">28.5%</span>
                     </div>
                     
                     <div class="breakdown-row">
-                        <span class="breakdown-label">Реінвестування:</span>
+                        <span class="breakdown-label">Reinvestment:</span>
                         <span class="breakdown-value" id="compoundText">--</span>
                     </div>
                     
                     <div class="breakdown-row">
-                        <span class="breakdown-label">Загальна винагорода:</span>
+                        <span class="breakdown-label">Total reward:</span>
                         <span class="breakdown-value" style="color: #22c55e; font-size: 1.05em;" id="totalRewardAmount">--</span>
                     </div>
                     
                     <div class="breakdown-row">
-                        <span class="breakdown-label">Комісія валідатора (сума):</span>
+                        <span class="breakdown-label">Validator commission (amount):</span>
                         <span class="breakdown-value" style="color: #fbbf24;" id="validatorCommissionAmount">--</span>
                     </div>
                     
                     <div class="breakdown-row">
-                        <span class="breakdown-label">Ваша винагорода (чиста):</span>
+                        <span class="breakdown-label">Your reward (net):</span>
                         <span class="breakdown-value" style="color: #22c55e; font-size: 1.05em;" id="netRewardAmount">--</span>
                     </div>
                     
                     <div class="breakdown-row highlight">
-                        <span class="breakdown-label" style="color: #22c55e; font-size: 1.15em; font-weight: 700;">Кінцева сума:</span>
+                        <span class="breakdown-label" style="color: #22c55e; font-size: 1.15em; font-weight: 700;">Final amount:</span>
                         <span class="breakdown-value" style="color: #22c55e; font-size: 1.15em;" id="finalAmount">--</span>
                     </div>
                 </div>
 
                 <!-- Comparison -->
                 <div id="compoundComparison" class="comparison-box">
-                    <h4 class="breakdown-title">💡 Порівняння: без реінвестування vs з реінвестуванням</h4>
+                    <h4 class="breakdown-title">💡 Comparison: without reinvestment vs with reinvestment</h4>
                     
                     <div class="comparison-grid">
                         <div>
-                            <div style="color: #94a3b8; margin-bottom: 10px;">Без реінвестування:</div>
+                            <div style="color: #94a3b8; margin-bottom: 10px;">Without reinvestment:</div>
                             <div style="color: #fff; font-size: 1.3em; font-weight: 600;" id="withoutCompound">--</div>
                             <div style="color: #64748b; font-size: 0.9em; margin-top: 5px;" id="withoutCompoundUSD">--</div>
                         </div>
                         <div>
-                            <div style="color: #94a3b8; margin-bottom: 10px;">З реінвестуванням:</div>
+                            <div style="color: #94a3b8; margin-bottom: 10px;">With reinvestment:</div>
                             <div style="color: #22c55e; font-size: 1.3em; font-weight: 700;" id="withCompound">--</div>
                             <div style="color: #86efac; font-size: 0.9em; margin-top: 5px;" id="withCompoundUSD">--</div>
                         </div>
                     </div>
                     
                     <div class="benefit-box">
-                        <div class="label">Додатковий прибуток з реінвестуванням:</div>
+                        <div class="label">Additional profit with reinvestment:</div>
                         <div class="value" id="compoundBenefit">--</div>
                     </div>
                 </div>
@@ -410,8 +410,8 @@
         </div>
         
         <footer>
-            <p><strong>QubeNode</strong> - Професійний валідатор Qubetics Network</p>
-            <p>© 2025 QubeNode. Всі права захищено. | <a href="https://t.me/+sRnz7RyoL4Q0MWEy" target="_blank">Telegram</a></p>
+            <p><strong>QubeNode</strong> - Professional Qubetics Network validator</p>
+            <p>© 2025 QubeNode. All rights reserved. | <a href="https://t.me/+sRnz7RyoL4Q0MWEy" target="_blank">Telegram</a></p>
         </footer>
     </div>
 
@@ -480,13 +480,13 @@
                 const monthlyReward = amount * monthlyRate;
                 totalReward = monthlyReward * period;
                 finalAmount = amount + totalReward;
-                compoundText = 'Без реінвестування';
+                compoundText = 'Without reinvestment';
             } else {
                 switch(compoundFreq) {
-                    case 'daily': compoundsPerYear = 365; compoundText = 'Щоденне (вручну)'; break;
-                    case 'weekly': compoundsPerYear = 52; compoundText = 'Щотижневе (вручну)'; break;
-                    case 'monthly': compoundsPerYear = 12; compoundText = 'Щомісячне (вручну)'; break;
-                    case 'quarterly': compoundsPerYear = 4; compoundText = 'Щоквартальне (вручну)'; break;
+                    case 'daily': compoundsPerYear = 365; compoundText = 'Daily (manual)'; break;
+                    case 'weekly': compoundsPerYear = 52; compoundText = 'Weekly (manual)'; break;
+                    case 'monthly': compoundsPerYear = 12; compoundText = 'Monthly (manual)'; break;
+                    case 'quarterly': compoundsPerYear = 4; compoundText = 'Quarterly (manual)'; break;
                 }
                 
                 const ratePerPeriod = ANNUAL_RATE / compoundsPerYear;
@@ -571,16 +571,16 @@
         }
         
         function getPeriodText(months, customDays) {
-            if (customDays && customDays > 0) return customDays + ' днів';
-            if (months === 1) return '1 місяць';
-            if (months === 3) return '3 місяці';
-            if (months === 6) return '6 місяців';
-            if (months === 12) return '1 рік';
-            if (months === 24) return '2 роки';
-            if (months === 36) return '3 роки';
-            if (months === 48) return '4 роки';
-            if (months === 60) return '5 років';
-            return months.toFixed(1) + ' місяців';
+            if (customDays && customDays > 0) return customDays + ' days';
+            if (months === 1) return '1 month';
+            if (months === 3) return '3 months';
+            if (months === 6) return '6 months';
+            if (months === 12) return '1 year';
+            if (months === 24) return '2 years';
+            if (months === 36) return '3 years';
+            if (months === 48) return '4 years';
+            if (months === 60) return '5 years';
+            return months.toFixed(1) + ' months';
         }
         
         // Fetch price from MEXC (using CORS proxy like in sync.js)

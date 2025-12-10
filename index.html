@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Safari theme color - fixes pull-to-refresh background -->
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>QubeNode - Валідатор Qubetics</title>
+    <title>QubeNode - Qubetics Validator</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -30,22 +30,22 @@
     <meta name="apple-mobile-web-app-title" content="QubeNode">
     
     <!-- SEO Meta Tags -->
-    <meta name="description" content="QubeNode - стабільний та надійний валідатор мережі Qubetics. Uptime 100%, комісія 5%, APY 30%. Делегуйте $TICS та отримуйте винагороди.">
-    <meta name="keywords" content="QubeNode, Qubetics, валідатор, TICS, стейкінг, делегування, blockchain, crypto">
+    <meta name="description" content="QubeNode - stable and reliable Qubetics network validator. 100% uptime, 5% commission, 30% APY. Delegate $TICS and earn rewards.">
+    <meta name="keywords" content="QubeNode, Qubetics, validator, TICS, staking, delegation, blockchain, crypto">
     <meta name="author" content="QubeNode">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://qubenode.space/">
-    <meta property="og:title" content="QubeNode - Валідатор Qubetics">
-    <meta property="og:description" content="Стабільний та надійний валідатор мережі Qubetics. Uptime 100%, комісія 5%, APY 30%. Делегуйте $TICS та отримуйте винагороди.">
+    <meta property="og:title" content="QubeNode - Qubetics Validator">
+    <meta property="og:description" content="Stable and reliable Qubetics network validator. 100% uptime, 5% commission, 30% APY. Delegate $TICS and earn rewards.">
     <meta property="og:image" content="https://qubenode.space/android-chrome-512x512.png">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://qubenode.space/">
-    <meta property="twitter:title" content="QubeNode - Валідатор Qubetics">
-    <meta property="twitter:description" content="Стабільний та надійний валідатор мережі Qubetics. Uptime 100%, комісія 5%, APY 30%.">
+    <meta property="twitter:title" content="QubeNode - Qubetics Validator">
+    <meta property="twitter:description" content="Stable and reliable Qubetics network validator. 100% uptime, 5% commission, 30% APY.">
     <meta property="twitter:image" content="https://qubenode.space/android-chrome-512x512.png">
     
     <style>
@@ -1859,7 +1859,7 @@
                 box-shadow: 0 0 0 3px rgba(0, 255, 240, 0.1);
             }
 
-            /* Закрити button */
+            /* Close button */
             .close-button {
                 width: 45px !important;
                 height: 45px !important;
@@ -2301,7 +2301,7 @@
             
             const headerBtn = document.getElementById('headerWalletBtn');
             if (headerBtn) {
-                headerBtn.innerHTML = '<span>⏳</span><span>Підключення...</span>';
+                headerBtn.innerHTML = '<span>⏳</span><span>Connecting...</span>';
                 headerBtn.style.pointerEvents = 'none';
             }
             
@@ -2314,7 +2314,7 @@
                 }
                 
                 if (typeof CosmosStakingModule === 'undefined') {
-                    throw new Error('Модулі не завантажились. Перезавантажте сторінку.');
+                    throw new Error('Modules failed to load. Reload the page.');
                 }
                 
                 await initializeStaking();
@@ -2327,7 +2327,7 @@
                 }
             } catch (error) {
                 // console.error('Header wallet connection error:', error);
-                alert('Помилка підключення: ' + error.message);
+                alert('Connection error: ' + error.message);
                 resetHeaderWalletButton();
             } finally {
                 if (headerBtn) headerBtn.style.pointerEvents = 'auto';
@@ -2344,7 +2344,7 @@
         function resetHeaderWalletButton() {
             const headerBtn = document.getElementById('headerWalletBtn');
             if (headerBtn) {
-                headerBtn.innerHTML = '<span>💼</span><span>Підключити гаманець</span>';
+                headerBtn.innerHTML = '<span>💼</span><span>Connect Wallet</span>';
                 headerBtn.classList.remove('wallet-connected');
             }
         }
@@ -2407,8 +2407,8 @@
     <div class="wallet-modal-overlay" id="walletModal">
         <div class="wallet-modal-content">
             <button class="wallet-modal-close" onclick="closeWalletModal()">×</button>
-            <h2 class="wallet-modal-title">Підключити гаманець</h2>
-            <p class="wallet-modal-subtitle">Оберіть ваш гаманець для підключення</p>
+            <h2 class="wallet-modal-title">Connect Wallet</h2>
+            <p class="wallet-modal-subtitle">Choose your wallet to connect</p>
             <div class="wallet-buttons">
                 <button id="modalKeplrBtn" class="wallet-btn">
                     <img src="keplr.png" alt="Keplr" style="width: 32px; height: 32px; border-radius: 8px;">
@@ -2479,7 +2479,7 @@
             }
         }
     </style>
-    <button id="mobileHeaderWalletBtn" type="button">Підключити гаманець</button>
+    <button id="mobileHeaderWalletBtn" type="button">Connect Wallet</button>
 
     <div class="bg-animation"></div>
     <div class="grid-overlay"></div>
@@ -2493,24 +2493,24 @@
     <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobileMenu">
         <div style="padding: 15px 20px 20px 20px; text-align: left; border-bottom: 1px solid rgba(0, 212, 255, 0.2); color: #00D4FF; font-weight: 700; font-size: 32px; margin-bottom: 20px; padding-left: 30px;">
-            Меню
+            Menu
         </div>
         <div class="mobile-menu-items">
             <button class="mobile-menu-item" onclick="window.location.href='ecosystem.html'" type="button">
                 <span>🌐</span>
-                <span>Про Екосистему</span>
+                <span>About Ecosystem</span>
             </button>
             <button class="mobile-menu-item" onclick="window.location.href='tics.html'" type="button">
                 <span>💎</span>
-                <span>Монета TICS</span>
+                <span>TICS Coin</span>
             </button>
             <button class="mobile-menu-item" onclick="window.location.href='calculator.html'" type="button">
                 <span>🧮</span>
-                <span>Калькулятор</span>
+                <span>Calculator</span>
             </button>
             <button class="mobile-menu-item" onclick="window.location.href='how-to-delegate.html'" type="button">
                 <span>🤝</span>
-                <span>Стати делегатором</span>
+                <span>Become a Delegator</span>
             </button>
             <button class="mobile-menu-item" onclick="window.location.href='faq.html'" type="button">
                 <span>❓</span>
@@ -2523,19 +2523,19 @@
         <div class="top-left-menu">
             <button class="ecosystem-button" onclick="window.location.href='ecosystem.html'">
                 <span>🌐</span>
-                <span>Про Екосистему</span>
+                <span>About Ecosystem</span>
             </button>
             <button class="ecosystem-button" onclick="window.location.href='tics.html'">
                 <span>💎</span>
-                <span>Монета TICS</span>
+                <span>TICS Coin</span>
             </button>
             <button class="ecosystem-button" onclick="window.location.href='calculator.html'">
                 <span>🧮</span>
-                <span>Калькулятор</span>
+                <span>Calculator</span>
             </button>
             <button class="ecosystem-button" onclick="window.location.href='how-to-delegate.html'">
                 <span>🤝</span>
-                <span>Стати делегатором</span>
+                <span>Become a Delegator</span>
             </button>
             <button class="ecosystem-button" onclick="window.location.href='faq.html'">
                 <span>❓</span>
@@ -2544,7 +2544,7 @@
             <div style="position: relative;">
                 <button class="header-wallet-button" id="headerWalletBtn" onclick="toggleHeaderWalletDropdown(event)">
                     <span>💼</span>
-                    <span>Підключити гаманець</span>
+                    <span>Connect Wallet</span>
                 </button>
                 <div class="wallet-dropdown" id="headerWalletDropdown">
                     <button class="wallet-option" onclick="connectHeaderWallet('keplr'); event.stopPropagation();">
@@ -2584,11 +2584,11 @@
                 <img src="qubenode-logo.png" alt="QubeNode">
                 <h1 class="validator-name">QubeNode</h1>
             </div>
-            <p class="subtitle">Стабільний та надійний валідатор мережі Qubetics</p>
+            <p class="subtitle">Stable and reliable Qubetics network validator</p>
             <div class="status-badge-extended">
                 <div class="status-badge-header">
                     <span class="status-dot"></span>
-                    <span>Активний Валідатор</span>
+                    <span>Active Validator</span>
                 </div>
                 <div class="block-info" style="text-align: center; margin-bottom: 4px; width: 100%;">
                     Блок #<span id="currentBlock">—</span> • Avg Block Time: <span id="avgBlockTime">—</span>
@@ -2601,70 +2601,70 @@
 
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-label">Загальна Сума</div>
+                <div class="stat-label">Total Amount</div>
                 <div class="stat-value" id="delegatedAmountContainer">--</div>
-                <div class="stat-subvalue">Делеговано $TICS</div>
+                <div class="stat-subvalue">Delegated $TICS</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Делегатори</div>
+                <div class="stat-label">Delegators</div>
                 <div class="stat-value"><span id="delegatorsCount">--</span></div>
-                <div class="stat-subvalue">Активні учасники</div>
+                <div class="stat-subvalue">Active participants</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">Uptime</div>
                 <div class="stat-value"><span id="uptimePercent">--</span></div>
-                <div class="stat-subvalue">Останні 100K блоків</div>
+                <div class="stat-subvalue">Last 100K blocks</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">Rank</div>
                 <div class="stat-value"><span id="validatorRank">--</span></div>
-                <div class="stat-subvalue">За голосувальною силою</div>
+                <div class="stat-subvalue">By voting power</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">APY</div>
                 <div class="stat-value">30%</div>
-                <div class="stat-subvalue">Річна винагорода</div>
+                <div class="stat-subvalue">Annual reward</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Ставка Комісії</div>
+                <div class="stat-label">Commission Rate</div>
                 <div class="stat-value"><span id="commissionRate">--</span></div>
-                <div class="stat-subvalue">Найнижча можлива комісія<br>Від 30% APY → 28.5% ваш дохід</div>
+                <div class="stat-subvalue">Lowest possible commission<br>From 30% APY → 28.5% your income</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Ціна $TICS</div>
+                <div class="stat-label">$TICS Price</div>
                 <div class="stat-value"><span id="ticsPrice">--</span></div>
-                <div class="stat-subvalue">Поточна ринкова ціна монети $TICS</div>
+                <div class="stat-subvalue">Current market price of $TICS coin</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Зміна за 24Г</div>
+                <div class="stat-label">24H Change</div>
                 <div class="stat-value" style="color: #22c55e;"><span id="ticsChange">--</span></div>
-                <div class="stat-subvalue">Зміна ціни за останні 24 години</div>
+                <div class="stat-subvalue">Price change in the last 24 hours</div>
             </div>
         </div>
 
         <div class="info-section">
-            <h2>Чому обрати QubeNode?</h2>
+            <h2>Why Choose QubeNode?</h2>
             <div class="info-row">
-                <div class="info-label">🛡️ Надійність</div>
-                <div class="info-value">Високий uptime — ми забезпечуємо стабільну роботу ноди 24/7 з професійним моніторингом</div>
+                <div class="info-label">🛡️ Reliability</div>
+                <div class="info-value">High uptime — we ensure stable node operation 24/7 with professional monitoring</div>
             </div>
             <div class="info-row">
-                <div class="info-label">💎 Мінімальна комісія мережі</div>
-                <div class="info-value">Фіксована комісія 5% — більше винагороди залишається у вас</div>
+                <div class="info-label">💎 Minimal Network Commission</div>
+                <div class="info-value">Fixed 5% commission — more rewards stay with you</div>
             </div>
             <div class="info-row">
-                <div class="info-label">⚡ Продуктивність</div>
-                <div class="info-value">Потужне обладнання та оптимізована конфігурація ноди для максимальної ефективності</div>
+                <div class="info-label">⚡ Performance</div>
+                <div class="info-value">Powerful hardware and optimized node configuration for maximum efficiency</div>
             </div>
             <div class="info-row">
-                <div class="info-label">🤝 Підтримка</div>
-                <div class="info-value">Швидка підтримка та відкрита комунікація з делегаторами</div>
+                <div class="info-label">🤝 Support</div>
+                <div class="info-value">Fast support and open communication with delegators</div>
             </div>
         </div>
 
         <footer>
-            <p><strong>QubeNode</strong> - Професійний валідатор Qubetics Network</p>
-            <p>© 2025 QubeNode. Всі права захищено.</p>
+            <p><strong>QubeNode</strong> - Professional Qubetics Network validator</p>
+            <p>© 2025 QubeNode. All rights reserved.</p>
         </footer>
     </div>
 
@@ -2673,7 +2673,7 @@
     <div id="delegatorModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Стати делегатором QubeNode</h2>
+                <h2>Become a Delegator QubeNode</h2>
                 <button class="close-button" data-close="delegatorModal" onclick="closeModal('delegatorModal')">&times;</button>
             </div>
             <div class="modal-body">
@@ -2686,19 +2686,19 @@
                     <div style="margin-bottom: 40px;">
                         <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
                             <div style="width: 45px; height: 45px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4em; font-weight: 800; color: #000;">1</div>
-                            <h3 style="color: #00FFF0; font-size: 1.5em; margin: 0;">Делегування через мобільний гаманець</h3>
+                            <h3 style="color: #00FFF0; font-size: 1.5em; margin: 0;">Delegation via Mobile Wallet</h3>
                         </div>
                         
                         <p style="color: #cbd5e1; margin-bottom: 20px; line-height: 1.8;">
-                            Ви можете зробити делегування у гаманці 
-                            <span style="color: #00D4FF; font-weight: 600; cursor: pointer;" onclick="openModal('keplrGuideModal')">Keplr (<u>інструкція</u>)</span> 
-                            або 
+                            You can make delegation in wallet 
+                            <span style="color: #00D4FF; font-weight: 600; cursor: pointer;" onclick="openModal('keplrGuideModal')">Keplr (<u>guide</u>)</span> 
+                            or 
                             <span style="color: #00D4FF; font-weight: 600;">Cosmostation</span>.
                         </p>
                         
                         <div style="background: rgba(250, 204, 21, 0.1); border-left: 4px solid #facc15; padding: 15px 20px; border-radius: 8px; margin-top: 15px;">
                             <p style="color: #fde047; margin: 0; font-size: 0.95em;">
-                                <span style="font-weight: 700;">💡 Рекомендація:</span> Радимо використовувати гаманець Keplr для мобільного делегування.
+                                <span style="font-weight: 700;">💡 Recommendation:</span> We recommend using Keplr wallet for mobile delegation.
                             </p>
                         </div>
                     </div>
@@ -2707,30 +2707,30 @@
                     <div>
                         <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
                             <div style="width: 45px; height: 45px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4em; font-weight: 800; color: #000;">2</div>
-                            <h3 style="color: #00FFF0; font-size: 1.5em; margin: 0;">Делегування через QubeNode.space</h3>
+                            <h3 style="color: #00FFF0; font-size: 1.5em; margin: 0;">Delegation via QubeNode.space</h3>
                         </div>
                         
                         <p style="color: #cbd5e1; margin-bottom: 20px; line-height: 1.8;">
-                            Найпростіший спосіб — підключити гаманець прямо на цій сторінці для миттєвого делегування.
+                            The easiest way is to connect wallet directly on this page for instant delegation.
                         </p>
                         
                         <div style="background: rgba(0, 212, 255, 0.05); border-left: 4px solid #00D4FF; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
                             <p style="color: #00FFF0; font-weight: 600; margin-bottom: 12px; font-size: 1.05em;">
-                                💎 Після підключення гаманця ви зможете:
+                                💎 After connecting wallet you will be able to:
                             </p>
                             <ul style="color: #cbd5e1; margin: 0; padding-left: 20px; line-height: 2;">
-                                <li><strong style="color: #00D4FF;">Переглянути дашборд делегатора</strong> — баланс, делегації, винагороди</li>
-                                <li><strong style="color: #00D4FF;">Делегувати токени</strong> валідатору QubeNode</li>
-                                <li><strong style="color: #00D4FF;">Ределегувати</strong> токени між валідаторами</li>
-                                <li><strong style="color: #00D4FF;">Зібрати винагороди</strong> в будь-який момент</li>
-                                <li><strong style="color: #00D4FF;">Зробити Undelegate</strong> (розблокування за 14 днів)</li>
-                                <li><strong style="color: #00D4FF;">Скасувати активний Unbond</strong> під час періоду розблокування</li>
+                                <li><strong style="color: #00D4FF;">View delegator dashboard</strong> — balance, delegations, rewards</li>
+                                <li><strong style="color: #00D4FF;">Delegate tokens</strong> to QubeNode validator</li>
+                                <li><strong style="color: #00D4FF;">Redelegate</strong> tokens between validators</li>
+                                <li><strong style="color: #00D4FF;">Claim rewards</strong> at any time</li>
+                                <li><strong style="color: #00D4FF;">Make Undelegate</strong> (unlocking for 14 days)</li>
+                                <li><strong style="color: #00D4FF;">Cancel active Unbond</strong> during unlocking period</li>
                             </ul>
                         </div>
 
                         <!-- Wallet Connection Section -->
                         <div id="walletSection">
-                            <p style="color: #cbd5e1; margin-bottom: 15px; font-size: 0.95em; font-weight: 600;">Підключіть гаманець для делегування $TICS:</p>
+                            <p style="color: #cbd5e1; margin-bottom: 15px; font-size: 0.95em; font-weight: 600;">Connect wallet for $TICS delegation:</p>
                             
                             <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 15px;">
                                 <button id="connectKeplrBtn" onclick="connectHeaderWallet('keplr')" style="flex: 1; min-width: 180px; padding: 14px 24px; background: rgba(0, 212, 255, 0.15); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 10px; color: #00FFF0; font-size: 1em; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;">
@@ -2747,23 +2747,23 @@
                             <div id="walletStatus" style="display: none; padding: 20px; background: rgba(0, 212, 255, 0.1); border-radius: 12px; margin-top: 20px;">
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                                     <div>
-                                        <div style="color: #00FFF0; font-weight: 600; margin-bottom: 5px;">Підключено: <span id="connectedWallet"></span></div>
+                                        <div style="color: #00FFF0; font-weight: 600; margin-bottom: 5px;">Connected: <span id="connectedWallet"></span></div>
                                         <div style="color: #94a3b8; font-size: 0.9em; word-break: break-all;"><span id="connectedAddress"></span></div>
                                     </div>
-                                    <button onclick="disconnectWallet()" style="padding: 10px 20px; background: rgba(255, 0, 0, 0.2); border: 1px solid rgba(255, 0, 0, 0.4); border-radius: 8px; color: #ff6b6b; cursor: pointer; font-weight: 600;">Відключити</button>
+                                    <button onclick="disconnectWallet()" style="padding: 10px 20px; background: rgba(255, 0, 0, 0.2); border: 1px solid rgba(255, 0, 0, 0.4); border-radius: 8px; color: #ff6b6b; cursor: pointer; font-weight: 600;">Disconnect</button>
                                 </div>
                                 
                                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
                                     <div style="padding: 15px; background: rgba(0, 0, 0, 0.3); border-radius: 10px;">
-                                        <div style="color: #94a3b8; font-size: 0.9em; margin-bottom: 5px;">Баланс</div>
+                                        <div style="color: #94a3b8; font-size: 0.9em; margin-bottom: 5px;">Balance</div>
                                         <div style="color: #00FFF0; font-size: 1.3em; font-weight: 700;"><span id="walletBalance">0</span> TICS</div>
                                     </div>
                                     <div style="padding: 15px; background: rgba(0, 0, 0, 0.3); border-radius: 10px;">
-                                        <div style="color: #94a3b8; font-size: 0.9em; margin-bottom: 5px;">Делеговано</div>
+                                        <div style="color: #94a3b8; font-size: 0.9em; margin-bottom: 5px;">Delegated</div>
                                         <div style="color: #00FFF0; font-size: 1.3em; font-weight: 700;"><span id="walletDelegated">0</span> TICS</div>
                                     </div>
                                     <div style="padding: 15px; background: rgba(0, 0, 0, 0.3); border-radius: 10px;">
-                                        <div style="color: #94a3b8; font-size: 0.9em; margin-bottom: 5px;">Винагороди</div>
+                                        <div style="color: #94a3b8; font-size: 0.9em; margin-bottom: 5px;">Rewards</div>
                                         <div style="color: #22c55e; font-size: 1.3em; font-weight: 700;"><span id="walletRewards">0</span> TICS</div>
                                     </div>
                                 </div>
@@ -2773,47 +2773,47 @@
                         <!-- Staking Actions Section -->
                         <div id="stakingActions" style="display: none; margin-top: 30px;">
                             <div style="background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 25px;">
-                                <h4 style="color: #00FFF0; font-size: 1.2em; margin-bottom: 20px;">Операції зі стейкінгом</h4>
+                                <h4 style="color: #00FFF0; font-size: 1.2em; margin-bottom: 20px;">Staking Operations</h4>
                                 
                                 <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid rgba(0, 212, 255, 0.2); padding-bottom: 10px;">
-                                    <button onclick="showStakingTab('delegate')" id="tabDelegate" class="staking-tab active" style="padding: 12px 24px; background: rgba(0, 212, 255, 0.2); border: none; border-radius: 8px; color: #00FFF0; font-weight: 600; cursor: pointer; transition: all 0.3s;">Делегувати</button>
-                                    <button onclick="showStakingTab('undelegate')" id="tabUndelegate" class="staking-tab" style="padding: 12px 24px; background: transparent; border: none; border-radius: 8px; color: #94a3b8; font-weight: 600; cursor: pointer; transition: all 0.3s;">Розділегувати</button>
-                                    <button onclick="showStakingTab('claim')" id="tabClaim" class="staking-tab" style="padding: 12px 24px; background: transparent; border: none; border-radius: 8px; color: #94a3b8; font-weight: 600; cursor: pointer; transition: all 0.3s;">Забрати винагороду</button>
+                                    <button onclick="showStakingTab('delegate')" id="tabDelegate" class="staking-tab active" style="padding: 12px 24px; background: rgba(0, 212, 255, 0.2); border: none; border-radius: 8px; color: #00FFF0; font-weight: 600; cursor: pointer; transition: all 0.3s;">Delegate</button>
+                                    <button onclick="showStakingTab('undelegate')" id="tabUndelegate" class="staking-tab" style="padding: 12px 24px; background: transparent; border: none; border-radius: 8px; color: #94a3b8; font-weight: 600; cursor: pointer; transition: all 0.3s;">Undelegate</button>
+                                    <button onclick="showStakingTab('claim')" id="tabClaim" class="staking-tab" style="padding: 12px 24px; background: transparent; border: none; border-radius: 8px; color: #94a3b8; font-weight: 600; cursor: pointer; transition: all 0.3s;">Claim Reward</button>
                                 </div>
                                 
                                 <!-- Delegate Tab -->
                                 <div id="delegateTab" class="staking-tab-content">
-                                    <p style="color: #cbd5e1; margin-bottom: 15px;">Мінімальна сума делегування: <strong style="color: #00FFF0;">0.1 TICS</strong></p>
+                                    <p style="color: #cbd5e1; margin-bottom: 15px;">Minimum delegation amount: <strong style="color: #00FFF0;">0.1 TICS</strong></p>
                                     <div style="margin-bottom: 20px;">
-                                        <label style="color: #94a3b8; font-size: 0.95em; margin-bottom: 8px; display: block;">Сума TICS:</label>
+                                        <label style="color: #94a3b8; font-size: 0.95em; margin-bottom: 8px; display: block;">TICS Amount:</label>
                                         <input type="number" id="delegateAmount" placeholder="0.1" step="0.1" min="0.1" style="width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 10px; color: #fff; font-size: 1.1em;">
                                     </div>
                                     <button onclick="executeDelegate()" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border: none; border-radius: 12px; color: #000; font-size: 1.2em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
-                                        💎 Делегувати на QubeNode
+                                        💎 Delegate to QubeNode
                                     </button>
                                 </div>
                                 
                                 <!-- Undelegate Tab -->
                                 <div id="undelegateTab" class="staking-tab-content" style="display: none;">
-                                    <p style="color: #cbd5e1; margin-bottom: 15px;">Період розделегування: <strong style="color: #ff6b6b;">14 днів</strong></p>
+                                    <p style="color: #cbd5e1; margin-bottom: 15px;">Undelegation period: <strong style="color: #ff6b6b;">14 days</strong></p>
                                     <div style="margin-bottom: 20px;">
-                                        <label style="color: #94a3b8; font-size: 0.95em; margin-bottom: 8px; display: block;">Сума TICS:</label>
+                                        <label style="color: #94a3b8; font-size: 0.95em; margin-bottom: 8px; display: block;">TICS Amount:</label>
                                         <input type="number" id="undelegateAmount" placeholder="0.1" step="0.1" min="0.1" style="width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 10px; color: #fff; font-size: 1.1em;">
                                     </div>
                                     <button onclick="executeUndelegate()" style="width: 100%; padding: 18px; background: rgba(255, 107, 107, 0.2); border: 2px solid rgba(255, 107, 107, 0.4); border-radius: 12px; color: #ff6b6b; font-size: 1.2em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
-                                        ⚠️ Розділегувати
+                                        ⚠️ Undelegate
                                     </button>
                                 </div>
                                 
                                 <!-- Claim Tab -->
                                 <div id="claimTab" class="staking-tab-content" style="display: none;">
-                                    <p style="color: #cbd5e1; margin-bottom: 20px;">Заберіть вашу накопичену винагороду:</p>
+                                    <p style="color: #cbd5e1; margin-bottom: 20px;">Claim your accumulated reward:</p>
                                     <div style="padding: 20px; background: rgba(34, 197, 94, 0.1); border: 2px solid rgba(34, 197, 94, 0.3); border-radius: 12px; margin-bottom: 20px; text-align: center;">
-                                        <div style="color: #94a3b8; font-size: 0.9em; margin-bottom: 5px;">Доступна винагорода</div>
+                                        <div style="color: #94a3b8; font-size: 0.9em; margin-bottom: 5px;">Available reward</div>
                                         <div style="color: #22c55e; font-size: 2em; font-weight: 700;"><span id="claimableRewards">0</span> TICS</div>
                                     </div>
                                     <button onclick="executeClaim()" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #22c55e, #16a34a); border: none; border-radius: 12px; color: #000; font-size: 1.2em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
-                                        💰 Забрати винагороду
+                                        💰 Claim Reward
                                     </button>
                                 </div>
                             </div>
@@ -2826,28 +2826,28 @@
                         <div id="delegatorDashboard" style="display: none; position: relative; z-index: 10; background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 240, 0.05)); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 15px; padding: 20px; margin-top: 25px;">
                     <h3 style="color: #00FFF0; font-size: 1.5em; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
                         <span>💎</span>
-                        <span>Ваш стейкінг дашборд</span>
+                        <span>Your Staking Dashboard</span>
                     </h3>
                     
                     <!-- Dashboard Stats Grid -->
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
                         <!-- Available Balance -->
                         <div style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(0, 212, 255, 0.05)); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 12px; padding: 15px; text-align: center;">
-                            <div style="color: #94a3b8; font-size: 0.8em; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">💰 Баланс</div>
+                            <div style="color: #94a3b8; font-size: 0.8em; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">💰 Balance</div>
                             <div style="color: #00D4FF; font-size: 1.6em; font-weight: 700; margin-bottom: 3px;"><span id="dashBalance">0.00</span></div>
                             <div style="color: #64748b; font-size: 0.8em;">TICS</div>
                         </div>
                         
                         <!-- Delegated Amount -->
                         <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.05)); border: 2px solid rgba(34, 197, 94, 0.4); border-radius: 12px; padding: 15px; text-align: center;">
-                            <div style="color: #94a3b8; font-size: 0.8em; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">🤝 Делеговано</div>
+                            <div style="color: #94a3b8; font-size: 0.8em; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">🤝 Delegated</div>
                             <div style="color: #22c55e; font-size: 1.6em; font-weight: 700; margin-bottom: 3px;"><span id="dashDelegated">0.00</span></div>
                             <div style="color: #86efac; font-size: 0.8em;">TICS</div>
                         </div>
                         
                         <!-- Rewards -->
                         <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.05)); border: 2px solid rgba(34, 197, 94, 0.4); border-radius: 12px; padding: 15px; text-align: center;">
-                            <div style="color: #94a3b8; font-size: 0.8em; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">✨ Винагороди</div>
+                            <div style="color: #94a3b8; font-size: 0.8em; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">✨ Rewards</div>
                             <div style="color: #22c55e; font-size: 1.6em; font-weight: 700; margin-bottom: 3px;"><span id="dashRewards">0.00</span></div>
                             <div style="color: #86efac; font-size: 0.8em;">TICS</div>
                         </div>
@@ -2856,7 +2856,7 @@
                         <div style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05)); border: 2px solid rgba(239, 68, 68, 0.4); border-radius: 12px; padding: 15px; text-align: center;">
                             <div style="color: #94a3b8; font-size: 0.8em; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">⏳ Unbonding</div>
                             <div style="color: #ef4444; font-size: 1.6em; font-weight: 700; margin-bottom: 3px;"><span id="dashUnbonding">0.00</span></div>
-                            <div style="color: #fca5a5; font-size: 0.8em;">TICS (14 днів)</div>
+                            <div style="color: #fca5a5; font-size: 0.8em;">TICS (14 days)</div>
                         </div>
                     </div>
                     
@@ -2864,35 +2864,35 @@
                     <div style="background: rgba(0, 0, 0, 0.3); border-radius: 12px; padding: 18px; margin-bottom: 20px;">
                         <h4 style="color: #00FFF0; font-size: 1.1em; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
                             <span>📈</span>
-                            <span>Прогноз винагород</span>
+                            <span>Rewards Forecast</span>
                         </h4>
                         <div id="dashRewardsForecast">
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px;">
                                 <!-- Daily -->
                                 <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(34, 197, 94, 0.04)); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 10px; padding: 12px; text-align: center;">
-                                    <div style="color: #86efac; font-size: 0.75em; margin-bottom: 6px; font-weight: 600;">На день</div>
+                                    <div style="color: #86efac; font-size: 0.75em; margin-bottom: 6px; font-weight: 600;">Per day</div>
                                     <div style="color: #4ade80; font-size: 1.2em; font-weight: 700;"><span id="forecastDaily">0.00</span> TICS</div>
                                 </div>
                                 
                                 <!-- Weekly -->
                                 <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(34, 197, 94, 0.04)); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 10px; padding: 12px; text-align: center;">
-                                    <div style="color: #86efac; font-size: 0.75em; margin-bottom: 6px; font-weight: 600;">На тиждень</div>
+                                    <div style="color: #86efac; font-size: 0.75em; margin-bottom: 6px; font-weight: 600;">Per week</div>
                                     <div style="color: #4ade80; font-size: 1.2em; font-weight: 700;"><span id="forecastWeekly">0.00</span> TICS</div>
                                 </div>
                                 
                                 <!-- Monthly -->
                                 <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(34, 197, 94, 0.04)); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 10px; padding: 12px; text-align: center;">
-                                    <div style="color: #86efac; font-size: 0.75em; margin-bottom: 6px; font-weight: 600;">На місяць</div>
+                                    <div style="color: #86efac; font-size: 0.75em; margin-bottom: 6px; font-weight: 600;">Per month</div>
                                     <div style="color: #22c55e; font-size: 1.2em; font-weight: 700;"><span id="forecastMonthly">0.00</span> TICS</div>
                                 </div>
                                 
                                 <!-- Yearly -->
                                 <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(34, 197, 94, 0.04)); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 10px; padding: 12px; text-align: center;">
-                                    <div style="color: #86efac; font-size: 0.75em; margin-bottom: 6px; font-weight: 600;">На рік</div>
+                                    <div style="color: #86efac; font-size: 0.75em; margin-bottom: 6px; font-weight: 600;">Per year</div>
                                     <div style="color: #10b981; font-size: 1.2em; font-weight: 700;"><span id="forecastYearly">0.00</span> TICS</div>
                                 </div>
                             </div>
-                            <p style="color: #64748b; font-size: 0.75em; margin-top: 10px; text-align: center;">* APY ~30%, комісія валідатора вже врахована. Розрахунки наведені без урахування складного відсотка.</p>
+                            <p style="color: #64748b; font-size: 0.75em; margin-top: 10px; text-align: center;">* APY ~30%, validator commission already included. Calculations provided without compound interest.</p>
                         </div>
                     </div>
                     
@@ -2900,16 +2900,16 @@
                     <div style="background: rgba(0, 212, 255, 0.08); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 12px; padding: 18px; margin-bottom: 15px;">
                         <h4 style="color: #00FFF0; font-size: 1.1em; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
                             <span>💎</span>
-                            <span>Швидкі дії</span>
+                            <span>Quick Actions</span>
                         </h4>
                         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                             <button id="btnQuickStakeQubeNode" style="flex: 1; min-width: 200px; padding: 14px 20px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border: none; border-radius: 10px; color: #000; font-size: 1em; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;">
                                 <span style="font-size: 1.2em;">🚀</span>
-                                <span>Делегувати на QubeNode</span>
+                                <span>Delegate to QubeNode</span>
                             </button>
                             <button id="btnQuickClaimAllRewards" style="flex: 1; min-width: 200px; padding: 14px 20px; background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.1)); border: 2px solid rgba(34, 197, 94, 0.4); border-radius: 10px; color: #22c55e; font-size: 1em; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;">
                                 <span style="font-size: 1.2em;">💰</span>
-                                <span>Забрати всі винагороди (<span id="dashClaimableRewards">0.00</span> TICS)</span>
+                                <span>Claim All Rewards (<span id="dashClaimableRewards">0.00</span> TICS)</span>
                             </button>
                         </div>
                     </div>
@@ -2918,11 +2918,11 @@
                     <div style="background: rgba(0, 0, 0, 0.3); border-radius: 12px; padding: 18px; margin-bottom: 15px;">
                         <h4 style="color: #00FFF0; font-size: 1.1em; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
                             <span>📊</span>
-                            <span>Мої делегування</span>
+                            <span>My Delegations</span>
                         </h4>
                         <div id="dashDelegationsList">
                             <div style="padding: 15px; text-align: center; color: #94a3b8; font-size: 0.9em;">
-                                Завантаження делегувань...
+                                Loading delegations...
                             </div>
                         </div>
                     </div>
@@ -2944,7 +2944,7 @@
                     <!-- Disconnect Button -->
                     <div style="text-align: center;">
                         <button onclick="disconnectDashboard()" style="padding: 10px 25px; background: rgba(239, 68, 68, 0.2); border: 2px solid rgba(239, 68, 68, 0.4); border-radius: 30px; color: #ef4444; cursor: pointer; font-weight: 600; transition: all 0.3s; font-size: 0.9em;">
-                            🔌 Відключити гаманець
+                            🔌 Disconnect Wallet
                         </button>
                     </div>
                 </div>
@@ -2955,7 +2955,7 @@
             <div class="modal-footer" style="padding: 40px 60px; background: rgba(0, 212, 255, 0.05); border-top: 1px solid rgba(0, 212, 255, 0.2); display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
                 <a href="https://t.me/+sRnz7RyoL4Q0MWEy" class="modal-link" target="_blank" style="display: inline-flex; align-items: center; gap: 12px; padding: 18px 40px; background: rgba(0, 212, 255, 0.1); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 50px; color: #00D4FF; text-decoration: none; font-weight: 600; font-size: 1.1em; transition: all 0.3s; white-space: nowrap;">
                     <span>💬</span>
-                    <span>Підтримка в Telegram</span>
+                    <span>Support in Telegram</span>
                 </a>
             </div>
         </div>
@@ -2964,7 +2964,7 @@
     <!-- Validator Selection Modal -->
     <div id="validatorSelectorModal" class="modal" onclick="if(event.target === this) closeModal('validatorSelectorModal')">
         <div class="modal-content">
-            <button class="закрити-button" onclick="closeModal('validatorSelectorModal')" style="position: absolute; top: 20px; right: 20px; background: rgba(239, 68, 68, 0.2); border: 2px solid rgba(239, 68, 68, 0.4); padding: 8px 16px; border-radius: 8px; color: #ef4444; cursor: pointer; font-weight: 600; z-index: 10;">✕ Закрити</button>
+            <button class="закрити-button" onclick="closeModal('validatorSelectorModal')" style="position: absolute; top: 20px; right: 20px; background: rgba(239, 68, 68, 0.2); border: 2px solid rgba(239, 68, 68, 0.4); padding: 8px 16px; border-radius: 8px; color: #ef4444; cursor: pointer; font-weight: 600; z-index: 10;">✕ Close</button>
             
             <h2 id="validatorModalTitle" style="color: #00FFF0; font-size: 1.8em; margin-bottom: 25px; text-align: center;">Select Validator</h2>
             
@@ -2978,90 +2978,90 @@
     <div id="keplrGuideModal" class="modal">
         <div class="modal-content" style="max-width: 700px;">
             <div class="modal-header">
-                <h2 class="modal-title">📱 Як делегувати через Keplr Mobile</h2>
+                <h2 class="modal-title">📱 How to Delegate via Keplr Mobile</h2>
                 <button class="close-button" onclick="closeModal('keplrGuideModal')">&times;</button>
             </div>
             <div class="modal-body" style="padding: 40px;">
                 <p style="font-size: 1.1em; color: #cbd5e1; margin-bottom: 30px; line-height: 1.6;">
-                    Покрокова інструкція для делегування $TICS через мобільний додаток Keplr:
+                    Step-by-step guide for delegating $TICS via Keplr mobile app:
                 </p>
                 
                 <!-- Steps -->
                 <div style="display: flex; flex-direction: column; gap: 20px;">
                     <div style="display: flex; gap: 15px;">
                         <div style="min-width: 35px; height: 35px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #000; font-size: 1.1em;">1</div>
-                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Завантаж Keplr Wallet із App Store або Play Store</p>
+                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Download Keplr Wallet from App Store or Play Store</p>
                     </div>
                     
                     <div style="display: flex; gap: 15px;">
                         <div style="min-width: 35px; height: 35px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #000; font-size: 1.1em;">2</div>
-                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Створи новий гаманець</p>
+                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Create new wallet</p>
                     </div>
                     
                     <div style="display: flex; gap: 15px;">
                         <div style="min-width: 35px; height: 35px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #000; font-size: 1.1em;">3</div>
-                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Надійно збережи свою seed-фразу та пароль. <strong style="color: #ef4444;">Ніколи не ділися ними з кимось</strong></p>
+                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Securely save your seed phrase and password. <strong style="color: #ef4444;">Never share them with anyone</strong></p>
                     </div>
                     
                     <div style="display: flex; gap: 15px;">
                         <div style="min-width: 35px; height: 35px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #000; font-size: 1.1em;">4</div>
-                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Додай Qubetics Mainnet: знайди Qubetics і увімкни його</p>
+                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Add Qubetics Mainnet: find Qubetics and enable it</p>
                     </div>
                     
                     <div style="display: flex; gap: 15px;">
                         <div style="min-width: 35px; height: 35px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #000; font-size: 1.1em;">5</div>
-                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">На головному екрані натисни <strong style="color: #00FFF0;">Deposit</strong> → знайди Qubetics → скопіюй свою адресу гаманця Qubetics Mainnet (вибираємо <strong style="color: #00FFF0;">EVM адресу</strong>, вона починається з <code style="background: rgba(0,212,255,0.1); padding: 2px 6px; border-radius: 4px; color: #00D4FF;">0x...</code>)</p>
+                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">On main screen tap <strong style="color: #00FFF0;">Deposit</strong> → find Qubetics → copy your Qubetics Mainnet wallet address (select <strong style="color: #00FFF0;">EVM address</strong>, it starts with <code style="background: rgba(0,212,255,0.1); padding: 2px 6px; border-radius: 4px; color: #00D4FF;">0x...</code>)</p>
                     </div>
                     
                     <div style="display: flex; gap: 15px;">
                         <div style="min-width: 35px; height: 35px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #000; font-size: 1.1em;">6</div>
-                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Надішли $TICS на скопійовану адресу</p>
+                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Send $TICS to copied address</p>
                     </div>
                     
                     <div style="display: flex; gap: 15px;">
                         <div style="min-width: 35px; height: 35px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #000; font-size: 1.1em;">7</div>
-                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Коли транзакція завершиться й ти побачиш $TICS у своєму гаманці Keplr, натисни <strong style="color: #00FFF0;">Qubetics Mainnet</strong> на головному екрані</p>
+                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">When transaction completes and you see $TICS in your Keplr wallet, tap <strong style="color: #00FFF0;">Qubetics Mainnet</strong> on main screen</p>
                     </div>
                     
                     <div style="display: flex; gap: 15px;">
                         <div style="min-width: 35px; height: 35px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #000; font-size: 1.1em;">8</div>
-                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Натисни <strong style="color: #00FFF0;">Stake</strong></p>
+                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Tap <strong style="color: #00FFF0;">Stake</strong></p>
                     </div>
                     
                     <div style="display: flex; gap: 15px;">
                         <div style="min-width: 35px; height: 35px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #000; font-size: 1.1em;">9</div>
-                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Натисни <strong style="color: #00FFF0;">Stake</strong> ще раз</p>
+                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Tap <strong style="color: #00FFF0;">Stake</strong> ще раз</p>
                     </div>
                     
                     <div style="display: flex; gap: 15px;">
                         <div style="min-width: 35px; height: 35px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #000; font-size: 1.1em;">10</div>
-                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Обери валідатор <strong style="color: #00FFF0;">QubeNode</strong></p>
+                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Select validator <strong style="color: #00FFF0;">QubeNode</strong></p>
                     </div>
                     
                     <div style="display: flex; gap: 15px;">
                         <div style="min-width: 35px; height: 35px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #000; font-size: 1.1em;">11</div>
-                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Натисни <strong style="color: #00FFF0;">Stake</strong></p>
+                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Tap <strong style="color: #00FFF0;">Stake</strong></p>
                     </div>
                     
                     <div style="display: flex; gap: 15px;">
                         <div style="min-width: 35px; height: 35px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #000; font-size: 1.1em;">12</div>
-                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Введи суму для стейкінгу (поле <em style="color: #94a3b8;">Memo</em> залишаємо пустим) → натисни <strong style="color: #00FFF0;">Next</strong></p>
+                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Enter staking amount (leave <em style="color: #94a3b8;">Memo</em> field empty) → tap <strong style="color: #00FFF0;">Next</strong></p>
                     </div>
                     
                     <div style="display: flex; gap: 15px;">
                         <div style="min-width: 35px; height: 35px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #000; font-size: 1.1em;">13</div>
-                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Підтверди транзакцію</p>
+                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Confirm transaction</p>
                     </div>
                     
                     <div style="display: flex; gap: 15px;">
                         <div style="min-width: 35px; height: 35px; background: linear-gradient(135deg, #22c55e, #16a34a); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #fff; font-size: 1.3em;">✓</div>
-                        <p style="color: #22c55e; margin: 0; padding-top: 5px; font-weight: 600; font-size: 1.1em;">Готово! Ти офіційно займаєшся стейкінгом 🎉</p>
+                        <p style="color: #22c55e; margin: 0; padding-top: 5px; font-weight: 600; font-size: 1.1em;">Done! You are officially staking 🎉</p>
                     </div>
                 </div>
                 
                 <div style="background: rgba(34, 197, 94, 0.1); border-left: 4px solid #22c55e; padding: 20px; border-radius: 8px; margin-top: 30px;">
                     <p style="color: #86efac; margin: 0; line-height: 1.6;">
-                        <span style="font-size: 1.2em;">✨</span> Тепер ти будеш отримувати винагороди автоматично після кожного блоку!
+                        <span style="font-size: 1.2em;">✨</span> Now you will receive rewards automatically after each block!
                     </p>
                 </div>
             </div>
@@ -3076,7 +3076,7 @@
             const faqItem = button.parentElement;
             const isActive = faqItem.classList.contains('active');
             
-            // Закрити all other FAQ items
+            // Close all other FAQ items
             document.querySelectorAll('.faq-item').forEach(item => {
                 item.classList.remove('active');
             });
@@ -3087,7 +3087,7 @@
             }
         }
 
-        function bindЗакритиButtons() {
+        function bindCloseButtons() {
             var closeButtons = document.querySelectorAll('.close-button[data-close]');
             closeButtons.forEach(function(btn) {
                 var modalId = btn.getAttribute('data-close');
@@ -3165,7 +3165,7 @@
                 }
                 
                 // Bind close button after modal opens
-                setTimeout(bindЗакритиButtons, 100);
+                setTimeout(bindCloseButtons, 100);
             }
         }
 
@@ -3186,7 +3186,7 @@
         // DOMContentLoaded - bind close buttons
         document.addEventListener('DOMContentLoaded', function() {
             // Bind close buttons on page load
-            bindЗакритиButtons();
+            bindCloseButtons();
         });
 
         window.onclick = function(event) {
@@ -3214,7 +3214,7 @@
             
             const headerBtn = document.getElementById('headerWalletBtn');
             if (headerBtn) {
-                headerBtn.innerHTML = '<span>⏳</span><span>Підключення...</span>';
+                headerBtn.innerHTML = '<span>⏳</span><span>Connecting...</span>';
                 headerBtn.style.pointerEvents = 'none';
             }
             
@@ -3233,7 +3233,7 @@
                 }
             } catch (error) {
                 // console.error('Header wallet connection error:', error);
-                alert('Помилка підключення: ' + error.message);
+                alert('Connection error: ' + error.message);
                 resetHeaderWalletButton();
             } finally {
                 if (headerBtn) headerBtn.style.pointerEvents = 'auto';
@@ -3243,7 +3243,7 @@
         function resetHeaderWalletButton() {
             const headerBtn = document.getElementById('headerWalletBtn');
             if (headerBtn) {
-                headerBtn.innerHTML = '<span>💼</span><span>Підключити гаманець</span>';
+                headerBtn.innerHTML = '<span>💼</span><span>Connect Wallet</span>';
                 headerBtn.classList.remove('wallet-connected');
             }
         }
@@ -3298,7 +3298,7 @@
         async function initializeStaking() {
             if (!cosmosStaking) {
                 if (!stakingModuleReady) {
-                    throw new Error('Модулі стейкінгу ще завантажуються, спробуйте через секунду');
+                    throw new Error('Staking modules still loading, try in a second');
                 }
                 cosmosStaking = new CosmosStakingModule();
                 await cosmosStaking.initialize();
@@ -3315,9 +3315,9 @@
                 if (cosmostationBtn) cosmostationBtn.disabled = true;
                 
                 if (walletType === 'keplr' && keplrBtn) {
-                    keplrBtn.innerHTML = '<span>⏳</span><span>Підключення...</span>';
+                    keplrBtn.innerHTML = '<span>⏳</span><span>Connecting...</span>';
                 } else if (cosmostationBtn) {
-                    cosmostationBtn.innerHTML = '<span>⏳</span><span>Підключення...</span>';
+                    cosmostationBtn.innerHTML = '<span>⏳</span><span>Connecting...</span>';
                 }
 
                 await initializeStaking();
@@ -3345,7 +3345,7 @@
                 }
             } catch (error) {
                 // console.error('Connection error:', error);
-                alert('Помилка підключення: ' + error.message);
+                alert('Connection error: ' + error.message);
                 
                 // Reset buttons
                 const keplrBtn = document.getElementById('connectKeplrBtn');
@@ -3409,7 +3409,7 @@
             
             modal.innerHTML = `
                 <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 20px; padding: 30px; max-width: 500px; width: 90%; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);">
-                    <h3 style="color: #00D4FF; font-size: 1.5em; margin: 0 0 20px 0; text-align: center;">💎 Делегувати TICS</h3>
+                    <h3 style="color: #00D4FF; font-size: 1.5em; margin: 0 0 20px 0; text-align: center;">💎 Delegate TICS</h3>
                     
                     <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
                         <div style="color: #00FFF0; font-weight: 600; margin-bottom: 8px; font-size: 1.1em;">${validatorName}</div>
@@ -3417,7 +3417,7 @@
                     </div>
                     
                     <div style="margin-bottom: 20px;">
-                        <label style="color: #94a3b8; font-size: 0.9em; display: block; margin-bottom: 8px; font-weight: 500;">Сума для делегування (TICS)</label>
+                        <label style="color: #94a3b8; font-size: 0.9em; display: block; margin-bottom: 8px; font-weight: 500;">Amount to delegate (TICS)</label>
                         <input 
                             type="number" 
                             id="modalStakeAmount" 
@@ -3427,23 +3427,23 @@
                             style="width: 100%; padding: 14px; background: rgba(15, 23, 42, 0.6); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 10px; color: #fff; font-size: 1.2em; font-weight: 600; text-align: center; box-sizing: border-box;"
                         />
                         <div style="color: #64748b; font-size: 0.85em; margin-top: 8px; display: flex; justify-content: space-between;">
-                            <span>Мінімум: 0.1 TICS</span>
-                            <span>Доступно: ${parseFloat(available).toFixed(2)} TICS</span>
+                            <span>Minimum: 0.1 TICS</span>
+                            <span>Available: ${parseFloat(available).toFixed(2)} TICS</span>
                         </div>
                     </div>
                     
                     <div style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 10px; padding: 12px; margin-bottom: 20px;">
                         <div style="color: #86efac; font-size: 0.85em;">
-                            ✅ Почнете отримувати винагороди одразу після делегування
+                            ✅ You will start receiving rewards immediately after delegation
                         </div>
                     </div>
                     
                     <div style="display: flex; gap: 12px;">
                         <button onclick="document.getElementById('customStakeModal').remove()" style="flex: 1; padding: 14px; background: rgba(100, 116, 139, 0.2); border: 1px solid rgba(100, 116, 139, 0.4); border-radius: 12px; color: #94a3b8; font-size: 1em; font-weight: 600; cursor: pointer;">
-                            Скасувати
+                            Cancel
                         </button>
                         <button id="modalConfirmBtn" style="flex: 1; padding: 14px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border: none; border-radius: 12px; color: #000; font-size: 1em; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(0, 212, 255, 0.4);">
-                            Делегувати
+                            Delegate
                         </button>
                     </div>
                 </div>
@@ -3467,14 +3467,14 @@
                 const amount = document.getElementById('modalStakeAmount').value;
                 
                 if (!amount || isNaN(amount) || parseFloat(amount) < 0.1) {
-                    alert('Мінімальна сума: 0.1 TICS');
+                    alert('Minimum amount: 0.1 TICS');
                     return;
                 }
                 
                 modal.remove();
                 
                 try {
-                    showDashTxStatus('processing', 'Обробка транзакції...');
+                    showDashTxStatus('processing', 'Processing transaction...');
                     
                     // Get staking service directly
                     const stakingService = cosmosStaking.stakingService;
@@ -3508,7 +3508,7 @@
             const overview = cosmosStaking ? cosmosStaking.getStakingOverview() : null;
             
             if (!overview || !overview.delegations) {
-                alert('Немає делегувань');
+                alert('No delegations');
                 return;
             }
             
@@ -3546,7 +3546,7 @@
                     <div class="validator-option" data-address="${qubenodeAddr}" style="background: rgba(0, 212, 255, 0.12); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 12px; padding: 12px; margin-bottom: 8px; cursor: pointer; transition: all 0.3s;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                             <div style="color: #00D4FF; font-weight: 600; font-size: 1em;">QubeNode 🏆</div>
-                            <div style="color: #94a3b8; font-size: 0.85em;">Комісія: 5.00%</div>
+                            <div style="color: #94a3b8; font-size: 0.85em;">Commission: 5.00%</div>
                         </div>
                         <div style="color: #64748b; font-size: 0.75em; font-family: monospace;">${qubenodeAddr.substring(0, 30)}...</div>
                     </div>
@@ -3567,7 +3567,7 @@
                             <div class="validator-option" data-address="${addr}" style="background: rgba(100, 116, 139, 0.1); border: 2px solid rgba(100, 116, 139, 0.3); border-radius: 12px; padding: 12px; margin-bottom: 8px; cursor: pointer; transition: all 0.3s;">
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                                     <div style="color: #94a3b8; font-weight: 600; font-size: 0.95em;">${name}</div>
-                                    <div style="color: #64748b; font-size: 0.85em;">Комісія: ${commission}%</div>
+                                    <div style="color: #64748b; font-size: 0.85em;">Commission: ${commission}%</div>
                                 </div>
                                 <div style="color: #64748b; font-size: 0.75em; font-family: monospace;">${addr.substring(0, 30)}...</div>
                             </div>
@@ -4098,11 +4098,11 @@
 
         async function executeCancelUnbonding(validatorAddress, amount, creationHeight) {
             try {
-                if (!confirm(`Скасувати unbonding ${amount} TICS?\n\nТокени будуть знову делеговані на валідатора.`)) {
+                if (!confirm(`Cancel unbonding ${amount} TICS?\n\nТокени будуть знову делеговані на валідатора.`)) {
                     return;
                 }
                 
-                showDashTxStatus('processing', 'Обробка транзакції...');
+                showDashTxStatus('processing', 'Processing transaction...');
                 
                 const result = await cosmosStaking.cancelUnbonding(validatorAddress, amount, creationHeight, 'Cancel unbonding via QubeNode.space');
                 
@@ -4135,12 +4135,12 @@
             const amount = parseFloat(document.getElementById('dashDelegateAmount').value);
             
             if (!amount || amount < 0.1) {
-                alert('Мінімальна сума делегування: 0.1 TICS');
+                alert('Minimum delegation amount: 0.1 TICS');
                 return;
             }
 
             try {
-                showDashTxStatus('processing', 'Обробка транзакції...');
+                showDashTxStatus('processing', 'Processing transaction...');
                 
                 const result = await cosmosStaking.delegate(amount, 'Delegation via QubeNode.space');
                 
@@ -4178,16 +4178,16 @@
             const amount = parseFloat(document.getElementById('dashUndelegateAmount').value);
             
             if (!amount || amount < 0.1) {
-                alert('Мінімальна сума: 0.1 TICS');
+                alert('Minimum amount: 0.1 TICS');
                 return;
             }
 
-            if (!confirm(`Розділегувати ${amount} TICS? Період очікування: 14 днів`)) {
+            if (!confirm(`Undelegate ${amount} TICS? Період очікування: 14 днів`)) {
                 return;
             }
 
             try {
-                showDashTxStatus('processing', 'Обробка транзакції...');
+                showDashTxStatus('processing', 'Processing transaction...');
                 
                 const result = await cosmosStaking.undelegate(amount, 'Undelegation via QubeNode.space');
                 
@@ -4223,7 +4223,7 @@
 
         async function executeDashClaim() {
             try {
-                showDashTxStatus('processing', 'Обробка транзакції...');
+                showDashTxStatus('processing', 'Processing transaction...');
                 
                 const result = await cosmosStaking.claimRewards('Rewards claim via QubeNode.space');
                 
@@ -4287,7 +4287,7 @@
         }
 
         function disconnectDashboard() {
-            if (confirm('Відключити гаманець?')) {
+            if (confirm('Disconnect Wallet?')) {
                 if (cosmosStaking) {
                     cosmosStaking.disconnect();
                 }
@@ -4342,8 +4342,8 @@
                 container.innerHTML = `
                     <div style="padding: 30px; text-align: center; background: rgba(0, 212, 255, 0.05); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 12px;">
                         <div style="font-size: 3em; margin-bottom: 10px;">🎯</div>
-                        <div style="color: #00FFF0; font-size: 1.2em; font-weight: 600; margin-bottom: 8px;">Почніть стейкінг!</div>
-                        <p style="color: #94a3b8; font-size: 0.9em; margin-bottom: 0;">Делегуйте $TICS валідатору QubeNode та отримуйте 28.5% APY</p>
+                        <div style="color: #00FFF0; font-size: 1.2em; font-weight: 600; margin-bottom: 8px;">Start Staking!</div>
+                        <p style="color: #94a3b8; font-size: 0.9em; margin-bottom: 0;">Delegate $TICS to QubeNode validator and earn 28.5% APY</p>
                     </div>
                 `;
                 return;
@@ -4537,11 +4537,11 @@
             const container = document.getElementById('validatorListContainer');
             
             if (mode === 'from') {
-                title.textContent = 'З якого валідатора';
+                title.textContent = 'From which validator';
                 // Show only user's delegations
                 const overview = cosmosStaking.getStakingOverview();
                 if (!overview || !overview.delegations || overview.delegations.length === 0) {
-                    container.innerHTML = '<div style="padding: 20px; text-align: center; color: #94a3b8;">Немає делегувань</div>';
+                    container.innerHTML = '<div style="padding: 20px; text-align: center; color: #94a3b8;">No delegations</div>';
                 } else {
                     let html = '';
                     overview.delegations.forEach(del => {
@@ -4566,10 +4566,10 @@
                     container.innerHTML = html;
                 }
             } else {
-                title.textContent = 'Кому делегувати';
+                title.textContent = 'To whom to delegate';
                 // Show all validators
                 if (!allValidators || allValidators.length === 0) {
-                    container.innerHTML = '<div style="padding: 20px; text-align: center; color: #94a3b8;">Завантаження валідаторів...</div>';
+                    container.innerHTML = '<div style="padding: 20px; text-align: center; color: #94a3b8;">Loading validators...</div>';
                 } else {
                     let html = '';
                     allValidators.forEach(validator => {
@@ -4618,31 +4618,31 @@
             const amount = parseFloat(document.getElementById('dashRedelegateAmount').value);
             
             if (!fromValidator) {
-                alert('Оберіть валідатора з якого ределегувати');
+                alert('Select validator from which to redelegate');
                 return;
             }
             
             if (!toValidator) {
-                alert('Оберіть валідатора кому ределегувати');
+                alert('Select validator to whom to redelegate');
                 return;
             }
             
             if (fromValidator === toValidator) {
-                alert('Не можна ределегувати на того самого валідатора');
+                alert('Cannot redelegate to the same validator');
                 return;
             }
             
             if (!amount || amount < 0.1) {
-                alert('Мінімальна сума: 0.1 TICS');
+                alert('Minimum amount: 0.1 TICS');
                 return;
             }
             
-            if (!confirm(`Ределегувати ${amount} TICS?`)) {
+            if (!confirm(`Redelegate ${amount} TICS?`)) {
                 return;
             }
 
             try {
-                showDashTxStatus('processing', 'Обробка транзакції...');
+                showDashTxStatus('processing', 'Processing transaction...');
                 
                 const result = await cosmosStaking.redelegate(fromValidator, toValidator, amount, 'Redelegation via QubeNode.space');
                 
@@ -4712,12 +4712,12 @@
             const amount = parseFloat(document.getElementById('delegateAmount').value);
             
             if (!amount || amount < 0.1) {
-                alert('Мінімальна сума делегування: 0.1 TICS');
+                alert('Minimum delegation amount: 0.1 TICS');
                 return;
             }
 
             try {
-                showTxStatus('processing', 'Обробка транзакції...');
+                showTxStatus('processing', 'Processing transaction...');
                 
                 const result = await cosmosStaking.delegate(amount, 'Delegation via QubeNode.space');
                 
@@ -4737,16 +4737,16 @@
             const amount = parseFloat(document.getElementById('undelegateAmount').value);
             
             if (!amount || amount < 0.1) {
-                alert('Мінімальна сума: 0.1 TICS');
+                alert('Minimum amount: 0.1 TICS');
                 return;
             }
 
-            if (!confirm(`Розділегувати ${amount} TICS? Період очікування: 14 днів`)) {
+            if (!confirm(`Undelegate ${amount} TICS? Період очікування: 14 днів`)) {
                 return;
             }
 
             try {
-                showTxStatus('processing', 'Обробка транзакції...');
+                showTxStatus('processing', 'Processing transaction...');
                 
                 const result = await cosmosStaking.undelegate(amount, 'Undelegation via QubeNode.space');
                 
@@ -4764,7 +4764,7 @@
 
         async function executeClaim() {
             try {
-                showTxStatus('processing', 'Обробка транзакції...');
+                showTxStatus('processing', 'Processing transaction...');
                 
                 const result = await cosmosStaking.claimRewards('Rewards claim via QubeNode.space');
                 
@@ -4844,11 +4844,11 @@
                     dropdown.innerHTML = `
                         <button class="wallet-option" onclick="window.location.href='dashboard.html?wallet=${walletInfo.walletType}&address=${address}'; event.stopPropagation();">
                             <span>📊</span>
-                            <span>Переглянути дашборд</span>
+                            <span>View Dashboard</span>
                         </button>
                         <button class="wallet-option" onclick="disconnectHeaderWallet(); event.stopPropagation();" style="background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: #ef4444;">
                             <span>🔌</span>
-                            <span>Відключити гаманець</span>
+                            <span>Disconnect Wallet</span>
                         </button>
                     `;
                 }
@@ -4902,7 +4902,7 @@
             
             if (!btn) return;
             
-            btn.innerHTML = '<span>⏳</span><span>Підключення...</span>';
+            btn.innerHTML = '<span>⏳</span><span>Connecting...</span>';
             btn.style.pointerEvents = 'none';
             
             try {
@@ -4910,7 +4910,7 @@
                 
                 if (walletType === 'keplr') {
                     if (!window.keplr) {
-                        alert('Будь ласка, встановіть Keplr Wallet або відкрийте сайт через браузер Keplr');
+                        alert('Please install Keplr Wallet or open site through Keplr browser');
                         btn.style.pointerEvents = 'auto';
                         btn.innerHTML = '<span>🔷</span><span>Keplr Wallet</span>';
                         return;
@@ -4924,7 +4924,7 @@
                     
                 } else if (walletType === 'cosmostation') {
                     if (!window.cosmostation) {
-                        alert('Будь ласка, встановіть Cosmostation Wallet або відкрийте сайт через браузер Cosmostation');
+                        alert('Please install Cosmostation Wallet or open site through Cosmostation browser');
                         btn.style.pointerEvents = 'auto';
                         btn.innerHTML = '<span>🔶</span><span>Cosmostation</span>';
                         return;
@@ -4944,7 +4944,7 @@
                 
             } catch (error) {
                 console.error('❌ Connection error:', error);
-                alert('Помилка підключення: ' + error.message);
+                alert('Connection error: ' + error.message);
                 btn.style.pointerEvents = 'auto';
                 btn.innerHTML = walletType === 'keplr' ? 
                     '<span>🔷</span><span>Keplr Wallet</span>' : 
@@ -5042,7 +5042,7 @@
             } else {
                 mobileBtn.innerHTML = `
                     <span>💼</span>
-                    <span>Підключити гаманець</span>
+                    <span>Connect Wallet</span>
                 `;
                 mobileBtn.style.background = '';
                 mobileBtn.style.borderColor = '';

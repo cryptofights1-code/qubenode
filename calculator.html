@@ -95,18 +95,67 @@
         .price-hint { color: #64748b; font-size: 0.8em; margin-top: 4px; }
         #calcResults { display: none; }
         .summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px; }
-        .summary-card { background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(74, 222, 128, 0.08)); border: 1px solid rgba(34, 197, 94, 0.35); border-radius: 15px; padding: 20px; text-align: center; }
+        .summary-card { 
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(74, 222, 128, 0.08)); 
+            border: 1px solid rgba(34, 197, 94, 0.35); 
+            border-radius: 15px; 
+            padding: 20px; 
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 140px; /* FIXED: Однакова висота всіх карток */
+        }
         .summary-card.highlight { background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(74, 222, 128, 0.1)); border: 2px solid rgba(34, 197, 94, 0.4); }
-        .card-label { color: #94a3b8; font-size: 0.9em; margin-bottom: 8px; }
-        .card-value { color: #22c55e; font-size: 1.5em; font-weight: 700; }
+        .card-label { 
+            color: #94a3b8; 
+            font-size: 0.9em; 
+            margin-bottom: 8px;
+            text-align: center; /* FIXED: Центруємо текст */
+            width: 100%;
+        }
+        .card-value { 
+            color: #22c55e; 
+            font-size: 1.5em; 
+            font-weight: 700; 
+            margin: 5px 0;
+            text-align: center;
+            width: 100%;
+            word-break: break-word; /* FIXED: Довгі числа переносяться */
+        }
         .card-value.large { font-size: 1.6em; }
-        .card-usd { color: #86efac; font-size: 0.85em; margin-top: 5px; }
+        .card-usd { 
+            color: #86efac; 
+            font-size: 0.85em; 
+            margin-top: 3px;
+            text-align: center;
+            width: 100%;
+        }
         .detailed-breakdown { background: rgba(34, 197, 94, 0.05); border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 15px; padding: 25px; margin-bottom: 20px; }
         .breakdown-title { color: #22c55e; margin-bottom: 20px; font-size: 1.2em; }
-        .breakdown-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(34, 197, 94, 0.15); }
+        .breakdown-row { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            padding: 12px 0; /* FIXED: Більше padding для чіткості */
+            border-bottom: 1px solid rgba(34, 197, 94, 0.15);
+            gap: 15px; /* FIXED: Відступ між label і value */
+        }
         .breakdown-row.highlight { border-bottom: 2px solid rgba(34, 197, 94, 0.3); padding: 15px 0 5px 0; margin-top: 10px; }
-        .breakdown-label { color: #94a3b8; }
-        .breakdown-value { font-weight: 600; }
+        .breakdown-label { 
+            color: #94a3b8; 
+            text-align: left; /* FIXED: Завжди ліворуч */
+            flex: 1;
+            font-size: 0.95em;
+        }
+        .breakdown-value { 
+            font-weight: 600; 
+            text-align: right; /* FIXED: Завжди праворуч */
+            min-width: 140px; /* FIXED: Ширше для довгих чисел */
+            white-space: nowrap;
+            flex-shrink: 0; /* FIXED: Не стискається */
+        }
         .comparison-box { background: rgba(34, 197, 94, 0.05); border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 15px; padding: 25px; display: none; }
         .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px; }
         .benefit-box { padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 10px; margin-top: 15px; }
@@ -141,7 +190,34 @@
             .page-title { font-size: 1.5em; }
             .calc-container { padding: 20px; }
             .input-grid { grid-template-columns: 1fr; }
-            .summary-cards { grid-template-columns: repeat(2, 1fr); }
+            .summary-cards { 
+                grid-template-columns: repeat(2, 1fr); /* Дві картки в ряд */
+                gap: 12px;
+            }
+            .summary-card {
+                min-height: 130px; /* Менша висота на мобільному */
+                padding: 15px 10px; /* Менше padding */
+            }
+            .card-label {
+                font-size: 0.85em; /* Менший текст */
+            }
+            .card-value {
+                font-size: 1.3em; /* Менші цифри */
+            }
+            .card-value.large {
+                font-size: 1.4em;
+            }
+            .breakdown-row {
+                padding: 10px 0;
+                gap: 10px;
+            }
+            .breakdown-label {
+                font-size: 0.9em;
+            }
+            .breakdown-value {
+                min-width: 120px;
+                font-size: 0.95em;
+            }
             .comparison-grid { grid-template-columns: 1fr; }
         }
     </style>
@@ -271,7 +347,7 @@
                     
                     <div class="breakdown-row">
                         <span class="breakdown-label">Ваш реальний APY:</span>
-                        <span class="breakdown-value" style="color: #22c55e; font-size: 1.05em;" id="realAPY">28.5%</span>
+                        <span class="breakdown-value" style="color: #22c55e; font-size: 1.05em;">28.5%</span>
                     </div>
                     
                     <div class="breakdown-row">
@@ -437,17 +513,6 @@
             document.getElementById('initialAmount').textContent = amount.toLocaleString() + ' TICS ($' + (amount * priceToUse).toFixed(2) + ')';
             document.getElementById('periodText').textContent = getPeriodText(period, customDays);
             document.getElementById('compoundText').textContent = compoundText;
-            
-            // Calculate real APY based on compounding
-            let realAPY;
-            if (compoundFreq === 'none') {
-                realAPY = NET_APY;
-            } else {
-                // Formula: Real APY = (1 + r/n)^n - 1, where r = annual rate, n = compounds per year
-                const ratePerPeriod = ANNUAL_RATE / compoundsPerYear;
-                realAPY = (Math.pow(1 + ratePerPeriod, compoundsPerYear) - 1) * 100;
-            }
-            document.getElementById('realAPY').textContent = realAPY.toFixed(2) + '%';
             
             document.getElementById('totalRewardAmount').textContent = grossReward.toFixed(2) + ' TICS ($' + (grossReward * priceToUse).toFixed(2) + ')';
             document.getElementById('validatorCommissionAmount').textContent = validatorCommission.toFixed(2) + ' TICS ($' + (validatorCommission * priceToUse).toFixed(2) + ')';

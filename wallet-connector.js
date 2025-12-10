@@ -134,10 +134,22 @@ class QubeNodeWalletConnector {
         this.showConnecting('modalKeplrBtn');
         
         try {
-            // First, suggest the chain to Keplr (important for mobile to get validator names)
+            // Load validators registry first
+            if (window.validatorsRegistry && !window.validatorsRegistry.loaded) {
+                await window.validatorsRegistry.loadValidators();
+            }
+            
+            // Create chain config with validators metadata
+            let chainConfigToSuggest = this.QubeticsKeplrChain;
+            if (window.validatorsRegistry && window.validatorsRegistry.loaded) {
+                chainConfigToSuggest = window.validatorsRegistry.createChainConfigWithValidators(this.QubeticsKeplrChain);
+                console.log('✅ Chain config includes validators metadata');
+            }
+            
+            // Suggest the chain to Keplr with validators metadata
             try {
-                await window.keplr.experimentalSuggestChain(this.QubeticsKeplrChain);
-                console.log('✅ Chain suggested to Keplr');
+                await window.keplr.experimentalSuggestChain(chainConfigToSuggest);
+                console.log('✅ Chain with validators suggested to Keplr');
             } catch (suggestError) {
                 console.log('Chain already exists or suggestion failed:', suggestError.message);
                 // Continue anyway, chain might already be added

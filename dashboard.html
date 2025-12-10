@@ -937,9 +937,6 @@
             try {
                 const overview = await cosmosStaking.refresh();
                 
-                // Preload all validator names to cache
-                await preloadAllValidators();
-                
                 // Update stats
                 document.getElementById('balance').textContent = formatTics(overview.balance);
                 document.getElementById('delegated').textContent = formatTics(overview.totalDelegated);
@@ -1027,27 +1024,6 @@
             }
             
             container.innerHTML = html;
-        }
-        
-        // Preload all validators to cache their names
-        async function preloadAllValidators() {
-            try {
-                console.log('🔄 Preloading all validators...');
-                const response = await fetch('https://swagger.qubetics.com/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED');
-                const data = await response.json();
-                
-                if (data.validators && Array.isArray(data.validators)) {
-                    data.validators.forEach(validator => {
-                        if (validator.description && validator.description.moniker) {
-                            validatorNamesCache[validator.operator_address] = validator.description.moniker;
-                        }
-                    });
-                    console.log('✅ Loaded', Object.keys(validatorNamesCache).length, 'validator names');
-                }
-            } catch (error) {
-                console.error('❌ Error preloading validators:', error);
-                // Not critical, continue anyway
-            }
         }
         
         async function loadValidatorName(address) {
@@ -1282,15 +1258,8 @@
                 const chainClient = cosmosStaking.chainClient;
                 const txBuilder = cosmosStaking.txBuilder;
                 
-                // Get validator name if available
-                let validatorName = 'Validator';
-                if (validatorNamesCache[currentValidatorAddress]) {
-                    validatorName = validatorNamesCache[currentValidatorAddress];
-                }
-                
                 const stakingService = new CosmosStakingService(walletManager, chainClient, txBuilder);
-                const memoText = `Delegate to ${validatorName} via QubeNode.space`;
-                const result = await stakingService.delegate(currentValidatorAddress, amountMinimal, memoText);
+                const result = await stakingService.delegate(currentValidatorAddress, amountMinimal, 'Stake more via QubeNode.space');
                 
                 showSuccess('Делегування успішне!', result.txHash);
                 await loadData();
@@ -1350,14 +1319,7 @@
             closeModal('claimAllModal');
             
             try {
-                // Build memo with validator names
-                const validatorsList = Object.keys(validatorNamesCache)
-                    .map(addr => validatorNamesCache[addr])
-                    .filter(name => name !== 'Unknown')
-                    .join(', ') || 'validators';
-                
-                const memoText = `Claim rewards from ${validatorsList} via QubeNode.space`;
-                const result = await cosmosStaking.claimRewards(memoText);
+                const result = await cosmosStaking.claimRewards('Claim all via QubeNode.space');
                 showSuccess('Винагороди зібрано!', result.txHash);
                 await loadData();
             } catch (error) {
@@ -1469,13 +1431,8 @@
                 const chainClient = cosmosStaking.chainClient;
                 const txBuilder = cosmosStaking.txBuilder;
                 
-                // Get validator names
-                const fromName = validatorNamesCache[currentValidatorAddress] || 'current validator';
-                const toName = validatorNamesCache[selectedSwitchValidator] || 'new validator';
-                
                 const stakingService = new CosmosStakingService(walletManager, chainClient, txBuilder);
-                const memoText = `Redelegate from ${fromName} to ${toName} via QubeNode.space`;
-                const result = await stakingService.redelegate(currentValidatorAddress, selectedSwitchValidator, amountMinimal, memoText);
+                const result = await stakingService.redelegate(currentValidatorAddress, selectedSwitchValidator, amountMinimal, 'Switch validator via QubeNode.space');
                 
                 showSuccess('Валідатора змінено!', result.txHash);
                 await loadData();
@@ -1520,12 +1477,8 @@
                 const chainClient = cosmosStaking.chainClient;
                 const txBuilder = cosmosStaking.txBuilder;
                 
-                // Get validator name
-                const validatorName = validatorNamesCache[currentValidatorAddress] || 'validator';
-                
                 const stakingService = new CosmosStakingService(walletManager, chainClient, txBuilder);
-                const memoText = `Undelegate from ${validatorName} via QubeNode.space`;
-                const result = await stakingService.undelegate(currentValidatorAddress, amountMinimal, memoText);
+                const result = await stakingService.undelegate(currentValidatorAddress, amountMinimal, 'Unbond via QubeNode.space');
                 
                 showSuccess('Unstake розпочато! Токени будуть доступні через 14 днів', result.txHash);
                 await loadData();
@@ -1546,16 +1499,12 @@
                 const chainClient = cosmosStaking.chainClient;
                 const txBuilder = cosmosStaking.txBuilder;
                 
-                // Get validator name
-                const validatorName = validatorNamesCache[validatorAddress] || 'validator';
-                
                 const stakingService = new CosmosStakingService(walletManager, chainClient, txBuilder);
-                const memoText = `Cancel unbond from ${validatorName} via QubeNode.space`;
                 const result = await stakingService.cancelUnbonding(
                     validatorAddress, 
                     amount, 
                     creationHeight, 
-                    memoText
+                    'Cancel unbond via QubeNode.space'
                 );
                 
                 showSuccess('Unbond скасовано! Токени повернулися в стейкінг', result.txHash);

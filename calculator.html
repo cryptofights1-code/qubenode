@@ -334,7 +334,7 @@
                     <h4 class="breakdown-title">📊 Детальний розрахунок</h4>
                     
                     <div class="breakdown-row">
-                        <span class="breakdown-label">Тіло депозиту (Principal):</span>
+                        <span class="breakdown-label">Тіло депозиту:</span>
                         <span class="breakdown-value" id="initialAmount">--</span>
                     </div>
                     
@@ -355,7 +355,7 @@
                     
                     <div class="breakdown-row">
                         <span class="breakdown-label">Ваш реальний APY:</span>
-                        <span class="breakdown-value" style="color: #22c55e; font-size: 1.05em;">28.5%</span>
+                        <span class="breakdown-value" style="color: #22c55e; font-size: 1.05em;" id="realAPY">28.5%</span>
                     </div>
                     
                     <div class="breakdown-row">
@@ -518,15 +518,32 @@
             const grossReward = netReward / 0.95;
             const validatorCommission = grossReward - netReward;
             
+            // FIXED: Оригінальні кольори - НЕ ЗМІНЮВАТИ!
+            const LIGHT_GREEN = '#86efac';  // Світло-зелений для винагород і USD
+            const YELLOW_COLOR = '#fbbf24'; // Жовтий для комісії
+            
             // FIXED: USD на новому рядку для кращого відображення на мобільному
-            document.getElementById('initialAmount').innerHTML = amount.toLocaleString() + ' TICS<br><span style="font-size: 0.85em; color: #86efac;">($' + (amount * priceToUse).toFixed(2) + ')</span>';
+            document.getElementById('initialAmount').innerHTML = amount.toLocaleString() + ' TICS<br><span style="font-size: 0.85em; color: ' + LIGHT_GREEN + ';">($' + (amount * priceToUse).toFixed(2) + ')</span>';
             document.getElementById('periodText').textContent = getPeriodText(period, customDays);
             document.getElementById('compoundText').textContent = compoundText;
             
-            document.getElementById('totalRewardAmount').innerHTML = grossReward.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: #86efac;">($' + (grossReward * priceToUse).toFixed(2) + ')</span>';
-            document.getElementById('validatorCommissionAmount').innerHTML = validatorCommission.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: #fbbf24;">($' + (validatorCommission * priceToUse).toFixed(2) + ')</span>';
-            document.getElementById('netRewardAmount').innerHTML = netReward.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: #86efac;">($' + (netReward * priceToUse).toFixed(2) + ')</span>';
-            document.getElementById('finalAmount').innerHTML = finalAmount.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: #86efac;">($' + (finalAmount * priceToUse).toFixed(2) + ')</span>';
+            document.getElementById('totalRewardAmount').innerHTML = grossReward.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: ' + LIGHT_GREEN + ';">($' + (grossReward * priceToUse).toFixed(2) + ')</span>';
+            document.getElementById('validatorCommissionAmount').innerHTML = validatorCommission.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: ' + YELLOW_COLOR + ';">($' + (validatorCommission * priceToUse).toFixed(2) + ')</span>';
+            document.getElementById('netRewardAmount').innerHTML = netReward.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: ' + LIGHT_GREEN + ';">($' + (netReward * priceToUse).toFixed(2) + ')</span>';
+            document.getElementById('finalAmount').innerHTML = finalAmount.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: ' + LIGHT_GREEN + ';">($' + (finalAmount * priceToUse).toFixed(2) + ')</span>';
+            
+            // FIXED: Calculate real APY based on compound frequency using NET_APY
+            const NET_APY_DECIMAL = NET_APY / 100; // 28.5% -> 0.285
+            let realAPY;
+            if (compoundFreq === 'none') {
+                realAPY = NET_APY; // 28.5% без реінвестування
+            } else {
+                // Формула складного відсотка: (1 + r/n)^n - 1
+                // де r = NET_APY (28.5%), n = кількість компаундингів на рік
+                const effectiveAPY = (Math.pow(1 + NET_APY_DECIMAL / compoundsPerYear, compoundsPerYear) - 1) * 100;
+                realAPY = effectiveAPY;
+            }
+            document.getElementById('realAPY').textContent = realAPY.toFixed(2) + '%';
             
             if (compoundFreq !== 'none') {
                 const monthlyRate = ANNUAL_RATE / 12;
@@ -539,7 +556,7 @@
                 document.getElementById('withoutCompoundUSD').textContent = '$' + (withoutCompoundFinal * priceToUse).toFixed(2);
                 document.getElementById('withCompound').textContent = finalAmount.toFixed(2) + ' TICS';
                 document.getElementById('withCompoundUSD').textContent = '$' + (finalAmount * priceToUse).toFixed(2);
-                document.getElementById('compoundBenefit').innerHTML = '+' + benefit.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: #86efac;">($' + (benefit * priceToUse).toFixed(2) + ')</span>';
+                document.getElementById('compoundBenefit').innerHTML = '+' + benefit.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: ' + LIGHT_GREEN + ';">($' + (benefit * priceToUse).toFixed(2) + ')</span>';
             } else {
                 document.getElementById('compoundComparison').style.display = 'none';
             }

@@ -7,7 +7,6 @@
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>QubeNode - Qubetics Validator</title>
-    <!-- Version 2.2 - 2025-12-12 15:30 - Fixed mobile wallet button & email links -->
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -2386,7 +2385,7 @@
                     </defs>
                 </svg>
             </a>
-            <a href="mailto:validator.qubenode@gmail.com" class="fixed-contact-icon">
+            <a href="/cdn-cgi/l/email-protection#157c7b737a55646077707b7a71703b6665747670" class="fixed-contact-icon">
                 <svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <rect x="11" y="16" width="28" height="18" rx="2" stroke="url(#iconGrad2)" stroke-width="3.5" fill="none"/>
                     <path d="M11 19L25 28L39 19" stroke="url(#iconGrad2)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -2434,9 +2433,9 @@
                 position: fixed !important;
                 top: 24px !important;
                 left: 85px !important;
-                right: 135px !important;
+                right: 150px !important;
                 width: auto !important;
-                max-width: calc(100vw - 220px) !important;
+                max-width: calc(100vw - 235px) !important;
                 height: 42px !important;
                 background: linear-gradient(135deg, rgba(0, 212, 255, 0.12), rgba(99, 102, 241, 0.12)) !important;
                 border: 1.5px solid transparent !important;
@@ -2480,7 +2479,7 @@
             }
         }
     </style>
-    <button id="mobileHeaderWalletBtn" type="button" onclick="openWalletModal()">Connect Wallet</button>
+    <button id="mobileHeaderWalletBtn" type="button">Connect Wallet</button>
 
     <div class="bg-animation"></div>
     <div class="grid-overlay"></div>
@@ -2567,7 +2566,7 @@
                 </svg>
                 <span>Telegram</span>
             </a>
-            <a href="mailto:validator.qubenode@gmail.com" class="contact-link">
+            <a href="/cdn-cgi/l/email-protection#b8d1d6ded7f8c9cddaddd6d7dcdd96cbc8d9dbdd" class="contact-link">
                 <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                     <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
                 </svg>
@@ -2623,7 +2622,7 @@
             </div>
             <div class="stat-card">
                 <div class="stat-label">APY</div>
-                <div class="stat-value" style="padding-top: 20px;">30%</div>
+                <div class="stat-value">30%</div>
                 <div class="stat-subvalue">Annual reward</div>
             </div>
             <div class="stat-card">
@@ -2665,7 +2664,7 @@
 
         <footer>
             <p><strong>QubeNode</strong> - Professional Qubetics Network validator</p>
-            <p>© 2025 QubeNode. All rights reserved. | <a href="https://t.me/+sRnz7RyoL4Q0MWEy" target="_blank" style="color: #00D4FF; text-decoration: none;">Telegram</a></p>
+            <p>© 2025 QubeNode. All rights reserved.</p>
         </footer>
     </div>
 
@@ -3071,7 +3070,7 @@
 
     <!-- FAQ Modal -->
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    <script>
         // FAQ Accordion Toggle
         function toggleFaq(button) {
             const faqItem = button.parentElement;
@@ -5108,4 +5107,12 @@
             // console.log('✅ btnQuickClaimAllRewards listener attached');
         }
     } else {
-        // console.error('❌ Function
+        // console.error('❌ Functions are NOT loaded!');
+    }
+    </script>
+
+    <!-- WALLET CONNECTOR - Adapted from TicsLab -->
+    <script src="validators-registry.js"></script>
+    <script src="wallet-connector.js"></script>
+</body>
+</html>

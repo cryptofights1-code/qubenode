@@ -1460,24 +1460,25 @@
                 text-align: center;
                 display: flex;
                 flex-direction: column;
-                justify-content: flex-start;
-                align-items: center;
                 min-height: 140px;
-                gap: 8px;
             }
 
             .stat-label {
                 font-size: 0.75em;
                 text-align: center;
                 margin-bottom: 10px;
+                height: 18px;
             }
 
             .stat-value {
                 font-size: 1.6em;
                 text-align: center;
                 word-break: break-word;
-                margin-top: 0;
-                margin-bottom: 0;
+                margin: 0 0 10px 0;
+                height: 38px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
             .stat-subvalue {
@@ -2448,9 +2449,8 @@
                 position: fixed !important;
                 top: 24px !important;
                 left: 85px !important;
-                right: 150px !important;
+                right: 85px !important;
                 width: auto !important;
-                max-width: calc(100vw - 235px) !important;
                 height: 42px !important;
                 background: linear-gradient(135deg, rgba(0, 212, 255, 0.12), rgba(99, 102, 241, 0.12)) !important;
                 border: 1.5px solid transparent !important;

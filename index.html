@@ -966,6 +966,16 @@
             margin-top: 80px;
         }
 
+        footer a {
+            color: #00D4FF;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        footer a:hover {
+            color: #00FFF0;
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -1464,6 +1474,11 @@
                 font-size: 1.6em;
                 text-align: center;
                 word-break: break-word;
+            }
+            
+            /* Fix APY card alignment - add space after label */
+            .stat-card:nth-child(5) .stat-value {
+                margin-top: 15px;
             }
 
             .stat-subvalue {
@@ -2385,7 +2400,7 @@
                     </defs>
                 </svg>
             </a>
-            <a href="/cdn-cgi/l/email-protection#157c7b737a55646077707b7a71703b6665747670" class="fixed-contact-icon">
+            <a href="/cdn-cgi/l/email-protection#0b7d6a67626f6a7f6479257a7e696e65646f6e4b6c666a626725686466" class="fixed-contact-icon">
                 <svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <rect x="11" y="16" width="28" height="18" rx="2" stroke="url(#iconGrad2)" stroke-width="3.5" fill="none"/>
                     <path d="M11 19L25 28L39 19" stroke="url(#iconGrad2)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -2433,9 +2448,8 @@
                 position: fixed !important;
                 top: 24px !important;
                 left: 85px !important;
-                right: 150px !important;
+                right: 85px !important;
                 width: auto !important;
-                max-width: calc(100vw - 235px) !important;
                 height: 42px !important;
                 background: linear-gradient(135deg, rgba(0, 212, 255, 0.12), rgba(99, 102, 241, 0.12)) !important;
                 border: 1.5px solid transparent !important;
@@ -2566,7 +2580,7 @@
                 </svg>
                 <span>Telegram</span>
             </a>
-            <a href="/cdn-cgi/l/email-protection#b8d1d6ded7f8c9cddaddd6d7dcdd96cbc8d9dbdd" class="contact-link">
+            <a href="/cdn-cgi/l/email-protection#740215181d1015001b065a050116111a1b1011341319151d185a171b19" class="contact-link">
                 <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                     <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
                 </svg>
@@ -2664,7 +2678,7 @@
 
         <footer>
             <p><strong>QubeNode</strong> - Professional Qubetics Network validator</p>
-            <p>© 2025 QubeNode. All rights reserved.</p>
+            <p>© 2025 QubeNode. All rights reserved. | <a href="https://t.me/+sRnz7RyoL4Q0MWEy" target="_blank">Telegram</a></p>
         </footer>
     </div>
 
@@ -3070,7 +3084,7 @@
 
     <!-- FAQ Modal -->
 
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         // FAQ Accordion Toggle
         function toggleFaq(button) {
             const faqItem = button.parentElement;
@@ -5107,12 +5121,4 @@
             // console.log('✅ btnQuickClaimAllRewards listener attached');
         }
     } else {
-        // console.error('❌ Functions are NOT loaded!');
-    }
-    </script>
-
-    <!-- WALLET CONNECTOR - Adapted from TicsLab -->
-    <script src="validators-registry.js"></script>
-    <script src="wallet-connector.js"></script>
-</body>
-</html>
+        // console.error('❌ Function

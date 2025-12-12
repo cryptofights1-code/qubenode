@@ -411,7 +411,7 @@
                     <p>You can contact us through:</p>
                     <ul>
                         <li><strong><a href="https://t.me/+sRnz7RyoL4Q0MWEy" target="_blank">Telegram</a>:</strong> Our support team is always ready to help</li>
-                        <li><strong>Email:</strong> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="750314191c1114011a075b040017101b1a1110351218141c195b161a18">[email&#160;protected]</a></li>
+                        <li><strong>Email:</strong> <a href="mailto:validator.qubenode@gmail.com">validator.qubenode@gmail.com</a></li>
                     </ul>
                 </div>
             </div>
@@ -444,4 +444,14 @@
             document.querySelectorAll('.faq-question').forEach(q => {
                 q.classList.remove('active');
                 q.nextElementSibling.classList.remove('active');
-      
+            });
+            
+            // Toggle current answer
+            if (!isActive) {
+                button.classList.add('active');
+                answer.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -7,8 +7,6 @@
 console.log('🚀 QubeNode Sync v2.9.1 LOADED - 25 blocks for mobile (85% width)');
 
 const API_BASE = "https://swagger.qubetics.com";
-const RPC_BASE = "https://rpc.qubenode.space";
-const API_KEY = "qubenode_94Fh29sd8GvP!";
 const VALIDATOR = "qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld";
 const TICSSCAN_API = "https://v2.ticsscan.com/api/v2";
 
@@ -42,14 +40,12 @@ async function updateBlockHeight() {
   // Try different endpoints to get current block
   const endpoints = [
     'https://swagger.qubetics.com/cosmos/base/tendermint/v1beta1/blocks/latest',
-    'https://tendermint.qubetics.com/abci_info',
-    `${RPC_BASE}/status`
+    'https://tendermint.qubetics.com/abci_info'
   ];
   
   for (const endpoint of endpoints) {
     try {
-      const headers = endpoint.includes('qubenode') ? { "X-API-KEY": API_KEY } : {};
-      const data = await fetchJSON(endpoint, headers);
+      const data = await fetchJSON(endpoint);
       
       // Parse different response formats
       let blockHeight = null;

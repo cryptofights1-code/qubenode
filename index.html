@@ -2411,7 +2411,7 @@
     <!-- WALLET CONNECTION MODAL -->
     <div class="wallet-modal-overlay" id="walletModal">
         <div class="wallet-modal-content">
-            <button class="wallet-modal-close" onclick="closeWalletModal()">×</button>
+            <button class="wallet-modal-close">×</button>
             <h2 class="wallet-modal-title">Connect Wallet</h2>
             <p class="wallet-modal-subtitle">Choose your wallet to connect</p>
             <div class="wallet-buttons">
@@ -2501,23 +2501,23 @@
             Menu
         </div>
         <div class="mobile-menu-items">
-            <button class="mobile-menu-item" onclick="window.location.href='ecosystem.html'" type="button">
+            <button class="mobile-menu-item" id="mobileMenuEcosystem"" type="button">
                 <span>🌐</span>
                 <span>Qubetics Ecosystem</span>
             </button>
-            <button class="mobile-menu-item" onclick="window.location.href='tics.html'" type="button">
+            <button class="mobile-menu-item" id="mobileMenuTics"" type="button">
                 <span>💎</span>
                 <span>TICS Coin</span>
             </button>
-            <button class="mobile-menu-item" onclick="window.location.href='calculator.html'" type="button">
+            <button class="mobile-menu-item" id="mobileMenuCalculator"" type="button">
                 <span>🧮</span>
                 <span>Calculator</span>
             </button>
-            <button class="mobile-menu-item" onclick="window.location.href='how-to-delegate.html'" type="button">
+            <button class="mobile-menu-item" id="mobileMenuDelegate"" type="button">
                 <span>🤝</span>
                 <span>Become a Delegator</span>
             </button>
-            <button class="mobile-menu-item" onclick="window.location.href='faq.html'" type="button">
+            <button class="mobile-menu-item" id="mobileMenuFaq"" type="button">
                 <span>❓</span>
                 <span>FAQ</span>
             </button>
@@ -2526,37 +2526,37 @@
 
     <div class="container">
         <div class="top-left-menu">
-            <button class="ecosystem-button" onclick="window.location.href='ecosystem.html'">
+            <button class="ecosystem-button" id="desktopEcosystemBtn">
                 <span>🌐</span>
                 <span>Qubetics Ecosystem</span>
             </button>
-            <button class="ecosystem-button" onclick="window.location.href='tics.html'">
+            <button class="ecosystem-button" id="desktopTicsBtn">
                 <span>💎</span>
                 <span>TICS Coin</span>
             </button>
-            <button class="ecosystem-button" onclick="window.location.href='calculator.html'">
+            <button class="ecosystem-button" id="desktopCalculatorBtn">
                 <span>🧮</span>
                 <span>Calculator</span>
             </button>
-            <button class="ecosystem-button" onclick="window.location.href='how-to-delegate.html'">
+            <button class="ecosystem-button" id="desktopDelegateBtn">
                 <span>🤝</span>
                 <span>Become a Delegator</span>
             </button>
-            <button class="ecosystem-button" onclick="window.location.href='faq.html'">
+            <button class="ecosystem-button" id="desktopFaqBtn">
                 <span>❓</span>
                 <span>FAQ</span>
             </button>
             <div style="position: relative;">
-                <button class="header-wallet-button" id="headerWalletBtn" onclick="toggleHeaderWalletDropdown(event)">
+                <button class="header-wallet-button" id="headerWalletBtn">
                     <span>💼</span>
                     <span>Connect Wallet</span>
                 </button>
                 <div class="wallet-dropdown" id="headerWalletDropdown">
-                    <button class="wallet-option" onclick="connectHeaderWallet('keplr'); event.stopPropagation();">
+                    <button class="wallet-option" id="headerKeplrOption">
                         <img src="keplr.png" alt="Keplr" style="width: 24px; height: 24px; border-radius: 6px;">
                         <span>Keplr</span>
                     </button>
-                    <button class="wallet-option" onclick="connectHeaderWallet('cosmostation'); event.stopPropagation();">
+                    <button class="wallet-option" id="headerCosmostationOption">
                         <img src="Cosmostation.png" alt="Cosmostation" style="width: 24px; height: 24px; border-radius: 6px;">
                         <span>Cosmostation</span>
                     </button>
@@ -2679,7 +2679,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Become a Delegator QubeNode</h2>
-                <button class="close-button" data-close="delegatorModal" onclick="closeModal('delegatorModal')">&times;</button>
+                <button class="close-button" data-close="delegatorModal">&times;</button>
             </div>
             <div class="modal-body">
                 <!-- DELEGATOR DASHBOARD - Shows when wallet is connected -->
@@ -2696,7 +2696,7 @@
                         
                         <p style="color: #cbd5e1; margin-bottom: 20px; line-height: 1.8;">
                             You can make delegation in wallet 
-                            <span style="color: #00D4FF; font-weight: 600; cursor: pointer;" onclick="openModal('keplrGuideModal')">Keplr (<u>guide</u>)</span> 
+                            <span style="color: #00D4FF; font-weight: 600; cursor: pointer;"  data-modal="keplrGuideModal">Keplr (<u>guide</u>)</span> 
                             or 
                             <span style="color: #00D4FF; font-weight: 600;">Cosmostation</span>.
                         </p>
@@ -2738,12 +2738,12 @@
                             <p style="color: #cbd5e1; margin-bottom: 15px; font-size: 0.95em; font-weight: 600;">Connect wallet for $TICS delegation:</p>
                             
                             <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 15px;">
-                                <button id="connectKeplrBtn" onclick="connectHeaderWallet('keplr')" style="flex: 1; min-width: 180px; padding: 14px 24px; background: rgba(0, 212, 255, 0.15); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 10px; color: #00FFF0; font-size: 1em; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                <button id="connectKeplrBtn" style="flex: 1; min-width: 180px; padding: 14px 24px; background: rgba(0, 212, 255, 0.15); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 10px; color: #00FFF0; font-size: 1em; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;">
                                     <span style="font-size: 1.2em;">🔷</span>
                                     <span>Keplr Wallet</span>
                                 </button>
                                 
-                                <button id="connectCosmostationBtn" onclick="connectHeaderWallet('cosmostation')" style="flex: 1; min-width: 180px; padding: 14px 24px; background: rgba(0, 212, 255, 0.15); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 10px; color: #00FFF0; font-size: 1em; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                <button id="connectCosmostationBtn" style="flex: 1; min-width: 180px; padding: 14px 24px; background: rgba(0, 212, 255, 0.15); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 10px; color: #00FFF0; font-size: 1em; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;">
                                     <span style="font-size: 1.2em;">🔶</span>
                                     <span>Cosmostation</span>
                                 </button>
@@ -2755,7 +2755,7 @@
                                         <div style="color: #00FFF0; font-weight: 600; margin-bottom: 5px;">Connected: <span id="connectedWallet"></span></div>
                                         <div style="color: #94a3b8; font-size: 0.9em; word-break: break-all;"><span id="connectedAddress"></span></div>
                                     </div>
-                                    <button onclick="disconnectWallet()" style="padding: 10px 20px; background: rgba(255, 0, 0, 0.2); border: 1px solid rgba(255, 0, 0, 0.4); border-radius: 8px; color: #ff6b6b; cursor: pointer; font-weight: 600;">Disconnect</button>
+                                    <button id="disconnectWalletBtn" style="padding: 10px 20px; background: rgba(255, 0, 0, 0.2); border: 1px solid rgba(255, 0, 0, 0.4); border-radius: 8px; color: #ff6b6b; cursor: pointer; font-weight: 600;">Disconnect</button>
                                 </div>
                                 
                                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
@@ -2781,9 +2781,9 @@
                                 <h4 style="color: #00FFF0; font-size: 1.2em; margin-bottom: 20px;">Staking Operations</h4>
                                 
                                 <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid rgba(0, 212, 255, 0.2); padding-bottom: 10px;">
-                                    <button onclick="showStakingTab('delegate')" id="tabDelegate" class="staking-tab active" style="padding: 12px 24px; background: rgba(0, 212, 255, 0.2); border: none; border-radius: 8px; color: #00FFF0; font-weight: 600; cursor: pointer; transition: all 0.3s;">Delegate</button>
-                                    <button onclick="showStakingTab('undelegate')" id="tabUndelegate" class="staking-tab" style="padding: 12px 24px; background: transparent; border: none; border-radius: 8px; color: #94a3b8; font-weight: 600; cursor: pointer; transition: all 0.3s;">Undelegate</button>
-                                    <button onclick="showStakingTab('claim')" id="tabClaim" class="staking-tab" style="padding: 12px 24px; background: transparent; border: none; border-radius: 8px; color: #94a3b8; font-weight: 600; cursor: pointer; transition: all 0.3s;">Claim Reward</button>
+                                    <button id="tabDelegate" class="staking-tab active" style="padding: 12px 24px; background: rgba(0, 212, 255, 0.2); border: none; border-radius: 8px; color: #00FFF0; font-weight: 600; cursor: pointer; transition: all 0.3s;">Delegate</button>
+                                    <button id="tabUndelegate" class="staking-tab" style="padding: 12px 24px; background: transparent; border: none; border-radius: 8px; color: #94a3b8; font-weight: 600; cursor: pointer; transition: all 0.3s;">Undelegate</button>
+                                    <button id="tabClaim" class="staking-tab" style="padding: 12px 24px; background: transparent; border: none; border-radius: 8px; color: #94a3b8; font-weight: 600; cursor: pointer; transition: all 0.3s;">Claim Reward</button>
                                 </div>
                                 
                                 <!-- Delegate Tab -->
@@ -2793,7 +2793,7 @@
                                         <label style="color: #94a3b8; font-size: 0.95em; margin-bottom: 8px; display: block;">TICS Amount:</label>
                                         <input type="number" id="delegateAmount" placeholder="0.1" step="0.1" min="0.1" style="width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 10px; color: #fff; font-size: 1.1em;">
                                     </div>
-                                    <button onclick="executeDelegate()" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border: none; border-radius: 12px; color: #000; font-size: 1.2em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
+                                    <button id="executeDelegateBtn" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border: none; border-radius: 12px; color: #000; font-size: 1.2em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
                                         💎 Delegate to QubeNode
                                     </button>
                                 </div>
@@ -2805,7 +2805,7 @@
                                         <label style="color: #94a3b8; font-size: 0.95em; margin-bottom: 8px; display: block;">TICS Amount:</label>
                                         <input type="number" id="undelegateAmount" placeholder="0.1" step="0.1" min="0.1" style="width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 10px; color: #fff; font-size: 1.1em;">
                                     </div>
-                                    <button onclick="executeUndelegate()" style="width: 100%; padding: 18px; background: rgba(255, 107, 107, 0.2); border: 2px solid rgba(255, 107, 107, 0.4); border-radius: 12px; color: #ff6b6b; font-size: 1.2em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
+                                    <button id="executeUndelegateBtn" style="width: 100%; padding: 18px; background: rgba(255, 107, 107, 0.2); border: 2px solid rgba(255, 107, 107, 0.4); border-radius: 12px; color: #ff6b6b; font-size: 1.2em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
                                         ⚠️ Undelegate
                                     </button>
                                 </div>
@@ -2817,7 +2817,7 @@
                                         <div style="color: #94a3b8; font-size: 0.9em; margin-bottom: 5px;">Available reward</div>
                                         <div style="color: #22c55e; font-size: 2em; font-weight: 700;"><span id="claimableRewards">0</span> TICS</div>
                                     </div>
-                                    <button onclick="executeClaim()" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #22c55e, #16a34a); border: none; border-radius: 12px; color: #000; font-size: 1.2em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
+                                    <button id="executeClaimBtn" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #22c55e, #16a34a); border: none; border-radius: 12px; color: #000; font-size: 1.2em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
                                         💰 Claim Reward
                                     </button>
                                 </div>
@@ -2948,7 +2948,7 @@
                     
                     <!-- Disconnect Button -->
                     <div style="text-align: center;">
-                        <button onclick="disconnectDashboard()" style="padding: 10px 25px; background: rgba(239, 68, 68, 0.2); border: 2px solid rgba(239, 68, 68, 0.4); border-radius: 30px; color: #ef4444; cursor: pointer; font-weight: 600; transition: all 0.3s; font-size: 0.9em;">
+                        <button id="disconnectDashboardBtn" style="padding: 10px 25px; background: rgba(239, 68, 68, 0.2); border: 2px solid rgba(239, 68, 68, 0.4); border-radius: 30px; color: #ef4444; cursor: pointer; font-weight: 600; transition: all 0.3s; font-size: 0.9em;">
                             🔌 Disconnect Wallet
                         </button>
                     </div>
@@ -2967,9 +2967,9 @@
     </div>
 
     <!-- Validator Selection Modal -->
-    <div id="validatorSelectorModal" class="modal" onclick="if(event.target === this) closeModal('validatorSelectorModal')">
+    <div id="validatorSelectorModal" class="modal">
         <div class="modal-content">
-            <button class="закрити-button" onclick="closeModal('validatorSelectorModal')" style="position: absolute; top: 20px; right: 20px; background: rgba(239, 68, 68, 0.2); border: 2px solid rgba(239, 68, 68, 0.4); padding: 8px 16px; border-radius: 8px; color: #ef4444; cursor: pointer; font-weight: 600; z-index: 10;">✕ Close</button>
+            <button class="закрити-button" data-close="validatorSelectorModal" style="position: absolute; top: 20px; right: 20px; background: rgba(239, 68, 68, 0.2); border: 2px solid rgba(239, 68, 68, 0.4); padding: 8px 16px; border-radius: 8px; color: #ef4444; cursor: pointer; font-weight: 600; z-index: 10;">✕ Close</button>
             
             <h2 id="validatorModalTitle" style="color: #00FFF0; font-size: 1.8em; margin-bottom: 25px; text-align: center;">Select Validator</h2>
             
@@ -2984,7 +2984,7 @@
         <div class="modal-content" style="max-width: 700px;">
             <div class="modal-header">
                 <h2 class="modal-title">📱 How to Delegate via Keplr Mobile</h2>
-                <button class="close-button" onclick="closeModal('keplrGuideModal')">&times;</button>
+                <button class="close-button" data-close="keplrGuideModal">&times;</button>
             </div>
             <div class="modal-body" style="padding: 40px;">
                 <p style="font-size: 1.1em; color: #cbd5e1; margin-bottom: 30px; line-height: 1.6;">
@@ -3075,7 +3075,6 @@
 
     <!-- FAQ Modal -->
 
-    <script>
         // FAQ Accordion Toggle
         function toggleFaq(button) {
             const faqItem = button.parentElement;
@@ -3262,11 +3261,11 @@
             const dropdown = document.getElementById('headerWalletDropdown');
             if (dropdown) {
                 dropdown.innerHTML = `
-                    <button class="wallet-option" onclick="connectHeaderWallet('keplr'); event.stopPropagation();">
+                    <button class="wallet-option" id="headerKeplrOption">
                         <span>🔷</span>
                         <span>Keplr Wallet</span>
                     </button>
-                    <button class="wallet-option" onclick="connectHeaderWallet('cosmostation'); event.stopPropagation();">
+                    <button class="wallet-option" id="headerCosmostationOption">
                         <span>🔶</span>
                         <span>Cosmostation</span>
                     </button>
@@ -5115,9 +5114,12 @@
         // console.error('❌ Functions are NOT loaded!');
     }
     </script>
-
+    
     <!-- WALLET CONNECTOR - Adapted from TicsLab -->
     <script src="validators-registry.js"></script>
     <script src="wallet-connector.js"></script>
+    
+    <!-- Index Page Initialization - Event Listeners for CSP Compliance -->
+    <script src="init-index.js"></script>
 </body>
 </html>

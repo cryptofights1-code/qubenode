@@ -269,7 +269,7 @@
         <div style="max-width: 900px; margin: 25px auto; padding: 0 20px;">
             <h3 style="color: #00FFF0; font-size: 1.6em; margin-bottom: 20px;">How to Delegate $TICS</h3>
             
-            <p style="color: #cbd5e1; line-height: 1.8; margin-bottom: 15px;">You can delegate using the <span style="color: #67e8f9;">Keplr</span> wallet (<a href="#" class="link" onclick="openKeplrModal(); return false;">guide</a>) or <span style="color: #67e8f9;">Cosmostation</span>.</p>
+            <p style="color: #cbd5e1; line-height: 1.8; margin-bottom: 15px;">You can delegate using the <span style="color: #67e8f9;">Keplr</span> wallet (<a href="#" class="link">guide</a>) or <span style="color: #67e8f9;">Cosmostation</span>.</p>
             
             <p style="color: #cbd5e1; line-height: 1.8; margin-bottom: 15px;">For convenience, delegation is also available directly on the <span style="color: #67e8f9;">QubeNode</span> validator website.</p>
             
@@ -293,12 +293,12 @@
                 <p style="color: #cbd5e1; margin-bottom: 15px; font-weight: 600;">Connect wallet to delegate $TICS:</p>
                 
                 <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 15px;">
-                    <button id="connectKeplrBtn" onclick="connectWallet('keplr')" style="flex: 1; min-width: 200px; max-width: 300px; padding: 18px 24px; background: rgba(0, 212, 255, 0.15); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 12px; color: #00FFF0; font-size: 1.1em; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    <button id="connectKeplrBtn" style="flex: 1; min-width: 200px; max-width: 300px; padding: 18px 24px; background: rgba(0, 212, 255, 0.15); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 12px; color: #00FFF0; font-size: 1.1em; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;">
                         <img src="keplr.png" alt="Keplr" style="width: 28px; height: 28px; border-radius: 6px;">
                         <span>Keplr Wallet</span>
                     </button>
                     
-                    <button id="connectCosmostationBtn" onclick="connectWallet('cosmostation')" style="flex: 1; min-width: 200px; max-width: 300px; padding: 18px 24px; background: rgba(0, 212, 255, 0.15); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 12px; color: #00FFF0; font-size: 1.1em; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    <button id="connectCosmostationBtn" style="flex: 1; min-width: 200px; max-width: 300px; padding: 18px 24px; background: rgba(0, 212, 255, 0.15); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 12px; color: #00FFF0; font-size: 1.1em; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;">
                         <img src="Cosmostation.png" alt="Cosmostation" style="width: 28px; height: 28px; border-radius: 6px;">
                         <span>Cosmostation</span>
                     </button>
@@ -398,9 +398,9 @@
     </script>
     
     <!-- Keplr Instruction Modal -->
-    <div id="keplrModal" class="modal-overlay" onclick="if(event.target === this) closeKeplrModal()">
+    <div id="keplrModal" class="modal-overlay">
         <div class="modal-content">
-            <button class="modal-close" onclick="closeKeplrModal()">×</button>
+            <button class="modal-close">×</button>
             
             <h2 class="modal-title">📱 How to Delegate via Keplr Mobile</h2>
             <p class="modal-subtitle">Step-by-step guide for delegating $TICS via Keplr mobile app:</p>
@@ -531,5 +531,8 @@
             }
         });
     </script>
+    
+    <!-- How To Delegate Initialization -->
+    <script src="init-how-to-delegate.js"></script>
 </body>
 </html>

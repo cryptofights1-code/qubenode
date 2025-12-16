@@ -619,7 +619,7 @@
                 <a href="index.html" style="padding: 10px 20px; background: rgba(0,212,255,0.15); border: 1px solid rgba(0,212,255,0.4); border-radius: 8px; color: #00D4FF; text-decoration: none; font-weight: 600; transition: all 0.3s;" onmouseover="this.style.background='rgba(0,212,255,0.25)'" onmouseout="this.style.background='rgba(0,212,255,0.15)'">🏠 To Main</a>
             </div>
             <p style="color: #64748b; margin-bottom: 12px; word-break: break-all;">Address: <span id="walletAddress" style="color: #00FFF0;">Loading...</span></p>
-            <button onclick="disconnectWallet()" style="padding: 10px 20px; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4); border-radius: 8px; color: #ef4444; cursor: pointer; font-weight: 600; transition: all 0.3s;" onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.15)'">🚪 Disconnect Wallet</button>
+            <button id="disconnectWalletBtn" style="padding: 10px 20px; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4); border-radius: 8px; color: #ef4444; cursor: pointer; font-weight: 600; transition: all 0.3s;" onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.15)'">🚪 Disconnect Wallet</button>
         </div>
         
         <!-- Stats -->
@@ -670,10 +670,10 @@
         <div class="section">
             <h4 class="section-title">💎 Quick Actions</h4>
             <div class="quick-actions">
-                <button class="btn-quick btn-delegate" onclick="quickDelegateQubeNode()">
+                <button class="btn-quick btn-delegate">
                     Delegate to QubeNode
                 </button>
-                <button class="btn-quick btn-claim-all" onclick="quickClaimAll()">
+                <button class="btn-quick btn-claim-all">
                     <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
                         <span>Claim All Rewards</span>
                         <span style="font-size: 13px; opacity: 0.9;"><span id="quickClaimAmount">0.000</span> TICS</span>
@@ -707,7 +707,7 @@
                     <span style="font-size: 20px;">💎</span>
                     <span>Delegate TICS</span>
                 </h3>
-                <span class="close" onclick="closeModal('stakeMoreModal')">&times;</span>
+                <span class="close" id="closeStakeMoreModal">&times;</span>
             </div>
             <div class="modal-body" style="padding: 15px 20px;">
                 <div class="validator-info-box" style="padding: 10px 12px; margin-bottom: 12px;">
@@ -733,8 +733,8 @@
                 </div>
             </div>
             <div class="modal-footer" style="padding: 12px 20px;">
-                <button class="btn-cancel" onclick="closeModal('stakeMoreModal')">Cancel</button>
-                <button class="btn-confirm cyan" onclick="confirmStakeMore()">Delegate</button>
+                <button class="btn-cancel" id="cancelStakeMore">Cancel</button>
+                <button class="btn-confirm cyan" id="confirmStakeMore">Delegate</button>
             </div>
         </div>
     </div>
@@ -744,7 +744,7 @@
         <div class="modal-content" style="border-color: rgba(245,158,11,0.4);">
             <div class="modal-header">
                 <h3 style="color: #fbbf24;">💰 Claim Rewards</h3>
-                <span class="close" onclick="closeModal('claimAllModal')">&times;</span>
+                <span class="close" id="closeClaimAllModal">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="total-rewards">
@@ -763,8 +763,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn-cancel" onclick="closeModal('claimAllModal')">Cancel</button>
-                <button class="btn-confirm green" onclick="confirmClaimAll()">Claim</button>
+                <button class="btn-cancel" id="cancelClaimAll">Cancel</button>
+                <button class="btn-confirm green" id="confirmClaimAll">Claim</button>
             </div>
         </div>
     </div>
@@ -777,7 +777,7 @@
                     <span style="font-size: 20px;">🔄</span>
                     <span>Switch Validator</span>
                 </h3>
-                <span class="close" onclick="closeModal('switchValidatorModal')">&times;</span>
+                <span class="close" id="closeSwitchModal1">&times;</span>
             </div>
             <div class="modal-body" style="padding: 15px 20px;">
                 <div style="margin-bottom: 15px;">
@@ -792,8 +792,8 @@
                 <div id="validatorsList" style="max-height: 320px; overflow-y: auto;"></div>
             </div>
             <div class="modal-footer" style="padding: 12px 20px;">
-                <button class="btn-cancel" onclick="closeModal('switchValidatorModal')">Cancel</button>
-                <button class="btn-confirm cyan" onclick="switchValidatorStep2()">Next</button>
+                <button class="btn-cancel" id="cancelSwitch1">Cancel</button>
+                <button class="btn-confirm cyan" id="nextSwitch">Next</button>
             </div>
         </div>
     </div>
@@ -806,7 +806,7 @@
                     <span style="font-size: 20px;">🔄</span>
                     <span>Switch Validator</span>
                 </h3>
-                <span class="close" onclick="closeModal('switchValidatorModal2')">&times;</span>
+                <span class="close" id="closeSwitchModal2">&times;</span>
             </div>
             <div class="modal-body" style="padding: 15px 20px;">
                 <div style="margin-bottom: 12px;">
@@ -836,8 +836,8 @@
                 </div>
             </div>
             <div class="modal-footer" style="padding: 12px 20px;">
-                <button class="btn-cancel" onclick="closeModal('switchValidatorModal2')">Cancel</button>
-                <button class="btn-confirm cyan" onclick="confirmSwitch()">Switch</button>
+                <button class="btn-cancel" id="cancelSwitch2">Cancel</button>
+                <button class="btn-confirm cyan" id="confirmSwitch">Switch</button>
             </div>
         </div>
     </div>
@@ -850,7 +850,7 @@
                     <span style="font-size: 20px;">🔓</span>
                     <span>Unstake TICS</span>
                 </h3>
-                <span class="close" onclick="closeModal('unbondModal')">&times;</span>
+                <span class="close" id="closeUnbondModal">&times;</span>
             </div>
             <div class="modal-body" style="padding: 15px 20px;">
                 <div class="validator-info-box" style="background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.2); padding: 10px 12px; margin-bottom: 12px;">
@@ -874,8 +874,8 @@
                 </div>
             </div>
             <div class="modal-footer" style="padding: 12px 20px;">
-                <button class="btn-cancel" onclick="closeModal('unbondModal')">Cancel</button>
-                <button class="btn-confirm red" onclick="confirmUnbond()">Unstake</button>
+                <button class="btn-cancel" id="cancelUnbond">Cancel</button>
+                <button class="btn-confirm red" id="confirmUnbond">Unstake</button>
             </div>
         </div>
     </div>
@@ -885,7 +885,7 @@
         <div class="modal-content" style="border-color: rgba(34,197,94,0.6); max-width: 600px;">
             <div class="modal-header" style="background: linear-gradient(135deg, rgba(34,197,94,0.2), rgba(34,197,94,0.05));">
                 <h3 style="color: #22c55e;">✅ Success! TX: <span id="successMessage"></span></h3>
-                <span class="close" onclick="closeModal('successModal')">&times;</span>
+                <span class="close" id="closeSuccessModal">&times;</span>
             </div>
             <div class="modal-body">
                 <div style="background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); border-radius: 12px; padding: 20px; text-align: center;">
@@ -897,7 +897,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn-confirm cyan" onclick="closeModal('successModal')" style="width: 100%;">OK</button>
+                <button class="btn-confirm cyan" id="successOK" style="width: 100%;">OK</button>
             </div>
         </div>
     </div>
@@ -1647,5 +1647,8 @@
     <script src="staking-service.js?v=10"></script>
     <script src="cosmos-staking.js?v=10"></script>
     <script src="validators-registry.js?v=10"></script>
+    
+    <!-- Dashboard Initialization - Event Listeners for CSP Compliance -->
+    <script src="init-dashboard.js"></script>
 </body>
 </html>

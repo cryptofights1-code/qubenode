@@ -247,11 +247,11 @@
             <div class="preset-buttons">
                 <label>Quick amount selection:</label>
                 <div class="preset-grid">
-                    <button class="preset-btn" onclick="setAmount(100)">100 TICS</button>
-                    <button class="preset-btn" onclick="setAmount(1000)">1,000 TICS</button>
-                    <button class="preset-btn" onclick="setAmount(5000)">5,000 TICS</button>
-                    <button class="preset-btn" onclick="setAmount(10000)">10,000 TICS</button>
-                    <button class="preset-btn" onclick="setAmount(50000)">50,000 TICS</button>
+                    <button class="preset-btn">100 TICS</button>
+                    <button class="preset-btn">1,000 TICS</button>
+                    <button class="preset-btn">5,000 TICS</button>
+                    <button class="preset-btn">10,000 TICS</button>
+                    <button class="preset-btn">50,000 TICS</button>
                 </div>
             </div>
 
@@ -259,12 +259,12 @@
             <div class="input-grid">
                 <div class="input-group">
                     <label>Quantity $TICS</label>
-                    <input type="number" id="amount" class="calc-input" placeholder="Enter quantity of coins" oninput="calculateAuto()">
+                    <input type="number" id="amount" class="calc-input" placeholder="Enter quantity of coins">
                 </div>
                 
                 <div class="input-group">
                     <label>Period</label>
-                    <select id="period" class="calc-input" onchange="usePeriod()">
+                    <select id="period" class="calc-input">
                         <option value="">-- Select --</option>
                         <option value="1">1 month</option>
                         <option value="3">3 months</option>
@@ -279,18 +279,18 @@
                 
                 <div class="input-group">
                     <label>Or days</label>
-                    <input type="number" id="customDays" class="calc-input" placeholder="Enter number of days" oninput="useCustomDays()">
+                    <input type="number" id="customDays" class="calc-input" placeholder="Enter number of days">
                 </div>
                 
                 <div class="input-group">
                     <label>$TICS Price (USD)</label>
-                    <input type="number" id="customPrice" class="calc-input" placeholder="Auto from MEXC" step="0.0001" oninput="useCustomPrice()">
+                    <input type="number" id="customPrice" class="calc-input" placeholder="Auto from MEXC" step="0.0001">
                     <div class="price-hint">Current: $<span id="currentPriceDisplay">...</span></div>
                 </div>
                 
                 <div class="input-group">
                     <label>Compounding</label>
-                    <select id="compoundFrequency" class="calc-input" onchange="calculateAuto()">
+                    <select id="compoundFrequency" class="calc-input">
                         <option value="none">No compounding</option>
                         <option value="daily">Daily (manual)</option>
                         <option value="weekly">Weekly (manual)</option>
@@ -637,5 +637,8 @@
         fetchTicsPrice();
         setInterval(fetchTicsPrice, 30000);
     </script>
+    
+    <!-- Calculator Initialization -->
+    <script src="init-calculator.js"></script>
 </body>
 </html>

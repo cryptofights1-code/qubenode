@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://swagger.qubetics.com https://tendermint.qubetics.com https://rpc.qubetics.com https://api.mexc.com https://corsproxy.io https://coingecko.io https://api.coingecko.com https://v2.ticstelem.com; frame-src https://www.tradingview.com; base-uri 'self'; form-action 'self';">
+    
     <!-- Safari theme color - fixes pull-to-refresh background -->
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -3078,7 +3082,7 @@
     </div>
 
     <!-- FAQ Modal -->
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         // FAQ Accordion Toggle
         function toggleFaq(button) {
             const faqItem = button.parentElement;
@@ -5048,8 +5052,8 @@
     <!-- WALLET CONNECTOR - Adapted from TicsLab -->
     <script src="validators-registry.js"></script>
     <script src="wallet-connector.js"></script>
-
-    <!-- Index Page Initialization – Event Listeners for CSP Compliance -->
+    
+    <!-- Index Page Initialization - Event Listeners for CSP Compliance -->
     <script src="init-index.js"></script>
 </body>
 </html>

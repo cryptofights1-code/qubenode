@@ -7,241 +7,20 @@
     
     <title>Staking Calculator - QubeNode</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        html {
-            background: #000000;
-            background-color: #000000 !important;
-            scroll-behavior: smooth;
-        }
-        
-        body {
-            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #000000;
-            color: #ffffff;
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-        }
-        
-        /* Animated background */
-        .bg-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            background: radial-gradient(ellipse at 50% 50%, rgba(0, 212, 255, 0.15) 0%, transparent 50%),
-                        radial-gradient(ellipse at 80% 20%, rgba(0, 255, 240, 0.15) 0%, transparent 50%),
-                        radial-gradient(ellipse at 20% 80%, rgba(0, 128, 255, 0.15) 0%, transparent 50%);
-            animation: bgShift 20s ease infinite;
-            pointer-events: none;
-        }
-
-        @keyframes bgShift {
-            0%, 100% { transform: scale(1) rotate(0deg); }
-            50% { transform: scale(1.1) rotate(5deg); }
-        }
-
-        .grid-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-            z-index: 1;
-            pointer-events: none;
-        }
-        
-        .container { 
-            position: relative;
-            z-index: 2;
-            max-width: 1200px; 
-            margin: 0 auto; 
-            padding: 20px; 
-        }
-        header { text-align: center; padding: 20px 0; margin-bottom: 20px; }
-        .back-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px 24px;
-            background: rgba(0, 212, 255, 0.15);
-            border: 1px solid rgba(0, 212, 255, 0.4);
-            border-radius: 12px;
-            color: #00D4FF;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 16px;
-            transition: all 0.3s;
-            margin-bottom: 40px;
-        }
-        .back-button:hover { background: rgba(0, 212, 255, 0.25); transform: translateX(-5px); }
-        .page-title { color: #00FFF0; font-size: 2.5em; font-weight: 700; margin: 20px 0; }
-        .calc-container { background: rgba(0, 212, 255, 0.03); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 20px; padding: 40px; }
-        .preset-buttons { margin-bottom: 30px; text-align: center; }
-        .preset-buttons label { display: block; color: #00D4FF; font-weight: 600; margin-bottom: 12px; }
-        .preset-grid { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
-        .preset-btn { padding: 10px 20px; background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 10px; color: #00FFF0; cursor: pointer; transition: all 0.3s; font-size: 0.95em; font-weight: 600; }
-        .preset-btn:hover { background: rgba(0, 212, 255, 0.2); transform: translateY(-2px); }
-        .input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .input-group label { display: block; color: #00D4FF; font-weight: 600; margin-bottom: 8px; }
-        .calc-input { width: 100%; padding: 15px; background: rgba(0, 212, 255, 0.05); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 12px; color: #fff; font-size: 1em; font-family: 'Space Grotesk', sans-serif; }
-        .calc-input:focus { outline: none; border-color: rgba(0, 212, 255, 0.5); background: rgba(0, 212, 255, 0.08); }
-        .price-hint { color: #64748b; font-size: 0.8em; margin-top: 4px; }
-        #calcResults { display: none; }
-        .summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px; }
-        .summary-card { 
-            background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(74, 222, 128, 0.08)); 
-            border: 1px solid rgba(34, 197, 94, 0.35); 
-            border-radius: 15px; 
-            padding: 20px; 
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 140px; /* FIXED: Однакова висота всіх карток */
-        }
-        .summary-card.highlight { background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(74, 222, 128, 0.1)); border: 2px solid rgba(34, 197, 94, 0.4); }
-        .card-label { 
-            color: #94a3b8; 
-            font-size: 0.85em; /* FIXED: Менший розмір для довгих назв */
-            margin-bottom: 10px;
-            text-align: center;
-            width: 100%;
-            line-height: 1.3; /* FIXED: Висота рядка для переносу */
-        }
-        .card-value { 
-            color: #22c55e; 
-            font-size: 1.4em; /* FIXED: Трохи менше для балансу */
-            font-weight: 700; 
-            margin: 8px 0;
-            text-align: center;
-            width: 100%;
-            word-break: break-word;
-            line-height: 1.2;
-        }
-        .card-value.large { font-size: 1.5em; } /* FIXED: Менше для великих чисел */
-        .card-usd { 
-            color: #86efac; 
-            font-size: 0.8em; /* FIXED: Трохи менше */
-            margin-top: 5px;
-            text-align: center;
-            width: 100%;
-        }
-        .detailed-breakdown { background: rgba(34, 197, 94, 0.05); border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 15px; padding: 25px; margin-bottom: 20px; }
-        .breakdown-title { color: #22c55e; margin-bottom: 20px; font-size: 1.2em; }
-        .breakdown-row { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            padding: 12px 0; /* FIXED: Більше padding для чіткості */
-            border-bottom: 1px solid rgba(34, 197, 94, 0.15);
-            gap: 15px; /* FIXED: Відступ між label і value */
-        }
-        .breakdown-row.highlight { border-bottom: 2px solid rgba(34, 197, 94, 0.3); padding: 15px 0 5px 0; margin-top: 10px; }
-        .breakdown-label { 
-            color: #94a3b8; 
-            text-align: left; /* FIXED: Завжди ліворуч */
-            flex: 1;
-            font-size: 0.95em;
-        }
-        .breakdown-value { 
-            font-weight: 600; 
-            text-align: right;
-            min-width: 140px;
-            flex-shrink: 0;
-            line-height: 1.4; /* FIXED: Висота рядка для переносу */
-        }
-        .comparison-box { background: rgba(34, 197, 94, 0.05); border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 15px; padding: 25px; display: none; }
-        .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px; }
-        .benefit-box { padding: 15px; background: rgba(34, 197, 94, 0.1); border-radius: 10px; margin-top: 15px; }
-        .benefit-box .label { color: #22c55e; font-weight: 600; }
-        .benefit-box .value { color: #fff; font-size: 1.2em; margin-top: 5px; }
-        
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 50px 20px 30px 20px;
-            color: #64748b;
-            border-top: 1px solid rgba(0, 212, 255, 0.1);
-            margin-top: 60px;
-        }
-        footer p {
-            margin: 8px 0;
-        }
-        footer strong {
-            color: #00FFF0;
-        }
-        footer a {
-            color: #00D4FF;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        footer a:hover {
-            color: #00FFF0;
-        }
-        
-        @media (max-width: 768px) {
-            .container { padding: 10px; }
-            .page-title { font-size: 1.5em; }
-            .calc-container { padding: 20px; }
-            .input-grid { grid-template-columns: 1fr; }
-            .summary-cards { 
-                grid-template-columns: repeat(2, 1fr); /* Дві картки в ряд */
-                gap: 12px;
-            }
-            .summary-card {
-                min-height: 125px; /* FIXED: Менша висота */
-                padding: 12px 8px; /* FIXED: Менше padding */
-            }
-            .card-label {
-                font-size: 0.8em; /* FIXED: Дуже маленький текст для довгих назв */
-                margin-bottom: 8px;
-                line-height: 1.2;
-            }
-            .card-value {
-                font-size: 1.2em; /* FIXED: Менші цифри */
-                margin: 6px 0;
-            }
-            .card-value.large {
-                font-size: 1.3em; /* FIXED: Менше для великих чисел */
-            }
-            .card-usd {
-                font-size: 0.75em; /* FIXED: Дуже маленький USD */
-            }
-            .breakdown-row {
-                padding: 10px 0;
-                gap: 10px;
-            }
-            .breakdown-label {
-                font-size: 0.9em;
-            }
-            .breakdown-value {
-                min-width: 120px;
-                font-size: 0.95em;
-            }
-            .comparison-grid { grid-template-columns: 1fr; }
-        }
-    </style>
+    
+    <!-- Calculator Styles - CSP Compliant -->
+    <link rel="stylesheet" href="styles-calculator.css">
 </head>
 <body>
     <!-- Animated background -->
     <div class="bg-animation"></div>
     <div class="grid-overlay"></div>
-    
+
     <div class="container">
         <header>
             <a href="index.html" class="back-button">🏠 To Main</a>
             <h1 class="page-title">💰 Staking Calculator</h1>
-            <p style="color: #94a3b8; font-size: 1.1em;">Calculate your future rewards</p>
+            <p class="page-subtitle">Calculate your future rewards</p>
         </header>
 
         <div class="calc-container">
@@ -347,17 +126,17 @@
                     
                     <div class="breakdown-row">
                         <span class="breakdown-label">APY (base rate):</span>
-                        <span class="breakdown-value" style="color: #22c55e;">30%</span>
+                        <span class="breakdown-value green">30%</span>
                     </div>
                     
                     <div class="breakdown-row">
                         <span class="breakdown-label">Validator commission (%):</span>
-                        <span class="breakdown-value" style="color: #fbbf24;">5%</span>
+                        <span class="breakdown-value yellow">5%</span>
                     </div>
                     
                     <div class="breakdown-row">
                         <span class="breakdown-label">Your real APY:</span>
-                        <span class="breakdown-value" style="color: #22c55e; font-size: 1.05em;" id="realAPY">28.5%</span>
+                        <span class="breakdown-value green-large" id="realAPY">28.5%</span>
                     </div>
                     
                     <div class="breakdown-row">
@@ -367,22 +146,22 @@
                     
                     <div class="breakdown-row">
                         <span class="breakdown-label">Total reward:</span>
-                        <span class="breakdown-value" style="color: #22c55e; font-size: 1.05em;" id="totalRewardAmount">--</span>
+                        <span class="breakdown-value green-large" id="totalRewardAmount">--</span>
                     </div>
                     
                     <div class="breakdown-row">
                         <span class="breakdown-label">Validator commission (amount):</span>
-                        <span class="breakdown-value" style="color: #fbbf24;" id="validatorCommissionAmount">--</span>
+                        <span class="breakdown-value yellow" id="validatorCommissionAmount">--</span>
                     </div>
                     
                     <div class="breakdown-row">
                         <span class="breakdown-label">Your reward (net):</span>
-                        <span class="breakdown-value" style="color: #22c55e; font-size: 1.05em;" id="netRewardAmount">--</span>
+                        <span class="breakdown-value green-large" id="netRewardAmount">--</span>
                     </div>
                     
                     <div class="breakdown-row highlight">
-                        <span class="breakdown-label" style="color: #22c55e; font-size: 1.15em; font-weight: 700;">Final amount:</span>
-                        <span class="breakdown-value" style="color: #22c55e; font-size: 1.15em;" id="finalAmount">--</span>
+                        <span class="breakdown-label green-xlarge">Final amount:</span>
+                        <span class="breakdown-value green-xlarge" id="finalAmount">--</span>
                     </div>
                 </div>
 
@@ -392,14 +171,14 @@
                     
                     <div class="comparison-grid">
                         <div>
-                            <div style="color: #94a3b8; margin-bottom: 10px;">No compounding:</div>
-                            <div style="color: #fff; font-size: 1.3em; font-weight: 600;" id="withoutCompound">--</div>
-                            <div style="color: #fff; font-size: 0.9em; margin-top: 5px;" id="withoutCompoundUSD">--</div>
+                            <div class="comparison-label">No compounding:</div>
+                            <div class="comparison-value-white" id="withoutCompound">--</div>
+                            <div class="comparison-usd-white" id="withoutCompoundUSD">--</div>
                         </div>
                         <div>
-                            <div style="color: #94a3b8; margin-bottom: 10px;">With compounding:</div>
-                            <div style="color: #22c55e; font-size: 1.3em; font-weight: 700;" id="withCompound">--</div>
-                            <div style="color: #22c55e; font-size: 0.9em; margin-top: 5px;" id="withCompoundUSD">--</div>
+                            <div class="comparison-label">With compounding:</div>
+                            <div class="comparison-value-green" id="withCompound">--</div>
+                            <div class="comparison-usd-green" id="withCompoundUSD">--</div>
                         </div>
                     </div>
                     
@@ -415,6 +194,7 @@
             <p><strong>QubeNode</strong> - Professional Qubetics Network validator</p>
             <p>© 2025 QubeNode. All rights reserved. | <a href="https://t.me/+sRnz7RyoL4Q0MWEy" target="_blank">Telegram</a></p>
         </footer>
+    </div>
     </div>
 
     <script>

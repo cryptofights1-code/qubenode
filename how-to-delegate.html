@@ -7,254 +7,9 @@
     
     <title>How to Delegate - QubeNode</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        html {
-            background: #000000;
-            background-color: #000000 !important;
-            scroll-behavior: smooth;
-        }
-        
-        body {
-            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #000000;
-            color: #ffffff;
-            overflow-x: hidden;
-            position: relative;
-        }
-        
-        /* Animated background */
-        .bg-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            background: radial-gradient(ellipse at 50% 50%, rgba(0, 212, 255, 0.15) 0%, transparent 50%),
-                        radial-gradient(ellipse at 80% 20%, rgba(0, 255, 240, 0.15) 0%, transparent 50%),
-                        radial-gradient(ellipse at 20% 80%, rgba(0, 128, 255, 0.15) 0%, transparent 50%);
-            animation: bgShift 20s ease infinite;
-            pointer-events: none;
-        }
-
-        @keyframes bgShift {
-            0%, 100% { transform: scale(1) rotate(0deg); }
-            50% { transform: scale(1.1) rotate(5deg); }
-        }
-
-        .grid-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-            z-index: 1;
-            pointer-events: none;
-        }
-        
-        .container { 
-            position: relative;
-            z-index: 2;
-            max-width: 1000px; 
-            margin: 0 auto; 
-            padding: 20px; 
-        }
-        header { text-align: center; padding: 20px 0; }
-        .back-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px 24px;
-            background: rgba(0, 212, 255, 0.15);
-            border: 1px solid rgba(0, 212, 255, 0.4);
-            border-radius: 12px;
-            color: #00D4FF;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 16px;
-            transition: all 0.3s;
-            margin-bottom: 40px;
-        }
-        .back-button:hover { background: rgba(0, 212, 255, 0.25); transform: translateX(-5px); }
-        .page-title { color: #00FFF0; font-size: 2.5em; font-weight: 700; margin: 20px 0; }
-        .section { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 20px; padding: 40px; margin: 30px 0; }
-        .step-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
-        .step-number { width: 45px; height: 45px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4em; font-weight: 800; color: #000; }
-        h3 { color: #00FFF0; font-size: 1.5em; margin: 0; }
-        p { color: #cbd5e1; font-size: 1.05em; line-height: 1.8; margin-bottom: 15px; }
-        .info-box { background: rgba(0, 212, 255, 0.05); border-left: 4px solid #00D4FF; padding: 20px; border-radius: 8px; margin: 20px 0; }
-        .warning-box { background: rgba(250, 204, 21, 0.1); border-left: 4px solid #facc15; padding: 15px 20px; border-radius: 8px; }
-        ul { color: #cbd5e1; margin: 0 0 20px 20px; line-height: 2; }
-        ul strong { color: #00D4FF; }
-        .link { color: #00D4FF; font-weight: 600; cursor: pointer; text-decoration: underline; }
-        
-        /* Modal styles */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        .modal-overlay.active { display: flex; }
-        .modal-content {
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-            border: 2px solid rgba(0, 212, 255, 0.3);
-            border-radius: 20px;
-            max-width: 700px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-            padding: 40px;
-        }
-        .modal-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid rgba(239, 68, 68, 0.4);
-            color: #ef4444;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 24px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-        }
-        .modal-close:hover {
-            background: rgba(239, 68, 68, 0.3);
-            transform: rotate(90deg);
-        }
-        .modal-title {
-            color: #00FFF0;
-            font-size: 1.8em;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-        .modal-subtitle {
-            color: #94a3b8;
-            font-size: 1em;
-            margin-bottom: 30px;
-        }
-        .instruction-step {
-            background: rgba(0, 212, 255, 0.05);
-            border: 1px solid rgba(0, 212, 255, 0.2);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 15px;
-            display: flex;
-            gap: 15px;
-            align-items: start;
-        }
-        .step-num {
-            min-width: 35px;
-            height: 35px;
-            background: linear-gradient(135deg, #00D4FF, #00FFF0);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            color: #000;
-            font-size: 1.1em;
-        }
-        .step-content {
-            flex: 1;
-        }
-        .step-content strong {
-            color: #00FFF0;
-            display: block;
-            margin-bottom: 5px;
-        }
-        .step-content .highlight {
-            color: #ef4444;
-            font-weight: 600;
-        }
-        .step-content .cyan {
-            color: #00FFF0;
-            font-weight: 600;
-        }
-        .success-box {
-            background: rgba(34, 197, 94, 0.1);
-            border: 2px solid rgba(34, 197, 94, 0.3);
-            border-radius: 15px;
-            padding: 20px;
-            margin-top: 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .success-box .icon {
-            font-size: 2em;
-        }
-        .success-box .text {
-            color: #22c55e;
-            font-weight: 600;
-        }
-        .final-note {
-            background: rgba(250, 204, 21, 0.1);
-            border-left: 4px solid #facc15;
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-top: 20px;
-            color: #fde047;
-        }
-        
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 50px 20px 30px 20px;
-            color: #64748b;
-            border-top: 1px solid rgba(0, 212, 255, 0.1);
-            margin-top: 60px;
-        }
-        footer p {
-            margin: 8px 0;
-        }
-        footer strong {
-            color: #00FFF0;
-        }
-        footer a {
-            color: #00D4FF;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        footer a:hover {
-            color: #00FFF0;
-        }
-        
-        @media (max-width: 768px) {
-            .container { padding: 10px; }
-            .page-title { font-size: 1.8em; }
-            .section { padding: 20px; }
-            .modal-content { padding: 30px 20px; }
-            .modal-title { font-size: 1.5em; padding-right: 50px; } /* Додаємо відступ справа */
-            .modal-close { 
-                top: 15px; 
-                right: 15px; 
-                width: 35px; 
-                height: 35px; 
-                font-size: 20px; 
-                z-index: 10; /* Поверх заголовку */
-            }
-        }
-    </style>
+    
+    <!-- How To Delegate Styles - CSP Compliant -->
+    <link rel="stylesheet" href="styles-how-to-delegate.css">
 </head>
 <body>
     <!-- Animated background -->
@@ -264,88 +19,79 @@
     <div class="container">
         <header>
             <a href="index.html" class="back-button">🏠 To Main</a>
-            <h1 class="page-title">Delegation in Qubetics Network</h1>
+            <h1 class="page-title">How to Delegate $TICS</h1>
         </header>
 
-        <!-- Об'єднаний розділ БЕЗ контейнера -->
-        <div style="max-width: 900px; margin: 25px auto; padding: 0 20px;">
-            <h3 style="color: #00FFF0; font-size: 1.6em; margin-bottom: 20px;">How to Delegate $TICS</h3>
+        <!-- Main instruction -->
+        <div class="delegate-content-wrapper">
+            <h3 class="delegate-title">How to Delegate $TICS</h3>
             
-            <p style="color: #cbd5e1; line-height: 1.8; margin-bottom: 15px;">You can delegate using the <span style="color: #67e8f9;">Keplr</span> wallet (<a href="#" class="link">guide</a>) or <span style="color: #67e8f9;">Cosmostation</span>.</p>
+            <p class="delegate-text">You can delegate using the <span class="highlight-cyan">Keplr</span> wallet (<a href="#" class="link">guide</a>) or <span class="highlight-cyan">Cosmostation</span>.</p>
             
-            <p style="color: #cbd5e1; line-height: 1.8; margin-bottom: 15px;">For convenience, delegation is also available directly on the <span style="color: #67e8f9;">QubeNode</span> validator website.</p>
+            <p class="delegate-text">For convenience, delegation is also available directly on the <span class="highlight-cyan">QubeNode</span> validator website.</p>
             
-            <p style="color: #cbd5e1; line-height: 1.8; margin-bottom: 25px;">Connect your <span style="color: #67e8f9;">Keplr</span> or <span style="color: #67e8f9;">Cosmostation</span> wallet on the website to make instant delegation.</p>
+            <p class="delegate-text-final">Connect your <span class="highlight-cyan">Keplr</span> or <span class="highlight-cyan">Cosmostation</span> wallet on the website to make instant delegation.</p>
             
-            <div class="info-box" style="margin-top: 30px; margin-bottom: 30px;">
-                <p style="color: #00FFF0; font-weight: 600; margin-bottom: 12px; font-size: 1.05em;">
-                    💎 After connecting your wallet, you will be able to:
+            <div class="info-box info-box-margin">
+                <p class="info-box-title">
+                    ⭐ You can delegate $TICS directly on the website — wallet connection and delegation happen in the browser through our interface!
                 </p>
-                <ul>
-                    <li><strong>View your delegator dashboard</strong> — balance, delegations, rewards</li>
-                    <li><strong>Delegate tokens</strong> to the QubeNode validator</li>
-                    <li><strong>Redelegate</strong> tokens between validators</li>
-                    <li><strong>Claim rewards</strong> at any time</li>
-                    <li><strong>Undelegate tokens</strong> (unbonding takes 14 days)</li>
-                    <li><strong>Cancel an ongoing unbonding</strong> during the unbonding period</li>
-                </ul>
             </div>
-
-            <div style="text-align: center; margin-top: 30px;">
-                <p style="color: #cbd5e1; margin-bottom: 15px; font-weight: 600;">Connect wallet to delegate $TICS:</p>
+            
+            <div class="wallet-connect-section">
+                <p class="wallet-connect-title">Connect wallet to delegate $TICS:</p>
                 
-                <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 15px;">
-                    <button id="connectKeplrBtn" style="flex: 1; min-width: 200px; max-width: 300px; padding: 18px 24px; background: rgba(0, 212, 255, 0.15); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 12px; color: #00FFF0; font-size: 1.1em; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;">
-                        <img src="keplr.png" alt="Keplr" style="width: 28px; height: 28px; border-radius: 6px;">
+                <div class="wallet-buttons-wrapper">
+                    <button id="connectKeplrBtn" class="wallet-connect-btn">
+                        <img src="keplr.png" alt="Keplr" class="wallet-icon">
                         <span>Keplr Wallet</span>
                     </button>
                     
-                    <button id="connectCosmostationBtn" style="flex: 1; min-width: 200px; max-width: 300px; padding: 18px 24px; background: rgba(0, 212, 255, 0.15); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 12px; color: #00FFF0; font-size: 1.1em; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;">
-                        <img src="Cosmostation.png" alt="Cosmostation" style="width: 28px; height: 28px; border-radius: 6px;">
+                    <button id="connectCosmostationBtn" class="wallet-connect-btn">
+                        <img src="Cosmostation.png" alt="Cosmostation" class="wallet-icon">
                         <span>Cosmostation</span>
                     </button>
                 </div>
                 
-                <p style="color: #64748b; font-size: 0.85em;">After connection, delegator dashboard will open</p>
+                <p class="wallet-note">After connection, delegator dashboard will open</p>
             </div>
         </div>
 
-        <!-- Додаткова інформація -->
+        <!-- Why Choose QubeNode -->
         <div class="section">
-            <h3 style="margin-bottom: 20px;">Why Choose QubeNode?</h3>
-            <div style="display: grid; gap: 20px;">
-                <div style="display: flex; gap: 15px; align-items: start;">
-                    <span style="font-size: 1.5em;">🛡️</span>
+            <h3 class="section-title">Why Choose QubeNode?</h3>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <span class="feature-icon">🛡️</span>
                     <div>
-                        <h4 style="color: #00FFF0; margin-bottom: 8px;">Reliability</h4>
-                        <p style="margin: 0;">High uptime — stable node operation 24/7 with professional monitoring</p>
+                        <h4 class="feature-title">Reliability</h4>
+                        <p class="feature-text">High uptime — stable node operation 24/7 with professional monitoring</p>
                     </div>
                 </div>
-                <div style="display: flex; gap: 15px; align-items: start;">
-                    <span style="font-size: 1.5em;">💎</span>
+                <div class="feature-item">
+                    <span class="feature-icon">💎</span>
                     <div>
-                        <h4 style="color: #00FFF0; margin-bottom: 8px;">Minimal Validator Commission</h4>
-                        <p style="margin: 0;">Fixed 5% commission — more rewards stay with you</p>
+                        <h4 class="feature-title">Minimal Validator Commission</h4>
+                        <p class="feature-text">Fixed 5% commission — more rewards stay with you</p>
                     </div>
                 </div>
-                <div style="display: flex; gap: 15px; align-items: start;">
-                    <span style="font-size: 1.5em;">⚡</span>
+                <div class="feature-item">
+                    <span class="feature-icon">⚡</span>
                     <div>
-                        <h4 style="color: #00FFF0; margin-bottom: 8px;">Performance</h4>
-                        <p style="margin: 0;">Powerful hardware and optimized node configuration for maximum efficiency</p>
+                        <h4 class="feature-title">Performance</h4>
+                        <p class="feature-text">Powerful hardware and optimized node configuration for maximum efficiency</p>
                     </div>
                 </div>
-                <div style="display: flex; gap: 15px; align-items: start;">
-                    <span style="font-size: 1.5em;">🤝</span>
+                <div class="feature-item">
+                    <span class="feature-icon">🤝</span>
                     <div>
-                        <h4 style="color: #00FFF0; margin-bottom: 8px;">Support</h4>
-                        <p style="margin: 0;">Fast support and open communication with delegators</p>
+                        <h4 class="feature-title">Support</h4>
+                        <p class="feature-text">Fast support and open communication with delegators</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
     <script>
         const CHAIN_ID = 'qubetics_9030-1';
         

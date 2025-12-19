@@ -4,12 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    
     <!-- Safari theme color - fixes pull-to-refresh background -->
     <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>QubeNode - Qubetics Validator</title>
-    <!-- Version 3.3 - 2025-12-12 16:15 - APY padding adjusted to 18px -->
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -51,2154 +49,10 @@
     <meta property="twitter:description" content="Stable and reliable Qubetics network validator. 100% uptime, 5% commission, 30% APY.">
     <meta property="twitter:image" content="https://qubenode.space/android-chrome-512x512.png">
     
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #000000;
-            background-color: #000000 !important;
-            color: #ffffff;
-            line-height: 1.6;
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: static !important;
-            margin: 0;
-            padding: 0;
-            width: 100%;
-        }
-
-        html {
-            background: #000000;
-            background-color: #000000 !important;
-            /* Fix Safari pull-to-refresh blue background */
-            -webkit-overflow-scrolling: touch;
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            overflow-x: hidden;
-        }
-
-        /* Override Safari's default overscroll color */
-        html::before {
-            content: '';
-            position: fixed;
-            top: -100vh;
-            left: 0;
-            right: 0;
-            height: 100vh;
-            background: #000000;
-            z-index: -1;
-        }
-
-        .bg-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            background: radial-gradient(ellipse at 50% 50%, rgba(0, 212, 255, 0.15) 0%, transparent 50%),
-                        radial-gradient(ellipse at 80% 20%, rgba(0, 255, 240, 0.15) 0%, transparent 50%),
-                        radial-gradient(ellipse at 20% 80%, rgba(0, 128, 255, 0.15) 0%, transparent 50%);
-            animation: bgShift 20s ease infinite;
-            pointer-events: none;
-        }
-
-        @keyframes bgShift {
-            0%, 100% { transform: scale(1) rotate(0deg); }
-            50% { transform: scale(1.1) rotate(5deg); }
-        }
-
-        .grid-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        .container {
-            position: relative;
-            z-index: 2;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* Hamburger Menu Styles */
-        .hamburger {
-            display: none;
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            z-index: 999999 !important;
-            width: 35px;
-            height: 35px;
-            background: rgba(0, 212, 255, 0.4);
-            border: 2px solid rgba(0, 212, 255, 0.8);
-            border-radius: 8px;
-            cursor: pointer;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 4px;
-            transition: all 0.3s ease;
-            pointer-events: auto !important;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
-            outline: none;
-        }
-
-        .hamburger span {
-            display: block;
-            width: 18px;
-            height: 2px;
-            background: #00FFF0;
-            transition: all 0.3s ease;
-            border-radius: 2px;
-        }
-
-        .hamburger:active {
-            transform: scale(0.95);
-        }
-
-        .hamburger.active span:nth-child(1) {
-            transform: rotate(45deg) translate(5px, 5px);
-        }
-
-        .hamburger.active span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .hamburger.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(7px, -7px);
-        }
-
-        .mobile-menu {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: -100%;
-            width: 80%;
-            max-width: 320px;
-            height: 100vh;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-            border-right: 2px solid rgba(0, 212, 255, 0.3);
-            z-index: 99999999;
-            padding: 20px 30px 30px;
-            overflow-y: auto;
-            transition: left 0.3s ease;
-            box-shadow: 5px 0 20px rgba(0, 0, 0, 0.5);
-        }
-        
-        .mobile-contact-icons {
-            display: none;
-        }
-
-        /* Fixed contact icons for mobile */
-        .fixed-mobile-contacts {
-            display: none;
-            position: fixed;
-            top: 15px;
-            right: 15px;
-            z-index: 999999 !important;
-            gap: 12px;
-        }
-
-        .fixed-contact-icon {
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
-            background: transparent;
-            border: none;
-            border-radius: 12px;
-        }
-
-        .fixed-contact-icon svg {
-            width: 50px;
-            height: 50px;
-            filter: drop-shadow(0 2px 6px rgba(0, 212, 255, 0.5));
-            transition: all 0.3s ease;
-        }
-
-        .fixed-contact-icon:active {
-            transform: scale(0.95);
-        }
-
-        .fixed-contact-icon:active svg {
-            filter: drop-shadow(0 2px 8px rgba(0, 212, 255, 0.7));
-        }
-
-        .mobile-menu.active {
-            left: 0;
-        }
-
-        .mobile-menu-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000000;
-            z-index: 9999999;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-        }
-
-        .mobile-menu-overlay.active {
-            pointer-events: auto;
-        }
-
-        /* Mobile menu will be controlled by CSS checkbox */
-        #menu-toggle:checked ~ .mobile-menu {
-            left: 0;
-        }
-
-        #menu-toggle:checked ~ .mobile-menu-overlay {
-            display: block;
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        #menu-toggle:checked ~ label.hamburger span:nth-child(1) {
-            transform: rotate(45deg) translate(8px, 8px);
-        }
-
-        #menu-toggle:checked ~ label.hamburger span:nth-child(2) {
-            opacity: 0;
-        }
-
-        #menu-toggle:checked ~ label.hamburger span:nth-child(3) {
-            transform: rotate(-45deg) translate(8px, -8px);
-        }
-
-        /* Base styles для фіксації іконок на мобільних */
-        .hamburger {
-            position: fixed !important;
-            top: 20px !important;
-            left: 20px !important;
-            z-index: 999999 !important;
-        }
-
-        .fixed-mobile-contacts {
-            position: fixed !important;
-            top: 20px !important;
-            right: 20px !important;
-            display: none;
-            flex-direction: row !important;
-            gap: 15px !important;
-            z-index: 999998 !important;
-        }
-
-        .fixed-contact-icon {
-            width: 50px;
-            height: 50px;
-            background: transparent;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            text-decoration: none;
-        }
-
-        .fixed-contact-icon svg {
-            width: 50px;
-            height: 50px;
-        }
-
-        .fixed-contact-icon:active,
-        .fixed-contact-icon:hover {
-            transform: scale(1.1);
-        }
-
-        @media (max-width: 768px) {
-            .fixed-mobile-contacts {
-                display: flex !important;
-            }
-            
-            /* EXCHANGES MOBILE OVERRIDE - WORKS IN MODALS */
-            .exchanges-container {
-                height: 100px !important;
-            }
-            
-            .exchanges-container a {
-                height: 100px !important;
-            }
-            
-            .exchanges-container img {
-                height: 100px !important;
-                max-height: 100px !important;
-            }
-            
-            .exchanges-container a:nth-child(3) img {
-                transform: translateY(-3px) !important;
-            }
-        }
-
-        .mobile-menu-items {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .mobile-menu-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 15px 20px;
-            background: rgba(0, 212, 255, 0.1);
-            border: 1px solid rgba(0, 212, 255, 0.3);
-            border-radius: 15px;
-            color: #ffffff;
-            text-decoration: none;
-            font-size: 0.95em;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            border: none;
-            width: 100%;
-            text-align: left;
-        }
-
-        .mobile-menu-item span {
-            pointer-events: none;
-        }
-
-        .mobile-menu-item:hover,
-        .mobile-menu-item:active {
-            background: rgba(0, 212, 255, 0.2);
-            border: 1px solid rgba(0, 212, 255, 0.5);
-            transform: translateX(-5px);
-        }
-
-        .contact-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 50px;
-            height: 50px;
-            background: rgba(0, 212, 255, 0.1);
-            border: 1px solid rgba(0, 212, 255, 0.3);
-            border-radius: 50%;
-            color: #ffffff;
-            text-decoration: none;
-            font-size: 24px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .contact-icon span {
-            pointer-events: none;
-        }
-
-        .contact-icon:hover,
-        .contact-icon:active {
-            background: rgba(0, 212, 255, 0.2);
-            border: 1px solid rgba(0, 212, 255, 0.5);
-            transform: scale(1.1);
-        }
-        .mobile-menu-item:active {
-            background: rgba(0, 212, 255, 0.2);
-            border: 1px solid rgba(0, 212, 255, 0.5);
-            transform: translateX(-5px);
-        }
-
-        .top-left-menu {
-            position: absolute;
-            top: 30px;
-            left: 40px;
-            right: 420px;
-            z-index: 10;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: nowrap;
-        }
-
-        .ecosystem-button {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 16px;
-            background: rgba(0, 212, 255, 0.1);
-            border: 1px solid rgba(0, 212, 255, 0.3);
-            border-radius: 50px;
-            color: #ffffff;
-            font-size: 0.9em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            outline: none;
-            white-space: nowrap;
-            height: 40px;
-        }
-
-        .ecosystem-button span {
-            line-height: 1;
-        }
-
-        .ecosystem-button:hover {
-            background: rgba(0, 212, 255, 0.2);
-            border: 1px solid rgba(0, 212, 255, 0.5);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
-        }
-
-        /* Header Wallet Button */
-        .header-wallet-button {
-            position: relative;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 16px;
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 255, 240, 0.15));
-            border: 2px solid rgba(0, 212, 255, 0.5);
-            border-radius: 50px;
-            color: #00FFF0;
-            font-size: 0.9em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            outline: none;
-            white-space: nowrap;
-            height: 40px;
-        }
-
-        .header-wallet-button:hover {
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(0, 255, 240, 0.25));
-            border-color: rgba(0, 212, 255, 0.7);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
-        }
-
-        .wallet-dropdown {
-            position: absolute;
-            top: calc(100% + 10px);
-            left: 0;
-            min-width: 220px;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-            border: 2px solid rgba(0, 212, 255, 0.4);
-            border-radius: 12px;
-            padding: 10px;
-            display: none !important;
-            flex-direction: column;
-            gap: 8px;
-            z-index: 1000;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.2s ease, visibility 0.2s ease;
-        }
-
-        .wallet-dropdown.show {
-            display: flex !important;
-            visibility: visible;
-            opacity: 1;
-        }
-
-        .wallet-option {
-            padding: 12px 16px;
-            background: rgba(0, 212, 255, 0.1);
-            border: 1px solid rgba(0, 212, 255, 0.3);
-            border-radius: 8px;
-            color: #00FFF0;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .wallet-option:hover {
-            background: rgba(0, 212, 255, 0.2);
-            border-color: rgba(0, 212, 255, 0.5);
-            transform: translateX(5px);
-        }
-
-        .wallet-connected {
-            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(22, 163, 74, 0.15));
-            border-color: rgba(34, 197, 94, 0.5);
-        }
-
-        .wallet-connected:hover {
-            background: linear-gradient(135deg, rgba(34, 197, 94, 0.3), rgba(22, 163, 74, 0.25));
-            border-color: rgba(34, 197, 94, 0.7);
-        }
-
-        .wallet-info {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .wallet-address {
-            font-size: 0.85em;
-            color: #94a3b8;
-        }
-
-        .wallet-balance {
-            font-size: 0.95em;
-            color: #22c55e;
-            font-weight: 700;
-        }
-
-        .top-contacts {
-            position: absolute;
-            top: 30px;
-            right: 10px;
-            display: flex;
-            gap: 15px;
-            z-index: 10;
-            align-items: center;
-        }
-
-        .contact-link {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 24px;
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 255, 240, 0.15));
-            border: none;
-            border-radius: 50px;
-            color: #ffffff;
-            text-decoration: none;
-            font-size: 0.95em;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.2);
-            white-space: nowrap;
-            height: 44px;
-        }
-
-        .contact-link span {
-            line-height: 1;
-        }
-
-        .contact-link:hover {
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(0, 255, 240, 0.25));
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4);
-        }
-
-        .contact-link svg {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
-        }
-
-        header {
-            text-align: center;
-            padding: 40px 20px 60px;
-        }
-
-        .qubetics-brand {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 25px;
-            margin-bottom: 60px;
-            margin-top: 80px;
-            opacity: 0;
-            transform: translateY(-30px);
-            animation: fadeInDown 1s ease-out 0.3s forwards;
-        }
-
-        @keyframes fadeInDown {
-            to {
-                opacity: 0.8;
-                transform: translateY(0);
-            }
-        }
-
-        .qubetics-brand img {
-            width: 120px;
-            height: 120px;
-            border-radius: 20px;
-            filter: drop-shadow(0 0 30px rgba(0, 212, 255, 0.5));
-        }
-
-        .qubetics-brand span {
-            font-size: 3.5em;
-            color: #94a3b8;
-            font-weight: 800;
-            letter-spacing: 3px;
-        }
-
-        .brand-container {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 30px;
-            margin-bottom: 35px;
-            position: relative;
-            opacity: 0;
-            transform: scale(0.8);
-            animation: zoomIn 1s ease-out 0.8s forwards;
-        }
-
-        @keyframes zoomIn {
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        .brand-container img {
-            width: 200px;
-            height: auto; /* Зберігаємо пропорції */
-            border-radius: 22px;
-            filter: drop-shadow(0 0 25px rgba(0, 212, 255, 0.7));
-        }
-
-        .validator-name {
-            font-size: 10em;
-            font-weight: 800;
-            background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -2px;
-            line-height: 1;
-        }
-
-        .subtitle {
-            font-size: 1.4em;
-            color: #94a3b8;
-            margin-bottom: 40px;
-            font-weight: 300;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeInUp 1s ease-out 1.3s forwards;
-        }
-
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            background: rgba(34, 197, 94, 0.1);
-            border: 2px solid rgba(34, 197, 94, 0.4);
-            padding: 14px 32px;
-            border-radius: 100px;
-            font-weight: 600;
-            font-size: 1.1em;
-            position: relative;
-            overflow: hidden;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeInUp 1s ease-out 1.6s forwards;
-        }
-
-        .status-badge::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.2), transparent);
-            animation: statusShine 3s infinite;
-        }
-
-        @keyframes statusShine {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-
-        .status-dot {
-            width: 12px;
-            height: 12px;
-            background: #22c55e;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-            box-shadow: 0 0 20px #22c55e;
-        }
-
-        /* Extended Status Badge with Inline Blocks */
-        .status-badge-extended {
-            max-width: 650px;
-            margin: 0 auto;
-            padding: 16px 25px;
-            background: rgba(34, 197, 94, 0.1);
-            border: 2px solid rgba(34, 197, 94, 0.4);
-            border-radius: 80px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .status-badge-extended::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.2), transparent);
-            animation: statusShine 3s infinite;
-        }
-
-        .status-badge-header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            font-weight: 600;
-            font-size: 1em;
-            margin-bottom: 12px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .block-info {
-            color: #94a3b8;
-            font-size: 0.8em;
-            font-weight: 500;
-        }
-
-        .block-info span {
-            color: #00FFF0;
-            font-weight: 700;
-        }
-
-        .blocks-chain-inline {
-            display: flex;
-            gap: 0;
-            overflow: hidden;
-            height: 30px;
-            position: relative;
-            z-index: 1;
-            flex: 1;
-            min-width: 0;
-        }
-
-        .blocks-track-inline {
-            display: flex;
-            gap: 8px;
-            align-items: flex-end;
-            height: 30px;
-            width: 100%;
-            max-width: 100%;
-            overflow: visible;
-        }
-
-
-        .chain-block {
-            width: 6px;
-            height: 28px;
-            background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
-            border-radius: 3px;
-            flex-shrink: 0;
-            transition: all 0.3s ease;
-            opacity: 0.6;
-            box-shadow: 0 2px 6px rgba(34, 197, 94, 0.3);
-            transition: opacity 0.3s ease;
-        }
-
-        .chain-block.fresh {
-            opacity: 1 !important;
-            background: linear-gradient(180deg, #10b981 0%, #059669 100%) !important;
-            box-shadow: 0 0 20px rgba(16, 185, 129, 1), 0 0 30px rgba(5, 150, 105, 0.8), 0 0 40px rgba(5, 150, 105, 0.5) !important;
-            animation: blockPulse 0.6s ease-out !important;
-            transform: scaleY(1.2) !important;
-        }
-
-        @keyframes blockPulse {
-            0% {
-                transform: scaleY(0.3);
-                opacity: 0.3;
-                box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
-                background: linear-gradient(180deg, #34d399 0%, #10b981 100%);
-            }
-            50% {
-                transform: scaleY(1.3);
-                opacity: 1;
-                box-shadow: 0 0 25px rgba(16, 185, 129, 1), 0 0 35px rgba(5, 150, 105, 1), 0 0 45px rgba(5, 150, 105, 0.6);
-                background: linear-gradient(180deg, #6ee7b7 0%, #34d399 100%);
-            }
-            100% {
-                transform: scaleY(1);
-                opacity: 1;
-                box-shadow: 0 0 16px rgba(74, 222, 128, 1), 0 0 24px rgba(34, 197, 94, 0.6);
-            }
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.2); opacity: 0.8; }
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin: 60px 0;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(0, 255, 240, 0.05) 100%);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(0, 212, 255, 0.2);
-            border-radius: 20px;
-            padding: 35px;
-            transition: all 0.4s;
-            opacity: 0;
-            transform: translateY(30px);
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .stat-card:nth-child(1) { animation: cardFadeIn 0.6s ease-out 2s forwards; }
-        .stat-card:nth-child(2) { animation: cardFadeIn 0.6s ease-out 2.15s forwards; }
-        .stat-card:nth-child(3) { animation: cardFadeIn 0.6s ease-out 2.3s forwards; }
-        .stat-card:nth-child(4) { animation: cardFadeIn 0.6s ease-out 2.45s forwards; }
-        .stat-card:nth-child(5) { animation: cardFadeIn 0.6s ease-out 2.6s forwards; }
-        .stat-card:nth-child(6) { animation: cardFadeIn 0.6s ease-out 2.75s forwards; }
-        .stat-card:nth-child(7) { animation: cardFadeIn 0.6s ease-out 2.9s forwards; }
-        .stat-card:nth-child(8) { animation: cardFadeIn 0.6s ease-out 3.05s forwards; }
-
-        @keyframes cardFadeIn {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .stat-card:hover {
-            transform: translateY(-8px);
-            border-color: rgba(0, 212, 255, 0.5);
-            box-shadow: 0 20px 60px rgba(0, 212, 255, 0.3);
-        }
-
-        .stat-label {
-            font-size: 0.95em;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 15px;
-            font-weight: 700;
-        }
-
-        .stat-value {
-            font-size: 2.8em;
-            font-weight: 800;
-            background: linear-gradient(135deg, #00FFF0 0%, #00D4FF 50%, #0080FF 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 10px;
-        }
-
-        .stat-subvalue {
-            font-size: 0.9em;
-            color: #64748b;
-            font-weight: 400;
-            margin-top: auto;
-        }
-
-        .info-section {
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.03) 0%, rgba(0, 255, 240, 0.03) 100%);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(0, 212, 255, 0.15);
-            border-radius: 24px;
-            padding: 50px;
-            margin: 50px 0;
-        }
-
-        .info-section h2 {
-            font-size: 2.5em;
-            margin-bottom: 40px;
-            background: linear-gradient(135deg, #00FFF0 0%, #00D4FF 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 800;
-        }
-
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 25px 0;
-            border-bottom: 1px solid rgba(0, 212, 255, 0.1);
-            gap: 30px;
-        }
-
-        .info-row:last-child {
-            border-bottom: none;
-        }
-
-        .info-label {
-            color: #94a3b8;
-            font-weight: 600;
-            min-width: 200px;
-        }
-
-        .info-value {
-            color: #e0e7ff;
-            font-weight: 500;
-            text-align: right;
-        }
-
-        footer {
-            text-align: center;
-            padding: 60px 20px;
-            color: #64748b;
-            border-top: 1px solid rgba(0, 212, 255, 0.1);
-            margin-top: 80px;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 100000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.95);
-        }
-
-        .modal.show {
-            display: block;
-        }
-
-        .modal-content {
-            background: linear-gradient(135deg, #0a0e27 0%, #000000 100%);
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            min-height: 100vh;
-        }
-
-        /* Centered modal for validator selector */
-        #validatorSelectorModal.show {
-            display: flex !important;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        #validatorSelectorModal .modal-content {
-            position: relative;
-            margin: 0;
-            padding: 30px;
-            width: 90%;
-            max-width: 650px;
-            max-height: 85vh;
-            overflow-y: auto;
-            border-radius: 20px;
-            border: 2px solid rgba(0, 212, 255, 0.4);
-            background: linear-gradient(135deg, #0a0e27 0%, #000814 100%);
-        }
-
-        .modal-header {
-            padding: 40px 60px;
-            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-header h2 {
-            font-size: 3em;
-            background: linear-gradient(135deg, #00FFF0 0%, #00D4FF 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 800;
-        }
-
-        .close-button {
-            font-size: 2.5em;
-            color: #94a3b8;
-            cursor: pointer;
-            background: rgba(0, 212, 255, 0.1);
-            border: none;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: rgba(0, 212, 255, 0.3);
-            position: relative;
-        }
-
-        .close-button:active {
-            background: rgba(0, 212, 255, 0.3);
-            transform: scale(0.95);
-        }
-
-        .close-button:hover {
-            color: #00FFF0;
-            transform: rotate(90deg);
-        }
-
-        .modal-body {
-            padding: 60px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .modal-body h3 {
-            font-size: 2.2em;
-            color: #00D4FF;
-            margin: 40px 0 20px 0;
-            font-weight: 700;
-        }
-
-        .modal-body h3:first-child {
-            margin-top: 0;
-        }
-
-        .modal-body p {
-            color: #cbd5e1;
-            font-size: 1.15em;
-            line-height: 1.8;
-            margin-bottom: 30px;
-        }
-
-        .tech-item {
-            background: rgba(0, 212, 255, 0.05);
-            padding: 25px;
-            border-left: 4px solid #00D4FF;
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
-
-        .tech-item-title {
-            color: #00FFF0;
-            font-size: 1.3em;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        .calc-input {
-            width: 100%;
-            padding: 18px 25px;
-            background: rgba(0, 0, 0, 0.5);
-            border: 2px solid rgba(0, 212, 255, 0.3);
-            border-radius: 12px;
-            color: #ffffff;
-            font-size: 1em;
-            font-weight: 600;
-            outline: none;
-            margin-bottom: 20px;
-        }
-        
-        .calc-input::placeholder {
-            font-size: 0.9em;
-            color: rgba(148, 163, 184, 0.7);
-        }
-
-        .calc-input:focus {
-            border-color: rgba(0, 212, 255, 0.6);
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
-        }
-
-        .calc-button {
-            width: 100%;
-            padding: 20px;
-            background: linear-gradient(135deg, #00D4FF 0%, #00FFF0 100%);
-            border: none;
-            border-radius: 12px;
-            color: #000;
-            font-size: 1.2em;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .calc-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.5);
-        }
-
-        .results {
-            display: none;
-            margin-top: 40px;
-            padding-top: 30px;
-            border-top: 2px solid rgba(0, 212, 255, 0.3);
-        }
-
-        .result-item {
-            background: rgba(0, 212, 255, 0.1);
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .result-label {
-            color: #94a3b8;
-            font-size: 0.9em;
-            margin-bottom: 8px;
-        }
-
-        .result-value {
-            color: #00D4FF;
-            font-size: 1.8em;
-            font-weight: 800;
-        }
-
-        .result-usd {
-            color: #64748b;
-            font-size: 0.95em;
-            margin-top: 5px;
-        }
-
-        /* FAQ Accordion Styles */
-        .faq-item {
-            background: rgba(0, 212, 255, 0.05);
-            border: 1px solid rgba(0, 212, 255, 0.2);
-            border-radius: 12px;
-            margin-bottom: 15px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .faq-item:hover {
-            border-color: rgba(0, 212, 255, 0.4);
-            background: rgba(0, 212, 255, 0.08);
-        }
-
-        .faq-question {
-            width: 100%;
-            padding: 20px 25px;
-            background: transparent;
-            border: none;
-            color: #ffffff;
-            font-size: 1.1em;
-            font-weight: 600;
-            text-align: left;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 15px;
-            transition: all 0.3s ease;
-        }
-
-        .faq-question:hover {
-            color: #00D4FF;
-        }
-
-        .faq-icon {
-            font-size: 1.5em;
-            color: #00D4FF;
-            transition: transform 0.3s ease;
-            flex-shrink: 0;
-        }
-
-        .faq-item.active .faq-icon {
-            transform: rotate(180deg);
-        }
-
-        .faq-answer {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease, padding 0.3s ease;
-            padding: 0 25px;
-        }
-
-        .faq-item.active .faq-answer {
-            max-height: 1000px;
-            padding: 0 25px 20px 25px;
-        }
-
-        .faq-answer p {
-            color: #cbd5e1;
-            line-height: 1.8;
-            margin: 0;
-        }
-
-        .faq-answer strong {
-            color: #00FFF0;
-        }
-
-        /* Medium screens - adjust menu layout */
-        @media (max-width: 1100px) {
-            .top-left-menu {
-                flex-wrap: wrap;
-                max-width: 600px;
-            }
-            
-            .ecosystem-button, .header-wallet-button {
-                font-size: 0.9em;
-                padding: 10px 16px;
-                height: 40px;
-            }
-        }
-
-        /* Mobile Connect Wallet Button Hover */
-        #mobileConnectWallet:hover {
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.25), rgba(0, 212, 255, 0.1)) !important;
-            border-color: rgba(0, 212, 255, 0.6) !important;
-            box-shadow: 0 4px 12px rgba(0, 212, 255, 0.4) !important;
-            transform: translateX(-50%) translateY(-2px) !important;
-        }
-
-        #mobileConnectWallet:active {
-            transform: translateX(-50%) translateY(0px) !important;
-            box-shadow: 0 2px 6px rgba(0, 212, 255, 0.3) !important;
-        }
-
-        @media (max-width: 768px) {
-            .hamburger {
-                display: flex !important;
-                pointer-events: auto !important;
-            }
-
-            .hamburger span {
-                width: 30px !important;
-                height: 3.5px !important;
-                background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important;
-                border-radius: 2px !important;
-                box-shadow: 0 2px 6px rgba(0, 212, 255, 0.5) !important;
-            }
-
-            .mobile-menu {
-                display: block;
-            }
-
-            .mobile-contact-icons {
-                display: flex !important;
-            }
-
-            .fixed-mobile-contacts {
-                display: flex !important;
-            }
-
-            #mobileConnectWallet {
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-            }
-
-            /* Hide blue background animation on mobile */
-            .container {
-                position: relative;
-                z-index: 1;
-                max-width: none !important;  /* Remove desktop max-width */
-                width: 100% !important;       /* Full width on mobile */
-                padding: 8px !important;      /* Minimal padding */
-                margin: 0 !important;         /* No centering margin */
-            }
-
-            .top-left-menu, .top-contacts {
-                display: none;
-            }
-
-            .container {
-                padding: 8px;
-                padding-top: 70px;
-            }
-
-            header {
-                padding: 10px 8px 30px;
-                text-align: center;
-            }
-
-            .qubetics-brand {
-                flex-direction: row;
-                justify-content: center;
-                gap: 10px;
-                margin-bottom: 20px;
-                margin-top: 50px;
-            }
-
-            .qubetics-brand img {
-                width: 45px;
-                height: 45px;
-            }
-
-            .qubetics-brand span {
-                font-size: 0.9em;
-                letter-spacing: 1px;
-            }
-
-            .brand-container {
-                flex-direction: row;
-                justify-content: center;
-                gap: 20px;
-                margin-bottom: 20px;
-            }
-
-            .brand-container img {
-                width: 90px;
-                height: auto; /* Зберігаємо пропорції */
-            }
-
-            .validator-name {
-                font-size: 2.8em;
-                letter-spacing: -1px;
-                text-align: center;
-            }
-
-            .subtitle {
-                font-size: 0.95em;
-                text-align: center;
-                padding: 0;
-                margin-bottom: 20px;
-            }
-
-            .status-badge {
-                font-size: 0.9em;
-                padding: 10px 20px;
-                display: inline-flex;
-                margin: 0 auto;
-            }
-
-            .status-badge-extended {
-                max-width: 260px !important;
-                width: 260px !important;
-                padding: 8px 10px;
-                margin: 0 auto;
-            }
-
-            .status-badge-header {
-                flex-direction: row;
-                gap: 8px;
-                font-size: 0.8em;
-                margin-bottom: 8px;
-                align-items: center;
-            }
-
-            .block-info {
-                font-size: 0.7em;
-                text-align: center;
-                margin-bottom: 6px !important;
-            }
-
-            .blocks-chain-inline {
-                height: 40px;
-                flex: 1;
-            }
-
-            .blocks-track-inline {
-                gap: 3px;
-                height: 40px;
-                max-width: 100%;
-            }
-
-            .chain-block {
-                width: 7px;
-                height: 40px;
-            }
-
-            /* ВАЖЛИВО: fresh анімація на мобільних - ДУЖЕ ЯСКРАВА */
-            .chain-block.fresh {
-                background: linear-gradient(180deg, #6ee7b7 0%, #10b981 100%) !important;
-                box-shadow: 0 0 30px rgba(110, 231, 183, 1), 
-                            0 0 40px rgba(16, 185, 129, 1), 
-                            0 0 50px rgba(5, 150, 105, 0.8) !important;
-                animation: blockPulse 0.6s ease-out !important;
-                transform: scaleY(1.3) !important;
-            }
-            
-            @keyframes blockPulse {
-                0% {
-                    transform: scaleY(0.3);
-                    opacity: 0.5;
-                    background: linear-gradient(180deg, #a7f3d0 0%, #6ee7b7 100%);
-                    box-shadow: 0 0 40px rgba(167, 243, 208, 1);
-                }
-                50% {
-                    transform: scaleY(1.5);
-                    opacity: 1;
-                    background: linear-gradient(180deg, #6ee7b7 0%, #34d399 100%);
-                    box-shadow: 0 0 50px rgba(110, 231, 183, 1), 
-                                0 0 60px rgba(52, 211, 153, 1);
-                }
-                100% {
-                    transform: scaleY(1);
-                    opacity: 1;
-                    background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
-                    box-shadow: 0 0 15px rgba(34, 197, 94, 0.6);
-                }
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
-                margin: 20px 0 40px 0;
-            }
-
-            .stat-card {
-                padding: 20px 15px;
-                text-align: center;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                min-height: 140px;
-            }
-
-            .stat-label {
-                font-size: 0.75em;
-                text-align: center;
-                margin-bottom: 10px;
-            }
-
-            .stat-value {
-                font-size: 1.6em;
-                text-align: center;
-                word-break: break-word;
-            }
-
-            .stat-value-apy {
-                padding-top: 18px;
-            }
-
-            .stat-subvalue {
-                font-size: 0.75em;
-                text-align: center;
-                line-height: 1.3;
-            }
-
-            .features {
-                grid-template-columns: 1fr;
-                gap: 20px;
-                margin: 50px 0;
-            }
-
-            .feature-card {
-                padding: 25px 20px;
-                text-align: left;
-            }
-
-            .feature-icon {
-                font-size: 2.5em;
-            }
-
-            .feature-card h3 {
-                font-size: 1.3em;
-                text-align: left;
-            }
-
-            .feature-card p {
-                font-size: 0.95em;
-                text-align: left;
-            }
-
-            .info-section {
-                padding: 30px 20px;
-                text-align: left;
-            }
-
-            .info-section h2 {
-                font-size: 1.8em;
-                text-align: left;
-            }
-
-            .info-row {
-                flex-direction: column;
-                gap: 10px;
-                padding: 20px 0;
-            }
-
-            .info-label,
-            .info-value {
-                text-align: left;
-                min-width: auto;
-            }
-
-            .cta-section {
-                padding: 40px 20px;
-                margin: 50px 0;
-                text-align: left;
-            }
-
-            .cta-section h2 {
-                font-size: 1.8em;
-                margin-bottom: 15px;
-                text-align: left;
-            }
-
-            .cta-section p {
-                font-size: 1em;
-                margin-bottom: 30px;
-                text-align: left;
-            }
-
-            .cta-buttons {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .btn {
-                padding: 15px 30px;
-                font-size: 0.95em;
-                width: 100%;
-                justify-content: center;
-            }
-
-            footer {
-                padding: 40px 20px;
-            }
-
-            .exchanges-container {
-                flex-direction: row !important;
-                gap: 12px !important;
-                padding: 0 !important;
-                flex-wrap: nowrap !important;
-                overflow-x: visible !important;
-                align-items: center !important;
-                justify-content: space-around !important;
-                display: flex !important;
-                margin: 0 auto 15px auto !important;
-                height: 100px !important;
-            }
-
-            .exchanges-container a {
-                flex: 1 1 0 !important;
-                display: flex !important;
-                justify-content: center !important;
-                align-items: center !important;
-                min-width: 0 !important;
-                padding: 0 !important;
-                margin: 0 !important;
-                background: transparent !important;
-                border: none !important;
-                transition: all 0.3s ease !important;
-                height: 100px !important;
-            }
-
-            .exchanges-container a:active {
-                transform: scale(0.95);
-            }
-
-            .exchanges-container img {
-                width: auto !important;
-                height: 100px !important;
-                max-height: 100px !important;
-                max-width: 100% !important;
-                object-fit: contain !important;
-                object-position: center !important;
-                margin: 0 auto !important;
-                padding: 0 !important;
-                display: block !important;
-                align-self: center !important;
-                vertical-align: middle !important;
-            }
-            
-            /* Спеціальне вирівнювання для Coinstore */
-            .exchanges-container a:nth-child(3) img {
-                transform: translateY(-3px) !important;
-            }
-            
-            /* Наступний заголовок після бірж */
-            .exchanges-container + h3 {
-                margin-top: 0 !important;
-            }
-
-            .footer-links {
-                flex-direction: column;
-                gap: 15px;
-                align-items: center;
-            }
-
-            .modal-content {
-                width: 95%;
-                max-width: 95%;
-                max-height: 90vh;
-            }
-
-            .modal-header, .modal-body {
-                padding: 20px;
-            }
-
-            .modal-body {
-                padding: 25px 20px;
-            }
-
-            .modal-body > div[style*="grid"] {
-                display: flex !important;
-                flex-direction: column !important;
-                gap: 25px !important;
-            }
-
-            .modal-body > div[style*="grid"] > div {
-                width: 100% !important;
-                padding: 20px;
-                background: rgba(0, 212, 255, 0.05);
-                border: 1px solid rgba(0, 212, 255, 0.2);
-                border-radius: 16px;
-                margin-bottom: 0 !important;
-            }
-
-            .modal-body > div[style*="grid"] > div > div:first-child {
-                font-size: 1.2em !important;
-                margin-bottom: 15px !important;
-                padding-bottom: 10px;
-                border-bottom: 2px solid rgba(0, 212, 255, 0.3);
-            }
-
-            .modal-body p {
-                margin-bottom: 20px;
-                line-height: 1.7;
-            }
-
-            .modal-body h3 {
-                margin-top: 35px;
-                padding-top: 20px;
-                border-top: 1px solid rgba(0, 212, 255, 0.2);
-            }
-
-            .modal-body h3:first-child {
-                margin-top: 0;
-                padding-top: 0;
-                border-top: none;
-            }
-
-            .modal-footer {
-                padding: 20px !important;
-                flex-direction: row !important;
-                gap: 10px !important;
-                flex-wrap: nowrap !important;
-                align-items: stretch !important;
-            }
-
-            .modal-link {
-                font-size: 0.75em !important;
-                padding: 12px 10px !important;
-                flex: 1 1 0 !important;
-                min-width: 0 !important;
-                max-width: 48% !important;
-                justify-content: center;
-                white-space: normal !important;
-                text-align: center;
-                line-height: 1.3;
-                gap: 6px !important;
-            }
-            
-            .modal-link span {
-                display: inline-block;
-            }
-            
-            .modal-link span:first-child {
-                font-size: 1.1em;
-            }
-
-            .modal-header h2 {
-                font-size: 1.5em;
-                line-height: 1.3;
-            }
-
-            .modal-body h3 {
-                font-size: 1.3em;
-                margin: 30px 0 15px 0;
-                font-weight: 700;
-            }
-
-            .modal-body p, .modal-body li {
-                font-size: 1em;
-                line-height: 1.7;
-            }
-
-            .modal-body ul {
-                padding-left: 20px;
-                margin: 15px 0;
-            }
-
-            .modal-body li {
-                margin: 12px 0;
-                line-height: 1.6;
-            }
-
-            .modal-body strong {
-                color: #00FFF0;
-                font-weight: 700;
-            }
-
-            .modal-body [style*="background: rgba(0, 212, 255"] {
-                padding: 20px !important;
-                margin: 20px 0 !important;
-                border-radius: 12px !important;
-            }
-
-            .close-modal {
-                font-size: 2em;
-                width: 35px;
-                height: 35px;
-            }
-
-            /* FAQ Mobile Styles */
-            .faq-question {
-                padding: 15px 18px;
-                font-size: 1em;
-                gap: 10px;
-            }
-
-            .faq-icon {
-                font-size: 1.2em;
-            }
-
-            .faq-answer {
-                padding: 0 18px;
-            }
-
-            .faq-item.active .faq-answer {
-                padding: 0 18px 15px 18px;
-            }
-
-            .faq-answer p {
-                font-size: 0.95em;
-                line-height: 1.6;
-            }
-
-            .faq-answer ul {
-                padding-left: 18px;
-                margin: 10px 0;
-            }
-
-            .faq-answer li {
-                margin: 8px 0;
-                font-size: 0.95em;
-            }
-
-            /* Примітка про делегування через комп'ютер */
-            div[style*="linear-gradient(135deg, rgba(0, 212, 255, 0.1)"] {
-                padding: 20px !important;
-                margin: 30px 0 !important;
-            }
-
-            div[style*="linear-gradient(135deg, rgba(0, 212, 255, 0.1)"] h4 {
-                font-size: 1.1em !important;
-            }
-
-            div[style*="linear-gradient(135deg, rgba(0, 212, 255, 0.1)"] p {
-                font-size: 0.95em !important;
-            }
-
-            div[style*="linear-gradient(135deg, rgba(0, 212, 255, 0.1)"] a {
-                padding: 12px 16px !important;
-                font-size: 0.9em !important;
-            }
-
-            /* Кроки делегування (1-5) */
-            div[style*="width: 40px; height: 40px"] {
-                width: 35px !important;
-                height: 35px !important;
-                font-size: 1.1em !important;
-            }
-
-            div[style*="margin-left: 55px"] {
-                margin-left: 45px !important;
-            }
-
-            /* Контейнер з кроками */
-            div[style*="background: rgba(0, 212, 255, 0.03)"] {
-                padding: 25px 15px !important;
-            }
-
-            /* Гаманці список */
-            div[style*="display: flex; align-items: center; gap: 12px; padding: 15px"] {
-                padding: 12px !important;
-                gap: 10px !important;
-            }
-
-            /* Посилання на біржі в FAQ */
-            .faq-answer a {
-                font-size: 0.95em !important;
-                padding: 2px 0 !important;
-                display: inline-block;
-            }
-
-            /* Примітка блок з посиланнями */
-            div[style*="background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 240, 0.05))"] {
-                padding: 20px 15px !important;
-                margin: 30px 0 !important;
-            }
-
-            div[style*="background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 240, 0.05))"] h4 {
-                font-size: 1.1em !important;
-                margin-bottom: 12px !important;
-            }
-
-            div[style*="background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 240, 0.05))"] p {
-                font-size: 0.9em !important;
-                margin-bottom: 15px !important;
-            }
-
-            div[style*="background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 240, 0.05))"] a {
-                padding: 12px 15px !important;
-                font-size: 0.85em !important;
-                gap: 8px !important;
-            }
-            
-            /* Staking Interface Styles */
-            #stakingInterface button:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
-            }
-            
-            #stakingInterface button:active {
-                transform: translateY(0);
-            }
-            
-            #stakingInterface input:focus {
-                outline: none;
-                border-color: #00FFF0;
-                box-shadow: 0 0 0 3px rgba(0, 255, 240, 0.1);
-            }
-
-            /* Close button */
-            .close-button {
-                width: 45px !important;
-                height: 45px !important;
-                font-size: 2em !important;
-            }
-
-            /* Розділ "Чому обрати QubeNode" на головній */
-            .info-row .info-value {
-                font-size: 0.95em !important;
-            }
-
-            /* Extended Badge Mobile */
-            .status-badge-extended {
-                max-width: calc(100% - 30px);
-                padding: 6px 10px !important;
-                border-radius: 16px !important;
-                margin-bottom: 10px !important;
-            }
-
-            .status-badge-header {
-                flex-direction: row;
-                gap: 8px !important;
-                font-size: 0.85em !important;
-                margin-bottom: 4px !important;
-                justify-content: center;
-                align-items: center;
-            }
-
-            .block-info {
-                font-size: 0.6em !important;
-            }
-
-            .blocks-chain-inline {
-                height: 22px !important;
-                gap: 0 !important;
-                width: 100% !important;
-                max-width: 100% !important;
-                display: flex !important;
-            }
-
-            .blocks-track-inline {
-                gap: 4px !important;
-                width: 100% !important;
-                max-width: 100% !important;
-                height: 22px !important;
-            }
-
-            .chain-block {
-                width: 4px !important;
-                height: 20px !important;
-                min-width: 4px !important;
-                border-radius: 2px !important;
-            }
-
-            .blocks-chain-inline::before,
-            .blocks-chain-inline::after {
-                width: 30px !important;
-            }
-
-            /* Фіксація гамбургер меню та іконок */
-            .hamburger {
-                position: fixed !important;
-                top: 20px !important;
-                left: 20px !important;
-                display: flex !important;
-                z-index: 999999 !important;
-            }
-
-            .fixed-mobile-contacts {
-                position: fixed !important;
-                top: 20px !important;
-                right: 20px !important;
-                display: flex !important;
-                flex-direction: row !important;
-                gap: 15px !important;
-                z-index: 999998 !important;
-            }
-
-            .fixed-contact-icon {
-                width: 50px !important;
-                height: 50px !important;
-                background: transparent !important;
-                border: none !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                transition: all 0.3s ease !important;
-            }
-
-            .fixed-contact-icon svg {
-                width: 50px !important;
-                height: 50px !important;
-            }
-
-            .fixed-contact-icon:active,
-            .fixed-contact-icon:hover {
-                transform: scale(1.1) !important;
-            }
-
-            /* Приховати десктопні контакти на мобільних */
-            .top-contacts {
-                display: none !important;
-            }
-
-            .top-left-menu {
-                display: none !important;
-            }
-
-            /* 📱 MOBILE DASHBOARD OPTIMIZATION 📱 */
-            
-            /* Dashboard modal - full width on mobile like competitor */
-            #dashboardModal .modal-content {
-                width: 100% !important;
-                max-width: 100% !important;
-                padding: 0 !important;  /* No padding - let modal-body handle it */
-                margin: 0 !important;
-                border-radius: 0 !important;  /* No rounded corners on mobile */
-            }
-            
-            /* Dashboard modal body - minimal padding */
-            #dashboardModal .modal-body {
-                padding: 8px !important;  /* Було: 10px */
-            }
-            
-            /* Reduce all section paddings inside dashboard */
-            #dashboardModal .modal-body > div > div {
-                padding: 12px !important;  /* Було: 18px */
-                margin-bottom: 12px !important;  /* Було: 20px */
-            }
-            
-            /* Dashboard stats cards - 2 columns */
-            #dashboardModal .modal-body > div > div[style*="grid-template-columns"] {
-                grid-template-columns: repeat(2, 1fr) !important;
-                gap: 12px !important;
-            }
-            
-            /* Dashboard stats individual cards - smaller padding */
-            #dashboardModal .modal-body > div > div[style*="grid-template-columns"] > div {
-                padding: 12px !important;
-            }
-            
-            #dashboardModal .modal-body > div > div[style*="grid-template-columns"] > div > div:first-child {
-                font-size: 0.7em !important;
-            }
-            
-            #dashboardModal .modal-body > div > div[style*="grid-template-columns"] > div > div:nth-child(2) {
-                font-size: 1.3em !important;
-            }
-            
-            #dashboardModal .modal-body > div > div[style*="grid-template-columns"] > div > div:last-child {
-                font-size: 0.75em !important;
-            }
-            
-            /* Forecast cards - 2 columns */
-            #dashRewardsForecast > div {
-                grid-template-columns: repeat(2, 1fr) !important;
-                gap: 10px !important;
-            }
-            
-            #dashRewardsForecast > div > div {
-                padding: 10px !important;
-            }
-            
-            #dashRewardsForecast > div > div > div:first-child {
-                font-size: 0.7em !important;
-            }
-            
-            #dashRewardsForecast > div > div > div:last-child {
-                font-size: 1em !important;
-            }
-            
-            /* Validator delegation cards - buttons in ONE row */
-            #dashDelegationsList > div > div > div:last-child {
-                grid-template-columns: repeat(3, 1fr) !important;
-                gap: 6px !important;
-            }
-            
-            #dashDelegationsList button {
-                padding: 10px 6px !important;
-                font-size: 0.75em !important;
-            }
-            
-            /* Quick Actions buttons - 2 per row with equal width */
-            #btnQuickStakeQubeNode,
-            #btnQuickClaimAllRewards {
-                flex: 1 1 calc(50% - 5px) !important;
-                min-width: 0 !important;
-                max-width: calc(50% - 5px) !important;
-                padding: 12px 8px !important;
-                font-size: 0.8em !important;
-            }
-            
-            #btnQuickStakeQubeNode span:last-child,
-            #btnQuickClaimAllRewards span:last-child {
-                font-size: 0.9em !important;
-            }
-            
-            /* Custom modals - full width on mobile */
-            #customStakeModal > div,
-            #customSwitchModal > div,
-            #customUnbondModal > div,
-            #customClaimModal > div {
-                width: 100% !important;
-                max-width: 100% !important;
-                padding: 12px !important;  /* Було: 15px */
-                margin: 0 !important;
-                border-radius: 0 !important;  /* No rounded corners */
-            }
-            
-            /* 📱 MAKE MODAL BLOCKS FULL-WIDTH ON MOBILE 📱 */
-            /* Any modal grids - make full width */
-            .modal-body div[style*="grid-template-columns"] {
-                display: grid !important;
-                grid-template-columns: 1fr !important;
-                gap: 20px !important;
-            }
-        }
-
-        /* Максимальний пріоритет для фіксації іконок */
-        @media (max-width: 768px) {
-            body .hamburger,
-            body label.hamburger[for="menu-toggle"] {
-                position: fixed !important;
-                top: 20px !important;
-                left: 20px !important;
-                z-index: 999999 !important;
-            }
-
-            body .fixed-mobile-contacts,
-            body div.fixed-mobile-contacts {
-                position: fixed !important;
-                top: 20px !important;
-                right: 20px !important;
-                z-index: 999998 !important;
-                flex-direction: row !important;
-            }
-        }
-
-        /* Extra small screens */
-        @media (max-width: 480px) {
-            /* Mobile Connect Wallet button - smaller on tiny screens */
-            #mobileConnectWallet {
-                padding: 10px 16px !important;
-                font-size: 0.75em !important;
-            }
-        }
-        
-        /* WALLET CONNECTION MODAL - from how-to-delegate.html */
-        .wallet-modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 999999999;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        .wallet-modal-overlay.active { display: flex; }
-        .wallet-modal-content {
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-            border: 2px solid rgba(0, 212, 255, 0.3);
-            border-radius: 20px;
-            max-width: 500px;
-            width: 100%;
-            position: relative;
-            padding: 40px 30px;
-        }
-        .wallet-modal-close {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(0, 255, 240, 0.1);
-            border: 1px solid rgba(0, 255, 240, 0.3);
-            color: #00FFF0;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            font-size: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-        }
-        .wallet-modal-close:hover {
-            background: rgba(0, 255, 240, 0.2);
-            border-color: rgba(0, 255, 240, 0.5);
-            transform: rotate(90deg);
-        }
-        .wallet-modal-title {
-            color: #00FFF0;
-            font-size: 1.5em;
-            font-weight: 700;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-        .wallet-modal-subtitle {
-            color: #94a3b8;
-            font-size: 0.9em;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        .wallet-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .wallet-btn {
-            padding: 18px 24px;
-            background: rgba(0, 212, 255, 0.15);
-            border: 2px solid rgba(0, 212, 255, 0.4);
-            border-radius: 12px;
-            color: #00FFF0;
-            font-size: 1.1em;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        .wallet-btn:hover {
-            background: rgba(0, 212, 255, 0.25);
-            border-color: rgba(0, 212, 255, 0.6);
-            transform: translateY(-2px);
-        }
-    </style>
+    <!-- Index Styles - CSP Compliant (NO Google Fonts - uses system fallback) -->
+    <link rel="stylesheet" href="styles-index.css">
+</head>
+<body>
     
     <!-- КРИТИЧНИЙ STYLE - МАКСИМАЛЬНИЙ ПРІОРИТЕТ ДЛЯ ФІКСАЦІЇ -->
     <style>
@@ -2289,9 +143,81 @@
             display: none !important;
         }
     </style>
-</head>
-<body>
     <!-- Header Wallet Functions - MUST Load First -->
+    <script>
+        let headerWalletConnected = false;
+        let cosmosStaking = null;
+        
+        function toggleHeaderWalletDropdown(event) {
+            if (event) event.stopPropagation();
+            const dropdown = document.getElementById('headerWalletDropdown');
+            if (dropdown) dropdown.classList.toggle('show');
+        }
+        
+        async function connectHeaderWallet(walletType) {
+            const dropdown = document.getElementById('headerWalletDropdown');
+            if (dropdown) dropdown.classList.remove('show');
+            
+            const headerBtn = document.getElementById('headerWalletBtn');
+            if (headerBtn) {
+                headerBtn.innerHTML = '<span>⏳</span><span>Connecting...</span>';
+                headerBtn.style.pointerEvents = 'none';
+            }
+            
+            try {
+                // Wait for modules to load (max 5 seconds)
+                let attempts = 0;
+                while ((typeof CosmosStakingModule === 'undefined' || typeof QUBETICS_CHAIN_CONFIG === 'undefined') && attempts < 50) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    attempts++;
+                }
+                
+                if (typeof CosmosStakingModule === 'undefined') {
+                    throw new Error('Modules failed to load. Reload the page.');
+                }
+                
+                if (typeof QUBETICS_CHAIN_CONFIG === 'undefined') {
+                    throw new Error('Chain configuration not loaded. Reload the page.');
+                }
+                
+                await initializeStaking();
+                const result = await cosmosStaking.connectWallet(walletType);
+                
+                if (result.success) {
+                    headerWalletConnected = true;
+                    const walletInfo = cosmosStaking.getWalletInfo();
+                    window.location.href = `dashboard.html?wallet=${walletType}&address=${walletInfo.address}`;
+                }
+            } catch (error) {
+                // console.error('Header wallet connection error:', error);
+                alert('Connection error: ' + error.message);
+                resetHeaderWalletButton();
+            } finally {
+                if (headerBtn) headerBtn.style.pointerEvents = 'auto';
+            }
+        }
+        
+        async function initializeStaking() {
+            if (!cosmosStaking) {
+                cosmosStaking = new CosmosStakingModule();
+                await cosmosStaking.initialize();
+            }
+        }
+        
+        function resetHeaderWalletButton() {
+            const headerBtn = document.getElementById('headerWalletBtn');
+            if (headerBtn) {
+                headerBtn.innerHTML = '<span>💼</span><span>Connect Wallet</span>';
+                headerBtn.classList.remove('wallet-connected');
+            }
+        }
+        
+        function disconnectHeaderWallet() {
+            headerWalletConnected = false;
+            if (typeof cosmosStaking !== 'undefined' && cosmosStaking) cosmosStaking.disconnect();
+            resetHeaderWalletButton();
+        }
+    </script>
     
     <!-- КОНТЕЙНЕР ДЛЯ ІКОНОК - ТІЛЬКИ ВГОРІ САЙТУ -->
     <div id="mobile-icons-container" style="position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important; width: 100% !important; height: 80px !important; z-index: 999999 !important; pointer-events: none !important; margin: 0 !important; padding: 0 !important;">
@@ -3005,9 +931,1931 @@
         </div>
     </div>
 
-
     <!-- FAQ Modal -->
+    <script>
+        // FAQ Accordion Toggle
+        function toggleFaq(button) {
+            const faqItem = button.parentElement;
+            const isActive = faqItem.classList.contains('active');
+            
+            // Close all other FAQ items
+            document.querySelectorAll('.faq-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Toggle current item
+            if (!isActive) {
+                faqItem.classList.add('active');
+            }
+        }
+
+        function bindCloseButtons() {
+            var closeButtons = document.querySelectorAll('.close-button[data-close]');
+            closeButtons.forEach(function(btn) {
+                var modalId = btn.getAttribute('data-close');
+                
+                // Remove old listeners
+                var newBtn = btn.cloneNode(true);
+                btn.parentNode.replaceChild(newBtn, btn);
+                
+                // Touch event for mobile
+                newBtn.addEventListener('touchend', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    closeModal(modalId);
+                }, {passive: false});
+                
+                // Click event for desktop  
+                newBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    closeModal(modalId);
+                });
+            });
+        }
     
+        function openModal(id) {
+            var modal = document.getElementById(id);
+            
+            if (modal) {
+                modal.classList.add('show');
+                modal.style.display = 'block';
+                modal.style.zIndex = '100000';
+                
+                // Check if opening delegator modal
+                if (id === 'delegatorModal') {
+                    const dashboard = document.getElementById('delegatorDashboard');
+                    const walletSection = document.getElementById('walletSection');
+                    const walletStatus = document.getElementById('walletStatus');
+                    const stakingActions = document.getElementById('stakingActions');
+                    
+                    // Check if wallet is connected
+                    if (headerWalletConnected && cosmosStaking && cosmosStaking.isWalletConnected()) {
+                        // Wallet IS connected - hide buttons, show dashboard
+                        if (walletSection) walletSection.style.display = 'none';
+                        if (walletStatus) walletStatus.style.display = 'none';
+                        if (stakingActions) stakingActions.style.display = 'none';
+                        if (dashboard) {
+                            dashboard.style.display = 'block';
+                            updateDashboardData();
+                        }
+                    } else {
+                        // Wallet NOT connected - show buttons, hide dashboard
+                        if (walletSection) walletSection.style.display = 'block';
+                        if (walletStatus) walletStatus.style.display = 'none';
+                        if (stakingActions) stakingActions.style.display = 'none';
+                        if (dashboard) dashboard.style.display = 'none';
+                        
+                        // Reset buttons to enabled state
+                        const keplrBtn = document.getElementById('connectKeplrBtn');
+                        const cosmostationBtn = document.getElementById('connectCosmostationBtn');
+                        if (keplrBtn) {
+                            keplrBtn.disabled = false;
+                            keplrBtn.innerHTML = '<span style="font-size: 1.2em;">🔷</span><span>Keplr Wallet</span>';
+                        }
+                        if (cosmostationBtn) {
+                            cosmostationBtn.disabled = false;
+                            cosmostationBtn.innerHTML = '<span style="font-size: 1.2em;">🔶</span><span>Cosmostation</span>';
+                        }
+                    }
+                }
+                
+                // ПРИХОВАТИ іконки меню, телеграм та пошти в модальних вікнах
+                var iconsContainer = document.getElementById('mobile-icons-container');
+                if (iconsContainer) {
+                    iconsContainer.style.display = 'none';
+                }
+                
+                // Bind close button after modal opens
+                setTimeout(bindCloseButtons, 100);
+            }
+        }
+
+        function closeModal(id) {
+            var modal = document.getElementById(id);
+            if (modal) {
+                modal.classList.remove('show');
+                modal.style.display = 'none';
+                
+                // ПОКАЗАТИ іконки меню, телеграм та пошти назад (тільки на мобільних)
+                var iconsContainer = document.getElementById('mobile-icons-container');
+                if (iconsContainer && window.innerWidth <= 768) {
+                    iconsContainer.style.display = 'block';
+                }
+            }
+        }
+
+        // DOMContentLoaded - bind close buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            // Bind close buttons on page load
+            bindCloseButtons();
+        });
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('show');
+                event.target.style.display = 'none';
+            }
+        }
+
+        // Cosmos Staking Functions already declared above
+        // let cosmosStaking = null; // REMOVED - duplicate declaration
+        let stakingModuleReady = false;
+
+        // Wait for all modules to load
+        window.addEventListener('DOMContentLoaded', function() {
+            // Initialize wallet dropdown - make sure it's hidden
+            const dropdown = document.getElementById('headerWalletDropdown');
+            if (dropdown) {
+                dropdown.classList.remove('show');
+                dropdown.style.display = 'none';
+            }
+            
+            // Check if CosmosStakingModule is available
+            const checkModules = setInterval(function() {
+                if (typeof CosmosStakingModule !== 'undefined' && 
+                    typeof QUBETICS_CHAIN_CONFIG !== 'undefined' && 
+                    typeof VALIDATOR_CONFIG !== 'undefined') {
+                    stakingModuleReady = true;
+                    clearInterval(checkModules);
+                    // console.log('✅ Cosmos Staking Module ready');
+                }
+            }, 100);
+        });
+
+        async function initializeStaking() {
+            if (!cosmosStaking) {
+                if (!stakingModuleReady) {
+                    throw new Error('Staking modules still loading, try in a second');
+                }
+                cosmosStaking = new CosmosStakingModule();
+                await cosmosStaking.initialize();
+            }
+        }
+
+        async function connectWallet(walletType) {
+            try {
+                // Disable buttons and show loading
+                const keplrBtn = document.getElementById('connectKeplrBtn');
+                const cosmostationBtn = document.getElementById('connectCosmostationBtn');
+                
+                if (keplrBtn) keplrBtn.disabled = true;
+                if (cosmostationBtn) cosmostationBtn.disabled = true;
+                
+                if (walletType === 'keplr' && keplrBtn) {
+                    keplrBtn.innerHTML = '<span>⏳</span><span>Connecting...</span>';
+                } else if (cosmostationBtn) {
+                    cosmostationBtn.innerHTML = '<span>⏳</span><span>Connecting...</span>';
+                }
+
+                await initializeStaking();
+                const result = await cosmosStaking.connectWallet(walletType);
+
+                if (result.success) {
+                    // Hide old interface
+                    const stakingInterface = document.getElementById('stakingInterface');
+                    if (stakingInterface) {
+                        stakingInterface.style.display = 'none';
+                    }
+                    
+                    // Show dashboard
+                    const dashboard = document.getElementById('delegatorDashboard');
+                    if (dashboard) {
+                        dashboard.style.display = 'block';
+                    }
+                    
+                    // Update dashboard data
+                    await updateDashboardData();
+                    
+                    // Update header
+                    headerWalletConnected = true;
+                    await updateHeaderWalletDisplay();
+                }
+            } catch (error) {
+                // console.error('Connection error:', error);
+                alert('Connection error: ' + error.message);
+                
+                // Reset buttons
+                const keplrBtn = document.getElementById('connectKeplrBtn');
+                const cosmostationBtn = document.getElementById('connectCosmostationBtn');
+                
+                if (keplrBtn) {
+                    keplrBtn.disabled = false;
+                    keplrBtn.innerHTML = '<span style="font-size: 1.3em;">🔷</span><span>Keplr Wallet</span>';
+                }
+                if (cosmostationBtn) {
+                    cosmostationBtn.disabled = false;
+                    cosmostationBtn.innerHTML = '<span style="font-size: 1.3em;">🔶</span><span>Cosmostation</span>';
+                }
+            }
+        }
+
+        async function disconnectWallet() {
+            if (cosmosStaking) {
+                cosmosStaking.disconnect();
+            }
+            
+            document.getElementById('walletSection').style.display = 'block';
+            document.getElementById('walletStatus').style.display = 'none';
+            document.getElementById('stakingActions').style.display = 'none';
+            document.getElementById('connectKeplrBtn').disabled = false;
+            document.getElementById('connectCosmostationBtn').disabled = false;
+            document.getElementById('connectKeplrBtn').innerHTML = '<span style="font-size: 1.3em;">🔷</span><span>Keplr Wallet</span>';
+        }
+
+        // DASHBOARD FUNCTIONS
+        
+
+
+                // =====================================================================
+        // SIMPLE WORKING FUNCTIONS (like the working module below)
+        // =====================================================================
+        
+        window.quickStakeMore = async function(validatorAddress) {
+            // Get validator name
+            const validatorName = validatorNamesCache[validatorAddress] || validatorAddress.substring(0, 20) + '...';
+            
+            // Create and show custom modal
+            const modal = document.createElement('div');
+            modal.id = 'customStakeModal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.85);
+                backdrop-filter: blur(10px);
+                z-index: 999999 !important;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            `;
+            
+            const overview = cosmosStaking ? cosmosStaking.getStakingOverview() : null;
+            const available = overview ? cosmosStaking.formatTics(overview.balance) : '0';
+            
+            modal.innerHTML = `
+                <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 20px; padding: 30px; max-width: 500px; width: 90%; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);">
+                    <h3 style="color: #00D4FF; font-size: 1.5em; margin: 0 0 20px 0; text-align: center;">💎 Delegate TICS</h3>
+                    
+                    <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+                        <div style="color: #00FFF0; font-weight: 600; margin-bottom: 8px; font-size: 1.1em;">${validatorName}</div>
+                        <div style="color: #64748b; font-size: 0.85em; font-family: monospace; word-break: break-all;">${validatorAddress}</div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <label style="color: #94a3b8; font-size: 0.9em; display: block; margin-bottom: 8px; font-weight: 500;">Amount to delegate (TICS)</label>
+                        <input 
+                            type="number" 
+                            id="modalStakeAmount" 
+                            placeholder="0.00"
+                            min="0.1"
+                            step="0.1"
+                            style="width: 100%; padding: 14px; background: rgba(15, 23, 42, 0.6); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 10px; color: #fff; font-size: 1.2em; font-weight: 600; text-align: center; box-sizing: border-box;"
+                        />
+                        <div style="color: #64748b; font-size: 0.85em; margin-top: 8px; display: flex; justify-content: space-between;">
+                            <span>Minimum: 0.1 TICS</span>
+                            <span>Available: ${parseFloat(available).toFixed(2)} TICS</span>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 10px; padding: 12px; margin-bottom: 20px;">
+                        <div style="color: #86efac; font-size: 0.85em;">
+                            ✅ You will start receiving rewards immediately after delegation
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 12px;">
+                        <button onclick="document.getElementById('customStakeModal').remove()" style="flex: 1; padding: 14px; background: rgba(100, 116, 139, 0.2); border: 1px solid rgba(100, 116, 139, 0.4); border-radius: 12px; color: #94a3b8; font-size: 1em; font-weight: 600; cursor: pointer;">
+                            Cancel
+                        </button>
+                        <button id="modalConfirmBtn" style="flex: 1; padding: 14px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border: none; border-radius: 12px; color: #000; font-size: 1em; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(0, 212, 255, 0.4);">
+                            Delegate
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Ensure modal is LAST element in body (after everything else)
+            document.body.appendChild(modal);
+            // Force modal to be on top by setting style after append
+            modal.style.zIndex = '2147483647'; // Max z-index value
+            
+            // Focus input
+            setTimeout(() => document.getElementById('modalStakeAmount').focus(), 100);
+            
+            // Close on overlay click
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+            
+            // Confirm button handler
+            document.getElementById('modalConfirmBtn').onclick = async () => {
+                const amount = document.getElementById('modalStakeAmount').value;
+                
+                if (!amount || isNaN(amount) || parseFloat(amount) < 0.1) {
+                    alert('Minimum amount: 0.1 TICS');
+                    return;
+                }
+                
+                modal.remove();
+                
+                try {
+                    showDashTxStatus('processing', 'Processing transaction...');
+                    
+                    // Get staking service directly
+                    const stakingService = cosmosStaking.stakingService;
+                    if (!stakingService) {
+                        throw new Error('Staking service not available');
+                    }
+                    
+                    // Convert to minimal units
+                    const amountMinimal = cosmosStaking.ticsToMinimal(parseFloat(amount));
+                    
+                    // Delegate to specific validator
+                    const result = await stakingService.delegate(validatorAddress, amountMinimal, 'Stake more to ' + validatorName);
+                    
+                    showDashTxStatus('success', `Успішно! TX: ${result.transactionHash}`);
+                    
+                    setTimeout(async () => await updateDashboardData(), 3000);
+                    let refreshCount = 0;
+                    const refreshInterval = setInterval(async () => {
+                        refreshCount++;
+                        await updateDashboardData();
+                        if (refreshCount >= 6) clearInterval(refreshInterval);
+                    }, 5000);
+                } catch (error) {
+                    showDashTxStatus('error', 'Помилка: ' + error.message);
+                }
+            };
+        }
+        
+        window.quickSwitchValidator = async function(fromValidatorAddress) {
+            const fromValidatorName = validatorNamesCache[fromValidatorAddress] || fromValidatorAddress.substring(0, 20) + '...';
+            const overview = cosmosStaking ? cosmosStaking.getStakingOverview() : null;
+            
+            if (!overview || !overview.delegations) {
+                alert('No delegations');
+                return;
+            }
+            
+            // Get current delegation amount
+            let currentAmount = '0';
+            const delegation = overview.delegations.find(d => d.delegation.validator_address === fromValidatorAddress);
+            if (delegation) {
+                currentAmount = cosmosStaking.formatTics(delegation.balance.amount);
+            }
+            
+            // Create modal
+            const modal = document.createElement('div');
+            modal.id = 'customSwitchModal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.85);
+                backdrop-filter: blur(10px);
+                z-index: 999999 !important;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            `;
+            
+            // Build validator options
+            let validatorOptions = '';
+            const qubenodeAddr = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
+            
+            // Add QubeNode first if not the current validator
+            if (fromValidatorAddress !== qubenodeAddr) {
+                validatorOptions += `
+                    <div class="validator-option" data-address="${qubenodeAddr}" style="background: rgba(0, 212, 255, 0.12); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 12px; padding: 12px; margin-bottom: 8px; cursor: pointer; transition: all 0.3s;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <div style="color: #00D4FF; font-weight: 600; font-size: 1em;">QubeNode 🏆</div>
+                            <div style="color: #94a3b8; font-size: 0.85em;">Commission: 5.00%</div>
+                        </div>
+                        <div style="color: #64748b; font-size: 0.75em; font-family: monospace;">${qubenodeAddr.substring(0, 30)}...</div>
+                    </div>
+                `;
+            }
+            
+            // Add ALL active validators (not just delegated ones)
+            if (allValidators && allValidators.length > 0) {
+                allValidators.forEach(validator => {
+                    const addr = validator.operator_address;
+                    if (addr !== fromValidatorAddress && addr !== qubenodeAddr) {
+                        const name = validatorNamesCache[addr] || validator.description?.moniker || addr.substring(0, 20) + '...';
+                        const commission = validator.commission?.commission_rates?.rate 
+                            ? (parseFloat(validator.commission.commission_rates.rate) * 100).toFixed(2) 
+                            : '5.00';
+                        
+                        validatorOptions += `
+                            <div class="validator-option" data-address="${addr}" style="background: rgba(100, 116, 139, 0.1); border: 2px solid rgba(100, 116, 139, 0.3); border-radius: 12px; padding: 12px; margin-bottom: 8px; cursor: pointer; transition: all 0.3s;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                    <div style="color: #94a3b8; font-weight: 600; font-size: 0.95em;">${name}</div>
+                                    <div style="color: #64748b; font-size: 0.85em;">Commission: ${commission}%</div>
+                                </div>
+                                <div style="color: #64748b; font-size: 0.75em; font-family: monospace;">${addr.substring(0, 30)}...</div>
+                            </div>
+                        `;
+                    }
+                });
+            }
+            
+            modal.innerHTML = `
+                <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 20px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);">
+                    <h3 style="color: #00D4FF; font-size: 1.5em; margin: 0 0 20px 0; text-align: center;">🔄 Switch Validator</h3>
+                    
+                    <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+                        <div style="color: #00FFF0; font-weight: 600; margin-bottom: 8px;">From:</div>
+                        <div style="color: #00D4FF; font-size: 1.1em; font-weight: 700; margin-bottom: 4px;">${fromValidatorName}</div>
+                        <div style="color: #64748b; font-size: 0.85em;">Staked: ${parseFloat(currentAmount).toFixed(4)} TICS</div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <label style="color: #94a3b8; font-size: 0.9em; display: block; margin-bottom: 12px; font-weight: 600;">Select Validator:</label>
+                        <div id="validatorList" style="max-height: 200px; overflow-y: auto;">
+                            ${validatorOptions}
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px; display: none;" id="amountSection">
+                        <label style="color: #94a3b8; font-size: 0.9em; display: block; margin-bottom: 8px; font-weight: 500;">Amount (TICS)</label>
+                        <input 
+                            type="number" 
+                            id="modalRedelegateAmount" 
+                            placeholder="0.00"
+                            min="0.1"
+                            max="${currentAmount}"
+                            step="0.1"
+                            style="width: 100%; padding: 14px; background: rgba(15, 23, 42, 0.6); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 10px; color: #fff; font-size: 1.2em; font-weight: 600; text-align: center; box-sizing: border-box;"
+                        />
+                        <div style="color: #64748b; font-size: 0.85em; margin-top: 8px;">
+                            Maximum: ${parseFloat(currentAmount).toFixed(4)} TICS
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 12px;">
+                        <button onclick="document.getElementById('customSwitchModal').remove()" style="flex: 1; padding: 14px; background: rgba(100, 116, 139, 0.2); border: 1px solid rgba(100, 116, 139, 0.4); border-radius: 12px; color: #94a3b8; font-size: 1em; font-weight: 600; cursor: pointer;">
+                            Cancel
+                        </button>
+                        <button id="modalSwitchBtn" disabled style="flex: 1; padding: 14px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border: none; border-radius: 12px; color: #000; font-size: 1em; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(0, 212, 255, 0.4); opacity: 0.5;">
+                            Next
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Ensure modal is LAST element in body (after everything else)
+            document.body.appendChild(modal);
+            // Force modal to be on top by setting style after append
+            modal.style.zIndex = '2147483647'; // Max z-index value
+            
+            // Handle validator selection
+            let selectedValidator = null;
+            const validatorOptionEls = modal.querySelectorAll('.validator-option');
+            
+            validatorOptionEls.forEach(el => {
+                el.addEventListener('click', () => {
+                    // Remove selection from all
+                    validatorOptionEls.forEach(v => {
+                        v.style.borderColor = v.dataset.address === qubenodeAddr ? 'rgba(0, 212, 255, 0.4)' : 'rgba(100, 116, 139, 0.3)';
+                        v.style.background = v.dataset.address === qubenodeAddr ? 'rgba(0, 212, 255, 0.1)' : 'rgba(100, 116, 139, 0.1)';
+                    });
+                    
+                    // Add selection to clicked
+                    el.style.borderColor = 'rgba(0, 212, 255, 0.8)';
+                    el.style.background = 'rgba(0, 212, 255, 0.2)';
+                    selectedValidator = el.dataset.address;
+                    
+                    // Show amount section
+                    document.getElementById('amountSection').style.display = 'block';
+                    document.getElementById('modalSwitchBtn').disabled = false;
+                    document.getElementById('modalSwitchBtn').style.opacity = '1';
+                    document.getElementById('modalRedelegateAmount').focus();
+                });
+            });
+            
+            // Close on overlay click
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+            
+            // Handle Next/Switch button
+            document.getElementById('modalSwitchBtn').onclick = async () => {
+                if (!selectedValidator) {
+                    alert('Please select a validator');
+                    return;
+                }
+                
+                const amount = document.getElementById('modalRedelegateAmount').value;
+                
+                if (!amount || isNaN(amount) || parseFloat(amount) < 0.1) {
+                    alert('Minimum amount: 0.1 TICS');
+                    return;
+                }
+                
+                if (parseFloat(amount) > parseFloat(currentAmount)) {
+                    alert('Amount exceeds staked amount');
+                    return;
+                }
+                
+                modal.remove();
+                
+                try {
+                    showDashTxStatus('processing', 'Processing transaction...');
+                    
+                    const stakingService = cosmosStaking.stakingService;
+                    if (!stakingService) {
+                        throw new Error('Staking service not available');
+                    }
+                    
+                    const amountMinimal = cosmosStaking.ticsToMinimal(parseFloat(amount));
+                    const toValidatorName = validatorNamesCache[selectedValidator] || 'validator';
+                    
+                    const result = await stakingService.redelegate(
+                        fromValidatorAddress,
+                        selectedValidator,
+                        amountMinimal,
+                        'Redelegate from ' + fromValidatorName + ' to ' + toValidatorName
+                    );
+                    
+                    showDashTxStatus('success', `Success! TX: ${result.transactionHash}`);
+                    
+                    setTimeout(async () => await updateDashboardData(), 3000);
+                    let refreshCount = 0;
+                    const refreshInterval = setInterval(async () => {
+                        refreshCount++;
+                        await updateDashboardData();
+                        if (refreshCount >= 6) clearInterval(refreshInterval);
+                    }, 5000);
+                } catch (error) {
+                    showDashTxStatus('error', 'Error: ' + error.message);
+                }
+            };
+        }
+        
+        window.quickUnbond = async function(validatorAddress) {
+            const validatorName = validatorNamesCache[validatorAddress] || validatorAddress.substring(0, 20) + '...';
+            const overview = cosmosStaking ? cosmosStaking.getStakingOverview() : null;
+            
+            // Get current delegation amount
+            let currentAmount = '0';
+            if (overview && overview.delegations) {
+                const delegation = overview.delegations.find(d => d.delegation.validator_address === validatorAddress);
+                if (delegation) {
+                    currentAmount = cosmosStaking.formatTics(delegation.balance.amount);
+                }
+            }
+            
+            // Create modal
+            const modal = document.createElement('div');
+            modal.id = 'customUnbondModal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.85);
+                backdrop-filter: blur(10px);
+                z-index: 999999 !important;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 2px solid rgba(239, 68, 68, 0.4); border-radius: 20px; padding: 30px; max-width: 500px; width: 90%; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);">
+                    <h3 style="color: #ef4444; font-size: 1.5em; margin: 0 0 20px 0; text-align: center;">🔓 Unstake TICS</h3>
+                    
+                    <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+                        <div style="color: #ef4444; font-weight: 600; margin-bottom: 8px; font-size: 1.1em;">${validatorName}</div>
+                        <div style="color: #64748b; font-size: 0.85em;">Staked: ${parseFloat(currentAmount).toFixed(4)} TICS</div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <label style="color: #94a3b8; font-size: 0.9em; display: block; margin-bottom: 8px; font-weight: 500;">Amount (TICS)</label>
+                        <input 
+                            type="number" 
+                            id="modalUnbondAmount" 
+                            placeholder="0.00"
+                            min="0.1"
+                            max="${currentAmount}"
+                            step="0.1"
+                            style="width: 100%; padding: 14px; background: rgba(15, 23, 42, 0.6); border: 2px solid rgba(239, 68, 68, 0.3); border-radius: 10px; color: #fff; font-size: 1.2em; font-weight: 600; text-align: center; box-sizing: border-box;"
+                        />
+                        <div style="color: #64748b; font-size: 0.85em; margin-top: 8px;">
+                            Staked: 0.1000 TICS
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 10px; padding: 16px; margin-bottom: 20px;">
+                        <div style="color: #64748b; font-size: 0.85em; line-height: 1.6;">
+                            ⚠️ You will NOT earn rewards during unbonding<br/>
+                            ⚠️ Tokens will be locked for 14 days<br/>
+                            ⚠️ You can cancel unbonding before completion
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 12px;">
+                        <button onclick="document.getElementById('customUnbondModal').remove()" style="flex: 1; padding: 14px; background: rgba(100, 116, 139, 0.2); border: 1px solid rgba(100, 116, 139, 0.4); border-radius: 12px; color: #94a3b8; font-size: 1em; font-weight: 600; cursor: pointer;">
+                            Cancel
+                        </button>
+                        <button id="modalUnbondBtn" style="flex: 1; padding: 14px; background: linear-gradient(135deg, #ef4444, #dc2626); border: none; border-radius: 12px; color: #fff; font-size: 1em; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);">
+                            Unstake
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Ensure modal is LAST element in body (after everything else)
+            document.body.appendChild(modal);
+            // Force modal to be on top by setting style after append
+            modal.style.zIndex = '2147483647'; // Max z-index value
+            
+            // Focus input
+            setTimeout(() => document.getElementById('modalUnbondAmount').focus(), 100);
+            
+            // Close on overlay click
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+            
+            // Handle Unbond button
+            document.getElementById('modalUnbondBtn').onclick = async () => {
+                const amount = document.getElementById('modalUnbondAmount').value;
+                
+                if (!amount || isNaN(amount) || parseFloat(amount) < 0.1) {
+                    alert('Minimum amount: 0.1 TICS');
+                    return;
+                }
+                
+                if (parseFloat(amount) > parseFloat(currentAmount)) {
+                    alert('Amount exceeds staked amount');
+                    return;
+                }
+                
+                modal.remove();
+                
+                try {
+                    showDashTxStatus('processing', 'Processing transaction...');
+                    
+                    const stakingService = cosmosStaking.stakingService;
+                    if (!stakingService) {
+                        throw new Error('Staking service not available');
+                    }
+                    
+                    const amountMinimal = cosmosStaking.ticsToMinimal(parseFloat(amount));
+                    
+                    const result = await stakingService.undelegate(
+                        validatorAddress,
+                        amountMinimal,
+                        'Unbond from ' + validatorName
+                    );
+                    
+                    showDashTxStatus('success', `Success! TX: ${result.transactionHash}. Wait 14 days.`);
+                    
+                    setTimeout(async () => await updateDashboardData(), 3000);
+                    let refreshCount = 0;
+                    const refreshInterval = setInterval(async () => {
+                        refreshCount++;
+                        await updateDashboardData();
+                        if (refreshCount >= 6) clearInterval(refreshInterval);
+                    }, 5000);
+                } catch (error) {
+                    showDashTxStatus('error', 'Error: ' + error.message);
+                }
+            };
+        }
+        
+        window.quickStakeQubeNode = async function() {
+            const qubenodeAddress = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
+            quickStakeMore(qubenodeAddress);
+        }
+        
+        window.quickClaimAllRewards = async function() {
+            if (!cosmosStaking || !cosmosStaking.isWalletConnected()) {
+                alert('Please connect your wallet first');
+                return;
+            }
+            
+            const overview = cosmosStaking.getStakingOverview();
+            if (!overview || !overview.delegations || overview.delegations.length === 0) {
+                alert('No active delegations');
+                return;
+            }
+            
+            const totalRewards = overview.totalRewards ? (parseFloat(overview.totalRewards) / 1e18).toFixed(4) : '0.0000';
+            
+            // Create modal
+            const modal = document.createElement('div');
+            modal.id = 'customClaimModal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.85);
+                backdrop-filter: blur(10px);
+                z-index: 999999 !important;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            `;
+            
+            // Build validator rewards list
+            let validatorsList = '';
+            if (overview.rewards && overview.rewards.rewards) {
+                overview.rewards.rewards.forEach(rewardEntry => {
+                    const addr = rewardEntry.validator_address;
+                    const name = validatorNamesCache[addr] || addr.substring(0, 20) + '...';
+                    
+                    let rewards = '0.0000';
+                    if (rewardEntry.reward && rewardEntry.reward.length > 0) {
+                        const ticsReward = rewardEntry.reward.find(r => r.denom === 'tics');
+                        if (ticsReward) {
+                            rewards = (parseFloat(ticsReward.amount) / 1e18).toFixed(4);
+                        }
+                    }
+                    
+                    if (parseFloat(rewards) > 0) {
+                        validatorsList += `
+                            <div style="display: flex; justify-content: space-between; padding: 12px; background: rgba(250, 204, 21, 0.05); border-radius: 8px; margin-bottom: 8px;">
+                                <span style="color: #94a3b8; font-size: 0.9em;">${name}</span>
+                                <span style="color: #facc15; font-weight: 600; font-size: 0.9em;">${rewards} TICS</span>
+                            </div>
+                        `;
+                    }
+                });
+            }
+            
+            modal.innerHTML = `
+                <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 2px solid rgba(250, 204, 21, 0.4); border-radius: 20px; padding: 30px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);">
+                    <h3 style="color: #facc15; font-size: 1.5em; margin: 0 0 20px 0; text-align: center;">💰 Claim Rewards</h3>
+                    
+                    <div style="background: rgba(250, 204, 21, 0.15); border: 2px solid rgba(250, 204, 21, 0.4); border-radius: 12px; padding: 20px; margin-bottom: 20px; text-align: center;">
+                        <div style="color: #fde047; font-size: 0.9em; margin-bottom: 8px;">Total Rewards:</div>
+                        <div style="color: #facc15; font-size: 2em; font-weight: 700;">${totalRewards} TICS</div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <div style="color: #94a3b8; font-size: 0.9em; margin-bottom: 12px; font-weight: 600;">Rewards from validators:</div>
+                        <div style="max-height: 250px; overflow-y: auto;">
+                            ${validatorsList}
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 10px; padding: 12px; margin-bottom: 20px;">
+                        <div style="color: #86efac; font-size: 0.85em;">
+                            ✅ All rewards will be claimed in one transaction
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 12px;">
+                        <button onclick="document.getElementById('customClaimModal').remove()" style="flex: 1; padding: 14px; background: rgba(100, 116, 139, 0.2); border: 1px solid rgba(100, 116, 139, 0.4); border-radius: 12px; color: #94a3b8; font-size: 1em; font-weight: 600; cursor: pointer;">
+                            Cancel
+                        </button>
+                        <button id="modalClaimBtn" style="flex: 1; padding: 14px; background: linear-gradient(135deg, #facc15, #eab308); border: none; border-radius: 12px; color: #000; font-size: 1em; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(250, 204, 21, 0.3);">
+                            Claim
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Ensure modal is LAST element in body (after everything else)
+            document.body.appendChild(modal);
+            // Force modal to be on top by setting style after append
+            modal.style.zIndex = '2147483647'; // Max z-index value
+            
+            // Close on overlay click
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+            
+            // Handle Claim button
+            document.getElementById('modalClaimBtn').onclick = async () => {
+                modal.remove();
+                
+                try {
+                    showDashTxStatus('processing', 'Processing transaction...');
+                    const result = await cosmosStaking.claimRewards('Claim all rewards');
+                    showDashTxStatus('success', `All rewards claimed! TX: ${result.txHash}`);
+                    
+                    setTimeout(async () => await updateDashboardData(), 3000);
+                    let refreshCount = 0;
+                    const refreshInterval = setInterval(async () => {
+                        refreshCount++;
+                        await updateDashboardData();
+                        if (refreshCount >= 6) clearInterval(refreshInterval);
+                    }, 5000);
+                } catch (error) {
+                    showDashTxStatus('error', 'Error: ' + error.message);
+                }
+            };
+        }
+
+        async function updateDashboardData() {
+            try {
+                const overview = await cosmosStaking.refresh();
+                
+                const balance = cosmosStaking.formatTics(overview.balance);
+                const delegated = cosmosStaking.formatTics(overview.totalDelegated);
+                const rewards = cosmosStaking.formatTics(overview.totalRewards);
+                
+                // Calculate unbonding - FIXED to use unbondingDelegations
+                let unbonding = '0';
+                // console.log('Unbonding data:', overview.unbondingDelegations); // Debug
+                
+                if (overview.unbondingDelegations && Array.isArray(overview.unbondingDelegations) && overview.unbondingDelegations.length > 0) {
+                    let totalUnbonding = BigInt(0);
+                    overview.unbondingDelegations.forEach(unbondingItem => {
+                        if (unbondingItem.entries && Array.isArray(unbondingItem.entries)) {
+                            unbondingItem.entries.forEach(entry => {
+                                if (entry.balance) {
+                                    totalUnbonding += BigInt(entry.balance);
+                                }
+                            });
+                        }
+                    });
+                    
+                    if (totalUnbonding > BigInt(0)) {
+                        unbonding = cosmosStaking.formatTics(totalUnbonding.toString());
+                    }
+                }
+
+                // Update dashboard displays with 2 decimal places
+                document.getElementById('dashBalance').textContent = parseFloat(balance).toFixed(2);
+                document.getElementById('dashDelegated').textContent = parseFloat(delegated).toFixed(2);
+                document.getElementById('dashRewards').textContent = parseFloat(rewards).toFixed(2);
+                document.getElementById('dashUnbonding').textContent = parseFloat(unbonding).toFixed(2);
+                document.getElementById('dashClaimableRewards').textContent = parseFloat(rewards).toFixed(2);
+                
+                // Update delegations list if exists
+                if (document.getElementById('dashDelegationsList')) {
+                    updateDelegationsList(overview);
+                }
+                
+                // Update rewards forecast if exists
+                if (document.getElementById('dashRewardsForecast')) {
+                    updateRewardsForecast(overview);
+                }
+                
+                // Update unbonding list if exists
+                if (document.getElementById('unbondingList')) {
+                    updateUnbondingList(overview);
+                }
+            } catch (error) {
+                // console.error('Error updating dashboard data:', error);
+            }
+        }
+
+        // Update Unbonding List
+        function updateUnbondingList(overview) {
+            const section = document.getElementById('unbondingSection');
+            const container = document.getElementById('unbondingList');
+            
+            if (!overview.unbondingDelegations || overview.unbondingDelegations.length === 0) {
+                section.style.display = 'none';
+                return;
+            }
+            
+            // Check if there are any actual entries
+            let hasEntries = false;
+            overview.unbondingDelegations.forEach(unbonding => {
+                if (unbonding.entries && unbonding.entries.length > 0) {
+                    hasEntries = true;
+                }
+            });
+            
+            if (!hasEntries) {
+                section.style.display = 'none';
+                return;
+            }
+            
+            section.style.display = 'block';
+            let html = '<div style="display: flex; flex-direction: column; gap: 12px;">';
+            
+            overview.unbondingDelegations.forEach(unbonding => {
+                const valAddress = unbonding.validator_address;
+                const validatorName = validatorNamesCache[valAddress] || valAddress.substring(0, 20) + '...';
+                
+                if (unbonding.entries && unbonding.entries.length > 0) {
+                    unbonding.entries.forEach(entry => {
+                        const amount = cosmosStaking.formatTics(entry.balance);
+                        const completionTime = new Date(entry.completion_time);
+                        const now = new Date();
+                        const timeRemaining = Math.max(0, completionTime - now);
+                        const daysRemaining = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+                        const hoursRemaining = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        
+                        html += `
+                            <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px; padding: 15px;">
+                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                                    <div style="flex: 1;">
+                                        <div style="color: #ef4444; font-weight: 700; font-size: 1.1em; margin-bottom: 5px;">${parseFloat(amount).toFixed(4)} TICS</div>
+                                        <div style="color: #fff; font-weight: 600; font-size: 0.9em; margin-bottom: 3px;">From: ${validatorName}</div>
+                                        <div style="color: #64748b; font-size: 0.75em;">${valAddress}</div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="color: #94a3b8; font-size: 0.75em; margin-bottom: 3px;">Completion</div>
+                                        <div style="color: #fff; font-size: 0.85em; font-weight: 600;">${completionTime.toLocaleString('uk-UA', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 8px; padding: 10px; margin-bottom: 10px;">
+                                    <div style="color: #94a3b8; font-size: 0.75em; margin-bottom: 3px;">Time Remaining</div>
+                                    <div style="color: #FFA500; font-size: 1em; font-weight: 700;">${daysRemaining}d ${hoursRemaining}h</div>
+                                </div>
+                                
+                                <button onclick="executeCancelUnbonding('${valAddress}', '${amount}', ${entry.creation_height})" style="width: 100%; padding: 10px; background: rgba(239, 68, 68, 0.2); border: 2px solid rgba(239, 68, 68, 0.4); border-radius: 8px; color: #ef4444; font-size: 0.9em; font-weight: 600; cursor: pointer; transition: all 0.3s;">
+                                    Cancel Unbonding
+                                </button>
+                            </div>
+                        `;
+                    });
+                }
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        async function executeCancelUnbonding(validatorAddress, amount, creationHeight) {
+            try {
+                if (!confirm(`Cancel unbonding ${amount} TICS?\n\nТокени будуть знову делеговані на валідатора.`)) {
+                    return;
+                }
+                
+                showDashTxStatus('processing', 'Processing transaction...');
+                
+                const result = await cosmosStaking.cancelUnbonding(validatorAddress, amount, creationHeight, 'Cancel unbonding via QubeNode.space');
+                
+                showDashTxStatus('success', `Успішно скасовано! TX: ${result.txHash}`);
+                
+                setTimeout(async () => {
+                    await updateDashboardData();
+                }, 2000);
+                
+            } catch (error) {
+                showDashTxStatus('error', 'Помилка: ' + error.message);
+            }
+        }
+
+        function showDashTab(tab) {
+            document.querySelectorAll('.dash-tab').forEach(btn => {
+                btn.style.background = 'transparent';
+                btn.style.color = '#94a3b8';
+            });
+            document.querySelectorAll('.dash-tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
+
+            document.getElementById('dashTab' + tab.charAt(0).toUpperCase() + tab.slice(1)).style.background = 'rgba(0, 212, 255, 0.2)';
+            document.getElementById('dashTab' + tab.charAt(0).toUpperCase() + tab.slice(1)).style.color = '#00FFF0';
+            document.getElementById('dash' + tab.charAt(0).toUpperCase() + tab.slice(1) + 'Tab').style.display = 'block';
+        }
+
+        async function executeDashDelegate() {
+            const amount = parseFloat(document.getElementById('dashDelegateAmount').value);
+            
+            if (!amount || amount < 0.1) {
+                alert('Minimum delegation amount: 0.1 TICS');
+                return;
+            }
+
+            try {
+                showDashTxStatus('processing', 'Processing transaction...');
+                
+                const result = await cosmosStaking.delegate(amount, 'Delegation via QubeNode.space');
+                
+                showDashTxStatus('success', `Успішно! TX: ${result.txHash}`);
+                
+                // Clear input field immediately
+                document.getElementById('dashDelegateAmount').value = '';
+                
+                // Refresh every 5 seconds for 30 seconds (6 times)
+                let refreshCount = 0;
+                const maxRefreshes = 6;
+                const refreshInterval = setInterval(async () => {
+                    refreshCount++;
+                    // console.log(`🔄 Auto-refresh #${refreshCount} after delegate...`);
+                    await updateDashboardData();
+                    
+                    if (refreshCount >= maxRefreshes) {
+                        clearInterval(refreshInterval);
+                        // console.log('✅ Auto-refresh completed');
+                    }
+                }, 5000);
+                
+                // First immediate refresh after 3 seconds
+                setTimeout(async () => {
+                    // console.log('🔄 Initial refresh after delegate...');
+                    await updateDashboardData();
+                }, 3000);
+                
+            } catch (error) {
+                showDashTxStatus('error', 'Помилка: ' + error.message);
+            }
+        }
+
+        async function executeDashUndelegate() {
+            const amount = parseFloat(document.getElementById('dashUndelegateAmount').value);
+            
+            if (!amount || amount < 0.1) {
+                alert('Minimum amount: 0.1 TICS');
+                return;
+            }
+
+            if (!confirm(`Undelegate ${amount} TICS? Період очікування: 14 днів`)) {
+                return;
+            }
+
+            try {
+                showDashTxStatus('processing', 'Processing transaction...');
+                
+                const result = await cosmosStaking.undelegate(amount, 'Undelegation via QubeNode.space');
+                
+                showDashTxStatus('success', `Успішно! TX: ${result.txHash}. Очікуйте 14 днів.`);
+                
+                // Clear input field immediately
+                document.getElementById('dashUndelegateAmount').value = '';
+                
+                // Refresh every 5 seconds for 30 seconds (6 times)
+                let refreshCount = 0;
+                const maxRefreshes = 6;
+                const refreshInterval = setInterval(async () => {
+                    refreshCount++;
+                    // console.log(`🔄 Auto-refresh #${refreshCount} after undelegate...`);
+                    await updateDashboardData();
+                    
+                    if (refreshCount >= maxRefreshes) {
+                        clearInterval(refreshInterval);
+                        // console.log('✅ Auto-refresh completed');
+                    }
+                }, 5000);
+                
+                // First immediate refresh after 3 seconds
+                setTimeout(async () => {
+                    // console.log('🔄 Initial refresh after undelegate...');
+                    await updateDashboardData();
+                }, 3000);
+                
+            } catch (error) {
+                showDashTxStatus('error', 'Помилка: ' + error.message);
+            }
+        }
+
+        async function executeDashClaim() {
+            try {
+                showDashTxStatus('processing', 'Processing transaction...');
+                
+                const result = await cosmosStaking.claimRewards('Rewards claim via QubeNode.space');
+                
+                showDashTxStatus('success', `Винагороду отримано! TX: ${result.txHash}`);
+                
+                // Refresh every 5 seconds for 30 seconds (6 times)
+                let refreshCount = 0;
+                const maxRefreshes = 6;
+                const refreshInterval = setInterval(async () => {
+                    refreshCount++;
+                    // console.log(`🔄 Auto-refresh #${refreshCount} after claim rewards...`);
+                    await updateDashboardData();
+                    
+                    if (refreshCount >= maxRefreshes) {
+                        clearInterval(refreshInterval);
+                        // console.log('✅ Auto-refresh completed');
+                    }
+                }, 5000);
+                
+                // First immediate refresh after 3 seconds
+                setTimeout(async () => {
+                    // console.log('🔄 Initial refresh after claim rewards...');
+                    await updateDashboardData();
+                }, 3000);
+                
+            } catch (error) {
+                showDashTxStatus('error', 'Помилка: ' + error.message);
+            }
+        }
+
+        function showDashTxStatus(type, message) {
+            const statusDiv = document.getElementById('dashTxStatus');
+            statusDiv.style.display = 'block';
+            
+            let bgColor, borderColor, textColor;
+            
+            if (type === 'processing') {
+                bgColor = 'rgba(59, 130, 246, 0.1)';
+                borderColor = 'rgba(59, 130, 246, 0.4)';
+                textColor = '#3b82f6';
+            } else if (type === 'success') {
+                bgColor = 'rgba(34, 197, 94, 0.1)';
+                borderColor = 'rgba(34, 197, 94, 0.4)';
+                textColor = '#22c55e';
+            } else {
+                bgColor = 'rgba(239, 68, 68, 0.1)';
+                borderColor = 'rgba(239, 68, 68, 0.4)';
+                textColor = '#ef4444';
+            }
+            
+            statusDiv.style.background = bgColor;
+            statusDiv.style.border = '2px solid ' + borderColor;
+            statusDiv.style.color = textColor;
+            statusDiv.innerHTML = message;
+            
+            if (type !== 'processing') {
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        function disconnectDashboard() {
+            if (confirm('Disconnect Wallet?')) {
+                if (cosmosStaking) {
+                    cosmosStaking.disconnect();
+                }
+                
+                // Hide dashboard
+                const dashboard = document.getElementById('delegatorDashboard');
+                if (dashboard) {
+                    dashboard.style.display = 'none';
+                }
+                
+                // Show wallet selection
+                const stakingInterface = document.getElementById('stakingInterface');
+                if (stakingInterface) {
+                    stakingInterface.style.display = 'block';
+                }
+                
+                // Make sure wallet section is visible
+                const walletSection = document.getElementById('walletSection');
+                if (walletSection) {
+                    walletSection.style.display = 'block';
+                }
+                
+                // HIDE old wallet status and actions
+                const walletStatus = document.getElementById('walletStatus');
+                const stakingActions = document.getElementById('stakingActions');
+                if (walletStatus) walletStatus.style.display = 'none';
+                if (stakingActions) stakingActions.style.display = 'none';
+                
+                // Reset wallet buttons
+                const keplrBtn = document.getElementById('connectKeplrBtn');
+                const cosmostationBtn = document.getElementById('connectCosmostationBtn');
+                if (keplrBtn) {
+                    keplrBtn.disabled = false;
+                    keplrBtn.innerHTML = '<span style="font-size: 1.3em;">🔷</span><span>Keplr Wallet</span>';
+                }
+                if (cosmostationBtn) {
+                    cosmostationBtn.disabled = false;
+                    cosmostationBtn.innerHTML = '<span style="font-size: 1.3em;">🔶</span><span>Cosmostation</span>';
+                }
+                
+                // Reset header
+                headerWalletConnected = false;
+                resetHeaderWalletButton();
+            }
+        }
+
+        // Update Delegations List
+        async function updateDelegationsList(overview) {
+            const container = document.getElementById('dashDelegationsList');
+            
+            if (!overview.delegations || overview.delegations.length === 0) {
+                container.innerHTML = `
+                    <div style="padding: 30px; text-align: center; background: rgba(0, 212, 255, 0.05); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 12px;">
+                        <div style="font-size: 3em; margin-bottom: 10px;">🎯</div>
+                        <div style="color: #00FFF0; font-size: 1.2em; font-weight: 600; margin-bottom: 8px;">Start Staking!</div>
+                        <p style="color: #94a3b8; font-size: 0.9em; margin-bottom: 0;">Delegate $TICS to QubeNode validator and earn 28.5% APY</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '<div style="display: flex; flex-direction: column; gap: 12px;">';
+            
+            overview.delegations.forEach(del => {
+                const amount = cosmosStaking.formatTics(del.balance.amount);
+                const valAddress = del.delegation.validator_address;
+                
+                // Get validator name from allValidators or cache
+                let validatorName = validatorNamesCache[valAddress];
+                if (!validatorName && allValidators) {
+                    const validator = allValidators.find(v => v.operator_address === valAddress);
+                    if (validator && validator.description) {
+                        validatorName = validator.description.moniker || 'Unknown Validator';
+                    }
+                }
+                if (!validatorName) {
+                    validatorName = 'Validator ' + valAddress.substring(14, 20);
+                }
+                
+                // Get rewards for this specific validator
+                let validatorRewards = '0.00';
+                if (overview.rewards && overview.rewards.rewards) {
+                    const rewardEntry = overview.rewards.rewards.find(r => r.validator_address === valAddress);
+                    if (rewardEntry && rewardEntry.reward && rewardEntry.reward.length > 0) {
+                        const ticsReward = rewardEntry.reward.find(r => r.denom === 'tics');
+                        if (ticsReward) {
+                            validatorRewards = (parseFloat(ticsReward.amount) / 1e18).toFixed(4);
+                        }
+                    }
+                }
+                
+                // Short address format
+                const shortAddress = valAddress.substring(0, 16) + '...' + valAddress.substring(valAddress.length - 6);
+                
+                // Check if QubeNode
+                const isQubeNode = valAddress === 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
+                
+                // Unique colors - ALL validator names are CYAN #00D4FF
+                const cardBg = isQubeNode 
+                    ? 'linear-gradient(135deg, rgba(0, 212, 255, 0.08), rgba(168, 85, 247, 0.05))'
+                    : 'linear-gradient(135deg, rgba(100, 116, 139, 0.08), rgba(71, 85, 105, 0.05))';
+                const cardBorder = isQubeNode 
+                    ? 'rgba(0, 212, 255, 0.4)'
+                    : 'rgba(100, 116, 139, 0.3)';
+                const nameColor = '#00D4FF'; // ALL names cyan (same shade)
+                const badge = isQubeNode ? ' <span style="background: linear-gradient(135deg, #00D4FF, #a855f7); padding: 2px 8px; border-radius: 6px; font-size: 0.65em; color: #000; font-weight: 700; margin-left: 6px;">🏆</span>' : '';
+                
+                html += `
+                    <div style="background: ${cardBg}; border: 1px solid ${cardBorder}; border-radius: 14px; padding: 18px; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);">
+                        <!-- Header row -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                            <div style="flex: 1;">
+                                <div style="color: ${nameColor}; font-weight: 700; font-size: 1.15em; margin-bottom: 5px;">${validatorName}${badge}</div>
+                                <div style="color: #64748b; font-size: 0.8em; font-family: monospace;">${shortAddress}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="color: #00D4FF; font-size: 1.4em; font-weight: 700; line-height: 1;">${parseFloat(amount).toFixed(4)}</div>
+                                <div style="color: #7dd3fc; font-size: 0.75em; margin-top: 3px; font-weight: 600;">TICS Staked</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Rewards row - light green shade -->
+                        <div style="background: linear-gradient(90deg, rgba(34, 197, 94, 0.12), rgba(34, 197, 94, 0.06)); border-left: 3px solid #22c55e; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
+                            <div style="color: #4ade80; font-size: 0.9em; font-weight: 600;">💰 Pending Rewards</div>
+                            <div style="color: #86efac; font-size: 1.05em; font-weight: 700;">${validatorRewards} TICS</div>
+                        </div>
+                        
+                        <!-- Buttons -->
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                            <button class="btn-stake-more" data-validator="${valAddress}" style="padding: 11px; background: linear-gradient(135deg, rgba(0, 212, 255, 0.18), rgba(0, 212, 255, 0.08)); border: 1px solid rgba(0, 212, 255, 0.5); border-radius: 9px; color: #00FFF0; font-size: 0.88em; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                                💎 Stake More
+                            </button>
+                            <button class="btn-switch-validator" data-validator="${valAddress}" style="padding: 11px; background: linear-gradient(135deg, rgba(132, 204, 22, 0.18), rgba(132, 204, 22, 0.08)); border: 1px solid rgba(132, 204, 22, 0.5); border-radius: 9px; color: #a3e635; font-size: 0.88em; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                                🔄 Switch Validator
+                            </button>
+                            <button class="btn-unbond" data-validator="${valAddress}" style="padding: 11px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.18), rgba(239, 68, 68, 0.08)); border: 1px solid rgba(239, 68, 68, 0.5); border-radius: 9px; color: #f87171; font-size: 0.88em; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                                🔓 Unbond
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+            
+            // Attach event listeners to delegation card buttons using event delegation
+            document.querySelectorAll('.btn-stake-more').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const validator = this.getAttribute('data-validator');
+                    // console.log('🚀 Stake more clicked for:', validator);
+                    window.quickStakeMore(validator);
+                });
+            });
+            
+            document.querySelectorAll('.btn-switch-validator').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const validator = this.getAttribute('data-validator');
+                    // console.log('🔄 Switch validator clicked for:', validator);
+                    window.quickSwitchValidator(validator);
+                });
+            });
+            
+            document.querySelectorAll('.btn-unbond').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const validator = this.getAttribute('data-validator');
+                    // console.log('🔓 Unbond clicked for:', validator);
+                    window.quickUnbond(validator);
+                });
+            });
+            
+            // Update redelegate dropdowns
+            updateRedelegateDropdowns(overview);
+        }
+
+                // Update Rewards Forecast
+        async function updateRewardsForecast(overview) {
+            try {
+                const delegated = cosmosStaking.formatTics(overview.totalDelegated);
+                const amount = parseFloat(delegated);
+                
+                if (amount === 0) {
+                    document.getElementById('forecastDaily').textContent = '0.00';
+                    document.getElementById('forecastWeekly').textContent = '0.00';
+                    document.getElementById('forecastMonthly').textContent = '0.00';
+                    document.getElementById('forecastYearly').textContent = '0.00';
+                    return;
+                }
+                
+                // APY 30%, but with 5% commission = 28.5% for user
+                const APY = 0.285;
+                
+                const dailyReward = (amount * APY) / 365;
+                const weeklyReward = (amount * APY) / 52;
+                const monthlyReward = (amount * APY) / 12;
+                const yearlyReward = amount * APY;
+                
+                document.getElementById('forecastDaily').textContent = dailyReward.toFixed(2);
+                document.getElementById('forecastWeekly').textContent = weeklyReward.toFixed(2);
+                document.getElementById('forecastMonthly').textContent = monthlyReward.toFixed(2);
+                document.getElementById('forecastYearly').textContent = yearlyReward.toFixed(2);
+            } catch (error) {
+                // console.error('Error updating rewards forecast:', error);
+            }
+        }
+
+        // Update Redelegate Dropdowns
+        async function updateRedelegateDropdowns(overview) {
+            // Store user's delegations for FROM selector
+            if (overview.delegations && overview.delegations.length > 0) {
+                overview.delegations.forEach(del => {
+                    const valAddress = del.delegation.validator_address;
+                    if (valAddress === 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld') {
+                        validatorNamesCache[valAddress] = 'QubeNode 🏆';
+                    }
+                });
+            }
+            
+            // Fetch ALL active validators for TO selector
+            try {
+                allValidators = await cosmosStaking.chainClient.getAllValidators();
+                
+                if (allValidators && allValidators.length > 0) {
+                    // Cache all validator names
+                    allValidators.forEach(validator => {
+                        const valAddress = validator.operator_address;
+                        let valName = validator.description?.moniker || valAddress.substring(0, 15) + '...';
+                        
+                        if (valAddress === 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld') {
+                            valName = 'QubeNode 🏆';
+                        }
+                        
+                        validatorNamesCache[valAddress] = valName;
+                    });
+                    
+                    // console.log(`✅ Loaded ${allValidators.length} validators`);
+                }
+            } catch (error) {
+                // console.error('Error loading validators:', error);
+            }
+        }
+
+        function openValidatorModal(mode) {
+            validatorModalMode = mode;
+            const modal = document.getElementById('validatorSelectorModal');
+            const title = document.getElementById('validatorModalTitle');
+            const container = document.getElementById('validatorListContainer');
+            
+            if (mode === 'from') {
+                title.textContent = 'From which validator';
+                // Show only user's delegations
+                const overview = cosmosStaking.getStakingOverview();
+                if (!overview || !overview.delegations || overview.delegations.length === 0) {
+                    container.innerHTML = '<div style="padding: 20px; text-align: center; color: #94a3b8;">No delegations</div>';
+                } else {
+                    let html = '';
+                    overview.delegations.forEach(del => {
+                        const valAddress = del.delegation.validator_address;
+                        const valName = validatorNamesCache[valAddress] || valAddress.substring(0, 20) + '...';
+                        const amount = cosmosStaking.formatTics(del.balance.amount);
+                        const shortAddress = valAddress.substring(0, 20) + '...' + valAddress.substring(valAddress.length - 6);
+                        
+                        html += `
+                            <div onclick="selectValidator('${valAddress}', '${valName.replace(/'/g, "\\'")}', 'from')" style="background: rgba(0, 212, 255, 0.05); border: 2px solid rgba(0, 212, 255, 0.2); border-radius: 10px; padding: 15px; cursor: pointer; transition: all 0.3s; display: flex; justify-content: space-between; align-items: center;" onmouseover="this.style.background='rgba(0, 212, 255, 0.15)'" onmouseout="this.style.background='rgba(0, 212, 255, 0.05)'">
+                                <div style="flex: 1;">
+                                    <div style="color: #00FFF0; font-weight: 700; font-size: 1.05em; margin-bottom: 5px;">${valName}</div>
+                                    <div style="color: #64748b; font-size: 0.8em;">${shortAddress}</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="color: #00D4FF; font-weight: 700; font-size: 1.1em;">${parseFloat(amount).toFixed(2)}</div>
+                                    <div style="color: #86efac; font-size: 0.8em;">TICS</div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    container.innerHTML = html;
+                }
+            } else {
+                title.textContent = 'To whom to delegate';
+                // Show all validators
+                if (!allValidators || allValidators.length === 0) {
+                    container.innerHTML = '<div style="padding: 20px; text-align: center; color: #94a3b8;">Loading validators...</div>';
+                } else {
+                    let html = '';
+                    allValidators.forEach(validator => {
+                        const valAddress = validator.operator_address;
+                        const valName = validatorNamesCache[valAddress] || valAddress.substring(0, 20) + '...';
+                        const shortAddress = valAddress.substring(0, 20) + '...' + valAddress.substring(valAddress.length - 6);
+                        const commission = validator.commission?.commission_rates?.rate 
+                            ? (parseFloat(validator.commission.commission_rates.rate) * 100).toFixed(2) 
+                            : '0.00';
+                        
+                        html += `
+                            <div onclick="selectValidator('${valAddress}', '${valName.replace(/'/g, "\\'")}', 'to')" style="background: rgba(0, 212, 255, 0.05); border: 2px solid rgba(0, 212, 255, 0.2); border-radius: 10px; padding: 15px; cursor: pointer; transition: all 0.3s; display: flex; justify-content: space-between; align-items: center;" onmouseover="this.style.background='rgba(0, 212, 255, 0.15)'" onmouseout="this.style.background='rgba(0, 212, 255, 0.05)'">
+                                <div style="flex: 1;">
+                                    <div style="color: #00FFF0; font-weight: 700; font-size: 1.05em; margin-bottom: 5px;">${valName}</div>
+                                    <div style="color: #64748b; font-size: 0.8em;">${shortAddress}</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="color: #94a3b8; font-weight: 600; font-size: 0.8em; margin-bottom: 2px;">Commission</div>
+                                    <div style="color: #22c55e; font-weight: 700; font-size: 1.1em;">${commission}%</div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    container.innerHTML = html;
+                }
+            }
+            
+            openModal('validatorSelectorModal');
+        }
+
+        function selectValidator(address, name, mode) {
+            if (mode === 'from') {
+                document.getElementById('dashRedelegateFrom').value = address;
+                document.getElementById('fromValidatorText').textContent = name;
+            } else {
+                document.getElementById('dashRedelegateTo').value = address;
+                document.getElementById('toValidatorText').textContent = name;
+            }
+            closeModal('validatorSelectorModal');
+        }
+
+        // Execute Redelegate
+        async function executeDashRedelegate() {
+            const fromValidator = document.getElementById('dashRedelegateFrom').value;
+            const toValidator = document.getElementById('dashRedelegateTo').value;
+            const amount = parseFloat(document.getElementById('dashRedelegateAmount').value);
+            
+            if (!fromValidator) {
+                alert('Select validator from which to redelegate');
+                return;
+            }
+            
+            if (!toValidator) {
+                alert('Select validator to whom to redelegate');
+                return;
+            }
+            
+            if (fromValidator === toValidator) {
+                alert('Cannot redelegate to the same validator');
+                return;
+            }
+            
+            if (!amount || amount < 0.1) {
+                alert('Minimum amount: 0.1 TICS');
+                return;
+            }
+            
+            if (!confirm(`Redelegate ${amount} TICS?`)) {
+                return;
+            }
+
+            try {
+                showDashTxStatus('processing', 'Processing transaction...');
+                
+                const result = await cosmosStaking.redelegate(fromValidator, toValidator, amount, 'Redelegation via QubeNode.space');
+                
+                showDashTxStatus('success', `Успішно! TX: ${result.txHash}`);
+                
+                // Aggressive refresh for redelegate - API is slow to update
+                // Clear input field immediately
+                document.getElementById('dashRedelegateAmount').value = '';
+                
+                // Refresh every 5 seconds for 60 seconds (12 times total)
+                let refreshCount = 0;
+                const maxRefreshes = 12;
+                const refreshInterval = setInterval(async () => {
+                    refreshCount++;
+                    // console.log(`🔄 Auto-refresh #${refreshCount} after redelegate...`);
+                    await updateDashboardData();
+                    
+                    if (refreshCount >= maxRefreshes) {
+                        clearInterval(refreshInterval);
+                        // console.log('✅ Auto-refresh completed');
+                    }
+                }, 5000); // Every 5 seconds
+                
+                // First immediate refresh after 3 seconds
+                setTimeout(async () => {
+                    // console.log('🔄 Initial refresh after redelegate...');
+                    await updateDashboardData();
+                }, 3000);
+                
+            } catch (error) {
+                showDashTxStatus('error', 'Помилка: ' + error.message);
+            }
+        }
+
+        async function updateStakingData() {
+            try {
+                const overview = await cosmosStaking.refresh();
+                
+                const balance = cosmosStaking.formatTics(overview.balance);
+                const delegated = cosmosStaking.formatTics(overview.totalDelegated);
+                const rewards = cosmosStaking.formatTics(overview.totalRewards);
+
+                document.getElementById('walletBalance').textContent = parseFloat(balance).toFixed(2);
+                document.getElementById('walletDelegated').textContent = parseFloat(delegated).toFixed(2);
+                document.getElementById('walletRewards').textContent = parseFloat(rewards).toFixed(4);
+                document.getElementById('claimableRewards').textContent = parseFloat(rewards).toFixed(4);
+            } catch (error) {
+                // console.error('Error updating staking data:', error);
+            }
+        }
+
+        function showStakingTab(tab) {
+            document.querySelectorAll('.staking-tab').forEach(btn => {
+                btn.style.background = 'transparent';
+                btn.style.color = '#94a3b8';
+            });
+            document.querySelectorAll('.staking-tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
+
+            document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).style.background = 'rgba(0, 212, 255, 0.2)';
+            document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).style.color = '#00FFF0';
+            document.getElementById(tab + 'Tab').style.display = 'block';
+        }
+
+        async function executeDelegate() {
+            const amount = parseFloat(document.getElementById('delegateAmount').value);
+            
+            if (!amount || amount < 0.1) {
+                alert('Minimum delegation amount: 0.1 TICS');
+                return;
+            }
+
+            try {
+                showTxStatus('processing', 'Processing transaction...');
+                
+                const result = await cosmosStaking.delegate(amount, 'Delegation via QubeNode.space');
+                
+                showTxStatus('success', `Успішно! TX: ${result.txHash}`);
+                
+                setTimeout(async () => {
+                    await updateStakingData();
+                    document.getElementById('delegateAmount').value = '';
+                }, 2000);
+                
+            } catch (error) {
+                showTxStatus('error', 'Помилка: ' + error.message);
+            }
+        }
+
+        async function executeUndelegate() {
+            const amount = parseFloat(document.getElementById('undelegateAmount').value);
+            
+            if (!amount || amount < 0.1) {
+                alert('Minimum amount: 0.1 TICS');
+                return;
+            }
+
+            if (!confirm(`Undelegate ${amount} TICS? Період очікування: 14 днів`)) {
+                return;
+            }
+
+            try {
+                showTxStatus('processing', 'Processing transaction...');
+                
+                const result = await cosmosStaking.undelegate(amount, 'Undelegation via QubeNode.space');
+                
+                showTxStatus('success', `Успішно! TX: ${result.txHash}. Очікуйте 14 днів.`);
+                
+                setTimeout(async () => {
+                    await updateStakingData();
+                    document.getElementById('undelegateAmount').value = '';
+                }, 2000);
+                
+            } catch (error) {
+                showTxStatus('error', 'Помилка: ' + error.message);
+            }
+        }
+
+        async function executeClaim() {
+            try {
+                showTxStatus('processing', 'Processing transaction...');
+                
+                const result = await cosmosStaking.claimRewards('Rewards claim via QubeNode.space');
+                
+                showTxStatus('success', `Винагороду отримано! TX: ${result.txHash}`);
+                
+                setTimeout(async () => {
+                    await updateStakingData();
+                }, 2000);
+                
+            } catch (error) {
+                showTxStatus('error', 'Помилка: ' + error.message);
+            }
+        }
+
+        function showTxStatus(type, message) {
+            const statusDiv = document.getElementById('txStatus');
+            statusDiv.style.display = 'block';
+            
+            let bgColor, borderColor, textColor;
+            
+            if (type === 'processing') {
+                bgColor = 'rgba(59, 130, 246, 0.1)';
+                borderColor = 'rgba(59, 130, 246, 0.4)';
+                textColor = '#3b82f6';
+            } else if (type === 'success') {
+                bgColor = 'rgba(34, 197, 94, 0.1)';
+                borderColor = 'rgba(34, 197, 94, 0.4)';
+                textColor = '#22c55e';
+            } else {
+                bgColor = 'rgba(239, 68, 68, 0.1)';
+                borderColor = 'rgba(239, 68, 68, 0.4)';
+                textColor = '#ef4444';
+            }
+            
+            statusDiv.style.background = bgColor;
+            statusDiv.style.border = '2px solid ' + borderColor;
+            statusDiv.style.color = textColor;
+            statusDiv.innerHTML = message;
+            
+            if (type !== 'processing') {
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        // Header Wallet Additional Variables
+        let allValidators = []; // Store all validators with names
+        let validatorModalMode = ''; // 'from' or 'to'
+        let validatorNamesCache = {}; // Cache validator names by address
+
+        async function updateHeaderWalletDisplay() {
+            try {
+                const overview = await cosmosStaking.refresh();
+                const walletInfo = cosmosStaking.getWalletInfo();
+                
+                const balance = cosmosStaking.formatTics(overview.balance);
+                const formattedBalance = parseFloat(balance).toFixed(2);
+                
+                // Shorten address: first 8 and last 6 characters
+                const address = walletInfo.address;
+                const shortAddress = address.substring(0, 8) + '...' + address.substring(address.length - 6);
+                
+                const headerBtn = document.getElementById('headerWalletBtn');
+                headerBtn.innerHTML = `
+                    <span>💼</span>
+                    <div class="wallet-info">
+                        <div class="wallet-address">${shortAddress}</div>
+                        <div class="wallet-balance">${formattedBalance} TICS</div>
+                    </div>
+                `;
+                headerBtn.classList.add('wallet-connected');
+                
+                // Update dropdown options for connected state
+                const dropdown = document.getElementById('headerWalletDropdown');
+                if (dropdown) {
+                    dropdown.innerHTML = `
+                        <button class="wallet-option" onclick="window.location.href='dashboard.html?wallet=${walletInfo.walletType}&address=${address}'; event.stopPropagation();">
+                            <span>📊</span>
+                            <span>View Dashboard</span>
+                        </button>
+                        <button class="wallet-option" onclick="disconnectHeaderWallet(); event.stopPropagation();" style="background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: #ef4444;">
+                            <span>🔌</span>
+                            <span>Disconnect Wallet</span>
+                        </button>
+                    `;
+                }
+                
+                // Update mobile button too
+                updateMobileWalletButton();
+            } catch (error) {
+                // console.error('Error updating header wallet display:', error);
+                resetHeaderWalletButton();
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('headerWalletDropdown');
+            const headerBtn = document.getElementById('headerWalletBtn');
+            
+            if (dropdown && headerBtn && !headerBtn.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        // Mobile wallet button handler - for menu button (not working due to checkbox)
+        window.handleMobileWalletClick = async function() {
+            console.log('Menu wallet button - opening modal...');
+            openWalletModal();
+        }
+
+        // WALLET MODAL FUNCTIONS - PURE JAVASCRIPT, NO onclick
+        function openWalletModal() {
+            const modal = document.getElementById('walletModal');
+            if (modal) {
+                modal.classList.add('active');
+                console.log('✅ Wallet modal opened');
+            }
+        }
+
+        function closeWalletModal() {
+            const modal = document.getElementById('walletModal');
+            if (modal) {
+                modal.classList.remove('active');
+                console.log('✅ Wallet modal closed');
+            }
+        }
+
+        async function connectWalletFromModal(walletType) {
+            console.log(`💼 Connecting ${walletType}...`);
+            
+            const CHAIN_ID = 'qubetics-1';
+            const btn = document.getElementById(walletType === 'keplr' ? 'modalKeplrBtn' : 'modalCosmostationBtn');
+            
+            if (!btn) return;
+            
+            btn.innerHTML = '<span>⏳</span><span>Connecting...</span>';
+            btn.style.pointerEvents = 'none';
+            
+            try {
+                let address;
+                
+                if (walletType === 'keplr') {
+                    if (!window.keplr) {
+                        alert('Please install Keplr Wallet or open site through Keplr browser');
+                        btn.style.pointerEvents = 'auto';
+                        btn.innerHTML = '<span>🔷</span><span>Keplr Wallet</span>';
+                        return;
+                    }
+                    
+                    await window.keplr.enable(CHAIN_ID);
+                    const offlineSigner = window.keplr.getOfflineSigner(CHAIN_ID);
+                    const accounts = await offlineSigner.getAccounts();
+                    address = accounts[0].address;
+                    console.log('✅ Keplr connected:', address);
+                    
+                } else if (walletType === 'cosmostation') {
+                    if (!window.cosmostation) {
+                        alert('Please install Cosmostation Wallet or open site through Cosmostation browser');
+                        btn.style.pointerEvents = 'auto';
+                        btn.innerHTML = '<span>🔶</span><span>Cosmostation</span>';
+                        return;
+                    }
+                    
+                    const provider = window.cosmostation.providers.keplr;
+                    await provider.enable(CHAIN_ID);
+                    const offlineSigner = provider.getOfflineSigner(CHAIN_ID);
+                    const accounts = await offlineSigner.getAccounts();
+                    address = accounts[0].address;
+                    console.log('✅ Cosmostation connected:', address);
+                }
+                
+                // Redirect to dashboard
+                console.log('✅ Redirecting to dashboard...');
+                window.location.href = `dashboard.html?wallet=${walletType}&address=${address}`;
+                
+            } catch (error) {
+                console.error('❌ Connection error:', error);
+                alert('Connection error: ' + error.message);
+                btn.style.pointerEvents = 'auto';
+                btn.innerHTML = walletType === 'keplr' ? 
+                    '<span>🔷</span><span>Keplr Wallet</span>' : 
+                    '<span>🔶</span><span>Cosmostation</span>';
+            }
+        }
+
+        // INITIALIZE ALL EVENT LISTENERS ON DOM READY
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Initializing wallet connection...');
+            
+            // Mobile-only wallet button (bottom right, only visible on mobile)
+            const mobileOnlyBtn = document.getElementById('mobileOnlyWalletBtn');
+            if (mobileOnlyBtn) {
+                mobileOnlyBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('💼 Mobile-only wallet button CLICKED');
+                    openWalletModal();
+                });
+                
+                mobileOnlyBtn.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    console.log('👆 Mobile-only wallet button TOUCHED');
+                    openWalletModal();
+                }, { passive: false });
+                
+                console.log('✅ Mobile-only wallet button listeners attached');
+            }
+            
+            // Modal close button
+            const closeBtn = document.querySelector('.wallet-modal-close');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', closeWalletModal);
+            }
+            
+            // Keplr button
+            const keplrBtn = document.getElementById('modalKeplrBtn');
+            if (keplrBtn) {
+                keplrBtn.addEventListener('click', function() {
+                    console.log('🔷 Keplr button clicked');
+                    connectWalletFromModal('keplr');
+                });
+                keplrBtn.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    console.log('👆 Keplr button touched');
+                    connectWalletFromModal('keplr');
+                }, { passive: false });
+            }
+            
+            // Cosmostation button
+            const cosmostationBtn = document.getElementById('modalCosmostationBtn');
+            if (cosmostationBtn) {
+                cosmostationBtn.addEventListener('click', function() {
+                    console.log('🔶 Cosmostation button clicked');
+                    connectWalletFromModal('cosmostation');
+                });
+                cosmostationBtn.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    console.log('👆 Cosmostation button touched');
+                    connectWalletFromModal('cosmostation');
+                }, { passive: false });
+            }
+            
+            // Close modal on overlay click
+            const modal = document.getElementById('walletModal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        closeWalletModal();
+                    }
+                });
+            }
+            
+            console.log('✅ All wallet modal listeners initialized');
+        });
+        
+        console.log('✅ handleMobileWalletClick function registered globally');
+
+        // Update mobile wallet button display
+        function updateMobileWalletButton() {
+            const mobileBtn = document.getElementById('mobileWalletBtn');
+            if (!mobileBtn) return;
+            
+            if (headerWalletConnected && cosmosStaking) {
+                const walletInfo = cosmosStaking.getWalletInfo();
+                const address = walletInfo.address;
+                const shortAddress = address.substring(0, 8) + '...' + address.substring(address.length - 6);
+                
+                mobileBtn.innerHTML = `
+                    <span>💼</span>
+                    <span>${shortAddress}</span>
+                `;
+                mobileBtn.style.background = 'rgba(34, 197, 94, 0.2)';
+                mobileBtn.style.borderColor = 'rgba(34, 197, 94, 0.4)';
+            } else {
+                mobileBtn.innerHTML = `
+                    <span>💼</span>
+                    <span>Connect Wallet</span>
+                `;
+                mobileBtn.style.background = '';
+                mobileBtn.style.borderColor = '';
+            }
+        }
+
+        // Check if wallet was connected in modal and update header
+        const originalConnectWallet = connectWallet;
+        async function connectWallet(walletType) {
+            await originalConnectWallet(walletType);
+            if (cosmosStaking && cosmosStaking.isWalletConnected()) {
+                headerWalletConnected = true;
+                await updateHeaderWalletDisplay();
+            }
+        }
+
+        // Check if wallet gets disconnected in modal and update header
+        const originalDisconnectWallet = disconnectWallet;
+        async function disconnectWallet() {
+            await originalDisconnectWallet();
+            resetHeaderWalletButton();
+        }
+
+
+    </script>
     <!-- Cosmos Staking Module Integration - Load in correct order -->
     <script src="chain-config.js"></script>
     <script src="wallet-manager.js"></script>
@@ -3016,12 +2864,47 @@
     <script src="staking-service.js"></script>
     <script src="cosmos-staking.js"></script>
     <script src="sync.js"></script>
+
+    <script>
+    // TEST: Verify functions are loaded
+    // console.log('🔧 Testing function definitions...');
+    // console.log('quickStakeMore type:', typeof window.quickStakeMore);
+    // console.log('quickStakeQubeNode type:', typeof window.quickStakeQubeNode);
+    // console.log('quickClaimAllRewards type:', typeof window.quickClaimAllRewards);
     
+    if (typeof window.quickStakeQubeNode === 'function') {
+        // console.log('✅ Functions are loaded correctly!');
+        
+        // Attach event listeners to Quick Actions buttons (FIRST block - before My Delegations)
+        const btnQuickStakeQubeNode = document.getElementById('btnQuickStakeQubeNode');
+        const btnQuickClaimAllRewards = document.getElementById('btnQuickClaimAllRewards');
+        
+        if (btnQuickStakeQubeNode) {
+            btnQuickStakeQubeNode.addEventListener('click', function() {
+                // console.log('🚀 Quick Stake QubeNode clicked!');
+                window.quickStakeQubeNode();
+            });
+            // console.log('✅ btnQuickStakeQubeNode listener attached');
+        }
+        
+        if (btnQuickClaimAllRewards) {
+            btnQuickClaimAllRewards.addEventListener('click', function() {
+                // console.log('💰 Quick Claim All Rewards clicked!');
+                window.quickClaimAllRewards();
+            });
+            // console.log('✅ btnQuickClaimAllRewards listener attached');
+        }
+    } else {
+        // console.error('❌ Functions are NOT loaded!');
+    }
+    </script>
+    
+    <!-- Wallet Connector - Adapted from TicsLab -->
     <!-- Wallet Connector - Adapted from TicsLab -->
     <script src="validators-registry.js"></script>
     <script src="wallet-connector.js"></script>
     
-    <!-- Index Page Initialization - All functions now external -->
+    <!-- Index Page Initialization - Event Listeners for CSP Compliance -->
     <script src="init-index.js"></script>
 </body>
 </html>

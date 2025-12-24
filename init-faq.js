@@ -1,9 +1,9 @@
 /**
  * FAQ Page - Complete Script
- * toggleFaq function + Event Listeners
+ * Function FIRST (global), then event listeners
  */
 
-// toggleFaq function - GLOBAL
+// GLOBAL function - defined BEFORE DOMContentLoaded
 function toggleFaq(button) {
     const answer = button.nextElementSibling;
     const isActive = button.classList.contains('active');
@@ -21,14 +21,12 @@ function toggleFaq(button) {
     }
 }
 
-// Event Listeners
+// Event Listeners - attached after DOM loads
 document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ FAQ Page Initialized');
     
-    // Get all FAQ question buttons
     const faqButtons = document.querySelectorAll('.faq-question');
     
-    // Add click event listener to each FAQ button
     faqButtons.forEach(function(button) {
         button.addEventListener('click', function() {
             toggleFaq(this);

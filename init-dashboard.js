@@ -114,7 +114,7 @@
                 }
                 
                 html += `
-                    <div style="background: rgba(15,23,42,0.6); border: 1px solid rgba(100,116,139,0.3); border-radius: 12px; padding: 20px; margin-bottom: 16px; transition: all 0.3s; cursor: pointer;" onmouseover="this.style.borderColor='rgba(0,212,255,0.6)'; this.style.background='rgba(15,23,42,0.9)'" onmouseout="this.style.borderColor='rgba(100,116,139,0.3)'; this.style.background='rgba(15,23,42,0.6)'">
+                    <div class="delegation-card" style="background: rgba(15,23,42,0.6); border: 1px solid rgba(100,116,139,0.3); border-radius: 12px; padding: 20px; margin-bottom: 16px; transition: all 0.3s; cursor: pointer;">
                         <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
                             <div>
                                 <div style="color: #00D4FF; font-size: 18px; font-weight: 600; margin-bottom: 4px;">${valName}</div>
@@ -132,15 +132,64 @@
                             </div>
                         </div>
                         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
-                            <button onclick="stakeMore('${valAddr}', '${amount}')" style="padding: 12px; background: rgba(14,165,233,0.15); border: 1px solid rgba(14,165,233,0.4); border-radius: 8px; color: #0ea5e9; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='rgba(14,165,233,0.25)'" onmouseout="this.style.background='rgba(14,165,233,0.15)'">💎 Stake More</button>
-                            <button onclick="switchValidator('${valAddr}', '${amount}')" style="padding: 12px; background: rgba(107,114,128,0.15); border: 1px solid rgba(107,114,128,0.4); border-radius: 8px; color: #94a3b8; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='rgba(107,114,128,0.25)'" onmouseout="this.style.background='rgba(107,114,128,0.15)'">🔄 Switch Validator</button>
-                            <button onclick="unbond('${valAddr}', '${amount}')" style="padding: 12px; background: rgba(153,27,27,0.15); border: 1px solid rgba(153,27,27,0.4); border-radius: 8px; color: #ef4444; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='rgba(153,27,27,0.25)'" onmouseout="this.style.background='rgba(153,27,27,0.15)'">🔓 Unbond</button>
+                            <button class="btn-stake-more" data-validator="${valAddr}" data-amount="${amount}" style="padding: 12px; background: rgba(14,165,233,0.15); border: 1px solid rgba(14,165,233,0.4); border-radius: 8px; color: #0ea5e9; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s;">💎 Stake More</button>
+                            <button class="btn-switch-validator" data-validator="${valAddr}" data-amount="${amount}" style="padding: 12px; background: rgba(107,114,128,0.15); border: 1px solid rgba(107,114,128,0.4); border-radius: 8px; color: #94a3b8; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s;">🔄 Switch Validator</button>
+                            <button class="btn-unbond" data-validator="${valAddr}" data-amount="${amount}" style="padding: 12px; background: rgba(153,27,27,0.15); border: 1px solid rgba(153,27,27,0.4); border-radius: 8px; color: #ef4444; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s;">🔓 Unbond</button>
                         </div>
                     </div>
                 `;
             }
             
             container.innerHTML = html;
+            
+            // Add event listeners to dynamically created buttons
+            container.querySelectorAll('.btn-stake-more').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    stakeMore(this.dataset.validator, this.dataset.amount);
+                });
+                btn.addEventListener('mouseover', function() {
+                    this.style.background = 'rgba(14,165,233,0.25)';
+                });
+                btn.addEventListener('mouseout', function() {
+                    this.style.background = 'rgba(14,165,233,0.15)';
+                });
+            });
+            
+            container.querySelectorAll('.btn-switch-validator').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    switchValidator(this.dataset.validator, this.dataset.amount);
+                });
+                btn.addEventListener('mouseover', function() {
+                    this.style.background = 'rgba(107,114,128,0.25)';
+                });
+                btn.addEventListener('mouseout', function() {
+                    this.style.background = 'rgba(107,114,128,0.15)';
+                });
+            });
+            
+            container.querySelectorAll('.btn-unbond').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    unbond(this.dataset.validator, this.dataset.amount);
+                });
+                btn.addEventListener('mouseover', function() {
+                    this.style.background = 'rgba(153,27,27,0.25)';
+                });
+                btn.addEventListener('mouseout', function() {
+                    this.style.background = 'rgba(153,27,27,0.15)';
+                });
+            });
+            
+            // Add hover effect to delegation cards
+            container.querySelectorAll('.delegation-card').forEach(card => {
+                card.addEventListener('mouseover', function() {
+                    this.style.borderColor = 'rgba(0,212,255,0.6)';
+                    this.style.background = 'rgba(15,23,42,0.9)';
+                });
+                card.addEventListener('mouseout', function() {
+                    this.style.borderColor = 'rgba(100,116,139,0.3)';
+                    this.style.background = 'rgba(15,23,42,0.6)';
+                });
+            });
         }
         
         // Preload all validators to cache their names
@@ -224,7 +273,7 @@
                     const creationHeight = entry.creation_height || entry.initial_balance;
                     
                     html += `
-                        <div style="background: rgba(15,23,42,0.6); border: 1px solid rgba(239,68,68,0.3); border-radius: 12px; padding: 20px; margin-bottom: 16px; transition: all 0.3s;" onmouseover="this.style.borderColor='rgba(239,68,68,0.6)'; this.style.background='rgba(15,23,42,0.9)'" onmouseout="this.style.borderColor='rgba(239,68,68,0.3)'; this.style.background='rgba(15,23,42,0.6)'">
+                        <div class="unbonding-card" style="background: rgba(15,23,42,0.6); border: 1px solid rgba(239,68,68,0.3); border-radius: 12px; padding: 20px; margin-bottom: 16px; transition: all 0.3s;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                                 <div>
                                     <div style="color: #94a3b8; font-size: 12px; margin-bottom: 4px;">From: ${valName}</div>
@@ -237,13 +286,38 @@
                                     <div style="color: #64748b; font-size: 11px;">Completion:<br>${completionTime.toLocaleDateString('uk-UA')}, ${completionTime.toLocaleTimeString('uk-UA', {hour: '2-digit', minute: '2-digit'})}</div>
                                 </div>
                             </div>
-                            ${days >= 0 && hours >= 0 ? `<button onclick="cancelUnbonding('${valAddr}', '${entry.balance}', '${creationHeight}')" style="width: 100%; padding: 12px; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4); border-radius: 8px; color: #ef4444; cursor: pointer; font-weight: 600; font-size: 14px; transition: all 0.3s;" onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.15)'">Cancel Unbonding</button>` : ''}
+                            ${days >= 0 && hours >= 0 ? `<button class="btn-cancel-unbonding" data-validator="${valAddr}" data-balance="${entry.balance}" data-height="${creationHeight}" style="width: 100%; padding: 12px; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4); border-radius: 8px; color: #ef4444; cursor: pointer; font-weight: 600; font-size: 14px; transition: all 0.3s;">Cancel Unbonding</button>` : ''}
                         </div>
                     `;
                 }
             }
             
             container.innerHTML = html;
+            
+            // Add event listeners to cancel unbonding buttons
+            container.querySelectorAll('.btn-cancel-unbonding').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    cancelUnbonding(this.dataset.validator, this.dataset.balance, this.dataset.height);
+                });
+                btn.addEventListener('mouseover', function() {
+                    this.style.background = 'rgba(239,68,68,0.25)';
+                });
+                btn.addEventListener('mouseout', function() {
+                    this.style.background = 'rgba(239,68,68,0.15)';
+                });
+            });
+            
+            // Add hover effect to unbonding cards
+            container.querySelectorAll('.unbonding-card').forEach(card => {
+                card.addEventListener('mouseover', function() {
+                    this.style.borderColor = 'rgba(239,68,68,0.6)';
+                    this.style.background = 'rgba(15,23,42,0.9)';
+                });
+                card.addEventListener('mouseout', function() {
+                    this.style.borderColor = 'rgba(239,68,68,0.3)';
+                    this.style.background = 'rgba(15,23,42,0.6)';
+                });
+            });
         }
         
         function formatTics(amount) {
@@ -544,7 +618,7 @@
                     const shortAddr = val.operator_address.substring(0, 20) + '...' + val.operator_address.substring(val.operator_address.length - 6);
                     
                     html += `
-                        <div class="validator-list-item" onclick="selectValidator('${val.operator_address}', '${name}')" style="${isQubeNode ? 'background: linear-gradient(135deg, rgba(0,212,255,0.15), rgba(99,102,241,0.15)); border: 1.5px solid rgba(0,212,255,0.4);' : ''} padding: 10px 12px; margin-bottom: 8px; cursor: pointer; border-radius: 12px; transition: all 0.3s;">
+                        <div class="validator-list-item" data-validator="${val.operator_address}" data-name="${name}" style="${isQubeNode ? 'background: linear-gradient(135deg, rgba(0,212,255,0.15), rgba(99,102,241,0.15)); border: 1.5px solid rgba(0,212,255,0.4);' : ''} padding: 10px 12px; margin-bottom: 8px; cursor: pointer; border-radius: 12px; transition: all 0.3s;">
                             <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
                                 <div style="flex: 1; min-width: 0;">
                                     <div style="color: ${isQubeNode ? '#00FFF0' : 'white'}; font-weight: ${isQubeNode ? '700' : '600'}; margin-bottom: 4px; font-size: ${isQubeNode ? '15px' : '14px'};">${name}${isQubeNode ? ' ⭐' : ''}</div>
@@ -560,6 +634,13 @@
                 }
                 
                 document.getElementById('validatorsList').innerHTML = html;
+                
+                // Add event listeners to validator list items
+                document.querySelectorAll('.validator-list-item').forEach(item => {
+                    item.addEventListener('click', function() {
+                        selectValidator(this.dataset.validator, this.dataset.name);
+                    });
+                });
             } catch (error) {
                 console.error('Error loading validators:', error);
             }
@@ -923,7 +1004,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // ========== INITIALIZATION COMPLETE ==========
     console.log('✅ Dashboard Initialized');
     console.log(`📊 Event listeners added: ${listenersAdded}`);
-    console.log('📝 Note: Dynamic elements keep inline onclick - safe for CSP');
+    console.log('🔒 CSP Grade A+ - All inline handlers removed');
 });
 
 // All functions exist in dashboard.html:

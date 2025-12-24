@@ -1,9 +1,27 @@
 /**
- * FAQ Page Initialization Script
- * Handles FAQ accordion functionality
- * Converted from inline onclick to addEventListener for CSP compliance
+ * FAQ Page - Complete Script
+ * toggleFaq function + Event Listeners
  */
 
+// toggleFaq function - GLOBAL
+function toggleFaq(button) {
+    const answer = button.nextElementSibling;
+    const isActive = button.classList.contains('active');
+    
+    // Close all other answers
+    document.querySelectorAll('.faq-question').forEach(q => {
+        q.classList.remove('active');
+        q.nextElementSibling.classList.remove('active');
+    });
+    
+    // Toggle current answer
+    if (!isActive) {
+        button.classList.add('active');
+        answer.classList.add('active');
+    }
+}
+
+// Event Listeners
 document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ FAQ Page Initialized');
     
@@ -19,6 +37,3 @@ document.addEventListener('DOMContentLoaded', function() {
     
     console.log(`✅ Added event listeners to ${faqButtons.length} FAQ questions`);
 });
-
-// toggleFaq function should already exist in the HTML <script> section
-// This init script only adds event listeners, doesn't change any logic

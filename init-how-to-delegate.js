@@ -3,7 +3,7 @@
  * Functions from inline scripts + Event Listeners
  */
 
-        const CHAIN_ID = 'qubetics_9030-1';
+        const chainId = 'qubetics_9030-1';
         
         async function connectWallet(walletType) {
             const btn = document.getElementById(walletType === 'keplr' ? 'connectKeplrBtn' : 'connectCosmostationBtn');
@@ -21,8 +21,8 @@
                         return;
                     }
                     
-                    await window.keplr.enable(CHAIN_ID);
-                    const offlineSigner = window.keplr.getOfflineSigner(CHAIN_ID);
+                    await window.keplr.enable(chainId);
+                    const offlineSigner = window.keplr.getOfflineSigner(chainId);
                     const accounts = await offlineSigner.getAccounts();
                     address = accounts[0].address;
                     
@@ -35,8 +35,8 @@
                     }
                     
                     const provider = window.cosmostation.providers.keplr;
-                    await provider.enable(CHAIN_ID);
-                    const offlineSigner = provider.getOfflineSigner(CHAIN_ID);
+                    await provider.enable(chainId);
+                    const offlineSigner = provider.getOfflineSigner(chainId);
                     const accounts = await offlineSigner.getAccounts();
                     address = accounts[0].address;
                 }

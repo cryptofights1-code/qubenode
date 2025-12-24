@@ -18,7 +18,8 @@ async function connectWallet(walletType) {
             if (!window.keplr) {
                 alert('Please install Keplr Wallet');
                 btn.style.pointerEvents = 'auto';
-                btn.innerHTML = '<img src="keplr.png" alt="Keplr" style="width: 28px; height: 28px; border-radius: 6px;"><span>Keplr Wallet</span>';
+                // Reset button content without inline styles
+                btn.innerHTML = '<img src="keplr.png" alt="Keplr" class="wallet-icon"><span>Keplr Wallet</span>';
                 return;
             }
             
@@ -31,7 +32,8 @@ async function connectWallet(walletType) {
             if (!window.cosmostation) {
                 alert('Please install Cosmostation Wallet');
                 btn.style.pointerEvents = 'auto';
-                btn.innerHTML = '<img src="Cosmostation.png" alt="Cosmostation" style="width: 28px; height: 28px; border-radius: 6px;"><span>Cosmostation</span>';
+                // Reset button content without inline styles
+                btn.innerHTML = '<img src="Cosmostation.png" alt="Cosmostation" class="wallet-icon"><span>Cosmostation</span>';
                 return;
             }
             
@@ -49,9 +51,10 @@ async function connectWallet(walletType) {
         console.error('Wallet connection error:', error);
         alert('Connection error: ' + error.message);
         btn.style.pointerEvents = 'auto';
+        // Reset button content without inline styles
         btn.innerHTML = walletType === 'keplr' ? 
-            '<img src="keplr.png" alt="Keplr" style="width: 28px; height: 28px; border-radius: 6px;"><span>Keplr Wallet</span>' : 
-            '<img src="Cosmostation.png" alt="Cosmostation" style="width: 28px; height: 28px; border-radius: 6px;"><span>Cosmostation</span>';
+            '<img src="keplr.png" alt="Keplr" class="wallet-icon"><span>Keplr Wallet</span>' : 
+            '<img src="Cosmostation.png" alt="Cosmostation" class="wallet-icon"><span>Cosmostation</span>';
     }
 }
 

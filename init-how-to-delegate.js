@@ -64,10 +64,21 @@
             document.body.style.overflow = '';
         }
         
+        function openCosmostationModal() {
+            document.getElementById('cosmostationModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeCosmostationModal() {
+            document.getElementById('cosmostationModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
         // Close modal on ESC key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeKeplrModal();
+                closeCosmostationModal();
             }
         });
 
@@ -80,18 +91,25 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ How To Delegate Page Initialized');
     
-    // Guide link - openKeplrModal()
-    const guideLinks = document.querySelectorAll('a.link');
-    guideLinks.forEach(function(link) {
-        const onclick = link.getAttribute('onclick');
-        if (onclick && onclick.includes('openKeplrModal')) {
-            link.addEventListener('click', function(event) {
-                event.preventDefault();
-                openKeplrModal();
-                return false;
-            });
-        }
-    });
+    // Keplr Guide link
+    const keplrGuideLink = document.getElementById('keplrGuideLink');
+    if (keplrGuideLink) {
+        keplrGuideLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            openKeplrModal();
+            return false;
+        });
+    }
+    
+    // Cosmostation Guide link
+    const cosmostationGuideLink = document.getElementById('cosmostationGuideLink');
+    if (cosmostationGuideLink) {
+        cosmostationGuideLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            openCosmostationModal();
+            return false;
+        });
+    }
     
     // Connect Keplr button
     const connectKeplrBtn = document.getElementById('connectKeplrBtn');
@@ -109,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Modal overlay - close on click outside
+    // Keplr Modal overlay - close on click outside
     const keplrModal = document.getElementById('keplrModal');
     if (keplrModal) {
         keplrModal.addEventListener('click', function(event) {
@@ -119,11 +137,22 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Modal close button
+    // Cosmostation Modal overlay - close on click outside
+    const cosmostationModal = document.getElementById('cosmostationModal');
+    if (cosmostationModal) {
+        cosmostationModal.addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeCosmostationModal();
+            }
+        });
+    }
+    
+    // Modal close buttons
     const modalCloseButtons = document.querySelectorAll('.modal-close');
     modalCloseButtons.forEach(function(button) {
         button.addEventListener('click', function() {
             closeKeplrModal();
+            closeCosmostationModal();
         });
     });
     

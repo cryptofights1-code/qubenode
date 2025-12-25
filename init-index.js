@@ -156,11 +156,11 @@
                         const cosmostationBtn = document.getElementById('connectCosmostationBtn');
                         if (keplrBtn) {
                             keplrBtn.disabled = false;
-                            keplrBtn.innerHTML = '<span style="font-size: 1.2em;">🔷</span><span>Keplr Wallet</span>';
+                            keplrBtn.innerHTML = '<span class="wallet-icon-emoji">🔷</span><span>Keplr Wallet</span>';
                         }
                         if (cosmostationBtn) {
                             cosmostationBtn.disabled = false;
-                            cosmostationBtn.innerHTML = '<span style="font-size: 1.2em;">🔶</span><span>Cosmostation</span>';
+                            cosmostationBtn.innerHTML = '<span class="wallet-icon-emoji">🔶</span><span>Cosmostation</span>';
                         }
                     }
                 }
@@ -286,11 +286,11 @@
                 
                 if (keplrBtn) {
                     keplrBtn.disabled = false;
-                    keplrBtn.innerHTML = '<span style="font-size: 1.3em;">🔷</span><span>Keplr Wallet</span>';
+                    keplrBtn.innerHTML = '<span class="wallet-icon-emoji-large">🔷</span><span>Keplr Wallet</span>';
                 }
                 if (cosmostationBtn) {
                     cosmostationBtn.disabled = false;
-                    cosmostationBtn.innerHTML = '<span style="font-size: 1.3em;">🔶</span><span>Cosmostation</span>';
+                    cosmostationBtn.innerHTML = '<span class="wallet-icon-emoji-large">🔶</span><span>Cosmostation</span>';
                 }
             }
         }
@@ -305,7 +305,7 @@
             document.getElementById('stakingActions').style.display = 'none';
             document.getElementById('connectKeplrBtn').disabled = false;
             document.getElementById('connectCosmostationBtn').disabled = false;
-            document.getElementById('connectKeplrBtn').innerHTML = '<span style="font-size: 1.3em;">🔷</span><span>Keplr Wallet</span>';
+            document.getElementById('connectKeplrBtn').innerHTML = '<span class="wallet-icon-emoji-large">🔷</span><span>Keplr Wallet</span>';
         }
 
         // DASHBOARD FUNCTIONS
@@ -1254,11 +1254,11 @@
                 const cosmostationBtn = document.getElementById('connectCosmostationBtn');
                 if (keplrBtn) {
                     keplrBtn.disabled = false;
-                    keplrBtn.innerHTML = '<span style="font-size: 1.3em;">🔷</span><span>Keplr Wallet</span>';
+                    keplrBtn.innerHTML = '<span class="wallet-icon-emoji-large">🔷</span><span>Keplr Wallet</span>';
                 }
                 if (cosmostationBtn) {
                     cosmostationBtn.disabled = false;
-                    cosmostationBtn.innerHTML = '<span style="font-size: 1.3em;">🔶</span><span>Cosmostation</span>';
+                    cosmostationBtn.innerHTML = '<span class="wallet-icon-emoji-large">🔶</span><span>Cosmostation</span>';
                 }
                 
                 // Reset header
@@ -1474,7 +1474,7 @@
                 // Show only user's delegations
                 const overview = cosmosStaking.getStakingOverview();
                 if (!overview || !overview.delegations || overview.delegations.length === 0) {
-                    container.innerHTML = '<div style="padding: 20px; text-align: center; color: #94a3b8;">No delegations</div>';
+                    container.innerHTML = '<div class="empty-state-message">No delegations</div>';
                 } else {
                     let html = '';
                     overview.delegations.forEach(del => {
@@ -1502,7 +1502,7 @@
                 title.textContent = 'To whom to delegate';
                 // Show all validators
                 if (!allValidators || allValidators.length === 0) {
-                    container.innerHTML = '<div style="padding: 20px; text-align: center; color: #94a3b8;">Loading validators...</div>';
+                    container.innerHTML = '<div class="empty-state-message">Loading validators...</div>';
                 } else {
                     let html = '';
                     allValidators.forEach(validator => {

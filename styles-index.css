@@ -2291,3 +2291,27 @@ footer {
         box-shadow: 0 1px 3px rgba(0, 212, 255, 0.2) !important;
     }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   ДОДАТКОВІ CSS КЛАСИ ДЛЯ init-index.js
+   CSP Compliance - Wallet Icon Emoji Classes
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Emoji іконки в wallet кнопках (менший розмір) */
+.wallet-icon-emoji {
+    font-size: 1.2em;
+    display: inline-block;
+}
+
+/* Emoji іконки в wallet кнопках (більший розмір) */
+.wallet-icon-emoji-large {
+    font-size: 1.3em;
+    display: inline-block;
+}
+
+/* Повідомлення "No delegations", "Loading validators..." */
+.empty-state-message {
+    padding: 20px;
+    text-align: center;
+    color: #94a3b8;
+}

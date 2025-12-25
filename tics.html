@@ -104,8 +104,20 @@
             <div class="section-title">
                 <h2>$TICS Price Chart</h2>
             </div>
+            
+            <!-- Chart Interval Buttons -->
+            <div class="chart-intervals">
+                <button class="chart-interval-btn" data-interval="1m">1m</button>
+                <button class="chart-interval-btn" data-interval="5m">5m</button>
+                <button class="chart-interval-btn" data-interval="15m">15m</button>
+                <button class="chart-interval-btn" data-interval="1h">1h</button>
+                <button class="chart-interval-btn active" data-interval="4h">4h</button>
+                <button class="chart-interval-btn" data-interval="1D">1D</button>
+            </div>
+            
+            <!-- Chart Container -->
             <div class="chart-container">
-                <iframe src="https://www.tradingview.com/widgetembed/?frameElementId=tradingview_chart&symbol=MEXC%3ATICSUSDT&interval=240&hidesidetoolbar=0&symboledit=1&saveimage=1&toolbarbg=rgba(0%2C0%2C0%2C0)&studies=%5B%5D&theme=dark&style=1&timezone=Etc%2FUTC&withdateranges=1&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=uk&utm_source=www.tradingview.com&utm_medium=widget&utm_campaign=chart&utm_term=MEXC%3ATICSUSDT"></iframe>
+                <div id="tics-chart"></div>
             </div>
         </div>
 
@@ -135,7 +147,13 @@
         </footer>
     </div>
 
-    <!-- TICS Initialization - CSP Compliant -->
+    <!-- Lightweight Charts Library -->
+    <script src="lightweight-charts.standalone.production.js"></script>
+    
+    <!-- TICS Chart Initialization -->
+    <script src="tics-chart.js"></script>
+    
+    <!-- TICS Page Initialization - CSP Compliant -->
     <script src="init-tics.js"></script>
 </body>
 </html>

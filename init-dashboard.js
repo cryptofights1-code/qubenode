@@ -404,17 +404,7 @@
                             const errorDiv = document.createElement('div');
                             errorDiv.id = 'errorMessage';
                             errorDiv.style.cssText = 'background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; padding: 12px; margin-top: 16px; color: #fca5a5; font-size: 13px;';
-                            
-                            // FIXED: Безпечне створення вмісту без innerHTML
-                            const strongElement = document.createElement('strong');
-                            strongElement.textContent = 'Reason:';
-                            const brElement = document.createElement('br');
-                            const errorTextNode = document.createTextNode(errorMsg);
-                            
-                            errorDiv.appendChild(strongElement);
-                            errorDiv.appendChild(brElement);
-                            errorDiv.appendChild(errorTextNode);
-                            
+                            errorDiv.innerHTML = `<strong>Reason:</strong><br>${errorMsg}`;
                             txHashElement.parentElement.insertBefore(errorDiv, txHashElement.nextSibling);
                         }
                         

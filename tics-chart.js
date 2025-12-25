@@ -198,7 +198,7 @@
     }
 
     /**
-     * Fetch data from MEXC API
+     * Fetch data from MEXC API via Cloudflare Worker (bypasses CORS)
      */
     async function fetchMEXCData(interval) {
         const intervalMap = {
@@ -213,8 +213,9 @@
         const mexcInterval = intervalMap[interval] || '4h';
         const limit = 500; // Last 500 candles
         
-        // MEXC Klines API
-        const url = `https://api.mexc.com/api/v3/klines?symbol=TICSUSDT&interval=${mexcInterval}&limit=${limit}`;
+        // Cloudflare Worker URL (proxy to MEXC API - bypasses CORS)
+        const workerUrl = 'https://mexc-proxy.yuskivvolodymyr.workers.dev';
+        const url = `${workerUrl}?symbol=TICSUSDT&interval=${mexcInterval}&limit=${limit}`;
         
         try {
             const response = await fetch(url);

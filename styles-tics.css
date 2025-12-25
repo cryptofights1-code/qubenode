@@ -590,3 +590,106 @@ footer a:hover {
         font-size: 20px;
     }
 }
+
+/* ===== CHART INTERVAL BUTTONS ===== */
+.chart-intervals {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 30px 0 20px 0;
+    flex-wrap: wrap;
+}
+
+.chart-interval-btn {
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: #94a3b8;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+.chart-interval-btn:hover {
+    background: rgba(0, 212, 255, 0.1);
+    border-color: rgba(0, 212, 255, 0.3);
+    color: #00D4FF;
+    transform: translateY(-2px);
+}
+
+.chart-interval-btn.active {
+    background: linear-gradient(135deg, #00D4FF 0%, #00FFF0 100%);
+    border-color: #00D4FF;
+    color: #000000;
+    font-weight: 700;
+}
+
+.chart-interval-btn.active:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 212, 255, 0.4);
+}
+
+/* ===== CHART CONTAINER UPDATES ===== */
+#tics-chart {
+    width: 100%;
+    height: 500px;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.chart-container.loading #tics-chart::after {
+    content: 'Loading chart data...';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #00D4FF;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.chart-error {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(239, 68, 68, 0.9);
+    color: #ffffff;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 1000;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* ===== RESPONSIVE CHART UPDATES ===== */
+@media (max-width: 768px) {
+    .chart-intervals {
+        gap: 8px;
+        margin: 20px 0 15px 0;
+    }
+    
+    .chart-interval-btn {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+    
+    #tics-chart {
+        height: 400px !important;
+    }
+}

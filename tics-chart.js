@@ -214,7 +214,7 @@
         const limit = 500; // Last 500 candles
         
         // Cloudflare Worker URL (proxy to MEXC API - bypasses CORS)
-        const workerUrl = 'https://mexc-proxy.yuskivvolodymyr.workers.dev';
+        const workerUrl = 'https://api.qubenode.space';
         const url = `${workerUrl}?symbol=TICSUSDT&interval=${mexcInterval}&limit=${limit}`;
         
         try {

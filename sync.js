@@ -1,20 +1,22 @@
-// === QubeNode Live Sync Script v3.2 ===
-// DIRECT MEXC API - GitHub Pages compatible
-// v3.2: Direct MEXC API call (works on some browsers/networks)
+// === QubeNode Live Sync Script v2.9.1 ===
+// Includes: validator info, delegators, inflation, uptime, validator rank, TICS price from MEXC
+// v2.9.1: Mobile blocks optimized for 85% width - 25 blocks
+// New commission text: "Від 30% APY → 28.5% ваш дохід"
+// Rank format: "#7" (only position, "by voting power")
 
-console.log('🚀 QubeNode Sync v3.2 LOADED - Direct MEXC API');
+console.log('🚀 QubeNode Sync v2.9.1 LOADED - 25 blocks for mobile (85% width)');
 
 const API_BASE = "https://swagger.qubetics.com";
 const VALIDATOR = "qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld";
 const TICSSCAN_API = "https://v2.ticsscan.com/api/v2";
 
 // Validator addresses
-const VALCONS_ADDR = "qubeticsvalcons1dlmj5pzg3fv54nrtejnfxmrj08d7qs09xjp2eu";
-const VAL_HEX_ADDR = "0x6FF72A04488A594ACC6BCCA6936C7279DBE041E5";
-const VAL_ACCOUNT_ADDR = "qubetics1tzk9f84cv2gmk3du3m9dpxcuph70sfj6ltvqjf";
+const VALCONS_ADDR = "qubeticsvalcons1dlmj5pzg3fv54nrtejnfxmrj08d7qs09xjp2eu"; // Signer/Consensus
+const VAL_HEX_ADDR = "0x6FF72A04488A594ACC6BCCA6936C7279DBE041E5"; // Hex address with 0x prefix
+const VAL_ACCOUNT_ADDR = "qubetics1tzk9f84cv2gmk3du3m9dpxcuph70sfj6ltvqjf"; // Account address
 
 // Global variables
-let currentBlockTime = 5.87;
+let currentBlockTime = 5.87; // Default value
 let blockAnimationInterval = null;
 let lastBlockHeight = null;
 
@@ -30,11 +32,12 @@ async function fetchJSON(url, headers = {}) {
   }
 }
 
-// === BLOCK HEIGHT ===
+// === BLOCK HEIGHT (current block number) ===
 async function updateBlockHeight() {
   const el = document.getElementById("currentBlock");
   if (!el) return;
   
+  // Try different endpoints to get current block
   const endpoints = [
     'https://swagger.qubetics.com/cosmos/base/tendermint/v1beta1/blocks/latest',
     'https://tendermint.qubetics.com/abci_info'
@@ -44,14 +47,18 @@ async function updateBlockHeight() {
     try {
       const data = await fetchJSON(endpoint);
       
+      // Parse different response formats
       let blockHeight = null;
       
+      // Format 1: RPC abci_info
       if (data?.result?.response?.last_block_height) {
         blockHeight = data.result.response.last_block_height;
       }
+      // Format 2: Cosmos SDK REST
       else if (data?.block?.header?.height) {
         blockHeight = data.block.header.height;
       }
+      // Format 3: RPC status
       else if (data?.result?.sync_info?.latest_block_height) {
         blockHeight = data.result.sync_info.latest_block_height;
       }
@@ -60,6 +67,7 @@ async function updateBlockHeight() {
         const blockNum = parseInt(blockHeight);
         el.textContent = blockNum.toLocaleString('en-US');
         
+        // Якщо блок змінився - додаємо нову паличку
         if (lastBlockHeight !== null && blockNum > lastBlockHeight) {
           addNewBlockVisual();
         }
@@ -87,6 +95,7 @@ async function updateAverageBlockTime() {
     if (data?.average_block_time) {
       let blockTime = parseFloat(data.average_block_time);
       
+      // Якщо значення більше 100, це мілісекунди - конвертуємо в секунди
       if (blockTime > 100) {
         blockTime = blockTime / 1000;
       }
@@ -107,6 +116,7 @@ async function updateValidatorRank() {
   if (!el) return;
 
   try {
+    // Отримуємо всіх активних валідаторів
     const url = `${API_BASE}/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED&pagination.limit=300`;
     const data = await fetchJSON(url);
     
@@ -115,12 +125,14 @@ async function updateValidatorRank() {
       return;
     }
 
+    // Сортуємо валідаторів за кількістю токенів (від більшого до меншого)
     const validators = data.validators.sort((a, b) => {
       const tokensA = parseFloat(a.tokens || "0");
       const tokensB = parseFloat(b.tokens || "0");
       return tokensB - tokensA;
     });
 
+    // Знаходимо позицію QubeNode
     const rank = validators.findIndex(v => v.operator_address === VALIDATOR) + 1;
     const total = validators.length;
 
@@ -146,15 +158,23 @@ async function updateValidatorCore() {
   const v = data.validator;
   const commission = parseFloat(v.commission.commission_rates.rate) * 100;
   
+  // v.tokens приходить у форматі uTICS (micro TICS) як STRING  
+  // Приклад: "10758095273067618117969514" (26 цифр)
+  // Щоб отримати мільйони TICS: відрізаємо останні 21 цифру
+  // 10758 M TICS = 10,758,000,000 TICS = 10,758,000,000,000,000 uTICS
   const tokensString = v.tokens.toString();
   
   let millions;
   
   if (tokensString.length > 21) {
+    // Відрізаємо останні 21 цифру щоб отримати мільйони
+    // "10758095273067618117969514" (26 цифр) -> slice(0, -21) -> "10758"
     millions = parseInt(tokensString.slice(0, -21));
   } else if (tokensString.length === 21) {
+    // Рівно 21 цифра = менше 10 мільйонів
     millions = parseInt(tokensString[0]);
   } else {
+    // Менше 21 цифри = менше 1 мільйона
     millions = 0;
   }
   
@@ -172,6 +192,8 @@ async function updateValidatorCore() {
       powerEl.removeChild(powerEl.firstChild);
     }
     
+    // Форматуємо: 10758 -> "10,758 M"
+    // Показуємо мільйони з комою після тисяч
     const formatted = millions.toLocaleString('en-US') + " M";
     const textNode = document.createTextNode(formatted);
     powerEl.appendChild(textNode);
@@ -180,7 +202,7 @@ async function updateValidatorCore() {
   }
 }
 
-// === DELEGATORS COUNT ===
+// === DELEGATORS COUNT (accurate total) ===
 async function updateDelegators() {
   const url = `${API_BASE}/cosmos/staking/v1beta1/validators/${VALIDATOR}/delegations?pagination.count_total=true`;
   const data = await fetchJSON(url);
@@ -193,7 +215,7 @@ async function updateDelegators() {
   }
 }
 
-// === INFLATION ===
+// === INFLATION (network metric) ===
 async function updateInflation() {
   const url = `${API_BASE}/cosmos/mint/v1beta1/inflation`;
   const data = await fetchJSON(url);
@@ -202,7 +224,7 @@ async function updateInflation() {
   el.textContent = (parseFloat(data.inflation) * 100).toFixed(2) + "%";
 }
 
-// === VALIDATOR UPTIME ===
+// === VALIDATOR UPTIME (%) ===
 async function updateUptime() {
   const el = document.getElementById("uptimePercent");
   if (!el) return;
@@ -222,23 +244,31 @@ async function updateUptime() {
       ? list.find(i => i.address === VALCONS_ADDR || i.cons_address === VALCONS_ADDR || i.valcons_address === VALCONS_ADDR)
       : null;
 
-    if (entry && params?.params?.signed_blocks_window) {
-      const missed = parseInt(entry.missed_blocks_count || "0");
-      const window = parseInt(params.params.signed_blocks_window);
-      const signed = window - missed;
-      const uptime = (signed / window) * 100;
+    if (!entry || !params?.params) {
+      el.textContent = "--";
+      return;
+    }
+
+    const missed = parseInt(entry.missed_blocks_counter ?? entry.missed_blocks ?? "0", 10);
+    const windowSize = parseInt(params.params.signed_blocks_window ?? params.params.signed_blocks_window_size ?? "100000", 10) || 100000;
+
+    let uptime = 100;
+    if (windowSize > 0 && !Number.isNaN(missed)) {
+      uptime = ((windowSize - missed) / windowSize) * 100;
+    }
+
+    if (Number.isFinite(uptime)) {
       el.textContent = uptime.toFixed(2) + "%";
-      console.log(`✅ Validator uptime: ${uptime.toFixed(2)}% (${signed}/${window} blocks, missed: ${missed})`);
     } else {
-      el.textContent = "100.00%";
+      el.textContent = "--";
     }
   } catch (e) {
     console.error("Uptime fetch error:", e);
-    el.textContent = "—";
+    el.textContent = "--";
   }
 }
 
-// === TICS PRICE FROM MEXC (DIRECT API) ===
+// === TICS PRICE FROM MEXC (with CORS proxy) ===
 async function updateTicsPrice() {
   const priceEl = document.getElementById("ticsPrice");
   const changeEl = document.getElementById("ticsChange");
@@ -249,30 +279,15 @@ async function updateTicsPrice() {
   }
 
   try {
-    console.log('🔄 Fetching TICS price from MEXC (direct)...');
+    console.log('🔄 Fetching TICS price from MEXC...');
     
-    // Прямий запит до MEXC API
-    const mexcUrl = 'https://api.mexc.com/api/v3/ticker/24hr?symbol=TICSUSDT';
+    // MEXC API з CORS proxy
+    // Варіант 1: Через публічний CORS proxy
+    const corsProxy = "https://corsproxy.io/?";
+    const mexcUrl = "https://api.mexc.com/api/v3/ticker/24hr?symbol=TICSUSDT";
+    const proxiedUrl = corsProxy + encodeURIComponent(mexcUrl);
     
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000);
-    
-    const response = await fetch(mexcUrl, {
-      method: 'GET',
-      signal: controller.signal,
-      mode: 'cors', // Спробуємо CORS mode
-      headers: {
-        'Accept': 'application/json'
-      }
-    });
-    
-    clearTimeout(timeoutId);
-    
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-    
-    const data = await response.json();
+    const data = await fetchJSON(proxiedUrl);
     
     console.log('📊 MEXC response:', data);
     
@@ -280,7 +295,7 @@ async function updateTicsPrice() {
       const price = parseFloat(data.lastPrice);
       const change24h = parseFloat(data.priceChangePercent);
       
-      priceEl.textContent = "$" + price.toFixed(5);
+      priceEl.textContent = "$" + price.toFixed(5); // 5 знаків замість 6
       const changeText = (change24h >= 0 ? "+" : "") + change24h.toFixed(2) + "%";
       changeEl.textContent = changeText;
       
@@ -292,20 +307,17 @@ async function updateTicsPrice() {
         updateCalculatorPrice(price);
       }
       
-      console.log(`✅ TICS price: $${price.toFixed(5)} (${changeText}) - Direct MEXC API`);
+      console.log(`✅ TICS price: $${price.toFixed(5)} (${changeText})`);
       return;
     }
     
-    throw new Error('Invalid response format from MEXC');
+    console.error('❌ MEXC returned data without lastPrice');
+    priceEl.textContent = "--";
+    changeEl.textContent = "--";
     
   } catch (e) {
-    if (e.name === 'AbortError') {
-      console.error('❌ MEXC price fetch timeout (8s)');
-    } else {
-      console.error("❌ MEXC price error:", e.message);
-      console.error("Full error:", e);
-    }
-    
+    console.error("❌ TICS price error:", e.message);
+    console.error("Full error:", e);
     priceEl.textContent = "--";
     changeEl.textContent = "--";
   }
@@ -327,20 +339,24 @@ function addNewBlockVisual() {
   
   console.log('🟢 NEW BLOCK ANIMATION TRIGGERED!');
   
+  // Отримуємо ширину існуючих паличок
   const existingBlock = wrapper.querySelector('.chain-block');
   const blockWidth = existingBlock ? existingBlock.offsetWidth : 6;
   
+  // Створюємо новий блок з підсвічуванням СПРАВА (в кінець)
   const block = createBlock(true);
-  block.style.width = blockWidth + 'px';
-  wrapper.appendChild(block);
+  block.style.width = blockWidth + 'px'; // Встановлюємо ту саму ширину
+  wrapper.appendChild(block); // Додаємо в кінець (справа)
   
   console.log('✅ Block element created with .fresh class at the END (right side)');
   
+  // Видаляємо підсвічування через 600мс
   setTimeout(() => {
     block.classList.remove('fresh');
     console.log('⚪ .fresh class removed after 600ms');
   }, 600);
   
+  // Видаляємо ПЕРШИЙ блок (зліва) щоб загальна кількість не змінювалася
   const firstBlock = wrapper.firstChild;
   if (firstBlock) {
     firstBlock.style.transition = 'opacity 0.3s ease';
@@ -361,12 +377,15 @@ function initBlockAnimation() {
     return;
   }
   
+  // Очищуємо контейнер
   container.innerHTML = '';
   
+  // Створюємо wrapper для анімації
   const wrapper = document.createElement('div');
   wrapper.className = 'blocks-track-inline';
   container.appendChild(wrapper);
   
+  // Розраховуємо скільки паличок поміститься
   const isMobile = window.innerWidth <= 768;
   let containerWidth;
   let blocksCount;
@@ -374,18 +393,24 @@ function initBlockAnimation() {
   let gapWidth;
   
   if (isMobile) {
+    // МОБІЛЬНА ВЕРСІЯ: фіксована кількість паличок для всіх пристроїв
     containerWidth = container.offsetWidth || (window.innerWidth - 40);
-    blocksCount = 30;
+    blocksCount = 30; // Оптимально для видимого вікна
     
+    // Динамічно розраховуємо ширину паличку та gap щоб заповнити контейнер
+    // Формула: containerWidth = (blocksCount × blockWidth) + ((blocksCount - 1) × gap)
+    // Приймаємо gap = 3px (фіксований), розраховуємо blockWidth
     gapWidth = 3;
     const totalGapsWidth = (blocksCount - 1) * gapWidth;
     blockWidth = Math.floor((containerWidth - totalGapsWidth) / blocksCount);
     
+    // Мінімальна ширина паличку - 4px
     if (blockWidth < 4) {
       blockWidth = 4;
       blocksCount = Math.floor(containerWidth / (blockWidth + gapWidth));
     }
   } else {
+    // DESKTOP ВЕРСІЯ: заповнюємо всю ширину
     containerWidth = container.offsetWidth || 800;
     blockWidth = 6;
     gapWidth = 8;
@@ -395,9 +420,10 @@ function initBlockAnimation() {
   
   console.log(`📊 Container: ${containerWidth}px, Block: ${blockWidth}px, Gap: ${gapWidth}px, Count: ${blocksCount} (${isMobile ? 'MOBILE' : 'DESKTOP'}, screenWidth: ${window.innerWidth}px)`);
   
+  // ЗАПОВНЮЄМО паличками
   for (let i = 0; i < blocksCount; i++) {
     const block = createBlock(false);
-    block.style.width = blockWidth + 'px';
+    block.style.width = blockWidth + 'px'; // Встановлюємо динамічну ширину
     wrapper.appendChild(block);
   }
   
@@ -408,22 +434,24 @@ function initBlockAnimation() {
 async function updateAll() {
   console.log("🔄 QubeNode sync running…");
   
+  // Оновлюємо дані паралельно
   await Promise.all([
-    updateBlockHeight(),
-    updateAverageBlockTime(),
+    updateBlockHeight(),      // Оновлює номер блоку кожні 3 секунди
+    updateAverageBlockTime(), // Оновлює Avg Block Time кожні 15 секунд
     updateValidatorCore(),
-    updateValidatorRank(),
+    updateValidatorRank(),    // Нова функція - Rank валідатора
     updateDelegators(),
     updateInflation(),
     updateUptime(),
-    updateTicsPrice()
+    updateTicsPrice()         // Ціна TICS з MEXC
   ]);
 }
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('🚀 QubeNode Sync v3.2 initialized - Direct MEXC API');
+  console.log('🚀 QubeNode Sync v2.5 initialized');
   
+  // БЛОКУЄМО всі ::before та ::after для stat-value
   const style = document.createElement('style');
   style.textContent = `
     #delegatedAmountContainer,
@@ -442,6 +470,7 @@ document.addEventListener('DOMContentLoaded', () => {
   `;
   document.head.appendChild(style);
   
+  // Оновлюємо формат при зміні розміру вікна
   let resizeTimeout;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimeout);
@@ -450,6 +479,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 250);
   });
   
+  // Даємо браузеру час для розрахунку розмірів контейнера
+  // На мобільних потрібно більше часу
   const isMobile = window.innerWidth <= 768;
   const initDelay = isMobile ? 300 : 100;
   
@@ -458,8 +489,10 @@ document.addEventListener('DOMContentLoaded', () => {
     updateAll();
   }, initDelay);
   
+  // Оновлюємо номер блоку частіше (кожні 3 секунди)
   setInterval(updateBlockHeight, 3000);
   
+  // Оновлюємо всі інші дані рідше (кожні 15 секунд)
   setInterval(() => {
     updateAverageBlockTime();
     updateValidatorCore();
@@ -471,7 +504,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }, 15000);
 });
 
-// Reinitialize on resize
+// Переініціалізація при зміні розміру вікна (для адаптації)
 let resizeTimeout;
 window.addEventListener('resize', () => {
   clearTimeout(resizeTimeout);
@@ -480,3 +513,4 @@ window.addEventListener('resize', () => {
     initBlockAnimation();
   }, 300);
 });
+

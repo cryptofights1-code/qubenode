@@ -1,8 +1,8 @@
-// === QubeNode Live Sync Script v2.9.2 ===
-// FIXED: Multiple CORS proxy fallbacks for MEXC price
-// v2.9.2: Added backup CORS proxies and direct API attempt
+// === QubeNode Live Sync Script v3.1 ===
+// GitHub Pages compatible - using reliable public CORS proxies
+// v3.1: Multiple stable CORS proxies with smart fallback
 
-console.log('🚀 QubeNode Sync v2.9.2 LOADED - MEXC price with fallback methods');
+console.log('🚀 QubeNode Sync v3.1 LOADED - GitHub Pages compatible');
 
 const API_BASE = "https://swagger.qubetics.com";
 const VALIDATOR = "qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld";
@@ -17,6 +17,7 @@ const VAL_ACCOUNT_ADDR = "qubetics1tzk9f84cv2gmk3du3m9dpxcuph70sfj6ltvqjf";
 let currentBlockTime = 5.87;
 let blockAnimationInterval = null;
 let lastBlockHeight = null;
+let lastWorkingProxy = null; // Запам'ятовуємо робочий проксі
 
 // Universal JSON fetch helper
 async function fetchJSON(url, headers = {}) {
@@ -30,7 +31,7 @@ async function fetchJSON(url, headers = {}) {
   }
 }
 
-// === BLOCK HEIGHT (current block number) ===
+// === BLOCK HEIGHT ===
 async function updateBlockHeight() {
   const el = document.getElementById("currentBlock");
   if (!el) return;
@@ -238,7 +239,7 @@ async function updateUptime() {
   }
 }
 
-// === TICS PRICE FROM MEXC (IMPROVED WITH FALLBACKS) ===
+// === TICS PRICE FROM MEXC (Smart proxy fallback) ===
 async function updateTicsPrice() {
   const priceEl = document.getElementById("ticsPrice");
   const changeEl = document.getElementById("ticsChange");
@@ -252,36 +253,40 @@ async function updateTicsPrice() {
   
   const mexcUrl = "https://api.mexc.com/api/v3/ticker/24hr?symbol=TICSUSDT";
   
-  // Масив CORS проксі для fallback
+  // Список надійних CORS проксі (від найкращих до запасних)
   const corsProxies = [
-    "https://corsproxy.io/?",
-    "https://api.allorigins.win/raw?url=",
-    "https://cors-anywhere.herokuapp.com/",
-    ""  // Останній варіант - пряма спроба без проксі
+    { url: "https://api.allorigins.win/raw?url=", name: "AllOrigins" },
+    { url: "https://corsproxy.io/?", name: "CorsProxy.io" },
+    { url: "https://proxy.cors.sh/", name: "CORS.sh" },
+    { url: "https://api.codetabs.com/v1/proxy?quest=", name: "CodeTabs" }
   ];
   
-  // Пробуємо кожен проксі по черзі
+  // Якщо є збережений робочий проксі - пробуємо його першим
+  if (lastWorkingProxy) {
+    corsProxies.unshift(lastWorkingProxy);
+  }
+  
+  // Пробуємо кожен проксі
   for (let i = 0; i < corsProxies.length; i++) {
     const proxy = corsProxies[i];
-    const isDirectAttempt = proxy === "";
     
     try {
-      const proxiedUrl = isDirectAttempt ? mexcUrl : proxy + encodeURIComponent(mexcUrl);
+      const proxiedUrl = proxy.url + encodeURIComponent(mexcUrl);
       
-      console.log(`🔄 Attempt ${i + 1}/${corsProxies.length}: ${isDirectAttempt ? 'Direct MEXC API' : 'Using proxy: ' + proxy}`);
+      console.log(`🔄 Attempt ${i + 1}/${corsProxies.length}: ${proxy.name}`);
       
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 секунд timeout
+      const timeoutId = setTimeout(() => controller.abort(), 6000); // 6 секунд timeout
       
       const response = await fetch(proxiedUrl, {
         signal: controller.signal,
-        headers: isDirectAttempt ? {} : { 'Accept': 'application/json' }
+        headers: { 'Accept': 'application/json' }
       });
       
       clearTimeout(timeoutId);
       
       if (!response.ok) {
-        console.warn(`❌ HTTP ${response.status} from proxy ${i + 1}`);
+        console.warn(`❌ ${proxy.name}: HTTP ${response.status}`);
         continue;
       }
       
@@ -305,23 +310,25 @@ async function updateTicsPrice() {
           updateCalculatorPrice(price);
         }
         
-        console.log(`✅ TICS price: $${price.toFixed(5)} (${changeText}) - Method: ${isDirectAttempt ? 'Direct' : 'Proxy ' + (i + 1)}`);
-        return; // SUCCESS - виходимо з функції
+        // Зберігаємо робочий проксі для наступних разів
+        lastWorkingProxy = proxy;
+        
+        console.log(`✅ TICS price: $${price.toFixed(5)} (${changeText}) - via ${proxy.name}`);
+        return; // SUCCESS
       }
       
-      console.warn(`⚠️ Proxy ${i + 1} returned data without lastPrice`);
+      console.warn(`⚠️ ${proxy.name} returned data without lastPrice`);
       
     } catch (e) {
       if (e.name === 'AbortError') {
-        console.warn(`⏱️ Proxy ${i + 1} timeout after 5 seconds`);
+        console.warn(`⏱️ ${proxy.name} timeout (6s)`);
       } else {
-        console.warn(`❌ Proxy ${i + 1} error:`, e.message);
+        console.warn(`❌ ${proxy.name} error:`, e.message);
       }
-      // Продовжуємо до наступного проксі
     }
   }
   
-  // Якщо всі спроби провалилися
+  // Всі спроби провалилися
   console.error('❌ All MEXC price fetch attempts failed');
   priceEl.textContent = "--";
   changeEl.textContent = "--";
@@ -438,7 +445,7 @@ async function updateAll() {
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('🚀 QubeNode Sync v2.9.2 initialized - MEXC price with fallback');
+  console.log('🚀 QubeNode Sync v3.1 initialized - GitHub Pages compatible');
   
   const style = document.createElement('style');
   style.textContent = `

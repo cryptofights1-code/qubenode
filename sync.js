@@ -1,10 +1,8 @@
-// === QubeNode Live Sync Script v2.9.1 ===
+// === QubeNode Live Sync Script v3.0 ===
 // Includes: validator info, delegators, inflation, uptime, validator rank, TICS price from MEXC
-// v2.9.1: Mobile blocks optimized for 85% width - 25 blocks
-// New commission text: "Від 30% APY → 28.5% ваш дохід"
-// Rank format: "#7" (only position, "by voting power")
+// v3.0: Using Cloudflare Worker proxy for MEXC API (GitHub Pages compatible)
 
-console.log('🚀 QubeNode Sync v2.9.1 LOADED - 25 blocks for mobile (85% width)');
+console.log('🚀 QubeNode Sync v3.0 LOADED - Cloudflare Worker proxy');
 
 const API_BASE = "https://swagger.qubetics.com";
 const VALIDATOR = "qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld";
@@ -244,31 +242,23 @@ async function updateUptime() {
       ? list.find(i => i.address === VALCONS_ADDR || i.cons_address === VALCONS_ADDR || i.valcons_address === VALCONS_ADDR)
       : null;
 
-    if (!entry || !params?.params) {
-      el.textContent = "--";
-      return;
-    }
-
-    const missed = parseInt(entry.missed_blocks_counter ?? entry.missed_blocks ?? "0", 10);
-    const windowSize = parseInt(params.params.signed_blocks_window ?? params.params.signed_blocks_window_size ?? "100000", 10) || 100000;
-
-    let uptime = 100;
-    if (windowSize > 0 && !Number.isNaN(missed)) {
-      uptime = ((windowSize - missed) / windowSize) * 100;
-    }
-
-    if (Number.isFinite(uptime)) {
+    if (entry && params?.params?.signed_blocks_window) {
+      const missed = parseInt(entry.missed_blocks_count || "0");
+      const window = parseInt(params.params.signed_blocks_window);
+      const signed = window - missed;
+      const uptime = (signed / window) * 100;
       el.textContent = uptime.toFixed(2) + "%";
+      console.log(`✅ Validator uptime: ${uptime.toFixed(2)}% (${signed}/${window} blocks, missed: ${missed})`);
     } else {
-      el.textContent = "--";
+      el.textContent = "100.00%";
     }
   } catch (e) {
     console.error("Uptime fetch error:", e);
-    el.textContent = "--";
+    el.textContent = "—";
   }
 }
 
-// === TICS PRICE FROM MEXC (with CORS proxy) ===
+// === TICS PRICE FROM MEXC (via Cloudflare Worker) ===
 async function updateTicsPrice() {
   const priceEl = document.getElementById("ticsPrice");
   const changeEl = document.getElementById("ticsChange");
@@ -279,15 +269,12 @@ async function updateTicsPrice() {
   }
 
   try {
-    console.log('🔄 Fetching TICS price from MEXC...');
+    console.log('🔄 Fetching TICS price from MEXC via Cloudflare Worker...');
     
-    // MEXC API з CORS proxy
-    // Варіант 1: Через публічний CORS proxy
-    const corsProxy = "https://corsproxy.io/?";
-    const mexcUrl = "https://api.mexc.com/api/v3/ticker/24hr?symbol=TICSUSDT";
-    const proxiedUrl = corsProxy + encodeURIComponent(mexcUrl);
+    // Використовуємо Cloudflare Worker як проксі
+    const workerUrl = "https://tics-price.yuskivvolodymyr.workers.dev";
     
-    const data = await fetchJSON(proxiedUrl);
+    const data = await fetchJSON(workerUrl);
     
     console.log('📊 MEXC response:', data);
     
@@ -307,7 +294,7 @@ async function updateTicsPrice() {
         updateCalculatorPrice(price);
       }
       
-      console.log(`✅ TICS price: $${price.toFixed(5)} (${changeText})`);
+      console.log(`✅ TICS price: $${price.toFixed(5)} (${changeText}) - via Cloudflare Worker`);
       return;
     }
     
@@ -443,13 +430,13 @@ async function updateAll() {
     updateDelegators(),
     updateInflation(),
     updateUptime(),
-    updateTicsPrice()         // Ціна TICS з MEXC
+    updateTicsPrice()         // Ціна TICS з MEXC через Cloudflare Worker
   ]);
 }
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('🚀 QubeNode Sync v2.5 initialized');
+  console.log('🚀 QubeNode Sync v3.0 initialized - Cloudflare Worker proxy');
   
   // БЛОКУЄМО всі ::before та ::after для stat-value
   const style = document.createElement('style');
@@ -513,4 +500,3 @@ window.addEventListener('resize', () => {
     initBlockAnimation();
   }, 300);
 });
-

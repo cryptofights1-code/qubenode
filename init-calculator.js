@@ -169,17 +169,15 @@
             return months.toFixed(1) + ' months';
         }
         
-        // Fetch price from MEXC (using CORS proxy like in sync.js)
+        // Fetch price from MEXC (using Cloudflare Worker)
         async function fetchTicsPrice() {
             try {
-                console.log('🔄 Fetching TICS price from MEXC...');
+                console.log('🔄 Fetching TICS price from MEXC via Cloudflare Worker...');
                 
-                // Use CORS proxy like in sync.js
-                const corsProxy = "https://corsproxy.io/?";
-                const mexcUrl = "https://api.mexc.com/api/v3/ticker/24hr?symbol=TICSUSDT";
-                const proxiedUrl = corsProxy + encodeURIComponent(mexcUrl);
+                // Use Cloudflare Worker instead of CORS proxy
+                const workerUrl = "https://tics-price.yuskivvolodymyr.workers.dev";
                 
-                const response = await fetch(proxiedUrl);
+                const response = await fetch(workerUrl);
                 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -193,7 +191,7 @@
                     currentTicsPrice = parseFloat(data.lastPrice);
                     const priceElement = document.getElementById('currentPriceDisplay');
                     if (priceElement) {
-                        priceElement.textContent = currentTicsPrice.toFixed(4);
+                        priceElement.textContent = currentTicsPrice.toFixed(5); // 5 decimals like in sync.js
                         priceElement.style.color = '#00FFF0'; // Highlight update
                         setTimeout(() => priceElement.style.color = '', 500);
                     }

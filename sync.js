@@ -1,8 +1,9 @@
-// === QubeNode Live Sync Script v3.0.0 ===
+// === QubeNode Live Sync Script v3.0.1 ===
 // Extended with real delegations, rewards, and top 20 delegators
 // Integrated for about.html page
+// Fixed: Added TICS price from Cloudflare Worker
 
-console.log('🚀 QubeNode Sync v3.0.0 LOADED - Extended for About page');
+console.log('🚀 QubeNode Sync v3.0.1 LOADED - Extended for About page + TICS Price');
 
 const API_BASE = "https://swagger.qubetics.com";
 const VALIDATOR = "qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld";
@@ -257,6 +258,60 @@ async function updateUptime() {
   }
 }
 
+// ===== TICS PRICE FROM MEXC (via Cloudflare Worker) =====
+async function updateTicsPrice() {
+  const priceEl = document.getElementById("ticsPrice");
+  const changeEl = document.getElementById("ticsChange");
+  
+  if (!priceEl || !changeEl) {
+    console.warn('⚠️ Price elements not found');
+    return;
+  }
+
+  try {
+    console.log('🔄 Fetching TICS price from MEXC via Cloudflare Worker...');
+    
+    // Використовуємо Cloudflare Worker як проксі (НЕ через CORS proxy!)
+    const workerUrl = "https://tics-price.yuskivvolodymyr.workers.dev";
+    
+    // Fetch без CORS proxy для Worker
+    const res = await fetch(workerUrl);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    
+    console.log('📊 MEXC response:', data);
+    
+    if (data && data.lastPrice) {
+      const price = parseFloat(data.lastPrice);
+      const change24h = parseFloat(data.priceChangePercent);
+      
+      priceEl.textContent = "$" + price.toFixed(5);
+      const changeText = (change24h >= 0 ? "+" : "") + change24h.toFixed(2) + "%";
+      changeEl.textContent = changeText;
+      
+      const changeValue = changeEl.parentElement;
+      changeValue.style.color = change24h >= 0 ? "#22c55e" : "#ef4444";
+      
+      // Update calculator price if function exists
+      if (typeof updateCalculatorPrice === 'function') {
+        updateCalculatorPrice(price);
+      }
+      
+      console.log(`✅ TICS price: $${price.toFixed(5)} (${changeText})`);
+      return;
+    }
+    
+    console.error('❌ MEXC returned data without lastPrice');
+    priceEl.textContent = "--";
+    changeEl.textContent = "--";
+    
+  } catch (e) {
+    console.error("❌ TICS price error:", e.message);
+    priceEl.textContent = "--";
+    changeEl.textContent = "--";
+  }
+}
+
 // ===== NEW: REAL LATEST DELEGATIONS =====
 async function updateLatestDelegations() {
   const tableBody = document.getElementById("delegationsTable");
@@ -265,7 +320,6 @@ async function updateLatestDelegations() {
   try {
     console.log('🔄 Fetching latest delegations...');
     
-    // Get all delegations with pagination
     const url = `${API_BASE}/cosmos/staking/v1beta1/validators/${VALIDATOR}/delegations?pagination.limit=100&pagination.reverse=true`;
     const data = await fetchJSON(url);
     
@@ -274,7 +328,6 @@ async function updateLatestDelegations() {
       return;
     }
 
-    // Take latest 10 delegations
     const latestDelegations = data.delegation_responses.slice(0, 10);
     
     tableBody.innerHTML = '';
@@ -286,7 +339,7 @@ async function updateLatestDelegations() {
       
       const delegator = item.delegation.delegator_address;
       const amountMicro = parseInt(item.balance.amount);
-      const amountTICS = (amountMicro / 1000000000000000000).toFixed(1); // Convert from micro
+      const amountTICS = (amountMicro / 1000000000000000000).toFixed(1);
       
       row.innerHTML = `
         <div class="delegator-address">${formatAddress(delegator)}</div>
@@ -312,7 +365,6 @@ async function updateTop20Delegators() {
   try {
     console.log('🔄 Fetching top 20 delegators...');
     
-    // Get ALL delegations
     const url = `${API_BASE}/cosmos/staking/v1beta1/validators/${VALIDATOR}/delegations?pagination.limit=1000`;
     const data = await fetchJSON(url);
     
@@ -321,10 +373,9 @@ async function updateTop20Delegators() {
       return;
     }
 
-    // Sort by amount and take top 20
     const allDelegations = data.delegation_responses.map(item => {
       const amountMicro = parseInt(item.balance.amount);
-      const amountTICS = amountMicro / 1000000000000000000; // Convert from micro
+      const amountTICS = amountMicro / 1000000000000000000;
       
       return {
         address: item.delegation.delegator_address,
@@ -332,13 +383,8 @@ async function updateTop20Delegators() {
       };
     });
 
-    // Sort descending
     allDelegations.sort((a, b) => b.amount - a.amount);
-    
-    // Take top 20
     const top20 = allDelegations.slice(0, 20);
-    
-    // Calculate total stake for percentages
     const totalStake = allDelegations.reduce((sum, d) => sum + d.amount, 0);
     
     tableBody.innerHTML = '';
@@ -381,7 +427,6 @@ async function updateOutstandingRewards() {
   try {
     console.log('🔄 Fetching outstanding rewards...');
     
-    // Get validator rewards
     const url = `${API_BASE}/cosmos/distribution/v1beta1/validators/${VALIDATOR}/outstanding_rewards`;
     const data = await fetchJSON(url);
     
@@ -390,7 +435,6 @@ async function updateOutstandingRewards() {
       return;
     }
 
-    // Get TICS rewards (denom: utics or aqube)
     const ticsReward = data.rewards.rewards.find(r => 
       r.denom === 'utics' || r.denom === 'aqube'
     );
@@ -417,11 +461,9 @@ async function updateNetworkShare() {
   if (!networkShareEl) return;
 
   try {
-    // Get our stake from validator info
     const validatorUrl = `${API_BASE}/cosmos/staking/v1beta1/validators/${VALIDATOR}`;
     const validatorData = await fetchJSON(validatorUrl);
     
-    // Get total bonded tokens (network total)
     const poolUrl = `${API_BASE}/cosmos/staking/v1beta1/pool`;
     const poolData = await fetchJSON(poolUrl);
     
@@ -429,14 +471,13 @@ async function updateNetworkShare() {
       const ourTokens = parseInt(validatorData.validator.tokens);
       const totalBonded = parseInt(poolData.pool.bonded_tokens);
       
-      const ourStake = ourTokens / 1000000000000000000; // Convert to TICS
+      const ourStake = ourTokens / 1000000000000000000;
       const networkTotal = totalBonded / 1000000000000000000;
       const share = ((ourStake / networkTotal) * 100).toFixed(2);
       
       if (networkShareEl) networkShareEl.textContent = share + '%';
       if (ourStakeEl) ourStakeEl.textContent = formatNumber(ourStake) + ' TICS';
       
-      // Only update networkTotal if it's the share stats element (not network traffic)
       if (networkTotalEl && networkTotalEl.closest('.share-stats')) {
         networkTotalEl.textContent = formatNumber(networkTotal) + ' TICS';
       }
@@ -461,18 +502,18 @@ async function updateAll() {
     updateDelegators(),
     updateInflation(),
     updateUptime(),
-    updateLatestDelegations(),      // NEW: Real delegations
-    updateTop20Delegators(),        // NEW: Real top 20
-    updateOutstandingRewards(),     // NEW: Real rewards
-    updateNetworkShare()            // NEW: Real network share
+    updateTicsPrice(),              // ADDED: TICS Price
+    updateLatestDelegations(),
+    updateTop20Delegators(),
+    updateOutstandingRewards(),
+    updateNetworkShare()
   ]);
 }
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('🚀 QubeNode Sync v3.0.0 initialized (About page extended)');
+  console.log('🚀 QubeNode Sync v3.0.1 initialized (About page + TICS Price)');
   
-  // Initial update
   setTimeout(() => {
     updateAll();
   }, 100);
@@ -488,10 +529,10 @@ document.addEventListener('DOMContentLoaded', () => {
     updateDelegators();
     updateInflation();
     updateUptime();
+    updateTicsPrice();            // ADDED: TICS Price
     updateLatestDelegations();
     updateTop20Delegators();
     updateOutstandingRewards();
     updateNetworkShare();
   }, 15000);
 });
-

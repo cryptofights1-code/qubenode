@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary Meta Tags -->
+    <title>About QubeNode - Professional Validator Infrastructure | Real-time Metrics</title>
+    <meta name="title" content="About QubeNode - Professional Validator Infrastructure">
+    <meta name="description" content="Live monitoring of QubeNode validator infrastructure. Real-time metrics, server performance, uptime statistics, and latest delegations on Qubetics blockchain.">
+    <meta name="keywords" content="QubeNode about, validator infrastructure, server monitoring, uptime statistics, Qubetics validator metrics, real-time performance, delegation tracking">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://qubenode.space/about.html">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://qubenode.space/about.html">
+    <meta property="og:title" content="About QubeNode - Professional Validator Infrastructure">
+    <meta property="og:description" content="Live monitoring and real-time metrics of QubeNode validator infrastructure on Qubetics blockchain.">
+    <meta property="og:image" content="https://qubenode.space/android-chrome-512x512.png">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://qubenode.space/about.html">
+    <meta name="twitter:title" content="About QubeNode Validator">
+    <meta name="twitter:description" content="Live infrastructure monitoring and performance metrics.">
+    <meta name="twitter:image" content="https://qubenode.space/android-chrome-512x512.png">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "QubeNode",
+      "url": "https://qubenode.space",
+      "logo": "https://qubenode.space/android-chrome-512x512.png",
+      "description": "Professional Qubetics blockchain validator with enterprise-grade infrastructure",
+      "sameAs": [
+        "https://t.me/+sRnz7RyoL4Q0MWEy"
+      ]
+    }
+    </script>
+    
+    <!-- About Styles - CSP Compliant -->
+    <link rel="stylesheet" href="styles-about.css">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation"></div>
+    <div class="grid-overlay"></div>
+
+    <!-- Content -->
+    <div class="content">
+        <!-- Back Button -->
+        <a href="index.html" class="back-button">
+            🏠 To Main
+        </a>
+
+        <!-- Hero Section - Live Status -->
+        <section class="hero-status">
+            <div class="status-badge">
+                <span class="status-dot"></span>
+                <span class="status-text">VALIDATOR STATUS: <span id="validatorStatus">LOADING...</span></span>
+            </div>
+            
+            <h1 class="main-title">
+                <span class="title-about">About</span> <span class="title-qubenode">QubeNode</span>
+            </h1>
+            <p class="main-subtitle">Professional Validator Infrastructure & Real-time Monitoring</p>
+            
+            <!-- Live Metrics Cards -->
+            <div class="live-metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon">📊</div>
+                    <div class="metric-label">Block Height</div>
+                    <div class="metric-value" id="currentBlock">--</div>
+                    <div class="metric-subtitle">Current Block</div>
+                </div>
+                
+                <div class="metric-card highlight">
+                    <div class="metric-icon">⚡</div>
+                    <div class="metric-label">Voting Power</div>
+                    <div class="metric-value" id="delegatedAmountContainer">--</div>
+                    <div class="metric-subtitle">TICS Delegated</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-icon">🔗</div>
+                    <div class="metric-label">Network Peers</div>
+                    <div class="metric-value" id="peerCount">--</div>
+                    <div class="metric-subtitle">Connected</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-icon">⏱️</div>
+                    <div class="metric-label">Uptime</div>
+                    <div class="metric-value" id="uptimePercent">99.98%</div>
+                    <div class="metric-subtitle">Last 30 Days</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Infrastructure Section - Speedometers -->
+        <section class="infrastructure-section">
+            <h2 class="section-title">
+                <span class="title-icon">🖥️</span>
+                Infrastructure Performance
+            </h2>
+            
+            <div class="speedometers-grid">
+                <!-- CPU Speedometer -->
+                <div class="speedometer-card">
+                    <h3 class="speedometer-title">CPU Usage</h3>
+                    <div class="speedometer-container">
+                        <svg class="speedometer" viewBox="0 0 200 120">
+                            <!-- Background arc -->
+                            <path class="speedometer-bg" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke-width="20" stroke-linecap="round"/>
+                            <!-- Progress arc -->
+                            <path id="cpuArc" class="speedometer-progress" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke-width="20" stroke-linecap="round"/>
+                            <!-- Center text -->
+                            <text x="100" y="80" class="speedometer-value" id="cpuValue">0%</text>
+                            <text x="100" y="100" class="speedometer-label">CPU</text>
+                        </svg>
+                    </div>
+                    <div class="speedometer-info">
+                        <span class="info-label">Cores:</span>
+                        <span class="info-value">8 vCPU</span>
+                    </div>
+                </div>
+
+                <!-- RAM Speedometer -->
+                <div class="speedometer-card">
+                    <h3 class="speedometer-title">Memory Usage</h3>
+                    <div class="speedometer-container">
+                        <svg class="speedometer" viewBox="0 0 200 120">
+                            <path class="speedometer-bg" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke-width="20" stroke-linecap="round"/>
+                            <path id="ramArc" class="speedometer-progress" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke-width="20" stroke-linecap="round"/>
+                            <text x="100" y="80" class="speedometer-value" id="ramValue">0%</text>
+                            <text x="100" y="100" class="speedometer-label">RAM</text>
+                        </svg>
+                    </div>
+                    <div class="speedometer-info">
+                        <span class="info-label">Total:</span>
+                        <span class="info-value">48 GB</span>
+                    </div>
+                </div>
+
+                <!-- Disk Speedometer -->
+                <div class="speedometer-card">
+                    <h3 class="speedometer-title">Disk Usage</h3>
+                    <div class="speedometer-container">
+                        <svg class="speedometer" viewBox="0 0 200 120">
+                            <path class="speedometer-bg" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke-width="20" stroke-linecap="round"/>
+                            <path id="diskArc" class="speedometer-progress" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke-width="20" stroke-linecap="round"/>
+                            <text x="100" y="80" class="speedometer-value" id="diskValue">0%</text>
+                            <text x="100" y="100" class="speedometer-label">DISK</text>
+                        </svg>
+                    </div>
+                    <div class="speedometer-info">
+                        <span class="info-label">Capacity:</span>
+                        <span class="info-value">500 GB NVMe</span>
+                    </div>
+                </div>
+
+                <!-- Network Traffic -->
+                <div class="speedometer-card network-card">
+                    <h3 class="speedometer-title">Network Traffic</h3>
+                    <div class="network-stats">
+                        <div class="network-row">
+                            <span class="network-icon">↓</span>
+                            <span class="network-label">Download</span>
+                            <span class="network-value" id="networkDown">-- MB/s</span>
+                        </div>
+                        <div class="network-row">
+                            <span class="network-icon">↑</span>
+                            <span class="network-label">Upload</span>
+                            <span class="network-value" id="networkUp">-- MB/s</span>
+                        </div>
+                        <div class="network-row total">
+                            <span class="network-icon">⇅</span>
+                            <span class="network-label">Total</span>
+                            <span class="network-value" id="networkTotal">-- MB/s</span>
+                        </div>
+                    </div>
+                    <canvas id="networkChart" class="network-chart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Rewards Section -->
+        <section class="rewards-section">
+            <h2 class="section-title">
+                <span class="title-icon">💰</span>
+                Outstanding Rewards
+            </h2>
+            
+            <div class="rewards-container">
+                <!-- Rewards Stats -->
+                <div class="rewards-stats">
+                    <div class="rewards-card">
+                        <div class="rewards-label">Total Rewards (30d)</div>
+                        <div class="rewards-value" id="totalRewards">-- TICS</div>
+                        <div class="rewards-change positive" id="rewardsTrend">+0.0%</div>
+                    </div>
+                    
+                    <div class="rewards-card">
+                        <div class="rewards-label">Average Daily</div>
+                        <div class="rewards-value" id="avgDailyRewards">-- TICS</div>
+                        <div class="rewards-subtitle">Per Day</div>
+                    </div>
+                    
+                    <div class="rewards-card">
+                        <div class="rewards-label">Commission Rate</div>
+                        <div class="rewards-value">5%</div>
+                        <div class="rewards-subtitle">Industry Standard</div>
+                    </div>
+                </div>
+
+                <!-- Rewards Chart -->
+                <div class="rewards-chart-container">
+                    <canvas id="rewardsChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Network Share & Performance Section -->
+        <section class="performance-section">
+            <div class="performance-grid">
+                <!-- Network Share Card -->
+                <div class="performance-card network-share-card">
+                    <h2 class="card-title">
+                        <span class="title-icon">📊</span>
+                        Network Share
+                    </h2>
+                    <div class="network-share-content">
+                        <div class="share-percentage" id="networkShare">--</div>
+                        <div class="share-label">of Total Network Stake</div>
+                        <div class="share-stats">
+                            <div class="share-stat">
+                                <span class="stat-label">Our Stake:</span>
+                                <span class="stat-value" id="ourStake">-- TICS</span>
+                            </div>
+                            <div class="share-stat">
+                                <span class="stat-label">Network Total:</span>
+                                <span class="stat-value" id="networkTotal">-- TICS</span>
+                            </div>
+                            <div class="share-stat">
+                                <span class="stat-label">Rank:</span>
+                                <span class="stat-value rank-badge" id="validatorRank">#--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Validator Performance Card -->
+                <div class="performance-card">
+                    <h2 class="card-title">
+                        <span class="title-icon">⚡</span>
+                        Validator Performance
+                    </h2>
+                    <div class="performance-metrics">
+                        <div class="metric-row">
+                            <span class="metric-label">Block Signing Rate:</span>
+                            <span class="metric-value success">99.98%</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Missed Blocks:</span>
+                            <span class="metric-value">3 / 150,000</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Avg Block Time:</span>
+                            <span class="metric-value" id="avgBlockTime">5.63s</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Jailed Status:</span>
+                            <span class="metric-value success">Never ✓</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Slashing Events:</span>
+                            <span class="metric-value success">0 ✓</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Achievements Card -->
+                <div class="performance-card achievements-card">
+                    <h2 class="card-title">
+                        <span class="title-icon">🎖️</span>
+                        Achievements
+                    </h2>
+                    <div class="achievements-grid">
+                        <div class="achievement-badge">
+                            <div class="badge-icon">✓</div>
+                            <div class="badge-text">100% Uptime<br><span class="badge-subtext">90 days</span></div>
+                        </div>
+                        <div class="achievement-badge">
+                            <div class="badge-icon">✓</div>
+                            <div class="badge-text">Zero Slashing<br><span class="badge-subtext">Perfect record</span></div>
+                        </div>
+                        <div class="achievement-badge">
+                            <div class="badge-icon">🏆</div>
+                            <div class="badge-text">Top 10<br><span class="badge-subtext">Validator</span></div>
+                        </div>
+                        <div class="achievement-badge">
+                            <div class="badge-icon">👥</div>
+                            <div class="badge-text">1000+<br><span class="badge-subtext">Delegators</span></div>
+                        </div>
+                        <div class="achievement-badge">
+                            <div class="badge-icon">✓</div>
+                            <div class="badge-text">Community<br><span class="badge-subtext">Verified</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TOP 20 Delegators Section -->
+        <section class="top-delegators-section">
+            <h2 class="section-title">
+                <span class="title-icon">🏆</span>
+                TOP 20 Delegators
+            </h2>
+            
+            <div class="top-delegators-container">
+                <div class="top-delegators-table">
+                    <div class="top-table-header">
+                        <div class="top-col col-rank">Rank</div>
+                        <div class="top-col col-delegator">Delegator</div>
+                        <div class="top-col col-amount">Amount</div>
+                        <div class="top-col col-share">% Share</div>
+                    </div>
+                    
+                    <div class="top-table-body" id="topDelegatorsTable">
+                        <div class="table-row loading">
+                            <div class="loading-spinner"></div>
+                            <span>Loading top delegators...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Delegation Growth Chart Section -->
+        <section class="growth-section">
+            <h2 class="section-title">
+                <span class="title-icon">📈</span>
+                Delegation Growth (30 Days)
+            </h2>
+            
+            <div class="growth-chart-container">
+                <canvas id="growthChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Live Activity Feed Section -->
+        <section class="activity-section">
+            <h2 class="section-title">
+                <span class="title-icon">🔔</span>
+                Live Activity Feed
+            </h2>
+            
+            <div class="activity-feed" id="activityFeed">
+                <div class="activity-item loading">
+                    <div class="loading-spinner"></div>
+                    <span>Loading activity...</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Latest Delegations -->
+        <section class="delegations-section">
+            <h2 class="section-title">
+                <span class="title-icon">👥</span>
+                Latest Delegations
+            </h2>
+            
+            <div class="delegations-container">
+                <div class="delegations-table">
+                    <div class="table-header">
+                        <div class="table-col col-delegator">Delegator</div>
+                        <div class="table-col col-amount">Amount</div>
+                        <div class="table-col col-time">Time</div>
+                    </div>
+                    
+                    <div class="table-body" id="delegationsTable">
+                        <!-- Will be populated by JavaScript -->
+                        <div class="table-row loading">
+                            <div class="loading-spinner"></div>
+                            <span>Loading latest delegations...</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="delegations-stats">
+                    <div class="stat-item">
+                        <div class="stat-label">Total Delegators</div>
+                        <div class="stat-value" id="delegatorsCount">--</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">24h Delegations</div>
+                        <div class="stat-value" id="dailyDelegations">--</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Avg. Delegation</div>
+                        <div class="stat-value" id="avgDelegation">-- TICS</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Server Information -->
+        <section class="server-info-section">
+            <h2 class="section-title">
+                <span class="title-icon">🌐</span>
+                Server Infrastructure
+            </h2>
+            
+            <div class="server-cards-grid">
+                <!-- Location Card -->
+                <div class="server-card">
+                    <div class="server-card-header">
+                        <span class="server-icon">📍</span>
+                        <h3>Location</h3>
+                    </div>
+                    <div class="server-card-content">
+                        <div class="info-row">
+                            <span class="info-label">Datacenter:</span>
+                            <span class="info-value">Frankfurt, Germany</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Provider:</span>
+                            <span class="info-value">Contabo GmbH</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Network:</span>
+                            <span class="info-value">1 Gbit/s</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Latency:</span>
+                            <span class="info-value">&lt; 5ms</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hardware Card -->
+                <div class="server-card">
+                    <div class="server-card-header">
+                        <span class="server-icon">🖥️</span>
+                        <h3>Hardware Specs</h3>
+                    </div>
+                    <div class="server-card-content">
+                        <div class="info-row">
+                            <span class="info-label">CPU:</span>
+                            <span class="info-value">8 vCPU Cores</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">RAM:</span>
+                            <span class="info-value">48 GB DDR4</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Storage:</span>
+                            <span class="info-value">500 GB NVMe SSD</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">OS:</span>
+                            <span class="info-value">Ubuntu 24.04 LTS</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Card -->
+                <div class="server-card">
+                    <div class="server-card-header">
+                        <span class="server-icon">🔒</span>
+                        <h3>Security Measures</h3>
+                    </div>
+                    <div class="server-card-content">
+                        <div class="security-feature">
+                            <span class="security-check">✓</span>
+                            <span>Multi-layer Firewall Protection</span>
+                        </div>
+                        <div class="security-feature">
+                            <span class="security-check">✓</span>
+                            <span>Cloudflare DDoS Protection</span>
+                        </div>
+                        <div class="security-feature">
+                            <span class="security-check">✓</span>
+                            <span>SSL/TLS Encryption</span>
+                        </div>
+                        <div class="security-feature">
+                            <span class="security-check">✓</span>
+                            <span>24/7 Monitoring (Netdata)</span>
+                        </div>
+                        <div class="security-feature">
+                            <span class="security-check">✓</span>
+                            <span>Rate Limiting & API Keys</span>
+                        </div>
+                        <div class="security-feature">
+                            <span class="security-check">✓</span>
+                            <span>Automated Backups</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Monitoring Card -->
+                <div class="server-card">
+                    <div class="server-card-header">
+                        <span class="server-icon">📊</span>
+                        <h3>Monitoring & Alerts</h3>
+                    </div>
+                    <div class="server-card-content">
+                        <div class="security-feature">
+                            <span class="security-check">✓</span>
+                            <span>Real-time Metrics Dashboard</span>
+                        </div>
+                        <div class="security-feature">
+                            <span class="security-check">✓</span>
+                            <span>Resource Usage Tracking</span>
+                        </div>
+                        <div class="security-feature">
+                            <span class="security-check">✓</span>
+                            <span>Network Performance Monitor</span>
+                        </div>
+                        <div class="security-feature">
+                            <span class="security-check">✓</span>
+                            <span>Validator Status Alerts</span>
+                        </div>
+                        <div class="security-feature">
+                            <span class="security-check">✓</span>
+                            <span>Uptime Tracking</span>
+                        </div>
+                        <div class="security-feature">
+                            <span class="security-check">✓</span>
+                            <span>Performance Optimization</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <section class="cta-section">
+            <div class="cta-content">
+                <h2 class="cta-title">Ready to Delegate?</h2>
+                <p class="cta-text">Join our growing community of delegators and start earning rewards today</p>
+                <div class="cta-buttons">
+                    <a href="how-to-delegate.html" class="cta-btn cta-primary">
+                        <span class="cta-icon">💎</span>
+                        <span>Delegate Now</span>
+                    </a>
+                    <a href="calculator.html" class="cta-btn cta-secondary">
+                        <span class="cta-icon">🧮</span>
+                        <span>Calculate Rewards</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <p><strong>QubeNode</strong> - Professional Qubetics Network Validator</p>
+            <p>© 2025 QubeNode. All rights reserved. | <a href="https://t.me/+sRnz7RyoL4Q0MWEy" target="_blank">Telegram</a></p>
+        </footer>
+    </div>
+
+    <!-- Sync Script - Validator Data from APIs -->
+    <script src="sync.js"></script>
+    
+    <!-- About Page Initialization - CSP Compliant -->
+    <script src="init-about.js"></script>
+</body>
+</html>

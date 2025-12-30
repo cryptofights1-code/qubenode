@@ -137,20 +137,16 @@
         
         const networkDown = document.getElementById('networkDown');
         const networkUp = document.getElementById('networkUp');
-        const networkTotal = document.getElementById('networkTotal');
+        const networkTotalTraffic = document.getElementById('networkTotalTraffic');
         
-        if (networkDown && networkUp && networkTotal) {
+        if (networkDown && networkUp && networkTotalTraffic) {
             const down = (2 + Math.random() * 3).toFixed(2);
             const up = (1 + Math.random() * 2).toFixed(2);
             const total = (parseFloat(down) + parseFloat(up)).toFixed(2);
             
             networkDown.textContent = down + ' MB/s';
             networkUp.textContent = up + ' MB/s';
-            
-            // Only update if it's the network traffic element (not network share)
-            if (!networkTotal.closest('.share-stats')) {
-                networkTotal.textContent = total + ' MB/s';
-            }
+            networkTotalTraffic.textContent = total + ' MB/s';
         }
     }
 

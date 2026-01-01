@@ -2,11 +2,12 @@
 // Includes: validator info, delegators, inflation, uptime, validator rank, TICS price from MEXC
 // v3.0: Using Cloudflare Worker proxy for MEXC API (GitHub Pages compatible)
 
-console.log('🚀 QubeNode Sync v3.0 LOADED - Cloudflare Worker proxy');
+console.log('🚀 QubeNode Sync v3.0.2 LOADED - RPC Worker + Cloudflare Worker proxy');
 
 const API_BASE = "https://swagger.qubetics.com";
 const VALIDATOR = "qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld";
 const TICSSCAN_API = "https://v2.ticsscan.com/api/v2";
+const RPC_WORKER = "https://qubenode-rpc-proxy.yuskivvolodymyr.workers.dev"; // QubeNode RPC через Worker
 
 // Validator addresses
 const VALCONS_ADDR = "qubeticsvalcons1dlmj5pzg3fv54nrtejnfxmrj08d7qs09xjp2eu"; // Signer/Consensus
@@ -489,6 +490,8 @@ document.addEventListener('DOMContentLoaded', () => {
     updateUptime();
     updateTicsPrice();
     // About page updates (if elements exist)
+    if (typeof updateValidatorStatus === 'function') updateValidatorStatus();
+    if (typeof updateNetworkPeers === 'function') updateNetworkPeers();
     if (typeof updateLatestDelegations === 'function') updateLatestDelegations();
     if (typeof updateTop20Delegators === 'function') updateTop20Delegators();
     if (typeof updateOutstandingRewards === 'function') updateOutstandingRewards();
@@ -520,6 +523,59 @@ function formatNumber(num) {
 function formatAddress(address) {
     if (!address || address.length < 20) return address;
     return address.slice(0, 12) + '...' + address.slice(-6);
+}
+
+// ===== VALIDATOR STATUS =====
+async function updateValidatorStatus() {
+  const statusEl = document.getElementById("validatorStatus");
+  if (!statusEl) return;
+  
+  try {
+    const url = `${API_BASE}/cosmos/staking/v1beta1/validators/${VALIDATOR}`;
+    const data = await fetchJSON(url);
+    
+    if (data?.validator) {
+      const validator = data.validator;
+      
+      if (validator.status === "BOND_STATUS_BONDED") {
+        statusEl.textContent = "ACTIVE";
+        statusEl.style.color = "#22c55e"; // Green
+      } else if (validator.jailed) {
+        statusEl.textContent = "JAILED";
+        statusEl.style.color = "#ef4444"; // Red
+      } else if (validator.status === "BOND_STATUS_UNBONDING") {
+        statusEl.textContent = "UNBONDING";
+        statusEl.style.color = "#fbbf24"; // Yellow
+      } else {
+        statusEl.textContent = "INACTIVE";
+        statusEl.style.color = "#94a3b8"; // Gray
+      }
+      
+      console.log(`✅ Validator status: ${statusEl.textContent}`);
+    }
+  } catch (error) {
+    console.error('❌ Error fetching validator status:', error);
+  }
+}
+
+// ===== NETWORK PEERS (з вашого RPC) =====
+async function updateNetworkPeers() {
+  const peerCountEl = document.getElementById("peerCount");
+  if (!peerCountEl) return;
+  
+  try {
+    // Отримати net_info з вашого RPC через Worker
+    const url = `${RPC_WORKER}/rpc/net_info`;
+    const data = await fetchJSON(url);
+    
+    if (data?.result?.n_peers) {
+      const totalPeers = parseInt(data.result.n_peers);
+      peerCountEl.textContent = totalPeers;
+      console.log(`✅ Network peers: ${totalPeers}`);
+    }
+  } catch (error) {
+    console.error('❌ Error fetching network peers:', error);
+  }
 }
 
 // Latest Delegations (for about.html)

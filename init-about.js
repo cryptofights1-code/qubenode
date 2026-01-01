@@ -136,16 +136,15 @@
             const cpuData = await cpuResponse.json();
             if (cpuData?.data?.[0]) {
                 const latest = cpuData.data[0];
-                // data = [timestamp, user, system, nice, idle, ...]
-                const user = latest[1] || 0;
-                const system = latest[2] || 0;
+                // Індекси: [0]=time, [1]=guest_nice, [2]=guest, [3]=steal, [4]=softirq, [5]=irq, [6]=user, [7]=system, [8]=nice, [9]=iowait
+                const user = latest[6] || 0;
+                const system = latest[7] || 0;
                 const cpuUsage = user + system;
                 updateSpeedometer('cpuArc', 'cpuValue', cpuUsage);
                 console.log('✅ CPU from Netdata:', cpuUsage.toFixed(1) + '%');
             }
         } catch (error) {
             console.error('❌ CPU fetch error:', error);
-            // Fallback to mock
             updateSpeedometer('cpuArc', 'cpuValue', 35 + Math.random() * 20);
         }
         
@@ -155,7 +154,7 @@
             const ramData = await ramResponse.json();
             if (ramData?.data?.[0]) {
                 const latest = ramData.data[0];
-                // data = [timestamp, free, used, cached, buffers, ...]
+                // Індекси: [0]=time, [1]=free, [2]=used, [3]=cached, [4]=buffers
                 const free = latest[1] || 0;
                 const used = latest[2] || 0;
                 const total = free + used;
@@ -165,17 +164,16 @@
             }
         } catch (error) {
             console.error('❌ RAM fetch error:', error);
-            // Fallback to mock
             updateSpeedometer('ramArc', 'ramValue', 20 + Math.random() * 15);
         }
         
         try {
             // Disk Usage
-            const diskResponse = await fetch(`${RPC_WORKER}/netdata/api/v1/data?chart=disk_space._&points=1`);
+            const diskResponse = await fetch(`${RPC_WORKER}/netdata/api/v1/data?chart=disk_space.%2F&points=1`);
             const diskData = await diskResponse.json();
             if (diskData?.data?.[0]) {
                 const latest = diskData.data[0];
-                // data = [timestamp, avail, used, reserved, ...]
+                // Індекси: [0]=time, [1]=avail, [2]=used, [3]=reserved
                 const avail = latest[1] || 0;
                 const used = latest[2] || 0;
                 const total = avail + used;
@@ -185,7 +183,6 @@
             }
         } catch (error) {
             console.error('❌ Disk fetch error:', error);
-            // Fallback to mock
             updateSpeedometer('diskArc', 'diskValue', 10 + Math.random() * 5);
         }
         
@@ -195,7 +192,7 @@
             const netData = await netResponse.json();
             if (netData?.data?.[0]) {
                 const latest = netData.data[0];
-                // data = [timestamp, received, sent, ...]
+                // Індекси: [0]=time, [1]=received (KB/s), [2]=sent (KB/s, може бути негативним!)
                 const received = Math.abs(latest[1] || 0); // KB/s
                 const sent = Math.abs(latest[2] || 0); // KB/s
                 
@@ -216,7 +213,6 @@
             }
         } catch (error) {
             console.error('❌ Network fetch error:', error);
-            // Fallback to mock
             const networkDown = document.getElementById('networkDown');
             const networkUp = document.getElementById('networkUp');
             const networkTotalTraffic = document.getElementById('networkTotalTraffic');

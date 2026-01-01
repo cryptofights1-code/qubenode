@@ -126,27 +126,110 @@
     }
 
     // ===== SIMULATE INFRASTRUCTURE METRICS =====
-    function updateInfrastructureMetrics() {
-        const cpuUsage = 35 + Math.random() * 20;
-        const ramUsage = 20 + Math.random() * 15;
-        const diskUsage = 10 + Math.random() * 5;
+    // ===== INFRASTRUCTURE METRICS (REAL NETDATA DATA) =====
+    async function updateInfrastructureMetrics() {
+        const RPC_WORKER = 'https://qubenode-rpc-proxy.yuskivvolodymyr.workers.dev';
         
-        updateSpeedometer('cpuArc', 'cpuValue', cpuUsage);
-        updateSpeedometer('ramArc', 'ramValue', ramUsage);
-        updateSpeedometer('diskArc', 'diskValue', diskUsage);
+        try {
+            // CPU Usage
+            const cpuResponse = await fetch(`${RPC_WORKER}/netdata/api/v1/data?chart=system.cpu&points=1`);
+            const cpuData = await cpuResponse.json();
+            if (cpuData?.data?.[0]) {
+                const latest = cpuData.data[0];
+                // data = [timestamp, user, system, nice, idle, ...]
+                const user = latest[1] || 0;
+                const system = latest[2] || 0;
+                const cpuUsage = user + system;
+                updateSpeedometer('cpuArc', 'cpuValue', cpuUsage);
+                console.log('✅ CPU from Netdata:', cpuUsage.toFixed(1) + '%');
+            }
+        } catch (error) {
+            console.error('❌ CPU fetch error:', error);
+            // Fallback to mock
+            updateSpeedometer('cpuArc', 'cpuValue', 35 + Math.random() * 20);
+        }
         
-        const networkDown = document.getElementById('networkDown');
-        const networkUp = document.getElementById('networkUp');
-        const networkTotalTraffic = document.getElementById('networkTotalTraffic');
+        try {
+            // RAM Usage
+            const ramResponse = await fetch(`${RPC_WORKER}/netdata/api/v1/data?chart=system.ram&points=1`);
+            const ramData = await ramResponse.json();
+            if (ramData?.data?.[0]) {
+                const latest = ramData.data[0];
+                // data = [timestamp, free, used, cached, buffers, ...]
+                const free = latest[1] || 0;
+                const used = latest[2] || 0;
+                const total = free + used;
+                const ramUsagePercent = (used / total) * 100;
+                updateSpeedometer('ramArc', 'ramValue', ramUsagePercent);
+                console.log('✅ RAM from Netdata:', ramUsagePercent.toFixed(1) + '%');
+            }
+        } catch (error) {
+            console.error('❌ RAM fetch error:', error);
+            // Fallback to mock
+            updateSpeedometer('ramArc', 'ramValue', 20 + Math.random() * 15);
+        }
         
-        if (networkDown && networkUp && networkTotalTraffic) {
-            const down = (2 + Math.random() * 3).toFixed(2);
-            const up = (1 + Math.random() * 2).toFixed(2);
-            const total = (parseFloat(down) + parseFloat(up)).toFixed(2);
+        try {
+            // Disk Usage
+            const diskResponse = await fetch(`${RPC_WORKER}/netdata/api/v1/data?chart=disk_space._&points=1`);
+            const diskData = await diskResponse.json();
+            if (diskData?.data?.[0]) {
+                const latest = diskData.data[0];
+                // data = [timestamp, avail, used, reserved, ...]
+                const avail = latest[1] || 0;
+                const used = latest[2] || 0;
+                const total = avail + used;
+                const diskUsagePercent = (used / total) * 100;
+                updateSpeedometer('diskArc', 'diskValue', diskUsagePercent);
+                console.log('✅ Disk from Netdata:', diskUsagePercent.toFixed(1) + '%');
+            }
+        } catch (error) {
+            console.error('❌ Disk fetch error:', error);
+            // Fallback to mock
+            updateSpeedometer('diskArc', 'diskValue', 10 + Math.random() * 5);
+        }
+        
+        try {
+            // Network Traffic
+            const netResponse = await fetch(`${RPC_WORKER}/netdata/api/v1/data?chart=system.net&points=1`);
+            const netData = await netResponse.json();
+            if (netData?.data?.[0]) {
+                const latest = netData.data[0];
+                // data = [timestamp, received, sent, ...]
+                const received = Math.abs(latest[1] || 0); // KB/s
+                const sent = Math.abs(latest[2] || 0); // KB/s
+                
+                const down = (received / 1024).toFixed(2); // MB/s
+                const up = (sent / 1024).toFixed(2); // MB/s
+                const total = (parseFloat(down) + parseFloat(up)).toFixed(2);
+                
+                const networkDown = document.getElementById('networkDown');
+                const networkUp = document.getElementById('networkUp');
+                const networkTotalTraffic = document.getElementById('networkTotalTraffic');
+                
+                if (networkDown && networkUp && networkTotalTraffic) {
+                    networkDown.textContent = down + ' MB/s';
+                    networkUp.textContent = up + ' MB/s';
+                    networkTotalTraffic.textContent = total + ' MB/s';
+                    console.log('✅ Network from Netdata: ↓' + down + ' ↑' + up);
+                }
+            }
+        } catch (error) {
+            console.error('❌ Network fetch error:', error);
+            // Fallback to mock
+            const networkDown = document.getElementById('networkDown');
+            const networkUp = document.getElementById('networkUp');
+            const networkTotalTraffic = document.getElementById('networkTotalTraffic');
             
-            networkDown.textContent = down + ' MB/s';
-            networkUp.textContent = up + ' MB/s';
-            networkTotalTraffic.textContent = total + ' MB/s';
+            if (networkDown && networkUp && networkTotalTraffic) {
+                const down = (2 + Math.random() * 3).toFixed(2);
+                const up = (1 + Math.random() * 2).toFixed(2);
+                const total = (parseFloat(down) + parseFloat(up)).toFixed(2);
+                
+                networkDown.textContent = down + ' MB/s';
+                networkUp.textContent = up + ' MB/s';
+                networkTotalTraffic.textContent = total + ' MB/s';
+            }
         }
     }
 

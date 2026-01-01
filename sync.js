@@ -265,7 +265,7 @@ async function updateTicsPrice() {
   const changeEl = document.getElementById("ticsChange");
   
   if (!priceEl || !changeEl) {
-    console.warn('⚠️ Price elements not found');
+    // Елементів немає на about.html - це нормально
     return;
   }
 
@@ -361,7 +361,7 @@ function addNewBlockVisual() {
 function initBlockAnimation() {
   const container = document.getElementById('blocksChainInline');
   if (!container) {
-    console.warn('⚠️ Container blocksChainInline not found');
+    // Контейнера немає на about.html - це нормально
     return;
   }
   

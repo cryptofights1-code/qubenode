@@ -538,7 +538,7 @@
         console.log('🚀 Initializing About page v3.0.1 with CORS proxy support...');
         console.log('CORS Proxy enabled:', CONFIG.useCorsProxy);
         
-        fetchNetworkInfo();
+        // fetchNetworkInfo(); // ВІДКЛЮЧЕНО - peers тепер з sync.js RPC Worker
         fetchLatestDelegations();
         updateInfrastructureMetrics();
         
@@ -548,7 +548,7 @@
         initActivityFeed();
         
         setInterval(() => {
-            fetchNetworkInfo();
+            // fetchNetworkInfo(); // ВІДКЛЮЧЕНО - peers тепер з sync.js RPC Worker
             updateInfrastructureMetrics();
         }, CONFIG.updateInterval);
         

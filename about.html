@@ -162,6 +162,29 @@
                     </div>
                 </div>
 
+                <!-- Disk I/O -->
+                <div class="speedometer-card network-card">
+                    <h3 class="speedometer-title">Disk I/O</h3>
+                    <div class="network-stats">
+                        <div class="network-row">
+                            <span class="network-icon">📖</span>
+                            <span class="network-label">Read</span>
+                            <span class="network-value" id="diskRead">-- MB/s</span>
+                        </div>
+                        <div class="network-row">
+                            <span class="network-icon">📝</span>
+                            <span class="network-label">Write</span>
+                            <span class="network-value" id="diskWrite">-- MB/s</span>
+                        </div>
+                        <div class="network-row total">
+                            <span class="network-icon">💾</span>
+                            <span class="network-label">Total I/O</span>
+                            <span class="network-value" id="diskTotal">-- MB/s</span>
+                        </div>
+                    </div>
+                    <canvas id="diskIoChart" class="network-chart"></canvas>
+                </div>
+
                 <!-- Network Traffic -->
                 <div class="speedometer-card network-card">
                     <h3 class="speedometer-title">Network Traffic</h3>

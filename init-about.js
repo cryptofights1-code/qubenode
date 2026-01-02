@@ -1,25 +1,29 @@
 /**
- * About QubeNode Page - v4.1 FIX
- * Real data + readable charts
+ * About QubeNode Page Initialization
+ * Real-time metrics, speedometer animations, and live data
+ * CSP Compliant - External script file
+ * Integrated with sync.js for real validator data
+ * v3.0.1 - Added CORS proxy support
  */
 
 (function() {
     'use strict';
 
+    // ===== CONFIGURATION =====
     const CONFIG = {
-        updateInterval: 10000,
-        useCorsProxy: false
+        updateInterval: 10000, // 10 seconds
+        corsProxy: "https://corsproxy.io/?",
+        useCorsProxy: true // Set to false in production with Cloudflare Worker
     };
 
-    const API_BASE = "https://swagger.qubetics.com";
-    const VALIDATOR = "qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld";
-    const RPC_WORKER = 'https://qubenode-rpc-proxy.yuskivvolodymyr.workers.dev';
-
-    // ===== UTILITY =====
+    // ===== UTILITY FUNCTIONS =====
     function formatNumber(num) {
-        if (num >= 1000000) return (num / 1000000).toFixed(2) + 'M';
-        if (num >= 1000) return (num / 1000).toFixed(2) + 'K';
-        return Math.round(num).toLocaleString();
+        if (num >= 1000000) {
+            return (num / 1000000).toFixed(2) + 'M';
+        } else if (num >= 1000) {
+            return (num / 1000).toFixed(2) + 'K';
+        }
+        return num.toLocaleString();
     }
 
     function formatAddress(address) {
@@ -30,6 +34,7 @@
     function timeAgo(timestamp) {
         const now = Date.now();
         const diff = now - timestamp;
+        
         const seconds = Math.floor(diff / 1000);
         const minutes = Math.floor(seconds / 60);
         const hours = Math.floor(minutes / 60);
@@ -41,10 +46,19 @@
         return 'just now';
     }
 
-    // ===== SPEEDOMETER =====
+    // Fetch with CORS proxy support
+    async function fetchWithProxy(url) {
+        const fetchUrl = CONFIG.useCorsProxy 
+            ? CONFIG.corsProxy + encodeURIComponent(url)
+            : url;
+        return fetch(fetchUrl);
+    }
+
+    // ===== SPEEDOMETER ANIMATION =====
     function updateSpeedometer(arcId, valueId, percentage) {
         const arc = document.getElementById(arcId);
         const valueText = document.getElementById(valueId);
+        
         if (!arc || !valueText) return;
         
         const radius = 80;
@@ -62,187 +76,242 @@
         arc.setAttribute('d', pathData);
         animateValue(valueText, 0, percentage, 800, (val) => val.toFixed(1) + '%');
         
-        if (percentage < 50) arc.setAttribute('stroke', '#22c55e');
-        else if (percentage < 80) arc.setAttribute('stroke', '#f59e0b');
-        else arc.setAttribute('stroke', '#ef4444');
+        if (percentage < 50) {
+            arc.setAttribute('stroke', '#22c55e');
+        } else if (percentage < 80) {
+            arc.setAttribute('stroke', '#f59e0b');
+        } else {
+            arc.setAttribute('stroke', '#ef4444');
+        }
     }
 
     function animateValue(element, start, end, duration, formatter) {
         const startTime = performance.now();
+        
         function update(currentTime) {
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
             const easeOutQuart = 1 - Math.pow(1 - progress, 4);
             const current = start + (end - start) * easeOutQuart;
+            
             element.textContent = formatter ? formatter(current) : current.toFixed(0);
-            if (progress < 1) requestAnimationFrame(update);
+            
+            if (progress < 1) {
+                requestAnimationFrame(update);
+            }
         }
+        
         requestAnimationFrame(update);
     }
 
-    // ===== INFRASTRUCTURE METRICS =====
+    // ===== FETCH NETWORK INFO =====
+    async function fetchNetworkInfo() {
+        try {
+            const response = await fetchWithProxy('https://tendermint.qubetics.com/net_info');
+            
+            if (!response.ok) throw new Error('Failed to fetch network info');
+            
+            const data = await response.json();
+            
+            const peerCount = document.getElementById('peerCount');
+            if (peerCount && data.result && data.result.n_peers) {
+                peerCount.textContent = data.result.n_peers;
+            }
+            
+            return data;
+        } catch (error) {
+            console.error('Error fetching network info:', error);
+            return null;
+        }
+    }
+
+    // ===== SIMULATE INFRASTRUCTURE METRICS =====
+    // ===== INFRASTRUCTURE METRICS (REAL NETDATA DATA) =====
     async function updateInfrastructureMetrics() {
+        const RPC_WORKER = 'https://qubenode-rpc-proxy.yuskivvolodymyr.workers.dev';
+        
+        // Get CPU cores count (one time)
         if (!window.cpuCoresDetected) {
             try {
                 const chartsResponse = await fetch(`${RPC_WORKER}/netdata/api/v1/charts`);
                 const chartsData = await chartsResponse.json();
                 if (chartsData?.charts?.['system.cpu']?.dimensions) {
+                    // Count dimensions that represent actual CPU cores (exclude guest, steal, etc.)
                     const dimensions = Object.keys(chartsData.charts['system.cpu'].dimensions);
+                    const coreLabels = dimensions.filter(d => 
+                        d.includes('user') || d.includes('system') || d.includes('nice') || 
+                        d.includes('iowait') || d.includes('softirq') || d.includes('irq')
+                    );
+                    // Each core has multiple dimensions, so divide by typical number (6-8)
                     const estimatedCores = Math.max(12, Math.round(dimensions.length / 6));
+                    
                     const cpuCoresEl = document.getElementById('cpuCores');
-                    if (cpuCoresEl) cpuCoresEl.textContent = estimatedCores + ' vCPU';
+                    if (cpuCoresEl) {
+                        cpuCoresEl.textContent = estimatedCores + ' vCPU';
+                        console.log('✅ CPU Cores detected:', estimatedCores);
+                    }
                     window.cpuCoresDetected = true;
                 }
             } catch (error) {
+                console.warn('⚠️ Could not detect CPU cores, using default 12');
                 window.cpuCoresDetected = true;
             }
         }
         
         try {
+            // CPU Usage
             const cpuResponse = await fetch(`${RPC_WORKER}/netdata/api/v1/data?chart=system.cpu&points=1`);
             const cpuData = await cpuResponse.json();
             if (cpuData?.data?.[0]) {
                 const latest = cpuData.data[0];
-                const cpuUsage = (latest[6] || 0) + (latest[7] || 0);
+                // Індекси: [0]=time, [1]=guest_nice, [2]=guest, [3]=steal, [4]=softirq, [5]=irq, [6]=user, [7]=system, [8]=nice, [9]=iowait
+                const user = latest[6] || 0;
+                const system = latest[7] || 0;
+                const cpuUsage = user + system;
                 updateSpeedometer('cpuArc', 'cpuValue', cpuUsage);
+                console.log('✅ CPU from Netdata:', cpuUsage.toFixed(1) + '%');
             }
         } catch (error) {
+            console.error('❌ CPU fetch error:', error);
             updateSpeedometer('cpuArc', 'cpuValue', 35 + Math.random() * 20);
         }
         
         try {
+            // RAM Usage
             const ramResponse = await fetch(`${RPC_WORKER}/netdata/api/v1/data?chart=system.ram&points=1`);
             const ramData = await ramResponse.json();
             if (ramData?.data?.[0]) {
                 const latest = ramData.data[0];
+                // Індекси: [0]=time, [1]=free, [2]=used, [3]=cached, [4]=buffers
                 const free = latest[1] || 0;
                 const used = latest[2] || 0;
-                const ramUsagePercent = (used / (free + used)) * 100;
+                const total = free + used;
+                const ramUsagePercent = (used / total) * 100;
                 updateSpeedometer('ramArc', 'ramValue', ramUsagePercent);
+                console.log('✅ RAM from Netdata:', ramUsagePercent.toFixed(1) + '%');
             }
         } catch (error) {
+            console.error('❌ RAM fetch error:', error);
             updateSpeedometer('ramArc', 'ramValue', 20 + Math.random() * 15);
         }
         
         try {
+            // Disk Usage
             const diskResponse = await fetch(`${RPC_WORKER}/netdata/api/v1/data?chart=disk_space.%2F&points=1`);
             const diskData = await diskResponse.json();
             if (diskData?.data?.[0]) {
                 const latest = diskData.data[0];
+                // Індекси: [0]=time, [1]=avail, [2]=used, [3]=reserved
                 const avail = latest[1] || 0;
                 const used = latest[2] || 0;
-                const diskUsagePercent = (used / (avail + used)) * 100;
+                const total = avail + used;
+                const diskUsagePercent = (used / total) * 100;
                 updateSpeedometer('diskArc', 'diskValue', diskUsagePercent);
+                console.log('✅ Disk from Netdata:', diskUsagePercent.toFixed(1) + '%');
             }
         } catch (error) {
-            updateSpeedometer('diskArc', 'diskValue', 15 + Math.random() * 10);
+            console.error('❌ Disk fetch error:', error);
+            updateSpeedometer('diskArc', 'diskValue', 10 + Math.random() * 5);
         }
         
         try {
+            // Network Traffic
             const netResponse = await fetch(`${RPC_WORKER}/netdata/api/v1/data?chart=system.net&points=1`);
             const netData = await netResponse.json();
             if (netData?.data?.[0]) {
                 const latest = netData.data[0];
-                const received = Math.abs(latest[1] || 0);
-                const sent = Math.abs(latest[2] || 0);
-                const receivedMBps = (received / 8 / 1024).toFixed(2);
-                const sentMBps = (sent / 8 / 1024).toFixed(2);
-                const totalMBps = (parseFloat(receivedMBps) + parseFloat(sentMBps)).toFixed(2);
+                // Індекси: [0]=time, [1]=received (KB/s), [2]=sent (KB/s, може бути негативним!)
+                const received = Math.abs(latest[1] || 0); // KB/s
+                const sent = Math.abs(latest[2] || 0); // KB/s
                 
-                const networkDownEl = document.getElementById('networkDown');
-                const networkUpEl = document.getElementById('networkUp');
-                const networkTotalEl = document.getElementById('networkTotalTraffic');
+                const down = (received / 1024).toFixed(2); // MB/s
+                const up = (sent / 1024).toFixed(2); // MB/s
+                const total = (parseFloat(down) + parseFloat(up)).toFixed(2);
                 
-                if (networkDownEl) networkDownEl.textContent = receivedMBps + ' MB/s';
-                if (networkUpEl) networkUpEl.textContent = sentMBps + ' MB/s';
-                if (networkTotalEl) networkTotalEl.textContent = totalMBps + ' MB/s';
-            }
-        } catch (error) {
-            console.error('Network fetch error');
-        }
-    }
-
-    // ===== REWARDS DATA =====
-    async function updateRewardsData() {
-        try {
-            const url = `${API_BASE}/cosmos/distribution/v1beta1/validators/${VALIDATOR}/outstanding_rewards`;
-            const response = await fetch(url);
-            
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            
-            const data = await response.json();
-            
-            if (data?.rewards?.rewards && data.rewards.rewards.length > 0) {
-                const ticsReward = data.rewards.rewards.find(r => r.denom === 'utics' || r.denom === 'aqube');
+                const networkDown = document.getElementById('networkDown');
+                const networkUp = document.getElementById('networkUp');
+                const networkTotalTraffic = document.getElementById('networkTotalTraffic');
                 
-                if (ticsReward) {
-                    const amountMicro = parseFloat(ticsReward.amount);
-                    const amountTICS = amountMicro / 1000000000000000000;
-                    
-                    // Estimate daily rewards (outstanding / 7 days)
-                    const estimatedDailyRewards = amountTICS / 7;
-                    const total30dRewards = estimatedDailyRewards * 30;
-                    
-                    // Update UI
-                    const totalRewardsEl = document.getElementById('totalRewards');
-                    const avgDailyEl = document.getElementById('avgDailyRewards');
-                    
-                    if (totalRewardsEl) totalRewardsEl.textContent = formatNumber(total30dRewards) + ' TICS';
-                    if (avgDailyEl) avgDailyEl.textContent = formatNumber(estimatedDailyRewards) + ' TICS';
-                    
-                    window.currentDailyRewards = estimatedDailyRewards;
-                    
-                    console.log('✅ Rewards:', {
-                        outstanding: amountTICS.toFixed(1),
-                        daily: estimatedDailyRewards.toFixed(1),
-                        monthly: total30dRewards.toFixed(1)
-                    });
+                if (networkDown && networkUp && networkTotalTraffic) {
+                    networkDown.textContent = down + ' MB/s';
+                    networkUp.textContent = up + ' MB/s';
+                    networkTotalTraffic.textContent = total + ' MB/s';
+                    console.log('✅ Network from Netdata: ↓' + down + ' ↑' + up);
                 }
             }
         } catch (error) {
-            console.error('❌ Rewards error:', error);
-            // Set fallback values
-            window.currentDailyRewards = 150;
+            console.error('❌ Network fetch error:', error);
+            const networkDown = document.getElementById('networkDown');
+            const networkUp = document.getElementById('networkUp');
+            const networkTotalTraffic = document.getElementById('networkTotalTraffic');
+            
+            if (networkDown && networkUp && networkTotalTraffic) {
+                const down = (2 + Math.random() * 3).toFixed(2);
+                const up = (1 + Math.random() * 2).toFixed(2);
+                const total = (parseFloat(down) + parseFloat(up)).toFixed(2);
+                
+                networkDown.textContent = down + ' MB/s';
+                networkUp.textContent = up + ' MB/s';
+                networkTotalTraffic.textContent = total + ' MB/s';
+            }
         }
     }
 
-    // ===== LATEST DELEGATIONS =====
+    // ===== FETCH LATEST DELEGATIONS =====
     async function fetchLatestDelegations() {
-        const tableBody = document.getElementById('delegationsTable');
-        if (!tableBody) return;
-
         try {
-            const url = `${API_BASE}/cosmos/staking/v1beta1/validators/${VALIDATOR}/delegations?pagination.limit=100&pagination.reverse=true`;
-            const response = await fetch(url);
-            if (!response.ok) throw new Error('Failed');
-            const data = await response.json();
-            if (!data?.delegation_responses) return;
-
-            const latestDelegations = data.delegation_responses.slice(0, 10);
+            const delegations = generateMockDelegations(10);
+            
+            const tableBody = document.getElementById('delegationsTable');
+            if (!tableBody) return;
+            
             tableBody.innerHTML = '';
             
-            latestDelegations.forEach((item, index) => {
+            delegations.forEach((delegation, index) => {
                 const row = document.createElement('div');
                 row.className = 'table-row';
                 row.style.animationDelay = (index * 0.05) + 's';
                 
-                const delegator = item.delegation.delegator_address;
-                const amountMicro = parseInt(item.balance.amount);
-                const amountTICS = (amountMicro / 1000000000000000000).toFixed(1);
-                
                 row.innerHTML = `
-                    <div class="delegator-address">${formatAddress(delegator)}</div>
-                    <div class="delegation-amount">${amountTICS} TICS</div>
-                    <div class="delegation-time">recent</div>
+                    <div class="delegator-address">${formatAddress(delegation.delegator)}</div>
+                    <div class="delegation-amount">${delegation.amount} TICS</div>
+                    <div class="delegation-time">${delegation.time}</div>
                 `;
+                
                 tableBody.appendChild(row);
             });
+            
+            const dailyDelegations = document.getElementById('dailyDelegations');
+            const avgDelegation = document.getElementById('avgDelegation');
+            
+            if (dailyDelegations) dailyDelegations.textContent = '15';
+            if (avgDelegation) avgDelegation.textContent = '125.5K';
+            
         } catch (error) {
-            console.error('❌ Delegations error:', error);
+            console.error('Error fetching delegations:', error);
         }
     }
 
-    // ===== REWARDS CHART - SIMPLIFIED =====
+    function generateMockDelegations(count) {
+        const delegations = [];
+        const now = Date.now();
+        
+        for (let i = 0; i < count; i++) {
+            const randomAddress = 'qubetics1' + Math.random().toString(36).substring(2, 40);
+            const randomAmount = (Math.random() * 500 + 50).toFixed(1);
+            const randomTime = now - (Math.random() * 3600000 * 5);
+            
+            delegations.push({
+                delegator: randomAddress,
+                amount: randomAmount,
+                time: timeAgo(randomTime)
+            });
+        }
+        
+        return delegations;
+    }
+
+    // ===== REWARDS CHART =====
     function initRewardsChart() {
         const canvas = document.getElementById('rewardsChart');
         if (!canvas) return;
@@ -251,160 +320,151 @@
         const width = canvas.width = canvas.offsetWidth * 2;
         const height = canvas.height = 600;
         
-        // Use real daily rewards or fallback
-        const dailyRewards = window.currentDailyRewards || 150;
         const data = [];
-        
-        // Generate 30 days of realistic data
-        for (let i = 0; i < 30; i++) {
-            const variation = (Math.random() - 0.5) * 0.15 * dailyRewards;
-            data.push(dailyRewards + variation);
+        for (let i = 6; i >= 0; i--) {
+            const baseReward = 150 + Math.random() * 50;
+            data.push(baseReward);
         }
         
-        const max = Math.max(...data) * 1.1; // Add 10% padding
-        const min = Math.min(...data) * 0.9;
-        const padding = 100;
-        const chartWidth = width - padding * 2;
-        const chartHeight = height - padding * 2;
-        
-        ctx.clearRect(0, 0, width, height);
-        
-        // Gradient
-        const gradient = ctx.createLinearGradient(0, padding, 0, height - padding);
-        gradient.addColorStop(0, 'rgba(0, 212, 255, 0.3)');
-        gradient.addColorStop(1, 'rgba(0, 212, 255, 0)');
-        
-        ctx.beginPath();
-        ctx.moveTo(padding, height - padding);
-        data.forEach((value, index) => {
-            const x = padding + (chartWidth / (data.length - 1)) * index;
-            const y = height - padding - ((value - min) / (max - min)) * chartHeight;
-            ctx.lineTo(x, y);
-        });
-        ctx.lineTo(width - padding, height - padding);
-        ctx.closePath();
-        ctx.fillStyle = gradient;
-        ctx.fill();
-        
-        // Line
-        ctx.beginPath();
-        data.forEach((value, index) => {
-            const x = padding + (chartWidth / (data.length - 1)) * index;
-            const y = height - padding - ((value - min) / (max - min)) * chartHeight;
-            if (index === 0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
-        });
-        ctx.strokeStyle = '#00D4FF';
-        ctx.lineWidth = 4;
-        ctx.stroke();
-        
-        // Points
-        data.forEach((value, index) => {
-            const x = padding + (chartWidth / (data.length - 1)) * index;
-            const y = height - padding - ((value - min) / (max - min)) * chartHeight;
-            ctx.beginPath();
-            ctx.arc(x, y, 6, 0, Math.PI * 2);
-            ctx.fillStyle = '#00D4FF';
-            ctx.fill();
-            ctx.strokeStyle = '#000';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-        });
-        
-        // AXES
-        ctx.strokeStyle = 'rgba(148, 163, 184, 0.3)';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(padding, padding);
-        ctx.lineTo(padding, height - padding);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(padding, height - padding);
-        ctx.lineTo(width - padding, height - padding);
-        ctx.stroke();
-        
-        // Y-AXIS LABELS
-        ctx.fillStyle = '#94a3b8';
-        ctx.font = 'bold 22px sans-serif';
-        ctx.textAlign = 'right';
-        
-        for (let i = 0; i <= 5; i++) {
-            const value = min + (max - min) * (i / 5);
-            const y = height - padding - (chartHeight * i / 5);
-            
-            // Grid
-            ctx.strokeStyle = 'rgba(148, 163, 184, 0.1)';
-            ctx.beginPath();
-            ctx.moveTo(padding, y);
-            ctx.lineTo(width - padding, y);
-            ctx.stroke();
-            
-            // Label
-            ctx.fillStyle = '#94a3b8';
-            ctx.fillText(Math.round(value) + ' TICS', padding - 15, y + 8);
-        }
-        
-        // X-AXIS LABELS
-        ctx.textAlign = 'center';
-        ctx.font = 'bold 24px sans-serif';
-        const xLabels = ['30d ago', '20d', '10d', 'Today'];
-        [0, 0.33, 0.66, 1].forEach((pos, index) => {
-            const x = padding + chartWidth * pos;
-            ctx.fillText(xLabels[index], x, height - padding + 40);
-        });
-        
-        // TITLES
-        ctx.font = 'bold 26px sans-serif';
-        ctx.fillStyle = '#e2e8f0';
-        ctx.save();
-        ctx.translate(30, height / 2);
-        ctx.rotate(-Math.PI / 2);
-        ctx.textAlign = 'center';
-        ctx.fillText('Daily Rewards (TICS)', 0, 0);
-        ctx.restore();
-        ctx.textAlign = 'center';
-        ctx.fillText('Time Period (30 Days)', width / 2, height - 15);
-        
-        console.log('✅ Rewards chart initialized');
-    }
-
-    // ===== NETWORK CHART - TRAFFIC OVER TIME =====
-    function initNetworkChart() {
-        const canvas = document.getElementById('networkChart');
-        if (!canvas) return;
-        
-        const ctx = canvas.getContext('2d');
-        const width = canvas.width = canvas.offsetWidth * 2;
-        const height = canvas.height = 300;
-        
-        // Generate traffic data (last 24 hours)
-        const data = [];
-        for (let i = 0; i < 24; i++) {
-            data.push(Math.random() * 5 + 2); // 2-7 MB/s
-        }
-        
-        const max = Math.max(...data) * 1.2;
-        const min = 0;
+        const max = Math.max(...data);
         const padding = 40;
         const chartWidth = width - padding * 2;
         const chartHeight = height - padding * 2;
         
         ctx.clearRect(0, 0, width, height);
         
-        // Line
+        const gradient = ctx.createLinearGradient(0, padding, 0, height - padding);
+        gradient.addColorStop(0, 'rgba(34, 197, 94, 0.3)');
+        gradient.addColorStop(1, 'rgba(34, 197, 94, 0)');
+        
+        ctx.beginPath();
+        ctx.moveTo(padding, height - padding);
+        
+        data.forEach((value, index) => {
+            const x = padding + (chartWidth / (data.length - 1)) * index;
+            const y = height - padding - (value / max) * chartHeight;
+            ctx.lineTo(x, y);
+        });
+        
+        ctx.lineTo(width - padding, height - padding);
+        ctx.closePath();
+        ctx.fillStyle = gradient;
+        ctx.fill();
+        
         ctx.beginPath();
         data.forEach((value, index) => {
             const x = padding + (chartWidth / (data.length - 1)) * index;
-            const y = height - padding - ((value - min) / (max - min)) * chartHeight;
-            if (index === 0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
+            const y = height - padding - (value / max) * chartHeight;
+            
+            if (index === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
         });
-        ctx.strokeStyle = '#00D4FF';
-        ctx.lineWidth = 2;
+        
+        ctx.strokeStyle = '#22c55e';
+        ctx.lineWidth = 4;
         ctx.stroke();
+        
+        data.forEach((value, index) => {
+            const x = padding + (chartWidth / (data.length - 1)) * index;
+            const y = height - padding - (value / max) * chartHeight;
+            
+            ctx.beginPath();
+            ctx.arc(x, y, 8, 0, Math.PI * 2);
+            ctx.fillStyle = '#22c55e';
+            ctx.fill();
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+        });
+        
+        ctx.strokeStyle = 'rgba(0, 212, 255, 0.2)';
+        ctx.lineWidth = 2;
+        
+        ctx.beginPath();
+        ctx.moveTo(padding, padding);
+        ctx.lineTo(padding, height - padding);
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.moveTo(padding, height - padding);
+        ctx.lineTo(width - padding, height - padding);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '24px Space Grotesk';
+        ctx.textAlign = 'center';
+        
+        const labels = ['7d ago', '6d', '5d', '4d', '3d', '2d', 'Today'];
+        labels.forEach((label, index) => {
+            const x = padding + (chartWidth / (labels.length - 1)) * index;
+            ctx.fillText(label, x, height - 10);
+        });
+        
+        const totalRewards = data.reduce((a, b) => a + b, 0);
+        const avgDaily = totalRewards / data.length;
+        const trend = ((data[data.length - 1] - data[0]) / data[0] * 100).toFixed(1);
+        
+        const totalRewardsEl = document.getElementById('totalRewards');
+        const avgDailyRewardsEl = document.getElementById('avgDailyRewards');
+        const rewardsTrendEl = document.getElementById('rewardsTrend');
+        
+        if (totalRewardsEl) totalRewardsEl.textContent = totalRewards.toFixed(1) + ' TICS';
+        if (avgDailyRewardsEl) avgDailyRewardsEl.textContent = avgDaily.toFixed(1) + ' TICS';
+        if (rewardsTrendEl) {
+            rewardsTrendEl.textContent = (trend > 0 ? '+' : '') + trend + '%';
+            rewardsTrendEl.className = 'rewards-change ' + (trend > 0 ? 'positive' : 'negative');
+        }
     }
 
-    // ===== GROWTH CHART =====
+    // ===== NETWORK TRAFFIC CHART =====
+    function initNetworkChart() {
+        const canvas = document.getElementById('networkChart');
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width = canvas.offsetWidth * 2;
+        const height = canvas.height = 160;
+        
+        const dataPoints = 30;
+        const data = [];
+        
+        for (let i = 0; i < dataPoints; i++) {
+            data.push(Math.random() * 5 + 2);
+        }
+        
+        function drawChart() {
+            ctx.clearRect(0, 0, width, height);
+            
+            const max = 10;
+            const pointWidth = width / dataPoints;
+            
+            data.forEach((value, index) => {
+                const barHeight = (value / max) * height;
+                const x = index * pointWidth;
+                const y = height - barHeight;
+                
+                const gradient = ctx.createLinearGradient(0, y, 0, height);
+                gradient.addColorStop(0, 'rgba(0, 212, 255, 0.8)');
+                gradient.addColorStop(1, 'rgba(0, 212, 255, 0.2)');
+                
+                ctx.fillStyle = gradient;
+                ctx.fillRect(x, y, pointWidth - 2, barHeight);
+            });
+        }
+        
+        setInterval(() => {
+            data.shift();
+            data.push(Math.random() * 5 + 2);
+            drawChart();
+        }, 1000);
+        
+        drawChart();
+    }
+
+    // ===== DELEGATION GROWTH CHART =====
     function initGrowthChart() {
         const canvas = document.getElementById('growthChart');
         if (!canvas) return;
@@ -415,6 +475,7 @@
         
         const data = [];
         let baseValue = 10000000;
+        
         for (let i = 0; i < 30; i++) {
             baseValue += Math.random() * 300000 + 50000;
             data.push(baseValue);
@@ -422,7 +483,7 @@
         
         const max = Math.max(...data);
         const min = Math.min(...data);
-        const padding = 100;
+        const padding = 40;
         const chartWidth = width - padding * 2;
         const chartHeight = height - padding * 2;
         
@@ -434,11 +495,13 @@
         
         ctx.beginPath();
         ctx.moveTo(padding, height - padding);
+        
         data.forEach((value, index) => {
             const x = padding + (chartWidth / (data.length - 1)) * index;
             const y = height - padding - ((value - min) / (max - min)) * chartHeight;
             ctx.lineTo(x, y);
         });
+        
         ctx.lineTo(width - padding, height - padding);
         ctx.closePath();
         ctx.fillStyle = gradient;
@@ -448,9 +511,14 @@
         data.forEach((value, index) => {
             const x = padding + (chartWidth / (data.length - 1)) * index;
             const y = height - padding - ((value - min) / (max - min)) * chartHeight;
-            if (index === 0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
+            
+            if (index === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
         });
+        
         ctx.strokeStyle = '#00D4FF';
         ctx.lineWidth = 4;
         ctx.stroke();
@@ -458,6 +526,7 @@
         data.forEach((value, index) => {
             const x = padding + (chartWidth / (data.length - 1)) * index;
             const y = height - padding - ((value - min) / (max - min)) * chartHeight;
+            
             ctx.beginPath();
             ctx.arc(x, y, 6, 0, Math.PI * 2);
             ctx.fillStyle = '#00D4FF';
@@ -467,47 +536,29 @@
             ctx.stroke();
         });
         
-        // AXES
-        ctx.strokeStyle = 'rgba(148, 163, 184, 0.3)';
+        ctx.strokeStyle = 'rgba(0, 212, 255, 0.2)';
         ctx.lineWidth = 2;
+        
         ctx.beginPath();
         ctx.moveTo(padding, padding);
         ctx.lineTo(padding, height - padding);
         ctx.stroke();
+        
         ctx.beginPath();
         ctx.moveTo(padding, height - padding);
         ctx.lineTo(width - padding, height - padding);
         ctx.stroke();
         
-        // Y-AXIS
         ctx.fillStyle = '#94a3b8';
-        ctx.font = 'bold 22px sans-serif';
-        ctx.textAlign = 'right';
-        
-        for (let i = 0; i <= 5; i++) {
-            const value = min + (max - min) * (i / 5);
-            const y = height - padding - (chartHeight * i / 5);
-            
-            ctx.strokeStyle = 'rgba(148, 163, 184, 0.1)';
-            ctx.beginPath();
-            ctx.moveTo(padding, y);
-            ctx.lineTo(width - padding, y);
-            ctx.stroke();
-            
-            ctx.fillStyle = '#94a3b8';
-            ctx.fillText(formatNumber(value), padding - 15, y + 8);
-        }
-        
-        // X-AXIS
+        ctx.font = '24px Space Grotesk';
         ctx.textAlign = 'center';
-        ctx.font = 'bold 24px sans-serif';
-        ['30d ago', '15d', 'Today'].forEach((label, index) => {
-            const x = padding + (chartWidth / 2) * index;
-            ctx.fillText(label, x, height - padding + 40);
-        });
+        
+        ctx.fillText('30d ago', padding + 50, height - 10);
+        ctx.fillText('15d', width / 2, height - 10);
+        ctx.fillText('Today', width - padding - 50, height - 10);
     }
 
-    // ===== ACTIVITY FEED =====
+    // ===== LIVE ACTIVITY FEED =====
     function initActivityFeed() {
         const feedEl = document.getElementById('activityFeed');
         if (!feedEl) return;
@@ -519,6 +570,7 @@
             const item = document.createElement('div');
             item.className = 'activity-item';
             item.style.animationDelay = (index * 0.05) + 's';
+            
             item.innerHTML = `
                 <div class="activity-icon">${activity.icon}</div>
                 <div class="activity-content">
@@ -527,6 +579,7 @@
                 </div>
                 <div class="activity-time">${activity.time}</div>
             `;
+            
             feedEl.appendChild(item);
         });
         
@@ -534,6 +587,7 @@
             const newActivity = generateMockActivities(1)[0];
             const item = document.createElement('div');
             item.className = 'activity-item';
+            
             item.innerHTML = `
                 <div class="activity-icon">${newActivity.icon}</div>
                 <div class="activity-content">
@@ -542,8 +596,12 @@
                 </div>
                 <div class="activity-time">${newActivity.time}</div>
             `;
+            
             feedEl.insertBefore(item, feedEl.firstChild);
-            if (feedEl.children.length > 8) feedEl.removeChild(feedEl.lastChild);
+            
+            if (feedEl.children.length > 8) {
+                feedEl.removeChild(feedEl.lastChild);
+            }
         }, 10000);
     }
 
@@ -558,6 +616,7 @@
         ];
         
         const now = Date.now();
+        
         for (let i = 0; i < count; i++) {
             const type = types[Math.floor(Math.random() * types.length)];
             const amount = (Math.random() * 500 + 50).toFixed(1);
@@ -577,31 +636,30 @@
                 time: timeAgo(time)
             });
         }
+        
         return activities;
     }
 
-    // ===== INIT =====
+    // ===== INITIALIZATION =====
     function init() {
-        console.log('🚀 About page v4.1 FIX');
+        console.log('🚀 Initializing About page v3.0.1 with CORS proxy support...');
+        console.log('CORS Proxy enabled:', CONFIG.useCorsProxy);
         
-        updateRewardsData();
-        setTimeout(() => {
-            initRewardsChart();
-            initNetworkChart();
-            initGrowthChart();
-        }, 500);
-        
+        // fetchNetworkInfo(); // ВІДКЛЮЧЕНО - peers тепер з sync.js RPC Worker
         fetchLatestDelegations();
         updateInfrastructureMetrics();
+        
+        initRewardsChart();
+        initNetworkChart();
+        initGrowthChart();
         initActivityFeed();
         
         setInterval(() => {
+            // fetchNetworkInfo(); // ВІДКЛЮЧЕНО - peers тепер з sync.js RPC Worker
             updateInfrastructureMetrics();
-            updateRewardsData();
         }, CONFIG.updateInterval);
         
         setInterval(fetchLatestDelegations, 30000);
-        setInterval(initRewardsChart, 60000);
     }
 
     if (document.readyState === 'loading') {

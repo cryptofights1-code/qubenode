@@ -257,12 +257,15 @@
         }
         
         try {
-            // Disk I/O
-            const diskIoResponse = await fetch(`${RPC_WORKER}/netdata/api/v1/data?chart=system.io&points=1`);
+            // Disk I/O - спробуємо disk.sda
+            const diskIoResponse = await fetch(`${RPC_WORKER}/netdata/api/v1/data?chart=disk.sda&points=1`);
             const diskIoData = await diskIoResponse.json();
+            
             if (diskIoData?.data?.[0]) {
                 const latest = diskIoData.data[0];
-                // Індекси: [0]=time, [1]=in (KB/s), [2]=out (KB/s)
+                console.log('📊 Raw Disk I/O data:', latest);
+                
+                // Netdata повертає KB/s для disk.sda: [time, reads, writes]
                 const readKB = Math.abs(latest[1] || 0);
                 const writeKB = Math.abs(latest[2] || 0);
                 
@@ -278,24 +281,13 @@
                     diskRead.textContent = read + ' MB/s';
                     diskWrite.textContent = write + ' MB/s';
                     diskTotal.textContent = totalIo + ' MB/s';
-                    console.log('✅ Disk I/O from Netdata: Read ' + read + ' Write ' + write);
+                    console.log('✅ Disk I/O: Read', read, 'Write', write, 'Total', totalIo);
                 }
+            } else {
+                console.warn('⚠️ Disk I/O: No data from disk.sda chart');
             }
         } catch (error) {
             console.error('❌ Disk I/O fetch error:', error);
-            const diskRead = document.getElementById('diskRead');
-            const diskWrite = document.getElementById('diskWrite');
-            const diskTotal = document.getElementById('diskTotal');
-            
-            if (diskRead && diskWrite && diskTotal) {
-                const read = (Math.random() * 5).toFixed(2);
-                const write = (Math.random() * 3).toFixed(2);
-                const totalIo = (parseFloat(read) + parseFloat(write)).toFixed(2);
-                
-                diskRead.textContent = read + ' MB/s';
-                diskWrite.textContent = write + ' MB/s';
-                diskTotal.textContent = totalIo + ' MB/s';
-            }
         }
     }
 

@@ -389,8 +389,9 @@ body {
 .network-value {
     color: #00FFF0;
     font-weight: 600;
-    font-size: 15px;
+    font-size: 13px;
     font-variant-numeric: tabular-nums;
+    white-space: nowrap;
 }
 
 .network-chart {

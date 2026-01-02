@@ -280,12 +280,19 @@
                 
                 tableBody.appendChild(row);
             });
+            
+            const dailyDelegations = document.getElementById('dailyDelegations');
+            const avgDelegation = document.getElementById('avgDelegation');
+            
+            if (dailyDelegations) dailyDelegations.textContent = '15';
+            if (avgDelegation) avgDelegation.textContent = '125.5K';
+            
         } catch (error) {
-            console.error('Error generating delegations:', error);
+            console.error('Error fetching delegations:', error);
         }
     }
 
-    // ===== OUTSTANDING REWARDS (REAL API) =====
+    // ===== OUTSTANDING REWARDS =====
     async function updateOutstandingRewards() {
         try {
             const url = 'https://swagger.qubetics.com/cosmos/distribution/v1beta1/validators/qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld/outstanding_rewards';
@@ -299,51 +306,24 @@
             const data = await response.json();
             
             if (data?.rewards?.rewards && data.rewards.rewards.length > 0) {
-                const ticsReward = data.rewards.rewards.find(r => r.denom === 'utics' || r.denom === 'aqube');
+                const ticsReward = data.rewards.rewards.find(r => 
+                    r.denom === 'tics' || r.denom === 'utics' || r.denom === 'aqube'
+                );
                 
                 if (ticsReward) {
                     const amountMicro = parseFloat(ticsReward.amount);
                     const amountTICS = amountMicro / 1000000000000000000;
                     
-                    // Estimate based on outstanding (accumulated ~7 days)
-                    const dailyRewards = amountTICS / 7;
-                    const monthly30dRewards = dailyRewards * 30;
-                    
-                    // Update HTML
                     const outstandingEl = document.getElementById('outstandingRewards');
-                    const totalRewardsEl = document.getElementById('totalRewards');
-                    const avgDailyEl = document.getElementById('avgDailyRewards');
+                    if (outstandingEl) {
+                        outstandingEl.textContent = formatNumber(amountTICS) + ' TICS';
+                    }
                     
-                    if (outstandingEl) outstandingEl.textContent = formatNumber(amountTICS) + ' TICS';
-                    if (totalRewardsEl) totalRewardsEl.textContent = formatNumber(monthly30dRewards) + ' TICS';
-                    if (avgDailyEl) avgDailyEl.textContent = formatNumber(dailyRewards) + ' TICS';
-                    
-                    // Store for chart
-                    window.validatorDailyRewards = dailyRewards;
-                    
-                    console.log('✅ Rewards:', {
-                        outstanding: amountTICS.toFixed(1),
-                        daily: dailyRewards.toFixed(1),
-                        monthly: monthly30dRewards.toFixed(1)
-                    });
+                    console.log('✅ Outstanding Rewards:', amountTICS.toFixed(1), 'TICS');
                 }
             }
         } catch (error) {
-            console.error('❌ Rewards fetch error:', error);
-        }
-    }
-                
-                tableBody.appendChild(row);
-            });
-            
-            const dailyDelegations = document.getElementById('dailyDelegations');
-            const avgDelegation = document.getElementById('avgDelegation');
-            
-            if (dailyDelegations) dailyDelegations.textContent = '15';
-            if (avgDelegation) avgDelegation.textContent = '125.5K';
-            
-        } catch (error) {
-            console.error('Error fetching delegations:', error);
+            console.error('❌ Rewards error:', error);
         }
     }
 
@@ -703,9 +683,8 @@
         // fetchNetworkInfo(); // ВІДКЛЮЧЕНО - peers тепер з sync.js RPC Worker
         fetchLatestDelegations();
         updateInfrastructureMetrics();
-        updateOutstandingRewards(); // NEW: Load rewards data
+        updateOutstandingRewards();
         
-        initRewardsChart();
         initNetworkChart();
         initGrowthChart();
         initActivityFeed();
@@ -716,7 +695,7 @@
         }, CONFIG.updateInterval);
         
         setInterval(fetchLatestDelegations, 30000);
-        setInterval(updateOutstandingRewards, 60000); // NEW: Update rewards every minute
+        setInterval(updateOutstandingRewards, 60000);
     }
 
     if (document.readyState === 'loading') {

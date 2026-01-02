@@ -187,42 +187,6 @@
             </div>
         </section>
 
-        <!-- Rewards Section -->
-        <section class="rewards-section">
-            <h2 class="section-title">
-                <span class="title-icon">💰</span>
-                Outstanding Rewards
-            </h2>
-            
-            <div class="rewards-container">
-                <!-- Rewards Stats -->
-                <div class="rewards-stats">
-                    <div class="rewards-card">
-                        <div class="rewards-label">Outstanding Rewards</div>
-                        <div class="rewards-value" id="outstandingRewards">-- TICS</div>
-                        <div class="rewards-subtitle">Unclaimed</div>
-                    </div>
-                    
-                    <div class="rewards-card">
-                        <div class="rewards-label">Total Rewards (30d)</div>
-                        <div class="rewards-value" id="totalRewards">-- TICS</div>
-                        <div class="rewards-change positive" id="rewardsTrend">+0.0%</div>
-                    </div>
-                    
-                    <div class="rewards-card">
-                        <div class="rewards-label">Average Daily</div>
-                        <div class="rewards-value" id="avgDailyRewards">-- TICS</div>
-                        <div class="rewards-subtitle">Per Day</div>
-                    </div>
-                </div>
-
-                <!-- Rewards Chart -->
-                <div class="rewards-chart-container">
-                    <canvas id="rewardsChart"></canvas>
-                </div>
-            </div>
-        </section>
-
         <!-- Network Share & Performance Section -->
         <section class="performance-section">
             <div class="performance-grid">
@@ -270,6 +234,10 @@
                         <div class="metric-row">
                             <span class="metric-label">Avg Block Time:</span>
                             <span class="metric-value" id="avgBlockTime">5.63s</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Outstanding Rewards:</span>
+                            <span class="metric-value highlight" id="outstandingRewards">-- TICS</span>
                         </div>
                         <div class="metric-row">
                             <span class="metric-label">Jailed Status:</span>

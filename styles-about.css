@@ -990,6 +990,74 @@ footer a:hover {
     font-weight: 700;
 }
 
+/* Commission Stat with info */
+.commission-stat {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+}
+
+.commission-stat .stat-info {
+    color: #64748b;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.calculator-link {
+    color: #00D4FF;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.calculator-link:hover {
+    color: #00ffff;
+}
+
+/* Validator Addresses Card */
+.addresses-card {
+    grid-column: span 2;
+}
+
+.addresses-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.address-row {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 12px;
+    background: rgba(0, 212, 255, 0.03);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 212, 255, 0.1);
+}
+
+.address-label {
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.address-value {
+    color: #00D4FF;
+    font-size: 13px;
+    font-family: 'Courier New', monospace;
+    word-break: break-all;
+    user-select: all;
+}
+
+.address-pubkey {
+    font-size: 11px;
+    color: #64748b;
+}
+
+.public-key-row {
+    background: rgba(0, 212, 255, 0.05);
+}
+
 /* Validator Performance Metrics */
 .performance-metrics {
     display: flex;

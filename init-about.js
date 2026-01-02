@@ -361,6 +361,151 @@
         }
     }
 
+    // ===== VALIDATOR INFO (Delegators, Self-Bonded, Commission) =====
+    async function updateValidatorInfo() {
+        try {
+            const validatorUrl = 'https://swagger.qubetics.com/cosmos/staking/v1/validators/qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
+            const response = await fetch(validatorUrl);
+            
+            if (!response.ok) {
+                console.error('❌ Validator Info API error:', response.status);
+                return;
+            }
+            
+            const data = await response.json();
+            const validator = data.validator;
+            
+            if (validator) {
+                // Commission Rate
+                const commissionRate = parseFloat(validator.commission.commission_rates.rate) * 100;
+                const commissionEl = document.getElementById('commissionRate');
+                if (commissionEl) {
+                    commissionEl.textContent = commissionRate.toFixed(1) + '%';
+                }
+                
+                // Jailed Status
+                const jailedEl = document.getElementById('jailedStatus');
+                if (jailedEl) {
+                    jailedEl.textContent = validator.jailed ? 'Yes ⚠️' : 'Never ✓';
+                    jailedEl.className = validator.jailed ? 'metric-value warning' : 'metric-value success';
+                }
+                
+                console.log('✅ Validator Info: Commission', commissionRate + '%', 'Jailed:', validator.jailed);
+            }
+        } catch (error) {
+            console.error('❌ Validator Info error:', error);
+        }
+    }
+
+    // ===== SELF-BONDED AMOUNT =====
+    async function updateSelfBonded() {
+        try {
+            const delegationsUrl = 'https://swagger.qubetics.com/cosmos/staking/v1beta1/delegations/qubetics1tzk9f84cv2gmk3du3m9dpxcuph70sfj6ltvqjf';
+            const response = await fetch(delegationsUrl);
+            
+            if (!response.ok) {
+                console.error('❌ Self-Bonded API error:', response.status);
+                return;
+            }
+            
+            const data = await response.json();
+            
+            if (data?.delegation_responses && data.delegation_responses.length > 0) {
+                const selfDelegation = data.delegation_responses.find(d => 
+                    d.delegation.validator_address === 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld'
+                );
+                
+                if (selfDelegation) {
+                    const amountMicro = parseFloat(selfDelegation.balance.amount);
+                    const amountTICS = amountMicro / 1000000000000000000;
+                    
+                    const selfBondedEl = document.getElementById('selfBonded');
+                    if (selfBondedEl) {
+                        selfBondedEl.textContent = formatNumber(amountTICS) + ' TICS';
+                    }
+                    
+                    console.log('✅ Self-Bonded:', amountTICS.toFixed(1), 'TICS');
+                }
+            }
+        } catch (error) {
+            console.error('❌ Self-Bonded error:', error);
+        }
+    }
+
+    // ===== SIGNING INFO (Uptime, Missed Blocks) =====
+    async function updateSigningInfo() {
+        try {
+            const signingUrl = 'https://swagger.qubetics.com/cosmos/slashing/v1beta1/signing_infos?pagination.limit=300';
+            const response = await fetch(signingUrl);
+            
+            if (!response.ok) {
+                console.error('❌ Signing Info API error:', response.status);
+                return;
+            }
+            
+            const data = await response.json();
+            
+            if (data?.info && data.info.length > 0) {
+                const ourValidator = data.info.find(v => 
+                    v.address === 'qubeticsvalcons1dlmj5pzg3fv54nrtejnfxmrj08d7qs09xjp2eu'
+                );
+                
+                if (ourValidator) {
+                    const indexOffset = parseInt(ourValidator.index_offset);
+                    const missedBlocks = parseInt(ourValidator.missed_blocks_counter);
+                    
+                    // Uptime calculation
+                    const signedBlocks = indexOffset - missedBlocks;
+                    const uptime = (signedBlocks / indexOffset) * 100;
+                    
+                    // Update Uptime
+                    const uptimeEl = document.getElementById('validatorUptime');
+                    if (uptimeEl) {
+                        uptimeEl.textContent = uptime.toFixed(4) + '%';
+                    }
+                    
+                    // Update Missed Blocks
+                    const missedEl = document.getElementById('missedBlocks');
+                    if (missedEl) {
+                        missedEl.textContent = missedBlocks + ' / ' + formatNumber(indexOffset);
+                    }
+                    
+                    console.log('✅ Uptime:', uptime.toFixed(4) + '%', 'Missed:', missedBlocks, '/', indexOffset);
+                }
+            }
+        } catch (error) {
+            console.error('❌ Signing Info error:', error);
+        }
+    }
+
+    // ===== DELEGATORS COUNT =====
+    async function updateDelegatorsCount() {
+        try {
+            const delegationsUrl = 'https://swagger.qubetics.com/cosmos/staking/v1beta1/validators/qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld/delegations?pagination.limit=10000';
+            const response = await fetch(delegationsUrl);
+            
+            if (!response.ok) {
+                console.error('❌ Delegations API error:', response.status);
+                return;
+            }
+            
+            const data = await response.json();
+            
+            if (data?.delegation_responses) {
+                const delegatorsCount = data.delegation_responses.length;
+                
+                const countEl = document.getElementById('delegatorsCount');
+                if (countEl) {
+                    countEl.textContent = delegatorsCount;
+                }
+                
+                console.log('✅ Delegators Count:', delegatorsCount);
+            }
+        } catch (error) {
+            console.error('❌ Delegators Count error:', error);
+        }
+    }
+
     function generateMockDelegations(count) {
         const delegations = [];
         const now = Date.now();
@@ -711,25 +856,34 @@
 
     // ===== INITIALIZATION =====
     function init() {
-        console.log('🚀 Initializing About page v3.0.1 with CORS proxy support...');
+        console.log('🚀 Initializing About page v4.0 with Validator API integration...');
         console.log('CORS Proxy enabled:', CONFIG.useCorsProxy);
         
-        // fetchNetworkInfo(); // ВІДКЛЮЧЕНО - peers тепер з sync.js RPC Worker
+        // Initial fetch
         fetchLatestDelegations();
         updateInfrastructureMetrics();
         updateOutstandingRewards();
+        updateValidatorInfo();
+        updateSelfBonded();
+        updateSigningInfo();
+        updateDelegatorsCount();
         
+        // Charts
         initNetworkChart();
         initGrowthChart();
         initActivityFeed();
         
+        // Regular updates
         setInterval(() => {
-            // fetchNetworkInfo(); // ВІДКЛЮЧЕНО - peers тепер з sync.js RPC Worker
             updateInfrastructureMetrics();
         }, CONFIG.updateInterval);
         
         setInterval(fetchLatestDelegations, 30000);
         setInterval(updateOutstandingRewards, 60000);
+        setInterval(updateValidatorInfo, 60000);
+        setInterval(updateSelfBonded, 60000);
+        setInterval(updateSigningInfo, 60000);
+        setInterval(updateDelegatorsCount, 300000); // 5 min
     }
 
     if (document.readyState === 'loading') {

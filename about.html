@@ -235,6 +235,22 @@
                                 <span class="stat-label">Rank:</span>
                                 <span class="stat-value rank-badge" id="validatorRank">#--</span>
                             </div>
+                            <div class="share-stat">
+                                <span class="stat-label">Delegators:</span>
+                                <span class="stat-value" id="delegatorsCount">--</span>
+                            </div>
+                            <div class="share-stat">
+                                <span class="stat-label">Self-Bonded:</span>
+                                <span class="stat-value" id="selfBonded">-- TICS</span>
+                            </div>
+                            <div class="share-stat commission-stat">
+                                <span class="stat-label">Commission:</span>
+                                <span class="stat-value" id="commissionRate">5%</span>
+                                <span class="stat-info" title="Lowest in network. Calculated from network rewards. Actual APY for delegators: 28.5%">
+                                    ⓘ Lowest in network • Actual APY: 28.5% • 
+                                    <a href="calculator.html" class="calculator-link">Calculator →</a>
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -247,16 +263,12 @@
                     </h2>
                     <div class="performance-metrics">
                         <div class="metric-row">
-                            <span class="metric-label">Block Signing Rate:</span>
-                            <span class="metric-value success">99.98%</span>
+                            <span class="metric-label">Uptime:</span>
+                            <span class="metric-value success" id="validatorUptime">--</span>
                         </div>
                         <div class="metric-row">
                             <span class="metric-label">Missed Blocks:</span>
-                            <span class="metric-value">3 / 150,000</span>
-                        </div>
-                        <div class="metric-row">
-                            <span class="metric-label">Avg Block Time:</span>
-                            <span class="metric-value" id="avgBlockTime">5.63s</span>
+                            <span class="metric-value" id="missedBlocks">--</span>
                         </div>
                         <div class="metric-row">
                             <span class="metric-label">Outstanding Rewards:</span>
@@ -264,7 +276,7 @@
                         </div>
                         <div class="metric-row">
                             <span class="metric-label">Jailed Status:</span>
-                            <span class="metric-value success">Never ✓</span>
+                            <span class="metric-value success" id="jailedStatus">--</span>
                         </div>
                         <div class="metric-row">
                             <span class="metric-label">Slashing Events:</span>
@@ -273,32 +285,32 @@
                     </div>
                 </div>
 
-                <!-- Achievements Card -->
-                <div class="performance-card achievements-card">
+                <!-- Validator Addresses Card -->
+                <div class="performance-card addresses-card">
                     <h2 class="card-title">
-                        <span class="title-icon">🎖️</span>
-                        Achievements
+                        <span class="title-icon">📋</span>
+                        Validator Addresses
                     </h2>
-                    <div class="achievements-grid">
-                        <div class="achievement-badge">
-                            <div class="badge-icon">✓</div>
-                            <div class="badge-text">100% Uptime<br><span class="badge-subtext">90 days</span></div>
+                    <div class="addresses-list">
+                        <div class="address-row">
+                            <span class="address-label">Account Address:</span>
+                            <span class="address-value" id="accountAddress">qubetics1tzk9f84cv2gmk3du3m9dpxcuph70sfj6ltvqjf</span>
                         </div>
-                        <div class="achievement-badge">
-                            <div class="badge-icon">✓</div>
-                            <div class="badge-text">Zero Slashing<br><span class="badge-subtext">Perfect record</span></div>
+                        <div class="address-row">
+                            <span class="address-label">Operator Address:</span>
+                            <span class="address-value" id="operatorAddress">qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld</span>
                         </div>
-                        <div class="achievement-badge">
-                            <div class="badge-icon">🏆</div>
-                            <div class="badge-text">Top 10<br><span class="badge-subtext">Validator</span></div>
+                        <div class="address-row">
+                            <span class="address-label">Hex Address:</span>
+                            <span class="address-value" id="hexAddress">6FF72A04488A594ACC6BCCA6936C7279DBE041E5</span>
                         </div>
-                        <div class="achievement-badge">
-                            <div class="badge-icon">👥</div>
-                            <div class="badge-text">1000+<br><span class="badge-subtext">Delegators</span></div>
+                        <div class="address-row">
+                            <span class="address-label">Consensus Address:</span>
+                            <span class="address-value" id="consensusAddress">qubeticsvalcons1dlmj5pzg3fv54nrtejnfxmrj08d7qs09xjp2eu</span>
                         </div>
-                        <div class="achievement-badge">
-                            <div class="badge-icon">✓</div>
-                            <div class="badge-text">Community<br><span class="badge-subtext">Verified</span></div>
+                        <div class="address-row public-key-row">
+                            <span class="address-label">Public Key:</span>
+                            <span class="address-value address-pubkey" id="publicKey">{"@type":"/cosmos.crypto.ed25519.PubKey","key":"AwffKHqarKlIZL72uCq4OQHlw0wspQEDGmHrBI1EWvc="}</span>
                         </div>
                     </div>
                 </div>

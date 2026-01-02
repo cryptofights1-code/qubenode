@@ -147,11 +147,15 @@
                 const sent = Math.abs(latest[2] || 0);
                 const receivedMBps = (received / 8 / 1024).toFixed(2);
                 const sentMBps = (sent / 8 / 1024).toFixed(2);
+                const totalMBps = (parseFloat(receivedMBps) + parseFloat(sentMBps)).toFixed(2);
                 
                 const networkDownEl = document.getElementById('networkDown');
                 const networkUpEl = document.getElementById('networkUp');
-                if (networkDownEl) networkDownEl.textContent = `↓ ${receivedMBps} MB/s`;
-                if (networkUpEl) networkUpEl.textContent = `↑ ${sentMBps} MB/s`;
+                const networkTotalEl = document.getElementById('networkTotalTraffic');
+                
+                if (networkDownEl) networkDownEl.textContent = receivedMBps + ' MB/s';
+                if (networkUpEl) networkUpEl.textContent = sentMBps + ' MB/s';
+                if (networkTotalEl) networkTotalEl.textContent = totalMBps + ' MB/s';
             }
         } catch (error) {
             console.error('Network fetch error');
@@ -175,19 +179,15 @@
                     const amountMicro = parseFloat(ticsReward.amount);
                     const amountTICS = amountMicro / 1000000000000000000;
                     
-                    const totalRewardsEl = document.getElementById('totalRewards');
-                    if (totalRewardsEl) {
-                        totalRewardsEl.textContent = formatNumber(amountTICS) + ' TICS';
-                    }
-                    
                     // Estimate daily rewards (outstanding / 7 days)
                     const estimatedDailyRewards = amountTICS / 7;
                     const total30dRewards = estimatedDailyRewards * 30;
                     
-                    const total30dEl = document.getElementById('total30dRewards');
+                    // Update UI
+                    const totalRewardsEl = document.getElementById('totalRewards');
                     const avgDailyEl = document.getElementById('avgDailyRewards');
                     
-                    if (total30dEl) total30dEl.textContent = formatNumber(total30dRewards) + ' TICS';
+                    if (totalRewardsEl) totalRewardsEl.textContent = formatNumber(total30dRewards) + ' TICS';
                     if (avgDailyEl) avgDailyEl.textContent = formatNumber(estimatedDailyRewards) + ' TICS';
                     
                     window.currentDailyRewards = estimatedDailyRewards;
@@ -368,52 +368,40 @@
         console.log('✅ Rewards chart initialized');
     }
 
-    // ===== NETWORK CHART =====
+    // ===== NETWORK CHART - TRAFFIC OVER TIME =====
     function initNetworkChart() {
         const canvas = document.getElementById('networkChart');
         if (!canvas) return;
         
         const ctx = canvas.getContext('2d');
         const width = canvas.width = canvas.offsetWidth * 2;
-        const height = canvas.height = 600;
+        const height = canvas.height = 300;
         
-        const data = [
-            { label: 'Block Time', value: 5.87, max: 10, color: '#22c55e' },
-            { label: 'Uptime', value: 99.98, max: 100, color: '#00D4FF' },
-            { label: 'Peers', value: 47, max: 50, color: '#f59e0b' }
-        ];
+        // Generate traffic data (last 24 hours)
+        const data = [];
+        for (let i = 0; i < 24; i++) {
+            data.push(Math.random() * 5 + 2); // 2-7 MB/s
+        }
         
-        const padding = 100;
-        const barHeight = 80;
-        const barSpacing = 100;
+        const max = Math.max(...data) * 1.2;
+        const min = 0;
+        const padding = 40;
         const chartWidth = width - padding * 2;
+        const chartHeight = height - padding * 2;
         
         ctx.clearRect(0, 0, width, height);
         
-        data.forEach((item, index) => {
-            const y = padding + index * (barHeight + barSpacing);
-            const barWidth = (chartWidth * item.value / item.max);
-            
-            ctx.fillStyle = 'rgba(148, 163, 184, 0.2)';
-            ctx.fillRect(padding, y, chartWidth, barHeight);
-            
-            const gradient = ctx.createLinearGradient(padding, 0, padding + barWidth, 0);
-            gradient.addColorStop(0, item.color);
-            gradient.addColorStop(1, item.color + '80');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(padding, y, barWidth, barHeight);
-            
-            ctx.fillStyle = '#e2e8f0';
-            ctx.font = 'bold 28px sans-serif';
-            ctx.textAlign = 'left';
-            ctx.fillText(item.label, padding + 20, y + barHeight / 2 + 10);
-            
-            ctx.textAlign = 'right';
-            let valueText = item.value.toFixed(2);
-            if (item.label === 'Block Time') valueText += 's';
-            if (item.label === 'Uptime') valueText += '%';
-            ctx.fillText(valueText, width - padding - 20, y + barHeight / 2 + 10);
+        // Line
+        ctx.beginPath();
+        data.forEach((value, index) => {
+            const x = padding + (chartWidth / (data.length - 1)) * index;
+            const y = height - padding - ((value - min) / (max - min)) * chartHeight;
+            if (index === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
         });
+        ctx.strokeStyle = '#00D4FF';
+        ctx.lineWidth = 2;
+        ctx.stroke();
     }
 
     // ===== GROWTH CHART =====

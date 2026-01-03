@@ -68,26 +68,34 @@
             </h1>
             <p class="main-subtitle">Professional Validator Infrastructure & Real-time Monitoring</p>
             
-            <!-- Live Metrics - Simple Text -->
-            <div class="live-metrics-simple">
-                <div class="simple-metric">
-                    <span class="simple-label">Block Height:</span>
-                    <span class="simple-value" id="currentBlock">--</span>
+            <!-- Live Metrics Grid - Without Card Borders -->
+            <div class="live-metrics-grid">
+                <div class="metric-card-simple">
+                    <div class="metric-icon">📊</div>
+                    <div class="metric-label">Block Height</div>
+                    <div class="metric-value" id="currentBlock">--</div>
+                    <div class="metric-subtitle">Current Block</div>
                 </div>
                 
-                <div class="simple-metric">
-                    <span class="simple-label">Voting Power:</span>
-                    <span class="simple-value highlight" id="delegatedAmountContainer">--</span>
+                <div class="metric-card-simple highlight">
+                    <div class="metric-icon">⚡</div>
+                    <div class="metric-label">Voting Power</div>
+                    <div class="metric-value" id="delegatedAmountContainer">--</div>
+                    <div class="metric-subtitle">TICS Delegated</div>
                 </div>
                 
-                <div class="simple-metric">
-                    <span class="simple-label">Network Peers:</span>
-                    <span class="simple-value" id="peerCount">--</span>
+                <div class="metric-card-simple">
+                    <div class="metric-icon">🔗</div>
+                    <div class="metric-label">Network Peers</div>
+                    <div class="metric-value" id="peerCount">--</div>
+                    <div class="metric-subtitle">Connected</div>
                 </div>
                 
-                <div class="simple-metric">
-                    <span class="simple-label">Uptime:</span>
-                    <span class="simple-value" id="uptimePercent">99.98%</span>
+                <div class="metric-card-simple">
+                    <div class="metric-icon">⏱️</div>
+                    <div class="metric-label">Uptime</div>
+                    <div class="metric-value" id="uptimePercent">99.98%</div>
+                    <div class="metric-subtitle">Last 100K Blocks</div>
                 </div>
             </div>
         </section>
@@ -118,6 +126,7 @@
                         <span class="info-label">Cores:</span>
                         <span class="info-value" id="cpuCores">12 vCPU</span>
                     </div>
+                    <canvas id="cpuChart" class="mini-chart"></canvas>
                 </div>
 
                 <!-- RAM Speedometer -->
@@ -135,6 +144,7 @@
                         <span class="info-label">Total:</span>
                         <span class="info-value">48 GB</span>
                     </div>
+                    <canvas id="memoryChart" class="mini-chart"></canvas>
                 </div>
 
                 <!-- Disk Speedometer -->
@@ -152,6 +162,7 @@
                         <span class="info-label">Capacity:</span>
                         <span class="info-value">500 GB NVMe</span>
                     </div>
+                    <canvas id="diskChart" class="mini-chart"></canvas>
                 </div>
 
                 <!-- Disk I/O -->
@@ -234,12 +245,12 @@
                                 <span class="stat-label">Self-Bonded:</span>
                                 <span class="stat-value" id="selfBonded">-- TICS</span>
                             </div>
-                            <div class="share-stat">
+                            <div class="share-stat commission-row">
                                 <span class="stat-label">Commission:</span>
-                                <span class="stat-value commission-value">
-                                    <span id="commissionRate">5.0%</span>
-                                    <span class="commission-note">Lowest in network • Actual APY: 28.5% • <a href="calculator.html" class="calculator-link">Calculator →</a></span>
-                                </span>
+                                <span class="stat-value" id="commissionRate">5.0%</span>
+                            </div>
+                            <div class="commission-note">
+                                Lowest in network • Actual APY: 28.5% • <a href="calculator.html" class="calculator-link">Calculator →</a>
                             </div>
                         </div>
                     </div>
@@ -306,10 +317,7 @@
                         </div>
                         <div class="address-row">
                             <span class="address-label">Public Key:</span>
-                            <span class="address-value address-pubkey-multiline">
-                                {"@type":"/cosmos.crypto.ed25519.PubKey",
-                                "key":"AwffKHqarKlIZL72uCq4OQHlw0wspQEDGmHrBI1EWvc="}
-                            </span>
+                            <span class="address-value address-pubkey">{"@type": "/cosmos.crypto.ed25519.PubKey", "key": "AwffKHqarKlIZL72uCq4OQHlw0wspQEDGmHrBI1EWvc="}</span>
                         </div>
                     </div>
                 </div>

@@ -165,44 +165,56 @@ body {
     margin-bottom: 50px;
 }
 
-/* ===== LIVE METRICS - SIMPLE TEXT STYLE ===== */
-.live-metrics-simple {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 40px;
-    flex-wrap: wrap;
-    max-width: 1000px;
+/* ===== LIVE METRICS GRID - WITHOUT CARD BORDERS ===== */
+.live-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
     margin: 0 auto;
 }
 
-.simple-metric {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
+.metric-card-simple {
+    text-align: center;
+    padding: 30px;
+    transition: transform 0.3s;
 }
 
-.simple-label {
-    color: #94a3b8;
-    font-size: 13px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+.metric-card-simple:hover {
+    transform: translateY(-5px);
 }
 
-.simple-value {
-    color: #00D4FF;
-    font-size: 22px;
-    font-weight: 700;
-}
-
-.simple-value.highlight {
+.metric-card-simple.highlight .metric-value {
     background: linear-gradient(135deg, #00D4FF, #00ffff);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    font-size: 26px;
+}
+
+.metric-icon {
+    font-size: 42px;
+    margin-bottom: 15px;
+}
+
+.metric-label {
+    color: #94a3b8;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+}
+
+.metric-value {
+    color: #00D4FF;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.metric-subtitle {
+    color: #64748b;
+    font-size: 12px;
 }
 
 /* ===== LIVE METRICS GRID ===== */
@@ -438,6 +450,12 @@ body {
     width: 100%;
     height: 80px;
     margin-top: 10px;
+}
+
+.mini-chart {
+    width: 100%;
+    height: 60px;
+    margin-top: 15px;
 }
 
 /* ===== REWARDS SECTION ===== */
@@ -1030,20 +1048,18 @@ footer a:hover {
     font-weight: 700;
 }
 
-/* Commission Stat with info */
-.commission-value {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 4px;
+/* Commission row and note */
+.commission-row {
+    /* Звичайний рядок як інші */
 }
 
 .commission-note {
     color: #64748b;
-    font-size: 10px;
-    line-height: 1.4;
-    font-weight: 400;
-    text-align: right;
+    font-size: 11px;
+    line-height: 1.5;
+    padding: 8px 10px;
+    margin-top: 8px;
+    border-top: 1px solid rgba(0, 212, 255, 0.1);
 }
 
 .calculator-link {
@@ -1092,9 +1108,9 @@ footer a:hover {
     user-select: all;
 }
 
-.address-pubkey-multiline {
-    color: #00D4FF;
+.address-pubkey {
     font-size: 11px;
+    word-wrap: break-word;
     white-space: pre-wrap;
     line-height: 1.6;
 }
@@ -1345,26 +1361,31 @@ footer a:hover {
         font-size: 36px;
     }
     
-    /* Simple metrics mobile */
-    .live-metrics-simple {
-        gap: 25px;
-        padding: 0 10px;
+    /* Metric cards mobile */
+    .live-metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
     }
     
-    .simple-metric {
-        min-width: 120px;
+    .metric-card-simple {
+        padding: 20px;
     }
     
-    .simple-label {
+    .metric-icon {
+        font-size: 32px;
+        margin-bottom: 10px;
+    }
+    
+    .metric-label {
         font-size: 11px;
     }
     
-    .simple-value {
-        font-size: 18px;
+    .metric-value {
+        font-size: 24px;
     }
     
-    .simple-value.highlight {
-        font-size: 22px;
+    .metric-subtitle {
+        font-size: 10px;
     }
     
     /* Commission note mobile */
@@ -1377,7 +1398,7 @@ footer a:hover {
         font-size: 11px;
     }
     
-    .address-pubkey-multiline {
+    .address-pubkey {
         font-size: 10px;
     }
     

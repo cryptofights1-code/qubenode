@@ -130,6 +130,8 @@
     async function updateInfrastructureMetrics() {
         const RPC_WORKER = 'https://qubenode-rpc-proxy.yuskivvolodymyr.workers.dev';
         
+        let cpuPercent, ramPercent, diskPercent;
+        
         // Get CPU cores count (one time)
         if (!window.cpuCoresDetected) {
             try {
@@ -168,6 +170,7 @@
                 const user = latest[6] || 0;
                 const system = latest[7] || 0;
                 const cpuUsage = user + system;
+                cpuPercent = cpuUsage;
                 updateSpeedometer('cpuArc', 'cpuValue', cpuUsage);
                 console.log('✅ CPU from Netdata:', cpuUsage.toFixed(1) + '%');
             }
@@ -187,6 +190,7 @@
                 const used = latest[2] || 0;
                 const total = free + used;
                 const ramUsagePercent = (used / total) * 100;
+                ramPercent = ramUsagePercent;
                 updateSpeedometer('ramArc', 'ramValue', ramUsagePercent);
                 console.log('✅ RAM from Netdata:', ramUsagePercent.toFixed(1) + '%');
             }
@@ -206,6 +210,7 @@
                 const used = latest[2] || 0;
                 const total = avail + used;
                 const diskUsagePercent = (used / total) * 100;
+                diskPercent = diskUsagePercent;
                 updateSpeedometer('diskArc', 'diskValue', diskUsagePercent);
                 console.log('✅ Disk from Netdata:', diskUsagePercent.toFixed(1) + '%');
             }
@@ -288,6 +293,11 @@
             }
         } catch (error) {
             console.error('❌ Disk I/O fetch error:', error);
+        }
+        
+        // Update mini charts if we have CPU, RAM, Disk percentages
+        if (cpuPercent !== undefined && ramPercent !== undefined && diskPercent !== undefined) {
+            updateAllMiniCharts(cpuPercent, ramPercent, diskPercent);
         }
     }
 
@@ -874,9 +884,79 @@
         return activities;
     }
 
+    // ===== MINI CHARTS FOR CPU, MEMORY, DISK =====
+    const chartData = {
+        cpu: [],
+        memory: [],
+        disk: []
+    };
+    
+    function updateMiniChart(canvasId, data, color) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width = canvas.offsetWidth * 2;
+        const height = canvas.height = 120;
+        
+        ctx.clearRect(0, 0, width, height);
+        
+        if (data.length < 2) return;
+        
+        const max = Math.max(...data, 1);
+        const min = Math.min(...data, 0);
+        const range = max - min || 1;
+        
+        // Gradient fill
+        const gradient = ctx.createLinearGradient(0, 0, 0, height);
+        gradient.addColorStop(0, color + '40');
+        gradient.addColorStop(1, color + '00');
+        
+        ctx.beginPath();
+        ctx.moveTo(0, height);
+        
+        data.forEach((value, index) => {
+            const x = (index / (data.length - 1)) * width;
+            const y = height - ((value - min) / range) * height;
+            ctx.lineTo(x, y);
+        });
+        
+        ctx.lineTo(width, height);
+        ctx.closePath();
+        ctx.fillStyle = gradient;
+        ctx.fill();
+        
+        // Line
+        ctx.beginPath();
+        data.forEach((value, index) => {
+            const x = (index / (data.length - 1)) * width;
+            const y = height - ((value - min) / range) * height;
+            if (index === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        });
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+    }
+    
+    function updateAllMiniCharts(cpuPercent, memoryPercent, diskPercent) {
+        // Keep last 20 data points
+        chartData.cpu.push(cpuPercent);
+        chartData.memory.push(memoryPercent);
+        chartData.disk.push(diskPercent);
+        
+        if (chartData.cpu.length > 20) chartData.cpu.shift();
+        if (chartData.memory.length > 20) chartData.memory.shift();
+        if (chartData.disk.length > 20) chartData.disk.shift();
+        
+        updateMiniChart('cpuChart', chartData.cpu, '#00D4FF');
+        updateMiniChart('memoryChart', chartData.memory, '#00D4FF');
+        updateMiniChart('diskChart', chartData.disk, '#00D4FF');
+    }
+
     // ===== INITIALIZATION =====
     function init() {
-        console.log('🚀 Initializing About page v4.0 with Validator API integration...');
+        console.log('🚀 Initializing About page v4.1 with Mini Charts...');
         console.log('CORS Proxy enabled:', CONFIG.useCorsProxy);
         
         // Initial fetch

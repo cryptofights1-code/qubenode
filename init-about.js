@@ -19,9 +19,12 @@
     // ===== UTILITY FUNCTIONS =====
     function formatNumber(num) {
         if (num >= 1000000) {
-            return (num / 1000000).toFixed(3) + 'M';
+            // Remove trailing zeros and decimal point if needed
+            const value = (num / 1000000).toString();
+            return value + 'M';
         } else if (num >= 1000) {
-            return (num / 1000).toFixed(3) + 'K';
+            const value = (num / 1000).toString();
+            return value + 'K';
         }
         return num.toLocaleString();
     }
@@ -891,31 +894,19 @@
     
     function updateMiniChart(canvasId, data, color) {
         const canvas = document.getElementById(canvasId);
-        if (!canvas) {
-            console.warn('Canvas not found:', canvasId);
-            return;
-        }
+        if (!canvas) return;
         
         const ctx = canvas.getContext('2d');
-        const parent = canvas.parentElement;
-        const width = canvas.width = parent.offsetWidth * 2 || 400;
+        const width = canvas.width = canvas.offsetWidth * 2;
         const height = canvas.height = 120;
         
         ctx.clearRect(0, 0, width, height);
         
-        if (data.length < 1) {
-            console.log('No data points for', canvasId);
-            return;
-        }
+        if (data.length < 2) return;
         
-        // Якщо тільки 1 точка - додаємо її двічі для малювання
-        const plotData = data.length === 1 ? [data[0], data[0]] : data;
-        
-        const max = Math.max(...plotData, 100);
-        const min = 0;
+        const max = Math.max(...data, 1);
+        const min = Math.min(...data, 0);
         const range = max - min || 1;
-        
-        console.log('Drawing', canvasId, '- Points:', plotData.length, 'Max:', max, 'Range:', range);
         
         // Gradient fill
         const gradient = ctx.createLinearGradient(0, 0, 0, height);
@@ -925,8 +916,8 @@
         ctx.beginPath();
         ctx.moveTo(0, height);
         
-        plotData.forEach((value, index) => {
-            const x = (index / (plotData.length - 1)) * width;
+        data.forEach((value, index) => {
+            const x = (index / (data.length - 1)) * width;
             const y = height - ((value - min) / range) * height;
             ctx.lineTo(x, y);
         });
@@ -938,8 +929,8 @@
         
         // Line
         ctx.beginPath();
-        plotData.forEach((value, index) => {
-            const x = (index / (plotData.length - 1)) * width;
+        data.forEach((value, index) => {
+            const x = (index / (data.length - 1)) * width;
             const y = height - ((value - min) / range) * height;
             if (index === 0) ctx.moveTo(x, y);
             else ctx.lineTo(x, y);
@@ -1149,6 +1140,7 @@
         updateBlockHeight();
         updateVotingPower();
         updateNetworkShareData();
+        fetchNetworkInfo();
         
         // Charts
         initNetworkChart();
@@ -1171,6 +1163,7 @@
         setInterval(updateBlockHeight, 3000); // 3 sec
         setInterval(updateVotingPower, 60000); // 1 min
         setInterval(updateNetworkShareData, 60000); // 1 min
+        setInterval(fetchNetworkInfo, 60000); // 1 min
     }
 
     if (document.readyState === 'loading') {

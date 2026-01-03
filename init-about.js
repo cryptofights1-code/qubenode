@@ -365,22 +365,28 @@
                         
                         tx.events.forEach(event => {
                             if (event.type === 'delegate') {
-                                const validatorAttr = event.attributes?.find(a => 
-                                    Buffer.from(a.key, 'base64').toString() === 'validator'
-                                );
-                                const delegatorAttr = event.attributes?.find(a => 
-                                    Buffer.from(a.key, 'base64').toString() === 'delegator'
-                                );
-                                const amountAttr = event.attributes?.find(a => 
-                                    Buffer.from(a.key, 'base64').toString() === 'amount'
-                                );
+                                const validatorAttr = event.attributes?.find(a => {
+                                    try {
+                                        return atob(a.key) === 'validator';
+                                    } catch (e) { return false; }
+                                });
+                                const delegatorAttr = event.attributes?.find(a => {
+                                    try {
+                                        return atob(a.key) === 'delegator';
+                                    } catch (e) { return false; }
+                                });
+                                const amountAttr = event.attributes?.find(a => {
+                                    try {
+                                        return atob(a.key) === 'amount';
+                                    } catch (e) { return false; }
+                                });
                                 
                                 if (validatorAttr && delegatorAttr && amountAttr) {
-                                    const validator = Buffer.from(validatorAttr.value, 'base64').toString();
+                                    const validator = atob(validatorAttr.value);
                                     
                                     if (validator === ourValidator) {
-                                        const delegator = Buffer.from(delegatorAttr.value, 'base64').toString();
-                                        const amountStr = Buffer.from(amountAttr.value, 'base64').toString();
+                                        const delegator = atob(delegatorAttr.value);
+                                        const amountStr = atob(amountAttr.value);
                                         const amount = parseInt(amountStr.replace(/[^0-9]/g, '')) / 1000000000000000000;
                                         
                                         delegations.push({
@@ -1067,15 +1073,16 @@
                             let amount = 0;
                             
                             // Check validator involvement
-                            const validatorAttr = event.attributes?.find(a => 
-                                Buffer.from(a.key, 'base64').toString() === 'validator' ||
-                                Buffer.from(a.key, 'base64').toString() === 'validator_src' ||
-                                Buffer.from(a.key, 'base64').toString() === 'validator_dst'
-                            );
+                            const validatorAttr = event.attributes?.find(a => {
+                                try {
+                                    const key = atob(a.key);
+                                    return key === 'validator' || key === 'validator_src' || key === 'validator_dst';
+                                } catch (e) { return false; }
+                            });
                             
                             if (!validatorAttr) return;
                             
-                            const validator = Buffer.from(validatorAttr.value, 'base64').toString();
+                            const validator = atob(validatorAttr.value);
                             if (validator !== ourValidator) return;
                             
                             // Delegation
@@ -1106,18 +1113,22 @@
                             if (!eventType) return;
                             
                             // Get delegator and amount
-                            const delegatorAttr = event.attributes?.find(a => 
-                                Buffer.from(a.key, 'base64').toString() === 'delegator'
-                            );
-                            const amountAttr = event.attributes?.find(a => 
-                                Buffer.from(a.key, 'base64').toString() === 'amount'
-                            );
+                            const delegatorAttr = event.attributes?.find(a => {
+                                try {
+                                    return atob(a.key) === 'delegator';
+                                } catch (e) { return false; }
+                            });
+                            const amountAttr = event.attributes?.find(a => {
+                                try {
+                                    return atob(a.key) === 'amount';
+                                } catch (e) { return false; }
+                            });
                             
                             if (delegatorAttr) {
-                                delegator = Buffer.from(delegatorAttr.value, 'base64').toString();
+                                delegator = atob(delegatorAttr.value);
                             }
                             if (amountAttr) {
-                                const amountStr = Buffer.from(amountAttr.value, 'base64').toString();
+                                const amountStr = atob(amountAttr.value);
                                 amount = parseInt(amountStr.replace(/[^0-9]/g, '')) / 1000000000000000000;
                             }
                             

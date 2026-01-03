@@ -890,19 +890,28 @@
     
     function updateMiniChart(canvasId, data, color) {
         const canvas = document.getElementById(canvasId);
-        if (!canvas) return;
+        if (!canvas) {
+            console.warn('Canvas not found:', canvasId);
+            return;
+        }
         
         const ctx = canvas.getContext('2d');
-        const width = canvas.width = canvas.offsetWidth * 2;
+        const parent = canvas.parentElement;
+        const width = canvas.width = parent.offsetWidth * 2 || 400;
         const height = canvas.height = 120;
         
         ctx.clearRect(0, 0, width, height);
         
-        if (data.length < 2) return;
+        if (data.length < 2) {
+            console.log('Not enough data points for', canvasId, ':', data.length);
+            return;
+        }
         
-        const max = Math.max(...data, 1);
-        const min = Math.min(...data, 0);
+        const max = Math.max(...data, 100);
+        const min = 0;
         const range = max - min || 1;
+        
+        console.log('Drawing', canvasId, '- Points:', data.length, 'Max:', max, 'Range:', range);
         
         // Gradient fill
         const gradient = ctx.createLinearGradient(0, 0, 0, height);

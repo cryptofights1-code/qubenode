@@ -19,12 +19,14 @@
     // ===== UTILITY FUNCTIONS =====
     function formatNumber(num) {
         if (num >= 1000000) {
-            // Remove trailing zeros and decimal point if needed
-            const value = (num / 1000000).toString();
-            return value + 'M';
+            // Truncate to 3 decimal places WITHOUT rounding
+            const millions = num / 1000000;
+            const truncated = Math.floor(millions * 1000) / 1000;
+            return truncated.toFixed(3) + 'M';
         } else if (num >= 1000) {
-            const value = (num / 1000).toString();
-            return value + 'K';
+            const thousands = num / 1000;
+            const truncated = Math.floor(thousands * 1000) / 1000;
+            return truncated.toFixed(3) + 'K';
         }
         return num.toLocaleString();
     }
@@ -110,7 +112,8 @@
     // ===== FETCH NETWORK INFO =====
     async function fetchNetworkInfo() {
         try {
-            const response = await fetchWithProxy('https://tendermint.qubetics.com/net_info');
+            const RPC_WORKER = 'https://qubenode-rpc-proxy.yuskivvolodymyr.workers.dev';
+            const response = await fetch(`${RPC_WORKER}/rpc/net_info`);
             
             if (!response.ok) throw new Error('Failed to fetch network info');
             
@@ -119,11 +122,12 @@
             const peerCount = document.getElementById('peerCount');
             if (peerCount && data.result && data.result.n_peers) {
                 peerCount.textContent = data.result.n_peers;
+                console.log('✅ Network peers:', data.result.n_peers);
             }
             
             return data;
         } catch (error) {
-            console.error('Error fetching network info:', error);
+            console.error('❌ Error fetching network info:', error);
             return null;
         }
     }
@@ -489,10 +493,16 @@
                     const signedBlocks = indexOffset - missedBlocks;
                     const uptime = (signedBlocks / indexOffset) * 100;
                     
-                    // Update Uptime
+                    // Update Uptime (both hero and performance sections)
                     const uptimeEl = document.getElementById('validatorUptime');
+                    const heroUptimeEl = document.getElementById('uptimePercent');
+                    const uptimeText = uptime.toFixed(2) + '%';
+                    
                     if (uptimeEl) {
-                        uptimeEl.textContent = uptime.toFixed(2) + '%';
+                        uptimeEl.textContent = uptimeText;
+                    }
+                    if (heroUptimeEl) {
+                        heroUptimeEl.textContent = uptimeText;
                     }
                     
                     // Update Missed Blocks (show /100K for slashing window)

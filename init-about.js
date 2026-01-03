@@ -361,7 +361,7 @@
         }
     }
 
-    // ===== VALIDATOR INFO (Delegators, Self-Bonded, Commission) =====
+    // ===== VALIDATOR INFO (Delegators, Self-Bonded, Commission, Since, Status) =====
     async function updateValidatorInfo() {
         try {
             const validatorUrl = 'https://swagger.qubetics.com/cosmos/staking/v1/validators/qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
@@ -376,6 +376,26 @@
             const validator = data.validator;
             
             if (validator) {
+                // Validator Since (дата створення)
+                const updateTime = new Date(validator.commission.update_time);
+                const sinceEl = document.getElementById('validatorSince');
+                if (sinceEl) {
+                    const formattedDate = updateTime.toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric' 
+                    });
+                    sinceEl.textContent = formattedDate;
+                }
+                
+                // Status
+                const statusEl = document.getElementById('validatorStatus');
+                if (statusEl) {
+                    const status = validator.status.replace('BOND_STATUS_', '');
+                    statusEl.textContent = status;
+                    statusEl.className = status === 'BONDED' ? 'metric-value success' : 'metric-value warning';
+                }
+                
                 // Commission Rate
                 const commissionRate = parseFloat(validator.commission.commission_rates.rate) * 100;
                 const commissionEl = document.getElementById('commissionRate');
@@ -390,7 +410,7 @@
                     jailedEl.className = validator.jailed ? 'metric-value warning' : 'metric-value success';
                 }
                 
-                console.log('✅ Validator Info: Commission', commissionRate + '%', 'Jailed:', validator.jailed);
+                console.log('✅ Validator Info: Since', updateTime.toISOString().split('T')[0], 'Status', validator.status, 'Commission', commissionRate + '%', 'Jailed:', validator.jailed);
             }
         } catch (error) {
             console.error('❌ Validator Info error:', error);
@@ -454,23 +474,23 @@
                     const indexOffset = parseInt(ourValidator.index_offset);
                     const missedBlocks = parseInt(ourValidator.missed_blocks_counter);
                     
-                    // Uptime calculation
+                    // Uptime calculation (2 decimal places)
                     const signedBlocks = indexOffset - missedBlocks;
                     const uptime = (signedBlocks / indexOffset) * 100;
                     
                     // Update Uptime
                     const uptimeEl = document.getElementById('validatorUptime');
                     if (uptimeEl) {
-                        uptimeEl.textContent = uptime.toFixed(4) + '%';
+                        uptimeEl.textContent = uptime.toFixed(2) + '%';
                     }
                     
-                    // Update Missed Blocks
+                    // Update Missed Blocks (show /100K for slashing window)
                     const missedEl = document.getElementById('missedBlocks');
                     if (missedEl) {
-                        missedEl.textContent = missedBlocks + ' / ' + formatNumber(indexOffset);
+                        missedEl.textContent = missedBlocks + ' / 100K';
                     }
                     
-                    console.log('✅ Uptime:', uptime.toFixed(4) + '%', 'Missed:', missedBlocks, '/', indexOffset);
+                    console.log('✅ Uptime:', uptime.toFixed(2) + '%', 'Missed:', missedBlocks, '/ 100,000 blocks (slashing window)');
                 }
             }
         } catch (error) {

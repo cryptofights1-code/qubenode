@@ -68,34 +68,26 @@
             </h1>
             <p class="main-subtitle">Professional Validator Infrastructure & Real-time Monitoring</p>
             
-            <!-- Live Metrics Cards -->
-            <div class="live-metrics-grid">
-                <div class="metric-card">
-                    <div class="metric-icon">📊</div>
-                    <div class="metric-label">Block Height</div>
-                    <div class="metric-value" id="currentBlock">--</div>
-                    <div class="metric-subtitle">Current Block</div>
+            <!-- Live Metrics - Simple Text -->
+            <div class="live-metrics-simple">
+                <div class="simple-metric">
+                    <span class="simple-label">Block Height:</span>
+                    <span class="simple-value" id="currentBlock">--</span>
                 </div>
                 
-                <div class="metric-card highlight">
-                    <div class="metric-icon">⚡</div>
-                    <div class="metric-label">Voting Power</div>
-                    <div class="metric-value" id="delegatedAmountContainer">--</div>
-                    <div class="metric-subtitle">TICS Delegated</div>
+                <div class="simple-metric">
+                    <span class="simple-label">Voting Power:</span>
+                    <span class="simple-value highlight" id="delegatedAmountContainer">--</span>
                 </div>
                 
-                <div class="metric-card">
-                    <div class="metric-icon">🔗</div>
-                    <div class="metric-label">Network Peers</div>
-                    <div class="metric-value" id="peerCount">--</div>
-                    <div class="metric-subtitle">Connected</div>
+                <div class="simple-metric">
+                    <span class="simple-label">Network Peers:</span>
+                    <span class="simple-value" id="peerCount">--</span>
                 </div>
                 
-                <div class="metric-card">
-                    <div class="metric-icon">⏱️</div>
-                    <div class="metric-label">Uptime</div>
-                    <div class="metric-value" id="uptimePercent">99.98%</div>
-                    <div class="metric-subtitle">Last 100K Blocks</div>
+                <div class="simple-metric">
+                    <span class="simple-label">Uptime:</span>
+                    <span class="simple-value" id="uptimePercent">99.98%</span>
                 </div>
             </div>
         </section>
@@ -216,7 +208,6 @@
                 <!-- Network Share Card -->
                 <div class="performance-card network-share-card">
                     <h2 class="card-title">
-                        <span class="title-icon">📊</span>
                         Network Share
                     </h2>
                     <div class="network-share-content">
@@ -224,31 +215,30 @@
                         <div class="share-label">of Total Network Stake</div>
                         <div class="share-stats">
                             <div class="share-stat">
-                                <span class="stat-label">Our Stake:</span>
-                                <span class="stat-value" id="ourStake">-- TICS</span>
-                            </div>
-                            <div class="share-stat">
                                 <span class="stat-label">Network Total:</span>
                                 <span class="stat-value" id="networkTotal">-- TICS</span>
                             </div>
                             <div class="share-stat">
-                                <span class="stat-label">Rank:</span>
-                                <span class="stat-value rank-badge" id="validatorRank">#--</span>
+                                <span class="stat-label">Our Stake:</span>
+                                <span class="stat-value" id="ourStake">-- TICS</span>
                             </div>
                             <div class="share-stat">
                                 <span class="stat-label">Delegators:</span>
                                 <span class="stat-value" id="delegatorsCount">--</span>
                             </div>
                             <div class="share-stat">
+                                <span class="stat-label">Rank:</span>
+                                <span class="stat-value rank-badge" id="validatorRank">#--</span>
+                            </div>
+                            <div class="share-stat">
                                 <span class="stat-label">Self-Bonded:</span>
                                 <span class="stat-value" id="selfBonded">-- TICS</span>
                             </div>
-                            <div class="share-stat commission-stat">
+                            <div class="share-stat">
                                 <span class="stat-label">Commission:</span>
-                                <span class="stat-value" id="commissionRate">5%</span>
-                                <span class="stat-info" title="Lowest in network. Calculated from network rewards. Actual APY for delegators: 28.5%">
-                                    ⓘ Lowest in network • Actual APY: 28.5% • 
-                                    <a href="calculator.html" class="calculator-link">Calculator →</a>
+                                <span class="stat-value commission-value">
+                                    <span id="commissionRate">5.0%</span>
+                                    <span class="commission-note">Lowest in network • Actual APY: 28.5% • <a href="calculator.html" class="calculator-link">Calculator →</a></span>
                                 </span>
                             </div>
                         </div>
@@ -258,17 +248,24 @@
                 <!-- Validator Performance Card -->
                 <div class="performance-card">
                     <h2 class="card-title">
-                        <span class="title-icon">⚡</span>
                         Validator Performance
                     </h2>
                     <div class="performance-metrics">
+                        <div class="metric-row">
+                            <span class="metric-label">Validator Since:</span>
+                            <span class="metric-value" id="validatorSince">--</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Status:</span>
+                            <span class="metric-value success" id="validatorStatus">BONDED</span>
+                        </div>
                         <div class="metric-row">
                             <span class="metric-label">Uptime:</span>
                             <span class="metric-value success" id="validatorUptime">--</span>
                         </div>
                         <div class="metric-row">
                             <span class="metric-label">Missed Blocks:</span>
-                            <span class="metric-value" id="missedBlocks">--</span>
+                            <span class="metric-value" id="missedBlocks">-- / 100K</span>
                         </div>
                         <div class="metric-row">
                             <span class="metric-label">Outstanding Rewards:</span>
@@ -276,7 +273,7 @@
                         </div>
                         <div class="metric-row">
                             <span class="metric-label">Jailed Status:</span>
-                            <span class="metric-value success" id="jailedStatus">--</span>
+                            <span class="metric-value success" id="jailedStatus">Never ✓</span>
                         </div>
                         <div class="metric-row">
                             <span class="metric-label">Slashing Events:</span>
@@ -288,29 +285,31 @@
                 <!-- Validator Addresses Card -->
                 <div class="performance-card addresses-card">
                     <h2 class="card-title">
-                        <span class="title-icon">📋</span>
                         Validator Addresses
                     </h2>
                     <div class="addresses-list">
                         <div class="address-row">
                             <span class="address-label">Account Address:</span>
-                            <span class="address-value" id="accountAddress">qubetics1tzk9f84cv2gmk3du3m9dpxcuph70sfj6ltvqjf</span>
+                            <span class="address-value">qubetics1tzk9f84cv2gmk3du3m9dpxcuph70sfj6ltvqjf</span>
                         </div>
                         <div class="address-row">
                             <span class="address-label">Operator Address:</span>
-                            <span class="address-value" id="operatorAddress">qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld</span>
+                            <span class="address-value">qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld</span>
                         </div>
                         <div class="address-row">
                             <span class="address-label">Hex Address:</span>
-                            <span class="address-value" id="hexAddress">6FF72A04488A594ACC6BCCA6936C7279DBE041E5</span>
+                            <span class="address-value">6FF72A04488A594ACC6BCCA6936C7279DBE041E5</span>
                         </div>
                         <div class="address-row">
                             <span class="address-label">Consensus Address:</span>
-                            <span class="address-value" id="consensusAddress">qubeticsvalcons1dlmj5pzg3fv54nrtejnfxmrj08d7qs09xjp2eu</span>
+                            <span class="address-value">qubeticsvalcons1dlmj5pzg3fv54nrtejnfxmrj08d7qs09xjp2eu</span>
                         </div>
-                        <div class="address-row public-key-row">
+                        <div class="address-row">
                             <span class="address-label">Public Key:</span>
-                            <span class="address-value address-pubkey" id="publicKey">{"@type":"/cosmos.crypto.ed25519.PubKey","key":"AwffKHqarKlIZL72uCq4OQHlw0wspQEDGmHrBI1EWvc="}</span>
+                            <span class="address-value address-pubkey-multiline">
+                                {"@type":"/cosmos.crypto.ed25519.PubKey",
+                                "key":"AwffKHqarKlIZL72uCq4OQHlw0wspQEDGmHrBI1EWvc="}
+                            </span>
                         </div>
                     </div>
                 </div>

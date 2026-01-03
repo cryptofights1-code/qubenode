@@ -959,6 +959,95 @@
         updateMiniChart('diskChart', chartData.disk, '#00D4FF');
     }
 
+    // ===== TOP 20 DELEGATORS =====
+    async function updateTop20Delegators() {
+        const tableBody = document.getElementById("topDelegatorsTable");
+        if (!tableBody) return;
+
+        try {
+            const url = `https://swagger.qubetics.com/cosmos/staking/v1beta1/validators/qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld/delegations?pagination.limit=1000`;
+            const response = await fetch(url);
+            
+            if (!response.ok) {
+                console.error('❌ TOP 20 API error:', response.status);
+                return;
+            }
+            
+            const data = await response.json();
+            
+            if (!data?.delegation_responses) return;
+
+            const allDelegations = data.delegation_responses.map(item => ({
+                address: item.delegation.delegator_address,
+                amount: parseInt(item.balance.amount) / 1000000000000000000
+            }));
+
+            allDelegations.sort((a, b) => b.amount - a.amount);
+            const top20 = allDelegations.slice(0, 20);
+            const totalStake = allDelegations.reduce((sum, d) => sum + d.amount, 0);
+            
+            tableBody.innerHTML = '';
+            
+            top20.forEach((delegator, index) => {
+                const row = document.createElement('div');
+                row.className = 'table-row';
+                row.style.animationDelay = (index * 0.03) + 's';
+                
+                const rank = index + 1;
+                const share = ((delegator.amount / totalStake) * 100).toFixed(2);
+                
+                row.innerHTML = `
+                    <div class="top-rank">#${rank}</div>
+                    <div class="delegator-address">${formatAddress(delegator.address)}</div>
+                    <div class="delegation-amount">${formatNumber(delegator.amount)} TICS</div>
+                    <div class="top-share">${share}%</div>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+            
+            console.log('✅ TOP 20 Delegators loaded:', top20.length);
+        } catch (error) {
+            console.error('❌ TOP 20 error:', error);
+        }
+    }
+
+    // ===== HERO VALIDATOR STATUS BADGE =====
+    async function updateHeroValidatorStatus() {
+        const statusEl = document.getElementById("validatorStatus");
+        if (!statusEl) return;
+        
+        try {
+            const url = 'https://swagger.qubetics.com/cosmos/staking/v1beta1/validators/qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
+            const response = await fetch(url);
+            
+            if (!response.ok) {
+                console.warn('⚠️ Hero Status API error:', response.status);
+                return;
+            }
+            
+            const data = await response.json();
+            
+            if (data?.validator) {
+                const validator = data.validator;
+                
+                if (validator.status === "BOND_STATUS_BONDED") {
+                    statusEl.textContent = "BONDED";
+                } else if (validator.jailed) {
+                    statusEl.textContent = "JAILED";
+                } else if (validator.status === "BOND_STATUS_UNBONDING") {
+                    statusEl.textContent = "UNBONDING";
+                } else {
+                    statusEl.textContent = "INACTIVE";
+                }
+                
+                console.log('✅ Hero Validator status:', statusEl.textContent);
+            }
+        } catch (error) {
+            console.warn('⚠️ Hero Status error:', error.message);
+        }
+    }
+
     // ===== INITIALIZATION =====
     function init() {
         console.log('🚀 Initializing About page v4.1 with Mini Charts...');
@@ -972,6 +1061,8 @@
         updateSelfBonded();
         updateSigningInfo();
         updateDelegatorsCount();
+        updateTop20Delegators();
+        updateHeroValidatorStatus();
         
         // Charts
         initNetworkChart();
@@ -989,6 +1080,8 @@
         setInterval(updateSelfBonded, 60000);
         setInterval(updateSigningInfo, 60000);
         setInterval(updateDelegatorsCount, 300000); // 5 min
+        setInterval(updateTop20Delegators, 300000); // 5 min
+        setInterval(updateHeroValidatorStatus, 60000); // 1 min
     }
 
     if (document.readyState === 'loading') {

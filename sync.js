@@ -489,13 +489,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateInflation();
     updateUptime();
     updateTicsPrice();
-    // About page updates (if elements exist)
-    if (typeof updateValidatorStatus === 'function') updateValidatorStatus();
-    if (typeof updateNetworkPeers === 'function') updateNetworkPeers();
-    if (typeof updateLatestDelegations === 'function') updateLatestDelegations();
-    if (typeof updateTop20Delegators === 'function') updateTop20Delegators();
-    if (typeof updateOutstandingRewards === 'function') updateOutstandingRewards();
-    if (typeof updateNetworkShare === 'function') updateNetworkShare();
+    // About page updates - MOVED TO init-about.js
   }, 15000);
 });
 
@@ -515,8 +509,8 @@ window.addEventListener('resize', () => {
 
 // Format helpers
 function formatNumber(num) {
-    if (num >= 1000000) return (num / 1000000).toFixed(2) + 'M';
-    if (num >= 1000) return (num / 1000).toFixed(2) + 'K';
+    if (num >= 1000000) return (num / 1000000).toFixed(3) + 'M';
+    if (num >= 1000) return (num / 1000).toFixed(3) + 'K';
     return num.toLocaleString();
 }
 
@@ -615,108 +609,7 @@ async function updateLatestDelegations() {
 }
 
 // Top 20 Delegators (for about.html)
-async function updateTop20Delegators() {
-  const tableBody = document.getElementById("topDelegatorsTable");
-  if (!tableBody) return;
+// Outstanding Rewards (for about.html) - MOVED TO init-about.js
 
-  try {
-    const url = `${API_BASE}/cosmos/staking/v1beta1/validators/${VALIDATOR}/delegations?pagination.limit=1000`;
-    const data = await fetchJSON(url);
-    
-    if (!data?.delegation_responses) return;
-
-    const allDelegations = data.delegation_responses.map(item => ({
-      address: item.delegation.delegator_address,
-      amount: parseInt(item.balance.amount) / 1000000000000000000
-    }));
-
-    allDelegations.sort((a, b) => b.amount - a.amount);
-    const top20 = allDelegations.slice(0, 20);
-    const totalStake = allDelegations.reduce((sum, d) => sum + d.amount, 0);
-    
-    tableBody.innerHTML = '';
-    
-    top20.forEach((delegator, index) => {
-      const row = document.createElement('div');
-      row.className = 'table-row';
-      row.style.animationDelay = (index * 0.03) + 's';
-      
-      const rank = index + 1;
-      let medal = '';
-      if (rank === 1) medal = '🥇';
-      else if (rank === 2) medal = '🥈';
-      else if (rank === 3) medal = '🥉';
-      
-      const share = ((delegator.amount / totalStake) * 100).toFixed(2);
-      
-      row.innerHTML = `
-        <div class="top-rank"><span class="medal">${medal}</span>#${rank}</div>
-        <div class="delegator-address">${formatAddress(delegator.address)}</div>
-        <div class="delegation-amount">${formatNumber(delegator.amount)} TICS</div>
-        <div class="top-share">${share}%</div>
-      `;
-      
-      tableBody.appendChild(row);
-    });
-  } catch (error) {
-    console.error('Error fetching top 20 delegators:', error);
-  }
-}
-
-// Outstanding Rewards (for about.html)
-async function updateOutstandingRewards() {
-  const totalRewardsEl = document.getElementById("totalRewards");
-  if (!totalRewardsEl) return;
-
-  try {
-    const url = `${API_BASE}/cosmos/distribution/v1beta1/validators/${VALIDATOR}/outstanding_rewards`;
-    const data = await fetchJSON(url);
-    
-    if (!data?.rewards?.rewards || data.rewards.rewards.length === 0) return;
-
-    const ticsReward = data.rewards.rewards.find(r => r.denom === 'utics' || r.denom === 'aqube');
-    
-    if (ticsReward) {
-      const amountMicro = parseFloat(ticsReward.amount);
-      const amountTICS = (amountMicro / 1000000000000000000).toFixed(1);
-      totalRewardsEl.textContent = formatNumber(parseFloat(amountTICS)) + ' TICS';
-    }
-  } catch (error) {
-    console.error('Error fetching outstanding rewards:', error);
-  }
-}
-
-// Network Share (for about.html)
-async function updateNetworkShare() {
-  const networkShareEl = document.getElementById("networkShare");
-  const ourStakeEl = document.getElementById("ourStake");
-  const networkTotalEl = document.getElementById("networkTotal");
-  
-  if (!networkShareEl) return;
-
-  try {
-    const validatorUrl = `${API_BASE}/cosmos/staking/v1beta1/validators/${VALIDATOR}`;
-    const validatorData = await fetchJSON(validatorUrl);
-    
-    const poolUrl = `${API_BASE}/cosmos/staking/v1beta1/pool`;
-    const poolData = await fetchJSON(poolUrl);
-    
-    if (validatorData?.validator && poolData?.pool) {
-      const ourTokens = parseInt(validatorData.validator.tokens);
-      const totalBonded = parseInt(poolData.pool.bonded_tokens);
-      
-      const ourStake = ourTokens / 1000000000000000000;
-      const networkTotal = totalBonded / 1000000000000000000;
-      const share = ((ourStake / networkTotal) * 100).toFixed(2);
-      
-      if (networkShareEl) networkShareEl.textContent = share + '%';
-      if (ourStakeEl) ourStakeEl.textContent = formatNumber(ourStake) + ' TICS';
-      if (networkTotalEl && networkTotalEl.closest('.share-stats')) {
-        networkTotalEl.textContent = formatNumber(networkTotal) + ' TICS';
-      }
-    }
-  } catch (error) {
-    console.error('Error calculating network share:', error);
-  }
-}
+// Network Share (for about.html) - MOVED TO init-about.js
 

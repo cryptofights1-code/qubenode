@@ -319,117 +319,138 @@
     // ===== FETCH LATEST DELEGATIONS =====
     async function fetchLatestDelegations() {
         try {
-            // Primary: Try to get transactions with timestamps
-            try {
-                const txUrl = 'https://swagger.qubetics.com/cosmos/tx/v1beta1/txs?events=delegate.validator%3Dqubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld&pagination.limit=10&order_by=ORDER_BY_DESC';
-                const txResponse = await fetch(txUrl);
-                
-                if (txResponse.ok) {
-                    const txData = await txResponse.json();
-                    
-                    if (txData?.tx_responses && txData.tx_responses.length > 0) {
-                        const tableBody = document.getElementById('delegationsTable');
-                        if (!tableBody) return;
-                        
-                        tableBody.innerHTML = '';
-                        
-                        txData.tx_responses.slice(0, 10).forEach((tx, index) => {
-                            const delegateEvent = tx.events?.find(e => e.type === 'delegate');
-                            if (!delegateEvent) return;
-                            
-                            const delegatorAttr = delegateEvent.attributes?.find(a => a.key === 'delegator');
-                            const amountAttr = delegateEvent.attributes?.find(a => a.key === 'amount');
-                            
-                            if (!delegatorAttr || !amountAttr) return;
-                            
-                            const delegator = delegatorAttr.value;
-                            const amountStr = amountAttr.value.replace('aqube', '').replace('utics', '');
-                            const amount = parseInt(amountStr) / 1000000000000000000;
-                            
-                            const timestamp = new Date(tx.timestamp);
-                            const now = new Date();
-                            const diffMins = Math.floor((now - timestamp) / 60000);
-                            
-                            const timeAgo = diffMins < 60 
-                                ? `${diffMins}m ago` 
-                                : diffMins < 1440 
-                                    ? `${Math.floor(diffMins / 60)}h ago`
-                                    : `${Math.floor(diffMins / 1440)}d ago`;
-                            
-                            const row = document.createElement('div');
-                            row.className = 'table-row';
-                            row.style.animationDelay = (index * 0.05) + 's';
-                            
-                            row.innerHTML = `
-                                <div class="delegator-address">${formatAddress(delegator)}</div>
-                                <div class="delegation-amount">${formatNumber(amount)} TICS</div>
-                                <div class="delegation-time">${timeAgo}</div>
-                            `;
-                            
-                            tableBody.appendChild(row);
-                        });
-                        
-                        console.log('✅ Latest Delegations loaded with REAL timestamps');
-                    }
-                }
-            } catch (txError) {
-                console.warn('⚠️ TX API failed, using delegations endpoint:', txError);
-                throw txError; // Go to fallback
-            }
-            
-            // Fallback: Use delegations endpoint (no timestamps)
-            const url = 'https://swagger.qubetics.com/cosmos/staking/v1beta1/validators/qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld/delegations?pagination.limit=1000';
-            const response = await fetch(url);
-            
-            if (!response.ok) {
-                console.error('❌ Delegations API error:', response.status);
-                return;
-            }
-            
-            const data = await response.json();
-            
-            if (!data?.delegation_responses) return;
-            
             const tableBody = document.getElementById('delegationsTable');
             if (!tableBody) return;
             
-            // Sort by amount descending (show biggest delegators as "latest")
-            const sorted = data.delegation_responses
-                .sort((a, b) => parseInt(b.balance.amount) - parseInt(a.balance.amount))
-                .slice(0, 10);
+            const RPC_WORKER = 'https://qubenode-rpc-proxy.yuskivvolodymyr.workers.dev';
+            
+            // Get latest block height
+            const statusResponse = await fetch(`${RPC_WORKER}/rpc/status`);
+            const statusData = await statusResponse.json();
+            
+            if (!statusData?.result?.sync_info?.latest_block_height) {
+                console.error('❌ Failed to get latest block height');
+                return;
+            }
+            
+            const latestHeight = parseInt(statusData.result.sync_info.latest_block_height);
+            console.log('Latest block:', latestHeight);
+            
+            tableBody.innerHTML = '<div style="text-align: center; padding: 20px; color: #94a3b8;">Loading latest delegations...</div>';
+            
+            const delegations = [];
+            const ourValidator = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
+            
+            // Search last 100 blocks for delegation events
+            for (let i = 0; i < 100 && delegations.length < 10; i++) {
+                const blockHeight = latestHeight - i;
+                
+                try {
+                    const blockResponse = await fetch(`${RPC_WORKER}/rpc/block?height=${blockHeight}`);
+                    const blockData = await blockResponse.json();
+                    
+                    if (!blockData?.result?.block) continue;
+                    
+                    const blockTime = new Date(blockData.result.block.header.time);
+                    
+                    // Get block results (contains events)
+                    const resultsResponse = await fetch(`${RPC_WORKER}/rpc/block_results?height=${blockHeight}`);
+                    const resultsData = await resultsResponse.json();
+                    
+                    if (!resultsData?.result?.txs_results) continue;
+                    
+                    // Parse transactions for delegation events
+                    resultsData.result.txs_results.forEach(tx => {
+                        if (!tx.events) return;
+                        
+                        tx.events.forEach(event => {
+                            if (event.type === 'delegate') {
+                                const validatorAttr = event.attributes?.find(a => 
+                                    Buffer.from(a.key, 'base64').toString() === 'validator'
+                                );
+                                const delegatorAttr = event.attributes?.find(a => 
+                                    Buffer.from(a.key, 'base64').toString() === 'delegator'
+                                );
+                                const amountAttr = event.attributes?.find(a => 
+                                    Buffer.from(a.key, 'base64').toString() === 'amount'
+                                );
+                                
+                                if (validatorAttr && delegatorAttr && amountAttr) {
+                                    const validator = Buffer.from(validatorAttr.value, 'base64').toString();
+                                    
+                                    if (validator === ourValidator) {
+                                        const delegator = Buffer.from(delegatorAttr.value, 'base64').toString();
+                                        const amountStr = Buffer.from(amountAttr.value, 'base64').toString();
+                                        const amount = parseInt(amountStr.replace(/[^0-9]/g, '')) / 1000000000000000000;
+                                        
+                                        delegations.push({
+                                            delegator,
+                                            amount,
+                                            height: blockHeight,
+                                            time: blockTime
+                                        });
+                                    }
+                                }
+                            }
+                        });
+                    });
+                } catch (blockError) {
+                    console.warn(`Block ${blockHeight} error:`, blockError);
+                }
+                
+                if (delegations.length >= 10) break;
+            }
             
             tableBody.innerHTML = '';
             
-            sorted.forEach((delegation, index) => {
-                const amount = parseInt(delegation.balance.amount) / 1000000000000000000;
+            if (delegations.length === 0) {
+                tableBody.innerHTML = '<div style="text-align: center; padding: 20px; color: #94a3b8;">No recent delegations found</div>';
+                return;
+            }
+            
+            const now = new Date();
+            
+            delegations.slice(0, 10).forEach((delegation, index) => {
+                const diffMins = Math.floor((now - delegation.time) / 60000);
+                const timeAgo = diffMins < 60 
+                    ? `${diffMins}m ago` 
+                    : diffMins < 1440 
+                        ? `${Math.floor(diffMins / 60)}h ago`
+                        : `${Math.floor(diffMins / 1440)}d ago`;
                 
                 const row = document.createElement('div');
                 row.className = 'table-row';
                 row.style.animationDelay = (index * 0.05) + 's';
                 
                 row.innerHTML = `
-                    <div class="delegator-address">${formatAddress(delegation.delegation.delegator_address)}</div>
-                    <div class="delegation-amount">${formatNumber(amount)} TICS</div>
-                    <div class="delegation-time">Active</div>
+                    <div class="delegator-address">${formatAddress(delegation.delegator)}</div>
+                    <div class="delegation-amount">+ ${formatNumber(delegation.amount)} TICS</div>
+                    <div class="delegation-time">${delegation.height}<br>${timeAgo}</div>
                 `;
                 
                 tableBody.appendChild(row);
             });
             
-            // Stats
-            const totalDelegators = data.delegation_responses.length;
-            const avgAmount = data.delegation_responses.reduce((sum, d) => 
-                sum + parseInt(d.balance.amount) / 1000000000000000000, 0) / totalDelegators;
+            // Get stats from delegations endpoint
+            const delegationsUrl = 'https://swagger.qubetics.com/cosmos/staking/v1beta1/validators/qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld/delegations?pagination.limit=1000';
+            const delegationsResponse = await fetch(delegationsUrl);
+            const delegationsData = await delegationsResponse.json();
             
-            const dailyDelegations = document.getElementById('dailyDelegations');
-            const avgDelegation = document.getElementById('avgDelegation');
+            if (delegationsData?.delegation_responses) {
+                const totalDelegators = delegationsData.delegation_responses.length;
+                const avgAmount = delegationsData.delegation_responses.reduce((sum, d) => 
+                    sum + parseInt(d.balance.amount) / 1000000000000000000, 0) / totalDelegators;
+                
+                const dailyDelegations = document.getElementById('dailyDelegations');
+                const avgDelegation = document.getElementById('avgDelegation');
+                
+                if (dailyDelegations) dailyDelegations.textContent = totalDelegators.toString();
+                if (avgDelegation) avgDelegation.textContent = formatNumber(avgAmount);
+            }
             
-            if (dailyDelegations) dailyDelegations.textContent = totalDelegators.toString();
-            if (avgDelegation) avgDelegation.textContent = formatNumber(avgAmount);
-            
-            console.log('✅ Latest Delegations loaded (fallback mode)');
+            console.log('✅ Latest Delegations loaded from RPC:', delegations.length);
         } catch (error) {
-            console.error('❌ Error fetching delegations:', error);
+            console.error('❌ Error fetching delegations from RPC:', error);
         }
     }
 
@@ -1005,98 +1026,159 @@
         if (!feedEl) return;
         
         try {
-            // Try TX API first
-            try {
-                const txUrl = 'https://swagger.qubetics.com/cosmos/tx/v1beta1/txs?events=delegate.validator%3Dqubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld&pagination.limit=8&order_by=ORDER_BY_DESC';
-                const response = await fetch(txUrl);
+            const RPC_WORKER = 'https://qubenode-rpc-proxy.yuskivvolodymyr.workers.dev';
+            
+            // Get latest block height
+            const statusResponse = await fetch(`${RPC_WORKER}/rpc/status`);
+            const statusData = await statusResponse.json();
+            
+            if (!statusData?.result?.sync_info?.latest_block_height) return;
+            
+            const latestHeight = parseInt(statusData.result.sync_info.latest_block_height);
+            
+            const activities = [];
+            const ourValidator = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
+            
+            // Search last 50 blocks for various events
+            for (let i = 0; i < 50 && activities.length < 8; i++) {
+                const blockHeight = latestHeight - i;
                 
-                if (response.ok) {
-                    const data = await response.json();
+                try {
+                    const blockResponse = await fetch(`${RPC_WORKER}/rpc/block?height=${blockHeight}`);
+                    const blockData = await blockResponse.json();
                     
-                    if (data?.tx_responses && data.tx_responses.length > 0) {
-                        feedEl.innerHTML = '';
+                    if (!blockData?.result?.block) continue;
+                    
+                    const blockTime = new Date(blockData.result.block.header.time);
+                    
+                    const resultsResponse = await fetch(`${RPC_WORKER}/rpc/block_results?height=${blockHeight}`);
+                    const resultsData = await resultsResponse.json();
+                    
+                    if (!resultsData?.result?.txs_results) continue;
+                    
+                    resultsData.result.txs_results.forEach(tx => {
+                        if (!tx.events) return;
                         
-                        data.tx_responses.forEach((tx, index) => {
-                            const delegateEvent = tx.events?.find(e => e.type === 'delegate');
-                            if (!delegateEvent) return;
+                        tx.events.forEach(event => {
+                            let eventType = null;
+                            let icon = '';
+                            let typeText = '';
+                            let delegator = '';
+                            let amount = 0;
                             
-                            const delegatorAttr = delegateEvent.attributes?.find(a => a.key === 'delegator');
-                            const amountAttr = delegateEvent.attributes?.find(a => a.key === 'amount');
+                            // Check validator involvement
+                            const validatorAttr = event.attributes?.find(a => 
+                                Buffer.from(a.key, 'base64').toString() === 'validator' ||
+                                Buffer.from(a.key, 'base64').toString() === 'validator_src' ||
+                                Buffer.from(a.key, 'base64').toString() === 'validator_dst'
+                            );
                             
-                            if (!delegatorAttr || !amountAttr) return;
+                            if (!validatorAttr) return;
                             
-                            const delegator = delegatorAttr.value;
-                            const amountStr = amountAttr.value.replace('aqube', '').replace('utics', '');
-                            const amount = parseInt(amountStr) / 1000000000000000000;
+                            const validator = Buffer.from(validatorAttr.value, 'base64').toString();
+                            if (validator !== ourValidator) return;
                             
-                            const timestamp = new Date(tx.timestamp);
-                            const now = new Date();
-                            const diffMins = Math.floor((now - timestamp) / 60000);
+                            // Delegation
+                            if (event.type === 'delegate') {
+                                icon = '💰';
+                                typeText = 'New Delegation';
+                                eventType = 'delegate';
+                            }
+                            // Undelegation
+                            else if (event.type === 'unbond') {
+                                icon = '📤';
+                                typeText = 'Undelegation';
+                                eventType = 'unbond';
+                            }
+                            // Redelegation
+                            else if (event.type === 'redelegate') {
+                                icon = '🔄';
+                                typeText = 'Redelegation';
+                                eventType = 'redelegate';
+                            }
+                            // Rewards claimed
+                            else if (event.type === 'withdraw_rewards') {
+                                icon = '🎁';
+                                typeText = 'Rewards Claimed';
+                                eventType = 'rewards';
+                            }
                             
-                            const timeAgo = diffMins < 60 
-                                ? `${diffMins}m ago` 
-                                : `${Math.floor(diffMins / 60)}h ago`;
+                            if (!eventType) return;
                             
-                            const item = document.createElement('div');
-                            item.className = 'activity-item';
-                            item.style.animationDelay = (index * 0.05) + 's';
+                            // Get delegator and amount
+                            const delegatorAttr = event.attributes?.find(a => 
+                                Buffer.from(a.key, 'base64').toString() === 'delegator'
+                            );
+                            const amountAttr = event.attributes?.find(a => 
+                                Buffer.from(a.key, 'base64').toString() === 'amount'
+                            );
                             
-                            item.innerHTML = `
-                                <div class="activity-icon">💰</div>
-                                <div class="activity-content">
-                                    <div class="activity-type">Delegation to QubeNode</div>
-                                    <div class="activity-details">${formatNumber(amount)} TICS from ${formatAddress(delegator)}</div>
-                                </div>
-                                <div class="activity-time">${timeAgo}</div>
-                            `;
+                            if (delegatorAttr) {
+                                delegator = Buffer.from(delegatorAttr.value, 'base64').toString();
+                            }
+                            if (amountAttr) {
+                                const amountStr = Buffer.from(amountAttr.value, 'base64').toString();
+                                amount = parseInt(amountStr.replace(/[^0-9]/g, '')) / 1000000000000000000;
+                            }
                             
-                            feedEl.appendChild(item);
+                            activities.push({
+                                icon,
+                                type: typeText,
+                                delegator,
+                                amount,
+                                time: blockTime
+                            });
                         });
-                        
-                        console.log('✅ Activity Feed updated with REAL timestamps');
-                        return;
-                    }
+                    });
+                } catch (blockError) {
+                    console.warn(`Activity block ${blockHeight} error:`, blockError);
                 }
-            } catch (txError) {
-                console.warn('⚠️ TX API failed for Activity Feed');
+                
+                if (activities.length >= 8) break;
             }
-            
-            // Fallback: Show top delegators
-            const url = 'https://swagger.qubetics.com/cosmos/staking/v1beta1/validators/qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld/delegations?pagination.limit=100';
-            const response = await fetch(url);
-            const data = await response.json();
-            
-            if (!data?.delegation_responses) return;
             
             feedEl.innerHTML = '';
             
-            const top8 = data.delegation_responses
-                .sort((a, b) => parseInt(b.balance.amount) - parseInt(a.balance.amount))
-                .slice(0, 8);
+            if (activities.length === 0) {
+                feedEl.innerHTML = '<div style="text-align: center; padding: 20px; color: #94a3b8;">No recent activity</div>';
+                return;
+            }
             
-            top8.forEach((delegation, index) => {
-                const amount = parseInt(delegation.balance.amount) / 1000000000000000000;
-                const delegator = delegation.delegation.delegator_address;
+            const now = new Date();
+            
+            activities.slice(0, 8).forEach((activity, index) => {
+                const diffMins = Math.floor((now - activity.time) / 60000);
+                const timeAgo = diffMins < 60 
+                    ? `${diffMins}m ago` 
+                    : `${Math.floor(diffMins / 60)}h ago`;
+                
+                const amountText = activity.amount > 0 
+                    ? `${formatNumber(activity.amount)} TICS` 
+                    : '';
+                
+                const details = activity.delegator 
+                    ? `${amountText} from ${formatAddress(activity.delegator)}`
+                    : amountText;
                 
                 const item = document.createElement('div');
                 item.className = 'activity-item';
                 item.style.animationDelay = (index * 0.05) + 's';
                 
                 item.innerHTML = `
-                    <div class="activity-icon">💰</div>
+                    <div class="activity-icon">${activity.icon}</div>
                     <div class="activity-content">
-                        <div class="activity-type">Active Delegator</div>
-                        <div class="activity-details">${formatNumber(amount)} TICS from ${formatAddress(delegator)}</div>
+                        <div class="activity-type">${activity.type}</div>
+                        <div class="activity-details">${details}</div>
                     </div>
-                    <div class="activity-time">Active</div>
+                    <div class="activity-time">${timeAgo}</div>
                 `;
                 
                 feedEl.appendChild(item);
             });
             
-            console.log('✅ Activity Feed loaded (fallback mode)');
+            console.log('✅ Activity Feed loaded from RPC:', activities.length);
         } catch (error) {
-            console.error('❌ Activity Feed error:', error);
+            console.error('❌ Activity Feed RPC error:', error);
         }
     }
 

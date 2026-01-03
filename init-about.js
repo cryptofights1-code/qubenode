@@ -1035,7 +1035,7 @@
                 const validator = data.validator;
                 
                 if (validator.status === "BOND_STATUS_BONDED") {
-                    statusEl.textContent = "BONDED";
+                    statusEl.textContent = "ACTIVE";
                 } else if (validator.jailed) {
                     statusEl.textContent = "JAILED";
                 } else if (validator.status === "BOND_STATUS_UNBONDING") {

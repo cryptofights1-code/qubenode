@@ -142,9 +142,9 @@ body {
 }
 
 .status-value {
-    font-size: 9px;
-    font-weight: 600;
-    color: #22c55e;
+    font-size: 9px !important;
+    font-weight: 600 !important;
+    color: #22c55e !important;
 }
 
 .main-title {

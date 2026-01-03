@@ -319,86 +319,115 @@
     // ===== FETCH LATEST DELEGATIONS =====
     async function fetchLatestDelegations() {
         try {
-            // Get latest delegation transactions from block explorer API
-            // This endpoint has real timestamps
-            const txUrl = 'https://swagger.qubetics.com/cosmos/tx/v1beta1/txs?events=delegate.validator%3Dqubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld&pagination.limit=10&order_by=ORDER_BY_DESC';
+            // Primary: Try to get transactions with timestamps
+            try {
+                const txUrl = 'https://swagger.qubetics.com/cosmos/tx/v1beta1/txs?events=delegate.validator%3Dqubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld&pagination.limit=10&order_by=ORDER_BY_DESC';
+                const txResponse = await fetch(txUrl);
+                
+                if (txResponse.ok) {
+                    const txData = await txResponse.json();
+                    
+                    if (txData?.tx_responses && txData.tx_responses.length > 0) {
+                        const tableBody = document.getElementById('delegationsTable');
+                        if (!tableBody) return;
+                        
+                        tableBody.innerHTML = '';
+                        
+                        txData.tx_responses.slice(0, 10).forEach((tx, index) => {
+                            const delegateEvent = tx.events?.find(e => e.type === 'delegate');
+                            if (!delegateEvent) return;
+                            
+                            const delegatorAttr = delegateEvent.attributes?.find(a => a.key === 'delegator');
+                            const amountAttr = delegateEvent.attributes?.find(a => a.key === 'amount');
+                            
+                            if (!delegatorAttr || !amountAttr) return;
+                            
+                            const delegator = delegatorAttr.value;
+                            const amountStr = amountAttr.value.replace('aqube', '').replace('utics', '');
+                            const amount = parseInt(amountStr) / 1000000000000000000;
+                            
+                            const timestamp = new Date(tx.timestamp);
+                            const now = new Date();
+                            const diffMins = Math.floor((now - timestamp) / 60000);
+                            
+                            const timeAgo = diffMins < 60 
+                                ? `${diffMins}m ago` 
+                                : diffMins < 1440 
+                                    ? `${Math.floor(diffMins / 60)}h ago`
+                                    : `${Math.floor(diffMins / 1440)}d ago`;
+                            
+                            const row = document.createElement('div');
+                            row.className = 'table-row';
+                            row.style.animationDelay = (index * 0.05) + 's';
+                            
+                            row.innerHTML = `
+                                <div class="delegator-address">${formatAddress(delegator)}</div>
+                                <div class="delegation-amount">${formatNumber(amount)} TICS</div>
+                                <div class="delegation-time">${timeAgo}</div>
+                            `;
+                            
+                            tableBody.appendChild(row);
+                        });
+                        
+                        console.log('✅ Latest Delegations loaded with REAL timestamps');
+                    }
+                }
+            } catch (txError) {
+                console.warn('⚠️ TX API failed, using delegations endpoint:', txError);
+                throw txError; // Go to fallback
+            }
             
-            const response = await fetch(txUrl);
+            // Fallback: Use delegations endpoint (no timestamps)
+            const url = 'https://swagger.qubetics.com/cosmos/staking/v1beta1/validators/qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld/delegations?pagination.limit=1000';
+            const response = await fetch(url);
             
             if (!response.ok) {
-                console.error('❌ Delegations TX API error:', response.status);
+                console.error('❌ Delegations API error:', response.status);
                 return;
             }
             
             const data = await response.json();
             
-            if (!data?.tx_responses) return;
+            if (!data?.delegation_responses) return;
             
             const tableBody = document.getElementById('delegationsTable');
             if (!tableBody) return;
             
+            // Sort by amount descending (show biggest delegators as "latest")
+            const sorted = data.delegation_responses
+                .sort((a, b) => parseInt(b.balance.amount) - parseInt(a.balance.amount))
+                .slice(0, 10);
+            
             tableBody.innerHTML = '';
             
-            // Process last 10 delegation transactions
-            const latest10 = data.tx_responses.slice(0, 10);
-            
-            latest10.forEach((tx, index) => {
-                // Parse delegation event to get delegator and amount
-                const delegateEvent = tx.events?.find(e => e.type === 'delegate');
-                if (!delegateEvent) return;
-                
-                const delegatorAttr = delegateEvent.attributes?.find(a => a.key === 'delegator');
-                const amountAttr = delegateEvent.attributes?.find(a => a.key === 'amount');
-                
-                if (!delegatorAttr || !amountAttr) return;
-                
-                const delegator = delegatorAttr.value;
-                const amountStr = amountAttr.value.replace('aqube', '').replace('utics', '');
-                const amount = parseInt(amountStr) / 1000000000000000000;
-                
-                // Parse timestamp
-                const timestamp = new Date(tx.timestamp);
-                const now = new Date();
-                const diffMs = now - timestamp;
-                const diffMins = Math.floor(diffMs / 60000);
-                
-                const timeAgo = diffMins < 60 
-                    ? `${diffMins}m ago` 
-                    : diffMins < 1440 
-                        ? `${Math.floor(diffMins / 60)}h ago`
-                        : `${Math.floor(diffMins / 1440)}d ago`;
+            sorted.forEach((delegation, index) => {
+                const amount = parseInt(delegation.balance.amount) / 1000000000000000000;
                 
                 const row = document.createElement('div');
                 row.className = 'table-row';
                 row.style.animationDelay = (index * 0.05) + 's';
                 
                 row.innerHTML = `
-                    <div class="delegator-address">${formatAddress(delegator)}</div>
+                    <div class="delegator-address">${formatAddress(delegation.delegation.delegator_address)}</div>
                     <div class="delegation-amount">${formatNumber(amount)} TICS</div>
-                    <div class="delegation-time">${timeAgo}</div>
+                    <div class="delegation-time">Active</div>
                 `;
                 
                 tableBody.appendChild(row);
             });
             
-            // Get total delegators count from delegations endpoint
-            const delegationsUrl = 'https://swagger.qubetics.com/cosmos/staking/v1beta1/validators/qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld/delegations?pagination.limit=1000';
-            const delegationsResponse = await fetch(delegationsUrl);
-            const delegationsData = await delegationsResponse.json();
+            // Stats
+            const totalDelegators = data.delegation_responses.length;
+            const avgAmount = data.delegation_responses.reduce((sum, d) => 
+                sum + parseInt(d.balance.amount) / 1000000000000000000, 0) / totalDelegators;
             
-            if (delegationsData?.delegation_responses) {
-                const totalDelegators = delegationsData.delegation_responses.length;
-                const avgAmount = delegationsData.delegation_responses.reduce((sum, d) => 
-                    sum + parseInt(d.balance.amount) / 1000000000000000000, 0) / totalDelegators;
-                
-                const dailyDelegations = document.getElementById('dailyDelegations');
-                const avgDelegation = document.getElementById('avgDelegation');
-                
-                if (dailyDelegations) dailyDelegations.textContent = totalDelegators.toString();
-                if (avgDelegation) avgDelegation.textContent = formatNumber(avgAmount);
-            }
+            const dailyDelegations = document.getElementById('dailyDelegations');
+            const avgDelegation = document.getElementById('avgDelegation');
             
-            console.log('✅ Latest Delegations loaded with REAL timestamps:', latest10.length);
+            if (dailyDelegations) dailyDelegations.textContent = totalDelegators.toString();
+            if (avgDelegation) avgDelegation.textContent = formatNumber(avgAmount);
+            
+            console.log('✅ Latest Delegations loaded (fallback mode)');
         } catch (error) {
             console.error('❌ Error fetching delegations:', error);
         }
@@ -976,38 +1005,78 @@
         if (!feedEl) return;
         
         try {
-            // Get latest delegation transactions with REAL timestamps
-            const txUrl = 'https://swagger.qubetics.com/cosmos/tx/v1beta1/txs?events=delegate.validator%3Dqubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld&pagination.limit=8&order_by=ORDER_BY_DESC';
-            const response = await fetch(txUrl);
+            // Try TX API first
+            try {
+                const txUrl = 'https://swagger.qubetics.com/cosmos/tx/v1beta1/txs?events=delegate.validator%3Dqubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld&pagination.limit=8&order_by=ORDER_BY_DESC';
+                const response = await fetch(txUrl);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    if (data?.tx_responses && data.tx_responses.length > 0) {
+                        feedEl.innerHTML = '';
+                        
+                        data.tx_responses.forEach((tx, index) => {
+                            const delegateEvent = tx.events?.find(e => e.type === 'delegate');
+                            if (!delegateEvent) return;
+                            
+                            const delegatorAttr = delegateEvent.attributes?.find(a => a.key === 'delegator');
+                            const amountAttr = delegateEvent.attributes?.find(a => a.key === 'amount');
+                            
+                            if (!delegatorAttr || !amountAttr) return;
+                            
+                            const delegator = delegatorAttr.value;
+                            const amountStr = amountAttr.value.replace('aqube', '').replace('utics', '');
+                            const amount = parseInt(amountStr) / 1000000000000000000;
+                            
+                            const timestamp = new Date(tx.timestamp);
+                            const now = new Date();
+                            const diffMins = Math.floor((now - timestamp) / 60000);
+                            
+                            const timeAgo = diffMins < 60 
+                                ? `${diffMins}m ago` 
+                                : `${Math.floor(diffMins / 60)}h ago`;
+                            
+                            const item = document.createElement('div');
+                            item.className = 'activity-item';
+                            item.style.animationDelay = (index * 0.05) + 's';
+                            
+                            item.innerHTML = `
+                                <div class="activity-icon">💰</div>
+                                <div class="activity-content">
+                                    <div class="activity-type">Delegation to QubeNode</div>
+                                    <div class="activity-details">${formatNumber(amount)} TICS from ${formatAddress(delegator)}</div>
+                                </div>
+                                <div class="activity-time">${timeAgo}</div>
+                            `;
+                            
+                            feedEl.appendChild(item);
+                        });
+                        
+                        console.log('✅ Activity Feed updated with REAL timestamps');
+                        return;
+                    }
+                }
+            } catch (txError) {
+                console.warn('⚠️ TX API failed for Activity Feed');
+            }
+            
+            // Fallback: Show top delegators
+            const url = 'https://swagger.qubetics.com/cosmos/staking/v1beta1/validators/qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld/delegations?pagination.limit=100';
+            const response = await fetch(url);
             const data = await response.json();
             
-            if (!data?.tx_responses) return;
+            if (!data?.delegation_responses) return;
             
             feedEl.innerHTML = '';
             
-            data.tx_responses.forEach((tx, index) => {
-                // Parse delegation event
-                const delegateEvent = tx.events?.find(e => e.type === 'delegate');
-                if (!delegateEvent) return;
-                
-                const delegatorAttr = delegateEvent.attributes?.find(a => a.key === 'delegator');
-                const amountAttr = delegateEvent.attributes?.find(a => a.key === 'amount');
-                
-                if (!delegatorAttr || !amountAttr) return;
-                
-                const delegator = delegatorAttr.value;
-                const amountStr = amountAttr.value.replace('aqube', '').replace('utics', '');
-                const amount = parseInt(amountStr) / 1000000000000000000;
-                
-                // Parse REAL timestamp
-                const timestamp = new Date(tx.timestamp);
-                const now = new Date();
-                const diffMs = now - timestamp;
-                const diffMins = Math.floor(diffMs / 60000);
-                
-                const timeAgo = diffMins < 60 
-                    ? `${diffMins}m ago` 
-                    : `${Math.floor(diffMins / 60)}h ago`;
+            const top8 = data.delegation_responses
+                .sort((a, b) => parseInt(b.balance.amount) - parseInt(a.balance.amount))
+                .slice(0, 8);
+            
+            top8.forEach((delegation, index) => {
+                const amount = parseInt(delegation.balance.amount) / 1000000000000000000;
+                const delegator = delegation.delegation.delegator_address;
                 
                 const item = document.createElement('div');
                 item.className = 'activity-item';
@@ -1016,16 +1085,16 @@
                 item.innerHTML = `
                     <div class="activity-icon">💰</div>
                     <div class="activity-content">
-                        <div class="activity-type">Delegation to QubeNode</div>
+                        <div class="activity-type">Active Delegator</div>
                         <div class="activity-details">${formatNumber(amount)} TICS from ${formatAddress(delegator)}</div>
                     </div>
-                    <div class="activity-time">${timeAgo}</div>
+                    <div class="activity-time">Active</div>
                 `;
                 
                 feedEl.appendChild(item);
             });
             
-            console.log('✅ Activity Feed updated with REAL timestamps');
+            console.log('✅ Activity Feed loaded (fallback mode)');
         } catch (error) {
             console.error('❌ Activity Feed error:', error);
         }

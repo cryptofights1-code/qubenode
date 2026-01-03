@@ -395,11 +395,13 @@
             
             if (validator) {
                 // Status
-                const statusEl = document.getElementById('validatorStatus');
+                const statusEl = document.getElementById('validatorPerformanceStatus');
                 if (statusEl) {
-                    const status = validator.status.replace('BOND_STATUS_', '');
+                    let status = validator.status.replace('BOND_STATUS_', '');
+                    // Change BONDED to ACTIVE for display
+                    if (status === 'BONDED') status = 'ACTIVE';
                     statusEl.textContent = status;
-                    statusEl.className = status === 'BONDED' ? 'metric-value success' : 'metric-value warning';
+                    statusEl.className = 'metric-value success';
                 }
                 
                 // Commission Rate
@@ -416,7 +418,7 @@
                     jailedEl.className = validator.jailed ? 'metric-value warning' : 'metric-value success';
                 }
                 
-                console.log('✅ Validator Info: Status', validator.status, 'Commission', commissionRate + '%', 'Jailed:', validator.jailed);
+                console.log('✅ Validator Info: Status', status, 'Commission', commissionRate + '%', 'Jailed:', validator.jailed);
             }
         } catch (error) {
             console.warn('⚠️ Validator Info error:', error.message);

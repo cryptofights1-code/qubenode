@@ -142,8 +142,9 @@ body {
 }
 
 .status-value {
-    font-size: 14px;
-    font-weight: 700;
+    font-size: 12px;
+    font-weight: 600;
+    color: #22c55e;
 }
 
 .main-title {
@@ -1387,6 +1388,7 @@ footer a:hover {
     
     .metric-value {
         font-size: 24px;
+        white-space: nowrap;
     }
     
     .metric-subtitle {

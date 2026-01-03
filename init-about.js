@@ -303,11 +303,10 @@
             console.error('❌ Disk I/O fetch error:', error);
         }
         
-        // Update mini charts (DISABLED - not working properly)
-        // if (cpuPercent !== undefined && ramPercent !== undefined && diskPercent !== undefined) {
-        //     console.log('📊 Updating mini charts:', cpuPercent, ramPercent, diskPercent);
-        //     updateAllMiniCharts(cpuPercent, ramPercent, diskPercent);
-        // }
+        // Update mini charts
+        if (cpuPercent !== undefined && ramPercent !== undefined && diskPercent !== undefined) {
+            updateAllMiniCharts(cpuPercent, ramPercent, diskPercent);
+        }
     }
 
     // ===== FETCH LATEST DELEGATIONS =====
@@ -369,7 +368,7 @@
                     
                     const outstandingEl = document.getElementById('outstandingRewards');
                     if (outstandingEl) {
-                        outstandingEl.textContent = formatNumber(amountTICS) + ' TICS';
+                        outstandingEl.textContent = formatNumber(amountTICS);
                     }
                     
                     console.log('✅ Outstanding Rewards:', amountTICS.toFixed(1), 'TICS');

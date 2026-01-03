@@ -1048,6 +1048,81 @@
         }
     }
 
+    // ===== BLOCK HEIGHT =====
+    let lastBlockHeight = null;
+    async function updateBlockHeight() {
+        const el = document.getElementById("currentBlock");
+        if (!el) return;
+        
+        try {
+            const data = await fetch('https://swagger.qubetics.com/cosmos/base/tendermint/v1beta1/blocks/latest').then(r => r.json());
+            
+            if (data?.block?.header?.height) {
+                const blockHeight = parseInt(data.block.header.height);
+                el.textContent = blockHeight.toLocaleString('en-US');
+                lastBlockHeight = blockHeight;
+                console.log('✅ Block height:', blockHeight);
+            }
+        } catch (error) {
+            console.warn('⚠️ Block height error:', error.message);
+        }
+    }
+
+    // ===== VOTING POWER =====
+    async function updateVotingPower() {
+        const powerEl = document.getElementById("delegatedAmountContainer");
+        if (!powerEl) return;
+        
+        try {
+            const url = 'https://swagger.qubetics.com/cosmos/staking/v1beta1/validators/qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
+            const data = await fetch(url).then(r => r.json());
+            
+            if (data?.validator?.tokens) {
+                const tokens = parseInt(data.validator.tokens) / 1000000000000000000;
+                powerEl.textContent = formatNumber(tokens) + ' M';
+                console.log('✅ Voting Power:', tokens);
+            }
+        } catch (error) {
+            console.warn('⚠️ Voting Power error:', error.message);
+        }
+    }
+
+    // ===== NETWORK SHARE =====
+    async function updateNetworkShareData() {
+        const networkShareEl = document.getElementById("networkShare");
+        const ourStakeEl = document.getElementById("ourStake");
+        const networkTotalEl = document.getElementById("networkTotal");
+        
+        if (!networkShareEl) return;
+
+        try {
+            const validatorUrl = 'https://swagger.qubetics.com/cosmos/staking/v1beta1/validators/qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
+            const poolUrl = 'https://swagger.qubetics.com/cosmos/staking/v1beta1/pool';
+            
+            const [validatorData, poolData] = await Promise.all([
+                fetch(validatorUrl).then(r => r.json()),
+                fetch(poolUrl).then(r => r.json())
+            ]);
+            
+            if (validatorData?.validator && poolData?.pool) {
+                const ourTokens = parseInt(validatorData.validator.tokens);
+                const totalBonded = parseInt(poolData.pool.bonded_tokens);
+                
+                const ourStake = ourTokens / 1000000000000000000;
+                const networkTotal = totalBonded / 1000000000000000000;
+                const share = ((ourStake / networkTotal) * 100).toFixed(2);
+                
+                if (networkShareEl) networkShareEl.textContent = share + '%';
+                if (ourStakeEl) ourStakeEl.textContent = formatNumber(ourStake) + ' TICS';
+                if (networkTotalEl) networkTotalEl.textContent = formatNumber(networkTotal) + ' TICS';
+                
+                console.log('✅ Network Share:', share + '%');
+            }
+        } catch (error) {
+            console.warn('⚠️ Network Share error:', error.message);
+        }
+    }
+
     // ===== INITIALIZATION =====
     function init() {
         console.log('🚀 Initializing About page v4.1 with Mini Charts...');
@@ -1063,6 +1138,9 @@
         updateDelegatorsCount();
         updateTop20Delegators();
         updateHeroValidatorStatus();
+        updateBlockHeight();
+        updateVotingPower();
+        updateNetworkShareData();
         
         // Charts
         initNetworkChart();
@@ -1082,6 +1160,9 @@
         setInterval(updateDelegatorsCount, 300000); // 5 min
         setInterval(updateTop20Delegators, 300000); // 5 min
         setInterval(updateHeroValidatorStatus, 60000); // 1 min
+        setInterval(updateBlockHeight, 3000); // 3 sec
+        setInterval(updateVotingPower, 60000); // 1 min
+        setInterval(updateNetworkShareData, 60000); // 1 min
     }
 
     if (document.readyState === 'loading') {

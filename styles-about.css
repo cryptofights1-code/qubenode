@@ -423,6 +423,7 @@ body {
 .network-row.total {
     background: rgba(0, 212, 255, 0.1);
     border: 1px solid rgba(0, 212, 255, 0.2);
+    min-height: 52px;
 }
 
 .network-icon {
@@ -1026,7 +1027,8 @@ footer a:hover {
 .share-stat {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: baseline;
+    gap: 10px;
 }
 
 .share-stat .stat-label {
@@ -1049,17 +1051,12 @@ footer a:hover {
 }
 
 /* Commission row and note */
-.commission-row {
-    /* Звичайний рядок як інші */
-}
-
-.commission-note {
+.commission-note-simple {
     color: #64748b;
     font-size: 11px;
     line-height: 1.5;
-    padding: 8px 10px;
-    margin-top: 8px;
-    border-top: 1px solid rgba(0, 212, 255, 0.1);
+    padding: 3px 0 0 0;
+    margin: 0;
 }
 
 .calculator-link {
@@ -1102,15 +1099,15 @@ footer a:hover {
 
 .address-value {
     color: #00D4FF;
-    font-size: 13px;
+    font-size: 11px;
     font-family: 'Courier New', monospace;
     word-break: break-all;
     user-select: all;
+    line-height: 1.5;
 }
 
 .address-pubkey {
     font-size: 11px;
-    word-wrap: break-word;
     white-space: pre-wrap;
     line-height: 1.6;
 }

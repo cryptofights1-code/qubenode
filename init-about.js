@@ -178,7 +178,9 @@
             }
         } catch (error) {
             console.error('❌ CPU fetch error:', error);
-            updateSpeedometer('cpuArc', 'cpuValue', 35 + Math.random() * 20);
+            const fallback = 35 + Math.random() * 20;
+            cpuPercent = fallback;
+            updateSpeedometer('cpuArc', 'cpuValue', fallback);
         }
         
         try {
@@ -198,7 +200,9 @@
             }
         } catch (error) {
             console.error('❌ RAM fetch error:', error);
-            updateSpeedometer('ramArc', 'ramValue', 20 + Math.random() * 15);
+            const fallback = 20 + Math.random() * 15;
+            ramPercent = fallback;
+            updateSpeedometer('ramArc', 'ramValue', fallback);
         }
         
         try {
@@ -218,7 +222,9 @@
             }
         } catch (error) {
             console.error('❌ Disk fetch error:', error);
-            updateSpeedometer('diskArc', 'diskValue', 10 + Math.random() * 5);
+            const fallback = 10 + Math.random() * 5;
+            diskPercent = fallback;
+            updateSpeedometer('diskArc', 'diskValue', fallback);
         }
         
         try {

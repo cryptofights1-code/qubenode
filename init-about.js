@@ -432,6 +432,42 @@
         }
     }
 
+    // ===== VALIDATOR RANK =====
+    async function updateValidatorRank() {
+        try {
+            const url = 'https://swagger.qubetics.com/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED&pagination.limit=100';
+            const response = await fetch(url);
+            
+            if (!response.ok) {
+                console.warn('⚠️ Validators list API error:', response.status);
+                return;
+            }
+            
+            const data = await response.json();
+            
+            if (data?.validators) {
+                // Sort by tokens descending
+                const sorted = data.validators.sort((a, b) => {
+                    const tokensA = parseInt(a.tokens);
+                    const tokensB = parseInt(b.tokens);
+                    return tokensB - tokensA;
+                });
+                
+                // Find our validator rank
+                const ourValidatorAddress = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
+                const rank = sorted.findIndex(v => v.operator_address === ourValidatorAddress) + 1;
+                
+                const rankEl = document.getElementById('validatorRank');
+                if (rankEl && rank > 0) {
+                    rankEl.textContent = '#' + rank;
+                    console.log('✅ Validator Rank:', rank);
+                }
+            }
+        } catch (error) {
+            console.warn('⚠️ Rank error:', error.message);
+        }
+    }
+
     // ===== SELF-BONDED AMOUNT =====
     async function updateSelfBonded() {
         try {
@@ -1151,6 +1187,7 @@
         updateVotingPower();
         updateNetworkShareData();
         fetchNetworkInfo();
+        updateValidatorRank();
         
         // Charts
         initNetworkChart();
@@ -1162,18 +1199,19 @@
             updateInfrastructureMetrics();
         }, CONFIG.updateInterval);
         
-        setInterval(fetchLatestDelegations, 30000);
-        setInterval(updateOutstandingRewards, 60000);
-        setInterval(updateValidatorInfo, 60000);
-        setInterval(updateSelfBonded, 60000);
-        setInterval(updateSigningInfo, 60000);
-        setInterval(updateDelegatorsCount, 300000); // 5 min
-        setInterval(updateTop20Delegators, 300000); // 5 min
-        setInterval(updateHeroValidatorStatus, 60000); // 1 min
+        setInterval(fetchLatestDelegations, 10000); // 10 sec
+        setInterval(updateOutstandingRewards, 10000); // 10 sec
+        setInterval(updateValidatorInfo, 10000); // 10 sec
+        setInterval(updateSelfBonded, 10000); // 10 sec
+        setInterval(updateSigningInfo, 10000); // 10 sec
+        setInterval(updateDelegatorsCount, 10000); // 10 sec
+        setInterval(updateTop20Delegators, 10000); // 10 sec
+        setInterval(updateHeroValidatorStatus, 10000); // 10 sec
         setInterval(updateBlockHeight, 3000); // 3 sec
-        setInterval(updateVotingPower, 60000); // 1 min
-        setInterval(updateNetworkShareData, 60000); // 1 min
-        setInterval(fetchNetworkInfo, 60000); // 1 min
+        setInterval(updateVotingPower, 10000); // 10 sec
+        setInterval(updateNetworkShareData, 10000); // 10 sec
+        setInterval(fetchNetworkInfo, 10000); // 10 sec
+        setInterval(updateValidatorRank, 10000); // 10 sec
     }
 
     if (document.readyState === 'loading') {

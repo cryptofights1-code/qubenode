@@ -19,9 +19,9 @@
     // ===== UTILITY FUNCTIONS =====
     function formatNumber(num) {
         if (num >= 1000000) {
-            return (num / 1000000).toFixed(2) + 'M';
+            return (num / 1000000).toFixed(3) + 'M';
         } else if (num >= 1000) {
-            return (num / 1000).toFixed(2) + 'K';
+            return (num / 1000).toFixed(3) + 'K';
         }
         return num.toLocaleString();
     }
@@ -303,11 +303,11 @@
             console.error('❌ Disk I/O fetch error:', error);
         }
         
-        // Update mini charts if we have CPU, RAM, Disk percentages
-        if (cpuPercent !== undefined && ramPercent !== undefined && diskPercent !== undefined) {
-            console.log('📊 Updating mini charts:', cpuPercent, ramPercent, diskPercent);
-            updateAllMiniCharts(cpuPercent, ramPercent, diskPercent);
-        }
+        // Update mini charts (DISABLED - not working properly)
+        // if (cpuPercent !== undefined && ramPercent !== undefined && diskPercent !== undefined) {
+        //     console.log('📊 Updating mini charts:', cpuPercent, ramPercent, diskPercent);
+        //     updateAllMiniCharts(cpuPercent, ramPercent, diskPercent);
+        // }
     }
 
     // ===== FETCH LATEST DELEGATIONS =====

@@ -141,6 +141,11 @@ body {
     letter-spacing: 0.5px;
 }
 
+.status-value {
+    font-size: 14px;
+    font-weight: 700;
+}
+
 .main-title {
     font-size: clamp(48px, 6vw, 72px);
     font-weight: 700;
@@ -1239,14 +1244,9 @@ footer a:hover {
 .top-rank {
     display: flex;
     align-items: center;
-    gap: 8px;
     font-size: 16px;
     font-weight: 700;
     color: #00FFF0;
-}
-
-.top-rank .medal {
-    font-size: 20px;
 }
 
 .top-share {
@@ -1410,6 +1410,13 @@ footer a:hover {
     /* Performance grid mobile - всі картки stack */
     .performance-grid {
         grid-template-columns: 1fr !important;
+    }
+    
+    /* Validator Performance mobile - fix Outstanding Rewards alignment */
+    .performance-metrics .metric-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
     
     .achievements-grid {

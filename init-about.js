@@ -1018,7 +1018,7 @@
     // ===== HERO VALIDATOR STATUS BADGE =====
     async function updateHeroValidatorStatus() {
         const statusEl = document.getElementById("validatorStatus");
-        if (!statusEl) return;
+        const perfStatusEl = document.getElementById("validatorPerformanceStatus");
         
         try {
             const url = 'https://swagger.qubetics.com/cosmos/staking/v1beta1/validators/qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
@@ -1033,18 +1033,21 @@
             
             if (data?.validator) {
                 const validator = data.validator;
+                let statusText = "INACTIVE";
                 
                 if (validator.status === "BOND_STATUS_BONDED") {
-                    statusEl.textContent = "ACTIVE";
+                    statusText = "ACTIVE";
                 } else if (validator.jailed) {
-                    statusEl.textContent = "JAILED";
+                    statusText = "JAILED";
                 } else if (validator.status === "BOND_STATUS_UNBONDING") {
-                    statusEl.textContent = "UNBONDING";
-                } else {
-                    statusEl.textContent = "INACTIVE";
+                    statusText = "UNBONDING";
                 }
                 
-                console.log('✅ Hero Validator status:', statusEl.textContent);
+                // Update both status displays
+                if (statusEl) statusEl.textContent = statusText;
+                if (perfStatusEl) perfStatusEl.textContent = statusText;
+                
+                console.log('✅ Hero Validator status:', statusText);
             }
         } catch (error) {
             console.warn('⚠️ Hero Status error:', error.message);

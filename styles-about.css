@@ -1036,6 +1036,12 @@ footer a:hover {
     font-size: 13px;
 }
 
+.stat-sublabel {
+    font-size: 10px;
+    color: #64748b;
+    font-weight: 400;
+}
+
 .share-stat .stat-value {
     color: #00D4FF;
     font-size: 14px;
@@ -1057,6 +1063,7 @@ footer a:hover {
     line-height: 1.5;
     padding: 3px 0 0 0;
     margin: 0;
+    text-align: left;
 }
 
 .calculator-link {

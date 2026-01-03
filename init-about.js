@@ -130,7 +130,9 @@
     async function updateInfrastructureMetrics() {
         const RPC_WORKER = 'https://qubenode-rpc-proxy.yuskivvolodymyr.workers.dev';
         
-        let cpuPercent, ramPercent, diskPercent;
+        let cpuPercent = 0;
+        let ramPercent = 0;
+        let diskPercent = 0;
         
         // Get CPU cores count (one time)
         if (!window.cpuCoresDetected) {
@@ -297,6 +299,7 @@
         
         // Update mini charts if we have CPU, RAM, Disk percentages
         if (cpuPercent !== undefined && ramPercent !== undefined && diskPercent !== undefined) {
+            console.log('📊 Updating mini charts:', cpuPercent, ramPercent, diskPercent);
             updateAllMiniCharts(cpuPercent, ramPercent, diskPercent);
         }
     }
@@ -371,14 +374,14 @@
         }
     }
 
-    // ===== VALIDATOR INFO (Delegators, Self-Bonded, Commission, Since, Status) =====
+    // ===== VALIDATOR INFO (Status, Commission, Jailed) =====
     async function updateValidatorInfo() {
         try {
-            const validatorUrl = 'https://swagger.qubetics.com/cosmos/staking/v1/validators/qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
+            const validatorUrl = 'https://swagger.qubetics.com/cosmos/staking/v1beta1/validators/qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
             const response = await fetch(validatorUrl);
             
             if (!response.ok) {
-                console.error('❌ Validator Info API error:', response.status);
+                console.warn('⚠️ Validator Info API error:', response.status, '- Using default values');
                 return;
             }
             
@@ -386,18 +389,6 @@
             const validator = data.validator;
             
             if (validator) {
-                // Validator Since (дата створення)
-                const updateTime = new Date(validator.commission.update_time);
-                const sinceEl = document.getElementById('validatorSince');
-                if (sinceEl) {
-                    const formattedDate = updateTime.toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: 'short', 
-                        day: 'numeric' 
-                    });
-                    sinceEl.textContent = formattedDate;
-                }
-                
                 // Status
                 const statusEl = document.getElementById('validatorStatus');
                 if (statusEl) {
@@ -420,10 +411,10 @@
                     jailedEl.className = validator.jailed ? 'metric-value warning' : 'metric-value success';
                 }
                 
-                console.log('✅ Validator Info: Since', updateTime.toISOString().split('T')[0], 'Status', validator.status, 'Commission', commissionRate + '%', 'Jailed:', validator.jailed);
+                console.log('✅ Validator Info: Status', validator.status, 'Commission', commissionRate + '%', 'Jailed:', validator.jailed);
             }
         } catch (error) {
-            console.error('❌ Validator Info error:', error);
+            console.warn('⚠️ Validator Info error:', error.message);
         }
     }
 

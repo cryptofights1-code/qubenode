@@ -901,16 +901,19 @@
         
         ctx.clearRect(0, 0, width, height);
         
-        if (data.length < 2) {
-            console.log('Not enough data points for', canvasId, ':', data.length);
+        if (data.length < 1) {
+            console.log('No data points for', canvasId);
             return;
         }
         
-        const max = Math.max(...data, 100);
+        // Якщо тільки 1 точка - додаємо її двічі для малювання
+        const plotData = data.length === 1 ? [data[0], data[0]] : data;
+        
+        const max = Math.max(...plotData, 100);
         const min = 0;
         const range = max - min || 1;
         
-        console.log('Drawing', canvasId, '- Points:', data.length, 'Max:', max, 'Range:', range);
+        console.log('Drawing', canvasId, '- Points:', plotData.length, 'Max:', max, 'Range:', range);
         
         // Gradient fill
         const gradient = ctx.createLinearGradient(0, 0, 0, height);
@@ -920,8 +923,8 @@
         ctx.beginPath();
         ctx.moveTo(0, height);
         
-        data.forEach((value, index) => {
-            const x = (index / (data.length - 1)) * width;
+        plotData.forEach((value, index) => {
+            const x = (index / (plotData.length - 1)) * width;
             const y = height - ((value - min) / range) * height;
             ctx.lineTo(x, y);
         });
@@ -933,8 +936,8 @@
         
         // Line
         ctx.beginPath();
-        data.forEach((value, index) => {
-            const x = (index / (data.length - 1)) * width;
+        plotData.forEach((value, index) => {
+            const x = (index / (plotData.length - 1)) * width;
             const y = height - ((value - min) / range) * height;
             if (index === 0) ctx.moveTo(x, y);
             else ctx.lineTo(x, y);
@@ -1079,7 +1082,7 @@
             
             if (data?.validator?.tokens) {
                 const tokens = parseInt(data.validator.tokens) / 1000000000000000000;
-                powerEl.textContent = formatNumber(tokens) + ' M';
+                powerEl.textContent = formatNumber(tokens);
                 console.log('✅ Voting Power:', tokens);
             }
         } catch (error) {

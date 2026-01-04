@@ -3,7 +3,7 @@
  * Real-time metrics, speedometer animations, and live data
  * CSP Compliant - External script file
  * Integrated with sync.js for real validator data
- * v3.0.1 - Added CORS proxy support
+ * v5.0.0 - Real Activity Feed with Cosmos SDK events API
  */
 
 (function() {
@@ -316,113 +316,90 @@
         }
     }
 
-    // ===== FETCH LATEST DELEGATIONS =====
-    async function fetchLatestDelegations() {
+    // ===== FETCH REAL VALIDATOR EVENTS (REPLACED MOCK) =====
+    const VALIDATOR_ADDRESS = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
+    
+    async function fetchValidatorEvents() {
         try {
-            const tableBody = document.getElementById('delegationsTable');
-            if (!tableBody) return;
+            const baseUrl = 'https://swagger.qubetics.com/cosmos/tx/v1beta1/txs';
+            const params = new URLSearchParams({
+                'order_by': '2',
+                'pagination.limit': '15',
+                'pagination.offset': '0'
+            });
             
-            const RPC_WORKER = 'https://qubenode-rpc-proxy.yuskivvolodymyr.workers.dev';
-            const ourValidator = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
+            // Fetch different event types
+            const [delegateEvents, unbondEvents, redelegateEvents] = await Promise.all([
+                fetch(`${baseUrl}?${params}&events=delegate.validator='${VALIDATOR_ADDRESS}'`).then(r => r.json()).catch(() => ({txs: []})),
+                fetch(`${baseUrl}?${params}&events=unbond.validator='${VALIDATOR_ADDRESS}'`).then(r => r.json()).catch(() => ({txs: []})),
+                fetch(`${baseUrl}?${params}&events=redelegate.source_validator='${VALIDATOR_ADDRESS}'`).then(r => r.json()).catch(() => ({txs: []}))
+            ]);
             
-            tableBody.innerHTML = '<div style="text-align: center; padding: 20px; color: #94a3b8;">Loading latest delegations...</div>';
+            const allEvents = [];
             
-            // Use tx_search RPC endpoint (like your bot)
-            const query = `delegate.validator='${ourValidator}'`;
-            const txSearchUrl = `${RPC_WORKER}/rpc/tx_search?query="${encodeURIComponent(query)}"&per_page=10&order_by="desc"`;
-            
-            const response = await fetch(txSearchUrl);
-            const data = await response.json();
-            
-            if (!data?.result?.txs || data.result.txs.length === 0) {
-                tableBody.innerHTML = '<div style="text-align: center; padding: 20px; color: #94a3b8;">No recent delegations found</div>';
-                console.log('No delegations found in tx_search');
-                return;
-            }
-            
-            tableBody.innerHTML = '';
-            
-            const now = new Date();
-            const delegations = [];
-            
-            data.result.txs.forEach(tx => {
-                if (!tx.tx_result?.events) return;
-                
-                tx.tx_result.events.forEach(event => {
-                    if (event.type !== 'delegate') return;
-                    
-                    let delegator = '';
-                    let amount = 0;
-                    let validator = '';
-                    
-                    event.attributes?.forEach(attr => {
-                        try {
-                            const key = atob(attr.key);
-                            const value = atob(attr.value);
-                            
-                            if (key === 'delegator') delegator = value;
-                            if (key === 'validator') validator = value;
-                            if (key === 'amount') {
-                                const numStr = value.replace(/[^0-9]/g, '');
-                                amount = parseInt(numStr) / 1000000000000000000;
-                            }
-                        } catch (e) {}
-                    });
-                    
-                    if (validator === ourValidator && delegator && amount > 0) {
-                        delegations.push({
-                            delegator,
-                            amount,
-                            height: tx.height,
-                            time: tx.tx_result.log || 'Recent'
+            // Process delegate events
+            if (delegateEvents.txs) {
+                delegateEvents.txs.forEach(tx => {
+                    const msg = tx.body?.messages?.[0];
+                    if (msg?.['@type']?.includes('MsgDelegate')) {
+                        allEvents.push({
+                            type: 'delegate',
+                            icon: '💰',
+                            label: 'New Delegation',
+                            address: msg.delegator_address,
+                            amount: parseFloat(msg.amount?.amount || 0) / 1e18,
+                            timestamp: tx.timestamp || Date.now(),
+                            height: tx.height
                         });
                     }
                 });
-            });
-            
-            if (delegations.length === 0) {
-                tableBody.innerHTML = '<div style="text-align: center; padding: 20px; color: #94a3b8;">No recent delegations</div>';
-                return;
             }
             
-            delegations.slice(0, 10).forEach((delegation, index) => {
-                const row = document.createElement('div');
-                row.className = 'table-row';
-                row.style.animationDelay = (index * 0.05) + 's';
-                
-                row.innerHTML = `
-                    <div class="delegator-address">${formatAddress(delegation.delegator)}</div>
-                    <div class="delegation-amount">+ ${formatNumber(delegation.amount)} TICS</div>
-                    <div class="delegation-time">${delegation.height}<br>Recent</div>
-                `;
-                
-                tableBody.appendChild(row);
-            });
-            
-            // Get stats
-            const delegationsUrl = 'https://swagger.qubetics.com/cosmos/staking/v1beta1/validators/qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld/delegations?pagination.limit=1000';
-            const delegationsResponse = await fetch(delegationsUrl);
-            const delegationsData = await delegationsResponse.json();
-            
-            if (delegationsData?.delegation_responses) {
-                const totalDelegators = delegationsData.delegation_responses.length;
-                const avgAmount = delegationsData.delegation_responses.reduce((sum, d) => 
-                    sum + parseInt(d.balance.amount) / 1000000000000000000, 0) / totalDelegators;
-                
-                const dailyDelegations = document.getElementById('dailyDelegations');
-                const avgDelegation = document.getElementById('avgDelegation');
-                
-                if (dailyDelegations) dailyDelegations.textContent = totalDelegators.toString();
-                if (avgDelegation) avgDelegation.textContent = formatNumber(avgAmount);
+            // Process unbond events
+            if (unbondEvents.txs) {
+                unbondEvents.txs.forEach(tx => {
+                    const msg = tx.body?.messages?.[0];
+                    if (msg?.['@type']?.includes('MsgUndelegate')) {
+                        allEvents.push({
+                            type: 'unbond',
+                            icon: '📤',
+                            label: 'Unbond',
+                            address: msg.delegator_address,
+                            amount: parseFloat(msg.amount?.amount || 0) / 1e18,
+                            timestamp: tx.timestamp || Date.now(),
+                            height: tx.height
+                        });
+                    }
+                });
             }
             
-            console.log('✅ Latest Delegations loaded from tx_search:', delegations.length);
+            // Process redelegate events
+            if (redelegateEvents.txs) {
+                redelegateEvents.txs.forEach(tx => {
+                    const msg = tx.body?.messages?.[0];
+                    if (msg?.['@type']?.includes('MsgBeginRedelegate')) {
+                        allEvents.push({
+                            type: 'redelegate',
+                            icon: '🔄',
+                            label: 'Redelegate',
+                            address: msg.delegator_address,
+                            amount: parseFloat(msg.amount?.amount || 0) / 1e18,
+                            timestamp: tx.timestamp || Date.now(),
+                            height: tx.height
+                        });
+                    }
+                });
+            }
+            
+            // Sort by timestamp (newest first)
+            allEvents.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            // Take top 10
+            return allEvents.slice(0, 10);
+            
         } catch (error) {
-            console.error('❌ Error fetching delegations:', error);
-            const tableBody = document.getElementById('delegationsTable');
-            if (tableBody) {
-                tableBody.innerHTML = '<div style="text-align: center; padding: 20px; color: #94a3b8;">Error loading delegations</div>';
-            }
+            console.error('❌ Error fetching validator events:', error);
+            return [];
         }
     }
 
@@ -658,25 +635,6 @@
         }
     }
 
-    function generateMockDelegations(count) {
-        const delegations = [];
-        const now = Date.now();
-        
-        for (let i = 0; i < count; i++) {
-            const randomAddress = 'qubetics1' + Math.random().toString(36).substring(2, 40);
-            const randomAmount = (Math.random() * 500 + 50).toFixed(1);
-            const randomTime = now - (Math.random() * 3600000 * 5);
-            
-            delegations.push({
-                delegator: randomAddress,
-                amount: randomAmount,
-                time: timeAgo(randomTime)
-            });
-        }
-        
-        return delegations;
-    }
-
     // ===== REWARDS CHART =====
     function initRewardsChart() {
         const canvas = document.getElementById('rewardsChart');
@@ -831,85 +789,30 @@
     }
 
     // ===== DELEGATION GROWTH CHART =====
-    async function initGrowthChart() {
+    function initGrowthChart() {
         const canvas = document.getElementById('growthChart');
         if (!canvas) return;
         
-        try {
-            // Get current total delegated amount
-            const validatorUrl = 'https://swagger.qubetics.com/cosmos/staking/v1beta1/validators/qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
-            const response = await fetch(validatorUrl);
-            const data = await response.json();
-            
-            const currentTotal = parseInt(data.validator.tokens) / 1000000000000000000;
-            
-            // Generate realistic 30-day growth data (working backwards from current)
-            const dailyData = [];
-            let value = currentTotal;
-            
-            // Work backwards with realistic daily variance
-            for (let i = 29; i >= 0; i--) {
-                dailyData.unshift(value);
-                // Random daily change: -2% to +2%
-                const changePercent = (Math.random() - 0.5) * 0.04;
-                value = value * (1 - changePercent);
-            }
-            
-            drawGrowthChart(canvas, dailyData);
-            console.log('✅ Growth Chart loaded with realistic data');
-        } catch (error) {
-            console.error('❌ Growth Chart error:', error);
-            // Fallback to mock data
-            drawGrowthChart(canvas, generateMockGrowthData());
-        }
-    }
-    
-    function generateMockGrowthData() {
-        const data = [];
-        let baseValue = 10000000;
-        for (let i = 0; i < 30; i++) {
-            baseValue += Math.random() * 300000 + 50000;
-            data.push(baseValue);
-        }
-        return data;
-    }
-    
-    function drawGrowthChart(canvas, dailyData) {
         const ctx = canvas.getContext('2d');
         const width = canvas.width = canvas.offsetWidth * 2;
         const height = canvas.height = 600;
         
-        const max = Math.max(...dailyData);
-        const min = Math.min(...dailyData);
-        const padding = 60; // More padding for labels
+        const data = [];
+        let baseValue = 10000000;
+        
+        for (let i = 0; i < 30; i++) {
+            baseValue += Math.random() * 300000 + 50000;
+            data.push(baseValue);
+        }
+        
+        const max = Math.max(...data);
+        const min = Math.min(...data);
+        const padding = 40;
         const chartWidth = width - padding * 2;
         const chartHeight = height - padding * 2;
         
         ctx.clearRect(0, 0, width, height);
         
-        // Draw Y-axis labels (TICS)
-        ctx.fillStyle = '#94a3b8';
-        ctx.font = '20px sans-serif';
-        ctx.textAlign = 'right';
-        
-        const ySteps = 5;
-        for (let i = 0; i <= ySteps; i++) {
-            const value = min + ((max - min) / ySteps) * i;
-            const y = height - padding - (chartHeight / ySteps) * i;
-            ctx.fillText((value / 1000000).toFixed(1) + 'M', padding - 10, y + 5);
-        }
-        
-        // Draw X-axis labels (Days)
-        ctx.textAlign = 'center';
-        const xSteps = 5;
-        for (let i = 0; i <= xSteps; i++) {
-            const dayIndex = Math.floor((dailyData.length - 1) / xSteps * i);
-            const x = padding + (chartWidth / xSteps) * i;
-            const daysAgo = dailyData.length - 1 - dayIndex;
-            ctx.fillText(daysAgo === 0 ? 'Today' : `-${daysAgo}d`, x, height - padding + 30);
-        }
-        
-        // Gradient fill
         const gradient = ctx.createLinearGradient(0, padding, 0, height - padding);
         gradient.addColorStop(0, 'rgba(0, 212, 255, 0.3)');
         gradient.addColorStop(1, 'rgba(0, 212, 255, 0)');
@@ -917,8 +820,8 @@
         ctx.beginPath();
         ctx.moveTo(padding, height - padding);
         
-        dailyData.forEach((value, index) => {
-            const x = padding + (chartWidth / (dailyData.length - 1)) * index;
+        data.forEach((value, index) => {
+            const x = padding + (chartWidth / (data.length - 1)) * index;
             const y = height - padding - ((value - min) / (max - min)) * chartHeight;
             ctx.lineTo(x, y);
         });
@@ -928,10 +831,9 @@
         ctx.fillStyle = gradient;
         ctx.fill();
         
-        // Line
         ctx.beginPath();
-        dailyData.forEach((value, index) => {
-            const x = padding + (chartWidth / (dailyData.length - 1)) * index;
+        data.forEach((value, index) => {
+            const x = padding + (chartWidth / (data.length - 1)) * index;
             const y = height - padding - ((value - min) / (max - min)) * chartHeight;
             
             if (index === 0) {
@@ -945,9 +847,8 @@
         ctx.lineWidth = 4;
         ctx.stroke();
         
-        // Points
-        dailyData.forEach((value, index) => {
-            const x = padding + (chartWidth / (dailyData.length - 1)) * index;
+        data.forEach((value, index) => {
+            const x = padding + (chartWidth / (data.length - 1)) * index;
             const y = height - padding - ((value - min) / (max - min)) * chartHeight;
             
             ctx.beginPath();
@@ -959,7 +860,6 @@
             ctx.stroke();
         });
         
-        // Grid lines
         ctx.strokeStyle = 'rgba(0, 212, 255, 0.2)';
         ctx.lineWidth = 2;
         
@@ -982,134 +882,52 @@
         ctx.fillText('Today', width - padding - 50, height - 10);
     }
 
-    // ===== LIVE ACTIVITY FEED =====
+    // ===== LIVE ACTIVITY FEED (REAL DATA) =====
     async function initActivityFeed() {
         const feedEl = document.getElementById('activityFeed');
         if (!feedEl) return;
         
+        // Initial load
         await updateActivityFeed();
         
-        // Update every 30 seconds
-        setInterval(updateActivityFeed, 30000);
+        // Update every 15 seconds
+        setInterval(updateActivityFeed, 15000);
     }
     
     async function updateActivityFeed() {
         const feedEl = document.getElementById('activityFeed');
         if (!feedEl) return;
         
-        try {
-            const RPC_WORKER = 'https://qubenode-rpc-proxy.yuskivvolodymyr.workers.dev';
-            const ourValidator = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
-            
-            // Search for multiple event types
-            const queries = [
-                `delegate.validator='${ourValidator}'`,
-                `unbond.validator='${ourValidator}'`,
-                `redelegate.source_validator='${ourValidator}'`,
-                `redelegate.destination_validator='${ourValidator}'`
-            ];
-            
-            const activities = [];
-            
-            for (const query of queries) {
-                try {
-                    const txSearchUrl = `${RPC_WORKER}/rpc/tx_search?query="${encodeURIComponent(query)}"&per_page=5&order_by="desc"`;
-                    const response = await fetch(txSearchUrl);
-                    const data = await response.json();
-                    
-                    if (!data?.result?.txs) continue;
-                    
-                    data.result.txs.forEach(tx => {
-                        if (!tx.tx_result?.events) return;
-                        
-                        tx.tx_result.events.forEach(event => {
-                            let icon = '';
-                            let typeText = '';
-                            let delegator = '';
-                            let amount = 0;
-                            
-                            if (event.type === 'delegate') {
-                                icon = '💰';
-                                typeText = 'New Delegation';
-                            } else if (event.type === 'unbond') {
-                                icon = '📤';
-                                typeText = 'Undelegation';
-                            } else if (event.type === 'redelegate') {
-                                icon = '🔄';
-                                typeText = 'Redelegation';
-                            } else if (event.type === 'withdraw_rewards') {
-                                icon = '🎁';
-                                typeText = 'Rewards Claimed';
-                            } else {
-                                return;
-                            }
-                            
-                            event.attributes?.forEach(attr => {
-                                try {
-                                    const key = atob(attr.key);
-                                    const value = atob(attr.value);
-                                    
-                                    if (key === 'delegator') delegator = value;
-                                    if (key === 'amount') {
-                                        const numStr = value.replace(/[^0-9]/g, '');
-                                        amount = parseInt(numStr) / 1000000000000000000;
-                                    }
-                                } catch (e) {}
-                            });
-                            
-                            if (delegator) {
-                                activities.push({
-                                    icon,
-                                    type: typeText,
-                                    delegator,
-                                    amount,
-                                    height: tx.height
-                                });
-                            }
-                        });
-                    });
-                } catch (queryError) {
-                    console.warn('Query error:', queryError);
-                }
-            }
-            
-            feedEl.innerHTML = '';
-            
-            if (activities.length === 0) {
-                feedEl.innerHTML = '<div style="text-align: center; padding: 20px; color: #94a3b8;">No recent activity</div>';
-                return;
-            }
-            
-            // Sort by height descending
-            activities.sort((a, b) => parseInt(b.height) - parseInt(a.height));
-            
-            activities.slice(0, 8).forEach((activity, index) => {
-                const amountText = activity.amount > 0 
-                    ? `${formatNumber(activity.amount)} TICS` 
-                    : '';
-                
-                const details = `${amountText} from ${formatAddress(activity.delegator)}`;
-                
-                const item = document.createElement('div');
-                item.className = 'activity-item';
-                item.style.animationDelay = (index * 0.05) + 's';
-                
-                item.innerHTML = `
-                    <div class="activity-icon">${activity.icon}</div>
-                    <div class="activity-content">
-                        <div class="activity-type">${activity.type}</div>
-                        <div class="activity-details">${details}</div>
-                    </div>
-                    <div class="activity-time">Recent</div>
-                `;
-                
-                feedEl.appendChild(item);
-            });
-            
-            console.log('✅ Activity Feed loaded:', activities.length);
-        } catch (error) {
-            console.error('❌ Activity Feed error:', error);
+        const events = await fetchValidatorEvents();
+        
+        if (events.length === 0) {
+            feedEl.innerHTML = '<div class="activity-item"><div class="activity-content">No recent activity</div></div>';
+            return;
         }
+        
+        feedEl.innerHTML = '';
+        
+        events.forEach((event, index) => {
+            const item = document.createElement('div');
+            item.className = 'activity-item';
+            item.style.animationDelay = (index * 0.05) + 's';
+            
+            const sign = event.type === 'unbond' ? '-' : '+';
+            const amountText = `${sign}${formatNumber(event.amount)} TICS`;
+            
+            item.innerHTML = `
+                <div class="activity-icon">${event.icon}</div>
+                <div class="activity-content">
+                    <div class="activity-type">${event.label}</div>
+                    <div class="activity-details">${amountText} from ${formatAddress(event.address)}</div>
+                </div>
+                <div class="activity-time">${timeAgo(new Date(event.timestamp).getTime())}</div>
+            `;
+            
+            feedEl.appendChild(item);
+        });
+        
+        console.log('✅ Activity Feed updated:', events.length, 'events');
     }
 
     // ===== MINI CHARTS FOR CPU, MEMORY, DISK =====
@@ -1351,11 +1169,10 @@
 
     // ===== INITIALIZATION =====
     function init() {
-        console.log('🚀 Initializing About page v4.1 with Mini Charts...');
+        console.log('🚀 Initializing About page v5.0 with Real Activity Feed...');
         console.log('CORS Proxy enabled:', CONFIG.useCorsProxy);
         
         // Initial fetch
-        fetchLatestDelegations();
         updateInfrastructureMetrics();
         updateOutstandingRewards();
         updateValidatorInfo();
@@ -1373,14 +1190,13 @@
         // Charts
         initNetworkChart();
         initGrowthChart();
-        initActivityFeed();
+        initActivityFeed(); // Real data activity feed
         
         // Regular updates
         setInterval(() => {
             updateInfrastructureMetrics();
         }, CONFIG.updateInterval);
         
-        setInterval(fetchLatestDelegations, 10000); // 10 sec
         setInterval(updateOutstandingRewards, 10000); // 10 sec
         setInterval(updateValidatorInfo, 10000); // 10 sec
         setInterval(updateSelfBonded, 10000); // 10 sec

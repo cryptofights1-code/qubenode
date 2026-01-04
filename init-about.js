@@ -1393,11 +1393,16 @@
         setInterval(updateNetworkShareData, 10000); // 10 sec
         setInterval(fetchNetworkInfo, 10000); // 10 sec
         setInterval(updateValidatorRank, 10000); // 10 sec
+        
+        // Start delegation monitoring
+        fetchLatestDelegations();
+        setInterval(checkForNewBlocks, 10000);
+        setInterval(fetchLatestDelegations, 60000);
     }
 
     // ===== LIVE DELEGATIONS & ACTIVITY FEED =====
     const VALIDATOR_ADDRESS = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
-    let lastBlockHeight = 0;
+    let delegationBlockHeight = 0;
 
     async function fetchLatestDelegations() {
         try {
@@ -1547,11 +1552,11 @@
             const data = await response.json();
             const currentHeight = parseInt(data.block.header.height);
             
-            if (currentHeight > lastBlockHeight && lastBlockHeight > 0) {
+            if (currentHeight > delegationBlockHeight && delegationBlockHeight > 0) {
                 await fetchLatestDelegations();
             }
             
-            lastBlockHeight = currentHeight;
+            delegationBlockHeight = currentHeight;
         } catch (error) {
             console.error('Error checking blocks:', error);
         }
@@ -1562,10 +1567,5 @@
     } else {
         init();
     }
-    
-    // Start delegation monitoring
-    fetchLatestDelegations();
-    setInterval(checkForNewBlocks, 10000);
-    setInterval(fetchLatestDelegations, 60000);
 
 })();

@@ -323,107 +323,69 @@
             if (!tableBody) return;
             
             const RPC_WORKER = 'https://qubenode-rpc-proxy.yuskivvolodymyr.workers.dev';
-            
-            // Get latest block height
-            const statusResponse = await fetch(`${RPC_WORKER}/rpc/status`);
-            const statusData = await statusResponse.json();
-            
-            if (!statusData?.result?.sync_info?.latest_block_height) {
-                console.error('❌ Failed to get latest block height');
-                return;
-            }
-            
-            const latestHeight = parseInt(statusData.result.sync_info.latest_block_height);
-            console.log('Latest block:', latestHeight);
+            const ourValidator = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
             
             tableBody.innerHTML = '<div style="text-align: center; padding: 20px; color: #94a3b8;">Loading latest delegations...</div>';
             
-            const delegations = [];
-            const ourValidator = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
+            // Use tx_search RPC endpoint (like your bot)
+            const query = `delegate.validator='${ourValidator}'`;
+            const txSearchUrl = `${RPC_WORKER}/rpc/tx_search?query="${encodeURIComponent(query)}"&per_page=10&order_by="desc"`;
             
-            // Search last 100 blocks for delegation events
-            for (let i = 0; i < 100 && delegations.length < 10; i++) {
-                const blockHeight = latestHeight - i;
-                
-                try {
-                    const blockResponse = await fetch(`${RPC_WORKER}/rpc/block?height=${blockHeight}`);
-                    const blockData = await blockResponse.json();
-                    
-                    if (!blockData?.result?.block) continue;
-                    
-                    const blockTime = new Date(blockData.result.block.header.time);
-                    
-                    // Get block results (contains events)
-                    const resultsResponse = await fetch(`${RPC_WORKER}/rpc/block_results?height=${blockHeight}`);
-                    const resultsData = await resultsResponse.json();
-                    
-                    if (!resultsData?.result?.txs_results) continue;
-                    
-                    // Parse transactions for delegation events
-                    resultsData.result.txs_results.forEach(tx => {
-                        if (!tx.events) return;
-                        
-                        tx.events.forEach(event => {
-                            if (event.type === 'delegate') {
-                                const validatorAttr = event.attributes?.find(a => {
-                                    try {
-                                        return atob(a.key) === 'validator';
-                                    } catch (e) { return false; }
-                                });
-                                const delegatorAttr = event.attributes?.find(a => {
-                                    try {
-                                        return atob(a.key) === 'delegator';
-                                    } catch (e) { return false; }
-                                });
-                                const amountAttr = event.attributes?.find(a => {
-                                    try {
-                                        return atob(a.key) === 'amount';
-                                    } catch (e) { return false; }
-                                });
-                                
-                                if (validatorAttr && delegatorAttr && amountAttr) {
-                                    const validator = atob(validatorAttr.value);
-                                    
-                                    if (validator === ourValidator) {
-                                        const delegator = atob(delegatorAttr.value);
-                                        const amountStr = atob(amountAttr.value);
-                                        const amount = parseInt(amountStr.replace(/[^0-9]/g, '')) / 1000000000000000000;
-                                        
-                                        delegations.push({
-                                            delegator,
-                                            amount,
-                                            height: blockHeight,
-                                            time: blockTime
-                                        });
-                                    }
-                                }
-                            }
-                        });
-                    });
-                } catch (blockError) {
-                    console.warn(`Block ${blockHeight} error:`, blockError);
-                }
-                
-                if (delegations.length >= 10) break;
+            const response = await fetch(txSearchUrl);
+            const data = await response.json();
+            
+            if (!data?.result?.txs || data.result.txs.length === 0) {
+                tableBody.innerHTML = '<div style="text-align: center; padding: 20px; color: #94a3b8;">No recent delegations found</div>';
+                console.log('No delegations found in tx_search');
+                return;
             }
             
             tableBody.innerHTML = '';
             
+            const now = new Date();
+            const delegations = [];
+            
+            data.result.txs.forEach(tx => {
+                if (!tx.tx_result?.events) return;
+                
+                tx.tx_result.events.forEach(event => {
+                    if (event.type !== 'delegate') return;
+                    
+                    let delegator = '';
+                    let amount = 0;
+                    let validator = '';
+                    
+                    event.attributes?.forEach(attr => {
+                        try {
+                            const key = atob(attr.key);
+                            const value = atob(attr.value);
+                            
+                            if (key === 'delegator') delegator = value;
+                            if (key === 'validator') validator = value;
+                            if (key === 'amount') {
+                                const numStr = value.replace(/[^0-9]/g, '');
+                                amount = parseInt(numStr) / 1000000000000000000;
+                            }
+                        } catch (e) {}
+                    });
+                    
+                    if (validator === ourValidator && delegator && amount > 0) {
+                        delegations.push({
+                            delegator,
+                            amount,
+                            height: tx.height,
+                            time: tx.tx_result.log || 'Recent'
+                        });
+                    }
+                });
+            });
+            
             if (delegations.length === 0) {
-                tableBody.innerHTML = '<div style="text-align: center; padding: 20px; color: #94a3b8;">No recent delegations found</div>';
+                tableBody.innerHTML = '<div style="text-align: center; padding: 20px; color: #94a3b8;">No recent delegations</div>';
                 return;
             }
             
-            const now = new Date();
-            
             delegations.slice(0, 10).forEach((delegation, index) => {
-                const diffMins = Math.floor((now - delegation.time) / 60000);
-                const timeAgo = diffMins < 60 
-                    ? `${diffMins}m ago` 
-                    : diffMins < 1440 
-                        ? `${Math.floor(diffMins / 60)}h ago`
-                        : `${Math.floor(diffMins / 1440)}d ago`;
-                
                 const row = document.createElement('div');
                 row.className = 'table-row';
                 row.style.animationDelay = (index * 0.05) + 's';
@@ -431,13 +393,13 @@
                 row.innerHTML = `
                     <div class="delegator-address">${formatAddress(delegation.delegator)}</div>
                     <div class="delegation-amount">+ ${formatNumber(delegation.amount)} TICS</div>
-                    <div class="delegation-time">${delegation.height}<br>${timeAgo}</div>
+                    <div class="delegation-time">${delegation.height}<br>Recent</div>
                 `;
                 
                 tableBody.appendChild(row);
             });
             
-            // Get stats from delegations endpoint
+            // Get stats
             const delegationsUrl = 'https://swagger.qubetics.com/cosmos/staking/v1beta1/validators/qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld/delegations?pagination.limit=1000';
             const delegationsResponse = await fetch(delegationsUrl);
             const delegationsData = await delegationsResponse.json();
@@ -454,9 +416,13 @@
                 if (avgDelegation) avgDelegation.textContent = formatNumber(avgAmount);
             }
             
-            console.log('✅ Latest Delegations loaded from RPC:', delegations.length);
+            console.log('✅ Latest Delegations loaded from tx_search:', delegations.length);
         } catch (error) {
-            console.error('❌ Error fetching delegations from RPC:', error);
+            console.error('❌ Error fetching delegations:', error);
+            const tableBody = document.getElementById('delegationsTable');
+            if (tableBody) {
+                tableBody.innerHTML = '<div style="text-align: center; padding: 20px; color: #94a3b8;">Error loading delegations</div>';
+            }
         }
     }
 
@@ -1033,119 +999,78 @@
         
         try {
             const RPC_WORKER = 'https://qubenode-rpc-proxy.yuskivvolodymyr.workers.dev';
-            
-            // Get latest block height
-            const statusResponse = await fetch(`${RPC_WORKER}/rpc/status`);
-            const statusData = await statusResponse.json();
-            
-            if (!statusData?.result?.sync_info?.latest_block_height) return;
-            
-            const latestHeight = parseInt(statusData.result.sync_info.latest_block_height);
-            
-            const activities = [];
             const ourValidator = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
             
-            // Search last 50 blocks for various events
-            for (let i = 0; i < 50 && activities.length < 8; i++) {
-                const blockHeight = latestHeight - i;
-                
+            // Search for multiple event types
+            const queries = [
+                `delegate.validator='${ourValidator}'`,
+                `unbond.validator='${ourValidator}'`,
+                `redelegate.source_validator='${ourValidator}'`,
+                `redelegate.destination_validator='${ourValidator}'`
+            ];
+            
+            const activities = [];
+            
+            for (const query of queries) {
                 try {
-                    const blockResponse = await fetch(`${RPC_WORKER}/rpc/block?height=${blockHeight}`);
-                    const blockData = await blockResponse.json();
+                    const txSearchUrl = `${RPC_WORKER}/rpc/tx_search?query="${encodeURIComponent(query)}"&per_page=5&order_by="desc"`;
+                    const response = await fetch(txSearchUrl);
+                    const data = await response.json();
                     
-                    if (!blockData?.result?.block) continue;
+                    if (!data?.result?.txs) continue;
                     
-                    const blockTime = new Date(blockData.result.block.header.time);
-                    
-                    const resultsResponse = await fetch(`${RPC_WORKER}/rpc/block_results?height=${blockHeight}`);
-                    const resultsData = await resultsResponse.json();
-                    
-                    if (!resultsData?.result?.txs_results) continue;
-                    
-                    resultsData.result.txs_results.forEach(tx => {
-                        if (!tx.events) return;
+                    data.result.txs.forEach(tx => {
+                        if (!tx.tx_result?.events) return;
                         
-                        tx.events.forEach(event => {
-                            let eventType = null;
+                        tx.tx_result.events.forEach(event => {
                             let icon = '';
                             let typeText = '';
                             let delegator = '';
                             let amount = 0;
                             
-                            // Check validator involvement
-                            const validatorAttr = event.attributes?.find(a => {
-                                try {
-                                    const key = atob(a.key);
-                                    return key === 'validator' || key === 'validator_src' || key === 'validator_dst';
-                                } catch (e) { return false; }
-                            });
-                            
-                            if (!validatorAttr) return;
-                            
-                            const validator = atob(validatorAttr.value);
-                            if (validator !== ourValidator) return;
-                            
-                            // Delegation
                             if (event.type === 'delegate') {
                                 icon = '💰';
                                 typeText = 'New Delegation';
-                                eventType = 'delegate';
-                            }
-                            // Undelegation
-                            else if (event.type === 'unbond') {
+                            } else if (event.type === 'unbond') {
                                 icon = '📤';
                                 typeText = 'Undelegation';
-                                eventType = 'unbond';
-                            }
-                            // Redelegation
-                            else if (event.type === 'redelegate') {
+                            } else if (event.type === 'redelegate') {
                                 icon = '🔄';
                                 typeText = 'Redelegation';
-                                eventType = 'redelegate';
-                            }
-                            // Rewards claimed
-                            else if (event.type === 'withdraw_rewards') {
+                            } else if (event.type === 'withdraw_rewards') {
                                 icon = '🎁';
                                 typeText = 'Rewards Claimed';
-                                eventType = 'rewards';
+                            } else {
+                                return;
                             }
                             
-                            if (!eventType) return;
-                            
-                            // Get delegator and amount
-                            const delegatorAttr = event.attributes?.find(a => {
+                            event.attributes?.forEach(attr => {
                                 try {
-                                    return atob(a.key) === 'delegator';
-                                } catch (e) { return false; }
-                            });
-                            const amountAttr = event.attributes?.find(a => {
-                                try {
-                                    return atob(a.key) === 'amount';
-                                } catch (e) { return false; }
+                                    const key = atob(attr.key);
+                                    const value = atob(attr.value);
+                                    
+                                    if (key === 'delegator') delegator = value;
+                                    if (key === 'amount') {
+                                        const numStr = value.replace(/[^0-9]/g, '');
+                                        amount = parseInt(numStr) / 1000000000000000000;
+                                    }
+                                } catch (e) {}
                             });
                             
-                            if (delegatorAttr) {
-                                delegator = atob(delegatorAttr.value);
+                            if (delegator) {
+                                activities.push({
+                                    icon,
+                                    type: typeText,
+                                    delegator,
+                                    amount,
+                                    height: tx.height
+                                });
                             }
-                            if (amountAttr) {
-                                const amountStr = atob(amountAttr.value);
-                                amount = parseInt(amountStr.replace(/[^0-9]/g, '')) / 1000000000000000000;
-                            }
-                            
-                            activities.push({
-                                icon,
-                                type: typeText,
-                                delegator,
-                                amount,
-                                time: blockTime
-                            });
                         });
                     });
-                } catch (blockError) {
-                    console.warn(`Activity block ${blockHeight} error:`, blockError);
+                } catch (queryError) {
+                    console.warn('Query error:', queryError);
                 }
-                
-                if (activities.length >= 8) break;
             }
             
             feedEl.innerHTML = '';
@@ -1155,21 +1080,15 @@
                 return;
             }
             
-            const now = new Date();
+            // Sort by height descending
+            activities.sort((a, b) => parseInt(b.height) - parseInt(a.height));
             
             activities.slice(0, 8).forEach((activity, index) => {
-                const diffMins = Math.floor((now - activity.time) / 60000);
-                const timeAgo = diffMins < 60 
-                    ? `${diffMins}m ago` 
-                    : `${Math.floor(diffMins / 60)}h ago`;
-                
                 const amountText = activity.amount > 0 
                     ? `${formatNumber(activity.amount)} TICS` 
                     : '';
                 
-                const details = activity.delegator 
-                    ? `${amountText} from ${formatAddress(activity.delegator)}`
-                    : amountText;
+                const details = `${amountText} from ${formatAddress(activity.delegator)}`;
                 
                 const item = document.createElement('div');
                 item.className = 'activity-item';
@@ -1181,15 +1100,15 @@
                         <div class="activity-type">${activity.type}</div>
                         <div class="activity-details">${details}</div>
                     </div>
-                    <div class="activity-time">${timeAgo}</div>
+                    <div class="activity-time">Recent</div>
                 `;
                 
                 feedEl.appendChild(item);
             });
             
-            console.log('✅ Activity Feed loaded from RPC:', activities.length);
+            console.log('✅ Activity Feed loaded:', activities.length);
         } catch (error) {
-            console.error('❌ Activity Feed RPC error:', error);
+            console.error('❌ Activity Feed error:', error);
         }
     }
 

@@ -316,7 +316,7 @@
         }
     }
 
-    // ===== FETCH REAL VALIDATOR EVENTS (FIXED TIMING) =====
+    // ===== FETCH REAL VALIDATOR EVENTS (DEBUG VERSION) =====
     const VALIDATOR_ADDRESS = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
     const BLOCK_TIME_SECONDS = 6; // Approximate block time in Qubetics
     
@@ -329,8 +329,9 @@
                 'pagination.offset': '0'
             });
             
-            // Get current block height first
-            let currentBlock = lastBlockHeight || 2960000; // Use cached or default
+            // Get current block height
+            let currentBlock = lastBlockHeight || 2960000;
+            console.log('🔍 Current block for time calculation:', currentBlock);
             
             // Fetch different event types in parallel
             const [delegateEvents, unbondEvents, redelegateEvents] = await Promise.all([
@@ -342,11 +343,32 @@
             const allEvents = [];
             
             // Helper function to calculate time ago from block height
-            const calculateTimeAgo = (txBlockHeight) => {
-                if (!txBlockHeight) return Date.now();
-                const blockDiff = currentBlock - parseInt(txBlockHeight);
+            const calculateTimeAgo = (tx) => {
+                // Try multiple possible locations for block height
+                const blockHeight = tx.tx_response?.height || tx.height || tx.txResponse?.height;
+                
+                if (!blockHeight) {
+                    console.warn('⚠️ No block height found in tx:', tx);
+                    return Date.now(); // Fallback to now
+                }
+                
+                const txBlock = parseInt(blockHeight);
+                const blockDiff = currentBlock - txBlock;
                 const secondsAgo = blockDiff * BLOCK_TIME_SECONDS;
-                return Date.now() - (secondsAgo * 1000);
+                const timestamp = Date.now() - (secondsAgo * 1000);
+                
+                // Debug first few
+                if (allEvents.length < 3) {
+                    console.log('📊 Time calc:', {
+                        currentBlock,
+                        txBlock,
+                        blockDiff,
+                        secondsAgo,
+                        timeAgo: timeAgo(timestamp)
+                    });
+                }
+                
+                return timestamp;
             };
             
             // Process delegate events
@@ -354,15 +376,14 @@
                 delegateEvents.txs.forEach(tx => {
                     const msg = tx.body?.messages?.[0];
                     if (msg?.['@type']?.includes('MsgDelegate')) {
-                        const blockHeight = tx.tx_response?.height || tx.height;
                         allEvents.push({
                             type: 'delegate',
                             icon: '💰',
                             label: 'New Delegation',
                             address: msg.delegator_address,
                             amount: parseFloat(msg.amount?.amount || 0) / 1e18,
-                            timestamp: calculateTimeAgo(blockHeight),
-                            height: blockHeight
+                            timestamp: calculateTimeAgo(tx),
+                            height: tx.tx_response?.height || tx.height
                         });
                     }
                 });
@@ -373,15 +394,14 @@
                 unbondEvents.txs.forEach(tx => {
                     const msg = tx.body?.messages?.[0];
                     if (msg?.['@type']?.includes('MsgUndelegate')) {
-                        const blockHeight = tx.tx_response?.height || tx.height;
                         allEvents.push({
                             type: 'unbond',
                             icon: '📤',
                             label: 'Unbond',
                             address: msg.delegator_address,
                             amount: parseFloat(msg.amount?.amount || 0) / 1e18,
-                            timestamp: calculateTimeAgo(blockHeight),
-                            height: blockHeight
+                            timestamp: calculateTimeAgo(tx),
+                            height: tx.tx_response?.height || tx.height
                         });
                     }
                 });
@@ -392,24 +412,23 @@
                 redelegateEvents.txs.forEach(tx => {
                     const msg = tx.body?.messages?.[0];
                     if (msg?.['@type']?.includes('MsgBeginRedelegate')) {
-                        const blockHeight = tx.tx_response?.height || tx.height;
                         allEvents.push({
                             type: 'redelegate',
                             icon: '🔄',
                             label: 'Redelegate',
                             address: msg.delegator_address,
                             amount: parseFloat(msg.amount?.amount || 0) / 1e18,
-                            timestamp: calculateTimeAgo(blockHeight),
-                            height: blockHeight
+                            timestamp: calculateTimeAgo(tx),
+                            height: tx.tx_response?.height || tx.height
                         });
                     }
                 });
             }
             
-            // Sort by timestamp (newest first) - THIS IS CRITICAL!
+            // Sort by timestamp (newest first)
             allEvents.sort((a, b) => b.timestamp - a.timestamp);
             
-            // Take top 10 and log for debugging
+            // Take top 10 and log
             const topEvents = allEvents.slice(0, 10);
             console.log('✅ Activity Feed: Mixed events:', {
                 total: allEvents.length,

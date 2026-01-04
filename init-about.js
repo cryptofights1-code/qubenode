@@ -1395,10 +1395,177 @@
         setInterval(updateValidatorRank, 10000); // 10 sec
     }
 
+    // ===== LIVE DELEGATIONS & ACTIVITY FEED =====
+    const VALIDATOR_ADDRESS = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
+    let lastBlockHeight = 0;
+
+    async function fetchLatestDelegations() {
+        try {
+            const url = `https://swagger.qubetics.com/cosmos/tx/v1beta1/txs?order_by=2&events=delegate.validator='${VALIDATOR_ADDRESS}'&pagination.limit=10`;
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Failed to fetch delegations');
+            
+            const data = await response.json();
+            if (data.txs && data.txs.length > 0) {
+                renderLatestDelegations(data.txs);
+                updateActivityFeed(data.txs);
+            }
+        } catch (error) {
+            console.error('Error fetching delegations:', error);
+        }
+    }
+
+    function renderLatestDelegations(txs) {
+        const table = document.getElementById('delegationsTable');
+        if (!table) return;
+
+        const delegations = parseDelegations(txs).slice(0, 10);
+        
+        if (delegations.length === 0) {
+            table.innerHTML = '<div class="table-row"><div class="empty-message">No recent delegations</div></div>';
+            return;
+        }
+
+        table.innerHTML = delegations.map(del => `
+            <div class="table-row">
+                <div class="table-col col-delegator">
+                    <span class="delegator-address" title="${del.delegator}">${formatAddress(del.delegator)}</span>
+                </div>
+                <div class="table-col col-amount">
+                    <span class="amount-value">${formatTICS(del.amount)} TICS</span>
+                </div>
+                <div class="table-col col-time">
+                    <span class="time-value">${timeAgo(new Date(del.timestamp).getTime())}</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function updateActivityFeed(txs) {
+        const feed = document.getElementById('activityFeed');
+        if (!feed) return;
+
+        const activities = parseDelegations(txs).slice(0, 5);
+        
+        if (activities.length === 0) {
+            feed.innerHTML = '<div class="activity-item"><div class="empty-message">No recent activity</div></div>';
+            return;
+        }
+
+        feed.innerHTML = activities.map(act => {
+            const icon = getActivityIcon(act.type);
+            const label = getActivityLabel(act.type);
+            
+            return `
+                <div class="activity-item">
+                    <div class="activity-icon">${icon}</div>
+                    <div class="activity-content">
+                        <div class="activity-title">${label}</div>
+                        <div class="activity-details">
+                            <span class="activity-amount">${formatTICS(act.amount)} TICS</span>
+                            <span class="activity-separator">•</span>
+                            <span class="activity-time">${timeAgo(new Date(act.timestamp).getTime())}</span>
+                        </div>
+                        <div class="activity-delegator">${formatAddress(act.delegator)}</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function parseDelegations(txs) {
+        const delegations = [];
+        
+        txs.forEach(tx => {
+            const messages = tx.body?.messages || [];
+            
+            messages.forEach(msg => {
+                const msgType = msg['@type'];
+                let delegation = null;
+                
+                if (msgType === '/cosmos.staking.v1beta1.MsgDelegate') {
+                    delegation = {
+                        type: 'delegate',
+                        delegator: msg.delegator_address,
+                        amount: msg.amount?.amount || '0',
+                        timestamp: tx.timestamp || new Date().toISOString()
+                    };
+                } else if (msgType === '/cosmos.staking.v1beta1.MsgBeginRedelegate') {
+                    delegation = {
+                        type: 'redelegate',
+                        delegator: msg.delegator_address,
+                        amount: msg.amount?.amount || '0',
+                        timestamp: tx.timestamp || new Date().toISOString()
+                    };
+                } else if (msgType === '/cosmos.staking.v1beta1.MsgUndelegate') {
+                    delegation = {
+                        type: 'undelegate',
+                        delegator: msg.delegator_address,
+                        amount: msg.amount?.amount || '0',
+                        timestamp: tx.timestamp || new Date().toISOString()
+                    };
+                }
+                
+                if (delegation) {
+                    delegations.push(delegation);
+                }
+            });
+        });
+        
+        return delegations.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    }
+
+    function formatTICS(amount) {
+        if (!amount) return '0';
+        const tics = parseFloat(amount) / 1e18;
+        return formatNumber(tics);
+    }
+
+    function getActivityIcon(type) {
+        const icons = {
+            'delegate': '➕',
+            'redelegate': '🔄',
+            'undelegate': '➖'
+        };
+        return icons[type] || '📝';
+    }
+
+    function getActivityLabel(type) {
+        const labels = {
+            'delegate': 'New Delegation',
+            'redelegate': 'Redelegation',
+            'undelegate': 'Undelegation'
+        };
+        return labels[type] || 'Transaction';
+    }
+
+    async function checkForNewBlocks() {
+        try {
+            const response = await fetch('https://swagger.qubetics.com/cosmos/base/tendermint/v1beta1/blocks/latest');
+            if (!response.ok) return;
+            
+            const data = await response.json();
+            const currentHeight = parseInt(data.block.header.height);
+            
+            if (currentHeight > lastBlockHeight && lastBlockHeight > 0) {
+                await fetchLatestDelegations();
+            }
+            
+            lastBlockHeight = currentHeight;
+        } catch (error) {
+            console.error('Error checking blocks:', error);
+        }
+    }
+
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {
         init();
     }
+    
+    // Start delegation monitoring
+    fetchLatestDelegations();
+    setInterval(checkForNewBlocks, 10000);
+    setInterval(fetchLatestDelegations, 60000);
 
 })();

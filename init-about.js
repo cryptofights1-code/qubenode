@@ -316,120 +316,60 @@
         }
     }
 
-    // ===== FETCH REAL VALIDATOR EVENTS (DEBUG VERSION) =====
+    // ===== FETCH REAL VALIDATOR EVENTS (CLOUDFLARE WORKER) =====
     const VALIDATOR_ADDRESS = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
-    const BLOCK_TIME_SECONDS = 6; // Approximate block time in Qubetics
     
     async function fetchValidatorEvents() {
         try {
-            const baseUrl = 'https://swagger.qubetics.com/cosmos/tx/v1beta1/txs';
-            const params = new URLSearchParams({
-                'order_by': '2',
-                'pagination.limit': '15',
-                'pagination.offset': '0'
+            const WORKER_URL = 'https://qubenode-rpc-proxy.yuskivvolodymyr.workers.dev';
+            const response = await fetch(`${WORKER_URL}/events/${VALIDATOR_ADDRESS}?limit=30`);
+            
+            if (!response.ok) {
+                throw new Error(`Worker API error: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            if (!data.events || data.events.length === 0) {
+                console.warn('⚠️ No events returned from worker');
+                return [];
+            }
+            
+            console.log('✅ Worker API response:', {
+                total: data.total_events,
+                current_block: data.current_block,
+                current_time: data.current_time
             });
             
-            // Get current block height
-            let currentBlock = lastBlockHeight || 2960000;
-            console.log('🔍 Current block for time calculation:', currentBlock);
-            
-            // Fetch different event types in parallel
-            const [delegateEvents, unbondEvents, redelegateEvents] = await Promise.all([
-                fetch(`${baseUrl}?${params}&events=delegate.validator='${VALIDATOR_ADDRESS}'`).then(r => r.json()).catch(() => ({txs: []})),
-                fetch(`${baseUrl}?${params}&events=unbond.validator='${VALIDATOR_ADDRESS}'`).then(r => r.json()).catch(() => ({txs: []})),
-                fetch(`${baseUrl}?${params}&events=redelegate.source_validator='${VALIDATOR_ADDRESS}'`).then(r => r.json()).catch(() => ({txs: []}))
-            ]);
-            
-            const allEvents = [];
-            
-            // Helper function to calculate time ago from block height
-            const calculateTimeAgo = (tx) => {
-                // Try multiple possible locations for block height
-                const blockHeight = tx.tx_response?.height || tx.height || tx.txResponse?.height;
+            // Map to our format
+            const allEvents = data.events.map(event => {
+                const icons = {
+                    'delegate': '💰',
+                    'unbond': '📤',
+                    'redelegate': '🔄'
+                };
                 
-                if (!blockHeight) {
-                    console.warn('⚠️ No block height found in tx:', tx);
-                    return Date.now(); // Fallback to now
-                }
+                const labels = {
+                    'delegate': 'New Delegation',
+                    'unbond': 'Unbond',
+                    'redelegate': 'Redelegate'
+                };
                 
-                const txBlock = parseInt(blockHeight);
-                const blockDiff = currentBlock - txBlock;
-                const secondsAgo = blockDiff * BLOCK_TIME_SECONDS;
-                const timestamp = Date.now() - (secondsAgo * 1000);
-                
-                // Debug first few
-                if (allEvents.length < 3) {
-                    console.log('📊 Time calc:', {
-                        currentBlock,
-                        txBlock,
-                        blockDiff,
-                        secondsAgo,
-                        timeAgo: timeAgo(timestamp)
-                    });
-                }
-                
-                return timestamp;
-            };
+                return {
+                    type: event.type,
+                    icon: icons[event.type] || '📍',
+                    label: labels[event.type] || event.type,
+                    address: event.delegator,
+                    amount: event.amount / 1e18, // Convert from wei to TICS
+                    timestamp: new Date(event.time).getTime(),
+                    time: event.time,
+                    height: event.height
+                };
+            });
             
-            // Process delegate events
-            if (delegateEvents.txs) {
-                delegateEvents.txs.forEach(tx => {
-                    const msg = tx.body?.messages?.[0];
-                    if (msg?.['@type']?.includes('MsgDelegate')) {
-                        allEvents.push({
-                            type: 'delegate',
-                            icon: '💰',
-                            label: 'New Delegation',
-                            address: msg.delegator_address,
-                            amount: parseFloat(msg.amount?.amount || 0) / 1e18,
-                            timestamp: calculateTimeAgo(tx),
-                            height: tx.tx_response?.height || tx.height
-                        });
-                    }
-                });
-            }
-            
-            // Process unbond events
-            if (unbondEvents.txs) {
-                unbondEvents.txs.forEach(tx => {
-                    const msg = tx.body?.messages?.[0];
-                    if (msg?.['@type']?.includes('MsgUndelegate')) {
-                        allEvents.push({
-                            type: 'unbond',
-                            icon: '📤',
-                            label: 'Unbond',
-                            address: msg.delegator_address,
-                            amount: parseFloat(msg.amount?.amount || 0) / 1e18,
-                            timestamp: calculateTimeAgo(tx),
-                            height: tx.tx_response?.height || tx.height
-                        });
-                    }
-                });
-            }
-            
-            // Process redelegate events
-            if (redelegateEvents.txs) {
-                redelegateEvents.txs.forEach(tx => {
-                    const msg = tx.body?.messages?.[0];
-                    if (msg?.['@type']?.includes('MsgBeginRedelegate')) {
-                        allEvents.push({
-                            type: 'redelegate',
-                            icon: '🔄',
-                            label: 'Redelegate',
-                            address: msg.delegator_address,
-                            amount: parseFloat(msg.amount?.amount || 0) / 1e18,
-                            timestamp: calculateTimeAgo(tx),
-                            height: tx.tx_response?.height || tx.height
-                        });
-                    }
-                });
-            }
-            
-            // Sort by timestamp (newest first)
-            allEvents.sort((a, b) => b.timestamp - a.timestamp);
-            
-            // Take top 10 and log
+            // Already sorted by worker (newest first)
             const topEvents = allEvents.slice(0, 10);
+            
             console.log('✅ Activity Feed: Mixed events:', {
                 total: allEvents.length,
                 delegates: allEvents.filter(e => e.type === 'delegate').length,

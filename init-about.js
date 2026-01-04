@@ -316,8 +316,9 @@
         }
     }
 
-    // ===== FETCH REAL VALIDATOR EVENTS (REPLACED MOCK) =====
+    // ===== FETCH REAL VALIDATOR EVENTS (FIXED TIMING) =====
     const VALIDATOR_ADDRESS = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
+    const BLOCK_TIME_SECONDS = 6; // Approximate block time in Qubetics
     
     async function fetchValidatorEvents() {
         try {
@@ -328,7 +329,10 @@
                 'pagination.offset': '0'
             });
             
-            // Fetch different event types
+            // Get current block height first
+            let currentBlock = lastBlockHeight || 2960000; // Use cached or default
+            
+            // Fetch different event types in parallel
             const [delegateEvents, unbondEvents, redelegateEvents] = await Promise.all([
                 fetch(`${baseUrl}?${params}&events=delegate.validator='${VALIDATOR_ADDRESS}'`).then(r => r.json()).catch(() => ({txs: []})),
                 fetch(`${baseUrl}?${params}&events=unbond.validator='${VALIDATOR_ADDRESS}'`).then(r => r.json()).catch(() => ({txs: []})),
@@ -337,19 +341,28 @@
             
             const allEvents = [];
             
+            // Helper function to calculate time ago from block height
+            const calculateTimeAgo = (txBlockHeight) => {
+                if (!txBlockHeight) return Date.now();
+                const blockDiff = currentBlock - parseInt(txBlockHeight);
+                const secondsAgo = blockDiff * BLOCK_TIME_SECONDS;
+                return Date.now() - (secondsAgo * 1000);
+            };
+            
             // Process delegate events
             if (delegateEvents.txs) {
                 delegateEvents.txs.forEach(tx => {
                     const msg = tx.body?.messages?.[0];
                     if (msg?.['@type']?.includes('MsgDelegate')) {
+                        const blockHeight = tx.tx_response?.height || tx.height;
                         allEvents.push({
                             type: 'delegate',
                             icon: '💰',
                             label: 'New Delegation',
                             address: msg.delegator_address,
                             amount: parseFloat(msg.amount?.amount || 0) / 1e18,
-                            timestamp: tx.timestamp || Date.now(),
-                            height: tx.height
+                            timestamp: calculateTimeAgo(blockHeight),
+                            height: blockHeight
                         });
                     }
                 });
@@ -360,14 +373,15 @@
                 unbondEvents.txs.forEach(tx => {
                     const msg = tx.body?.messages?.[0];
                     if (msg?.['@type']?.includes('MsgUndelegate')) {
+                        const blockHeight = tx.tx_response?.height || tx.height;
                         allEvents.push({
                             type: 'unbond',
                             icon: '📤',
                             label: 'Unbond',
                             address: msg.delegator_address,
                             amount: parseFloat(msg.amount?.amount || 0) / 1e18,
-                            timestamp: tx.timestamp || Date.now(),
-                            height: tx.height
+                            timestamp: calculateTimeAgo(blockHeight),
+                            height: blockHeight
                         });
                     }
                 });
@@ -378,24 +392,34 @@
                 redelegateEvents.txs.forEach(tx => {
                     const msg = tx.body?.messages?.[0];
                     if (msg?.['@type']?.includes('MsgBeginRedelegate')) {
+                        const blockHeight = tx.tx_response?.height || tx.height;
                         allEvents.push({
                             type: 'redelegate',
                             icon: '🔄',
                             label: 'Redelegate',
                             address: msg.delegator_address,
                             amount: parseFloat(msg.amount?.amount || 0) / 1e18,
-                            timestamp: tx.timestamp || Date.now(),
-                            height: tx.height
+                            timestamp: calculateTimeAgo(blockHeight),
+                            height: blockHeight
                         });
                     }
                 });
             }
             
-            // Sort by timestamp (newest first)
-            allEvents.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            // Sort by timestamp (newest first) - THIS IS CRITICAL!
+            allEvents.sort((a, b) => b.timestamp - a.timestamp);
             
-            // Take top 10
-            return allEvents.slice(0, 10);
+            // Take top 10 and log for debugging
+            const topEvents = allEvents.slice(0, 10);
+            console.log('✅ Activity Feed: Mixed events:', {
+                total: allEvents.length,
+                delegates: allEvents.filter(e => e.type === 'delegate').length,
+                unbonds: allEvents.filter(e => e.type === 'unbond').length,
+                redelegates: allEvents.filter(e => e.type === 'redelegate').length,
+                showing: topEvents.length
+            });
+            
+            return topEvents;
             
         } catch (error) {
             console.error('❌ Error fetching validator events:', error);

@@ -772,7 +772,6 @@
     }
 
     // ===== DELEGATION GROWTH CHART =====
-    // ===== DELEGATION TOTAL GROWTH CHART (CUMULATIVE) =====
     async function initGrowthChart() {
         const canvas = document.getElementById('growthChart');
         if (!canvas) return;
@@ -781,59 +780,43 @@
         const width = canvas.width = canvas.offsetWidth * 2;
         const height = canvas.height = 600;
         
-        let historyData = null;
         let data = [];
-        let dates = [];
         
         try {
-            // Fetch cumulative delegation total history
+            // Fetch real delegation history
             const WORKER_URL = 'https://qubenode-rpc-proxy.yuskivvolodymyr.workers.dev';
             const VALIDATOR_ADDRESS = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
-            const response = await fetch(`${WORKER_URL}/delegation-total-history/${VALIDATOR_ADDRESS}?days=30`);
-            historyData = await response.json();
+            const response = await fetch(`${WORKER_URL}/delegation-history/${VALIDATOR_ADDRESS}?days=30`);
+            const historyData = await response.json();
             
             if (historyData.data && historyData.data.length > 0) {
-                data = historyData.data.map(d => d.total);
-                dates = historyData.data.map(d => d.date);
+                data = historyData.data.map(d => d.amount);
             } else {
-                // Fallback to realistic mock data
-                let baseValue = 14000000;
+                // Fallback to mock data if API fails
+                let baseValue = 10000000;
                 for (let i = 0; i < 30; i++) {
-                    baseValue += Math.random() * 50000 + 10000;
+                    baseValue += Math.random() * 300000 + 50000;
                     data.push(baseValue);
-                    const date = new Date();
-                    date.setDate(date.getDate() - (29 - i));
-                    dates.push(date.toISOString().split('T')[0]);
                 }
             }
         } catch (error) {
             console.error('Failed to load delegation history:', error);
             // Fallback to mock data
-            let baseValue = 14000000;
+            let baseValue = 10000000;
             for (let i = 0; i < 30; i++) {
-                baseValue += Math.random() * 50000 + 10000;
+                baseValue += Math.random() * 300000 + 50000;
                 data.push(baseValue);
-                const date = new Date();
-                date.setDate(date.getDate() - (29 - i));
-                dates.push(date.toISOString().split('T')[0]);
             }
         }
         
-        // Auto-scale Y axis with 10% padding
         const max = Math.max(...data);
         const min = Math.min(...data);
-        const range = max - min;
-        const paddingPercent = 0.1;
-        const yMin = min - (range * paddingPercent);
-        const yMax = max + (range * paddingPercent);
-        
         const padding = 40;
         const chartWidth = width - padding * 2;
         const chartHeight = height - padding * 2;
         
         ctx.clearRect(0, 0, width, height);
         
-        // Draw gradient fill
         const gradient = ctx.createLinearGradient(0, padding, 0, height - padding);
         gradient.addColorStop(0, 'rgba(0, 212, 255, 0.3)');
         gradient.addColorStop(1, 'rgba(0, 212, 255, 0)');
@@ -843,7 +826,7 @@
         
         data.forEach((value, index) => {
             const x = padding + (chartWidth / (data.length - 1)) * index;
-            const y = height - padding - ((value - yMin) / (yMax - yMin)) * chartHeight;
+            const y = height - padding - ((value - min) / (max - min)) * chartHeight;
             ctx.lineTo(x, y);
         });
         
@@ -852,11 +835,10 @@
         ctx.fillStyle = gradient;
         ctx.fill();
         
-        // Draw line
         ctx.beginPath();
         data.forEach((value, index) => {
             const x = padding + (chartWidth / (data.length - 1)) * index;
-            const y = height - padding - ((value - yMin) / (yMax - yMin)) * chartHeight;
+            const y = height - padding - ((value - min) / (max - min)) * chartHeight;
             
             if (index === 0) {
                 ctx.moveTo(x, y);
@@ -869,11 +851,9 @@
         ctx.lineWidth = 4;
         ctx.stroke();
         
-        // Draw points (clickable)
-        const points = [];
         data.forEach((value, index) => {
             const x = padding + (chartWidth / (data.length - 1)) * index;
-            const y = height - padding - ((value - yMin) / (yMax - yMin)) * chartHeight;
+            const y = height - padding - ((value - min) / (max - min)) * chartHeight;
             
             ctx.beginPath();
             ctx.arc(x, y, 6, 0, Math.PI * 2);
@@ -882,12 +862,8 @@
             ctx.strokeStyle = '#000';
             ctx.lineWidth = 2;
             ctx.stroke();
-            
-            // Store point data for tooltip
-            points.push({ x, y, value, date: dates[index], index });
         });
         
-        // Draw axes
         ctx.strokeStyle = 'rgba(0, 212, 255, 0.2)';
         ctx.lineWidth = 2;
         
@@ -901,139 +877,13 @@
         ctx.lineTo(width - padding, height - padding);
         ctx.stroke();
         
-        // Y-axis labels with auto-scale
         ctx.fillStyle = '#94a3b8';
         ctx.font = '24px Space Grotesk';
-        ctx.textAlign = 'right';
-        
-        const ySteps = 5;
-        for (let i = 0; i <= ySteps; i++) {
-            const value = yMin + ((yMax - yMin) / ySteps) * i;
-            const y = height - padding - (chartHeight / ySteps) * i;
-            const millions = (value / 1000000).toFixed(1);
-            ctx.fillText(`${millions}M`, padding - 10, y + 8);
-        }
-        
-        // X-axis labels
         ctx.textAlign = 'center';
+        
         ctx.fillText('30d ago', padding + 50, height - 10);
         ctx.fillText('15d', width / 2, height - 10);
         ctx.fillText('Today', width - padding - 50, height - 10);
-        
-        // Tooltip functionality
-        let tooltipVisible = false;
-        let currentPoint = null;
-        
-        function formatNumber(num) {
-            return num.toLocaleString('en-US', { maximumFractionDigits: 1 });
-        }
-        
-        function formatDate(dateStr) {
-            const date = new Date(dateStr);
-            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        }
-        
-        function drawTooltip(point) {
-            const changeData = historyData?.data?.[point.index];
-            const change = changeData?.change || 0;
-            const changePercent = ((change / point.value) * 100).toFixed(2);
-            
-            // Tooltip dimensions
-            const tooltipWidth = 280;
-            const tooltipHeight = 90;
-            const tooltipX = point.x > width / 2 ? point.x - tooltipWidth - 20 : point.x + 20;
-            const tooltipY = point.y - tooltipHeight / 2;
-            
-            // Draw tooltip background
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
-            ctx.strokeStyle = '#00D4FF';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.roundRect(tooltipX, tooltipY, tooltipWidth, tooltipHeight, 10);
-            ctx.fill();
-            ctx.stroke();
-            
-            // Draw tooltip text
-            ctx.fillStyle = '#00FFF0';
-            ctx.font = 'bold 18px Space Grotesk';
-            ctx.textAlign = 'left';
-            ctx.fillText(formatDate(point.date), tooltipX + 15, tooltipY + 25);
-            
-            ctx.fillStyle = '#ffffff';
-            ctx.font = '20px Space Grotesk';
-            ctx.fillText(`Total: ${formatNumber(point.value)} TICS`, tooltipX + 15, tooltipY + 50);
-            
-            ctx.fillStyle = change >= 0 ? '#00ff88' : '#ff4444';
-            ctx.font = '16px Space Grotesk';
-            const changeText = change >= 0 ? `+${formatNumber(change)}` : formatNumber(change);
-            ctx.fillText(`Change: ${changeText} (${changePercent}%)`, tooltipX + 15, tooltipY + 72);
-        }
-        
-        // Mouse move handler
-        canvas.addEventListener('mousemove', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            const mouseX = (e.clientX - rect.left) * scaleX;
-            const mouseY = (e.clientY - rect.top) * scaleY;
-            
-            // Find closest point
-            let closestPoint = null;
-            let minDist = 30; // Hover radius
-            
-            points.forEach(point => {
-                const dist = Math.sqrt(Math.pow(mouseX - point.x, 2) + Math.pow(mouseY - point.y, 2));
-                if (dist < minDist) {
-                    minDist = dist;
-                    closestPoint = point;
-                }
-            });
-            
-            if (closestPoint !== currentPoint) {
-                currentPoint = closestPoint;
-                
-                // Redraw chart
-                initGrowthChart();
-                
-                if (currentPoint) {
-                    drawTooltip(currentPoint);
-                    canvas.style.cursor = 'pointer';
-                } else {
-                    canvas.style.cursor = 'default';
-                }
-            }
-        });
-        
-        // Click handler for mobile
-        canvas.addEventListener('click', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            const mouseX = (e.clientX - rect.left) * scaleX;
-            const mouseY = (e.clientY - rect.top) * scaleY;
-            
-            let closestPoint = null;
-            let minDist = 50; // Click radius
-            
-            points.forEach(point => {
-                const dist = Math.sqrt(Math.pow(mouseX - point.x, 2) + Math.pow(mouseY - point.y, 2));
-                if (dist < minDist) {
-                    minDist = dist;
-                    closestPoint = point;
-                }
-            });
-            
-            if (closestPoint) {
-                tooltipVisible = !tooltipVisible;
-                currentPoint = tooltipVisible ? closestPoint : null;
-                
-                initGrowthChart();
-                
-                if (currentPoint) {
-                    drawTooltip(currentPoint);
-                }
-            }
-        });
     }
 
     // ===== LIVE ACTIVITY FEED (REAL DATA) =====

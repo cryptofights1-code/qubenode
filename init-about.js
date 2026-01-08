@@ -780,43 +780,65 @@
         const width = canvas.width = canvas.offsetWidth * 2;
         const height = canvas.height = 600;
         
+        let snapshots = [];
         let data = [];
+        let dates = [];
         
         try {
-            // Fetch real delegation history
+            // Fetch delegation snapshots from worker
             const WORKER_URL = 'https://qubenode-rpc-proxy.yuskivvolodymyr.workers.dev';
-            const VALIDATOR_ADDRESS = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
-            const response = await fetch(`${WORKER_URL}/delegation-history/${VALIDATOR_ADDRESS}?days=30`);
-            const historyData = await response.json();
+            const response = await fetch(`${WORKER_URL}/delegation-snapshots?days=30`);
+            const snapshotsData = await response.json();
             
-            if (historyData.data && historyData.data.length > 0) {
-                data = historyData.data.map(d => d.amount);
-            } else {
-                // Fallback to mock data if API fails
-                let baseValue = 10000000;
+            if (snapshotsData.data && snapshotsData.data.length > 0) {
+                // Filter out null values and extract data
+                snapshots = snapshotsData.data.filter(s => s.total_staked !== null);
+                data = snapshots.map(s => s.total_staked);
+                dates = snapshots.map(s => s.date);
+                
+                console.log(`📊 Loaded ${data.length} snapshots for chart`);
+            }
+            
+            // If no snapshots yet, use realistic mock data
+            if (data.length === 0) {
+                console.log('⚠️ No snapshots yet, using mock data');
+                let baseValue = 14500000;
                 for (let i = 0; i < 30; i++) {
-                    baseValue += Math.random() * 300000 + 50000;
+                    baseValue += Math.random() * 50000 + 10000;
                     data.push(baseValue);
+                    const date = new Date();
+                    date.setDate(date.getDate() - (29 - i));
+                    dates.push(date.toISOString().split('T')[0]);
                 }
             }
         } catch (error) {
-            console.error('Failed to load delegation history:', error);
+            console.error('Failed to load snapshots:', error);
             // Fallback to mock data
-            let baseValue = 10000000;
+            let baseValue = 14500000;
             for (let i = 0; i < 30; i++) {
-                baseValue += Math.random() * 300000 + 50000;
+                baseValue += Math.random() * 50000 + 10000;
                 data.push(baseValue);
+                const date = new Date();
+                date.setDate(date.getDate() - (29 - i));
+                dates.push(date.toISOString().split('T')[0]);
             }
         }
         
+        // Auto-scale Y axis with 10% padding
         const max = Math.max(...data);
         const min = Math.min(...data);
-        const padding = 40;
+        const range = max - min || 1; // Prevent division by zero
+        const paddingPercent = 0.1;
+        const yMin = min - (range * paddingPercent);
+        const yMax = max + (range * paddingPercent);
+        
+        const padding = 80; // Increased for Y-axis labels
         const chartWidth = width - padding * 2;
         const chartHeight = height - padding * 2;
         
         ctx.clearRect(0, 0, width, height);
         
+        // Draw gradient fill
         const gradient = ctx.createLinearGradient(0, padding, 0, height - padding);
         gradient.addColorStop(0, 'rgba(0, 212, 255, 0.3)');
         gradient.addColorStop(1, 'rgba(0, 212, 255, 0)');
@@ -826,7 +848,7 @@
         
         data.forEach((value, index) => {
             const x = padding + (chartWidth / (data.length - 1)) * index;
-            const y = height - padding - ((value - min) / (max - min)) * chartHeight;
+            const y = height - padding - ((value - yMin) / (yMax - yMin)) * chartHeight;
             ctx.lineTo(x, y);
         });
         
@@ -835,10 +857,11 @@
         ctx.fillStyle = gradient;
         ctx.fill();
         
+        // Draw line
         ctx.beginPath();
         data.forEach((value, index) => {
             const x = padding + (chartWidth / (data.length - 1)) * index;
-            const y = height - padding - ((value - min) / (max - min)) * chartHeight;
+            const y = height - padding - ((value - yMin) / (yMax - yMin)) * chartHeight;
             
             if (index === 0) {
                 ctx.moveTo(x, y);
@@ -851,9 +874,10 @@
         ctx.lineWidth = 4;
         ctx.stroke();
         
+        // Draw points
         data.forEach((value, index) => {
             const x = padding + (chartWidth / (data.length - 1)) * index;
-            const y = height - padding - ((value - min) / (max - min)) * chartHeight;
+            const y = height - padding - ((value - yMin) / (yMax - yMin)) * chartHeight;
             
             ctx.beginPath();
             ctx.arc(x, y, 6, 0, Math.PI * 2);
@@ -864,26 +888,81 @@
             ctx.stroke();
         });
         
+        // Draw axes
         ctx.strokeStyle = 'rgba(0, 212, 255, 0.2)';
         ctx.lineWidth = 2;
         
+        // Y-axis
         ctx.beginPath();
         ctx.moveTo(padding, padding);
         ctx.lineTo(padding, height - padding);
         ctx.stroke();
         
+        // X-axis
         ctx.beginPath();
         ctx.moveTo(padding, height - padding);
         ctx.lineTo(width - padding, height - padding);
         ctx.stroke();
         
+        // Y-axis labels (TICS in millions)
         ctx.fillStyle = '#94a3b8';
-        ctx.font = '24px Space Grotesk';
-        ctx.textAlign = 'center';
+        ctx.font = '20px Space Grotesk';
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
         
-        ctx.fillText('30d ago', padding + 50, height - 10);
-        ctx.fillText('15d', width / 2, height - 10);
-        ctx.fillText('Today', width - padding - 50, height - 10);
+        const ySteps = 5;
+        for (let i = 0; i <= ySteps; i++) {
+            const value = yMin + ((yMax - yMin) / ySteps) * i;
+            const y = height - padding - (chartHeight / ySteps) * i;
+            const millions = (value / 1000000).toFixed(1);
+            ctx.fillText(`${millions}M`, padding - 15, y);
+            
+            // Draw grid line
+            ctx.strokeStyle = 'rgba(0, 212, 255, 0.05)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(padding, y);
+            ctx.lineTo(width - padding, y);
+            ctx.stroke();
+        }
+        
+        // X-axis labels (dates)
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '22px Space Grotesk';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        
+        if (dates.length > 0) {
+            // Show first date
+            const firstDate = new Date(dates[0]);
+            const firstLabel = `${firstDate.getDate()} ${firstDate.toLocaleString('en', { month: 'short' })}`;
+            ctx.fillText(firstLabel, padding + 50, height - padding + 15);
+            
+            // Show middle date
+            if (dates.length > 15) {
+                const midDate = new Date(dates[Math.floor(dates.length / 2)]);
+                const midLabel = `${midDate.getDate()} ${midDate.toLocaleString('en', { month: 'short' })}`;
+                ctx.fillText(midLabel, width / 2, height - padding + 15);
+            }
+            
+            // Show last date (Today)
+            ctx.fillText('Today', width - padding - 50, height - padding + 15);
+        } else {
+            // Fallback labels
+            ctx.fillText('30d ago', padding + 50, height - padding + 15);
+            ctx.fillText('15d', width / 2, height - padding + 15);
+            ctx.fillText('Today', width - padding - 50, height - padding + 15);
+        }
+        
+        // Y-axis title
+        ctx.save();
+        ctx.translate(25, height / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillStyle = '#00FFF0';
+        ctx.font = 'bold 22px Space Grotesk';
+        ctx.textAlign = 'center';
+        ctx.fillText('Total Staked (TICS)', 0, 0);
+        ctx.restore();
     }
 
     // ===== LIVE ACTIVITY FEED (REAL DATA) =====

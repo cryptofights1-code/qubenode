@@ -431,7 +431,8 @@ async function updateAll() {
     updateDelegators(),
     updateInflation(),
     updateUptime(),
-    updateTicsPrice()         // Ціна TICS з MEXC через Cloudflare Worker
+    updateTicsPrice(),        // Ціна TICS з MEXC через Cloudflare Worker
+    updateBlocksProposed()    // Blocks proposed by QubeNode
   ]);
 }
 
@@ -489,6 +490,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateInflation();
     updateUptime();
     updateTicsPrice();
+    updateBlocksProposed();
     // About page updates - MOVED TO init-about.js
   }, 15000);
 });
@@ -612,4 +614,30 @@ async function updateLatestDelegations() {
 // Outstanding Rewards (for about.html) - MOVED TO init-about.js
 
 // Network Share (for about.html) - MOVED TO init-about.js
+
+// ===== BLOCKS PROPOSED =====
+async function updateBlocksProposed() {
+  const blocksEl = document.getElementById("blocksProposed");
+  if (!blocksEl) return;
+  
+  try {
+    // Fetch from Cloudflare Worker
+    const url = `${RPC_WORKER}/blocks-proposed`;
+    const data = await fetchJSON(url);
+    
+    if (data?.total_blocks_proposed) {
+      const blocks = parseInt(data.total_blocks_proposed);
+      blocksEl.textContent = blocks.toLocaleString();
+      console.log(`✅ Blocks proposed: ${blocks.toLocaleString()}`);
+    } else {
+      // Fallback to static value if worker not ready yet
+      blocksEl.textContent = "141,715";
+      console.log('⚠️ Using fallback blocks count');
+    }
+  } catch (error) {
+    console.error('❌ Error fetching blocks proposed:', error);
+    // Fallback to static value
+    blocksEl.textContent = "141,715";
+  }
+}
 

@@ -31,6 +31,22 @@ async function fetchJSON(url, headers = {}) {
   }
 }
 
+// Format large numbers with M/K suffix
+function formatLargeNumber(num) {
+  if (num >= 1000000) {
+    // Truncate to 3 decimal places WITHOUT rounding
+    const millions = num / 1000000;
+    const truncated = Math.floor(millions * 1000) / 1000;
+    return truncated.toFixed(3) + 'M';
+  } else if (num >= 1000) {
+    const thousands = num / 1000;
+    const truncated = Math.floor(thousands * 1000) / 1000;
+    return truncated.toFixed(3) + 'K';
+  }
+  return num.toLocaleString();
+}
+
+
 // === BLOCK HEIGHT (current block number) ===
 async function updateBlockHeight() {
   const el = document.getElementById("currentBlock");

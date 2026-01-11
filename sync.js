@@ -18,6 +18,7 @@ const VAL_ACCOUNT_ADDR = "qubetics1tzk9f84cv2gmk3du3m9dpxcuph70sfj6ltvqjf"; // A
 let currentBlockTime = 5.87; // Default value
 let blockAnimationInterval = null;
 let lastBlockHeight = null;
+let cachedCirculatingSupply = null; // Cache for circulating supply from pricebot
 
 // Universal JSON fetch helper
 async function fetchJSON(url, headers = {}) {
@@ -29,6 +30,21 @@ async function fetchJSON(url, headers = {}) {
     console.warn(`Fetch failed → ${url}`, err);
     return null;
   }
+}
+
+// Format large numbers with M/K suffix
+function formatLargeNumber(num) {
+  if (num >= 1000000) {
+    // Truncate to 3 decimal places WITHOUT rounding
+    const millions = num / 1000000;
+    const truncated = Math.floor(millions * 1000) / 1000;
+    return truncated.toFixed(3) + 'M';
+  } else if (num >= 1000) {
+    const thousands = num / 1000;
+    const truncated = Math.floor(thousands * 1000) / 1000;
+    return truncated.toFixed(3) + 'K';
+  }
+  return num.toLocaleString();
 }
 
 // === BLOCK HEIGHT (current block number) ===
@@ -263,18 +279,17 @@ async function updateUptime() {
 async function updateTicsPrice() {
   const priceEl = document.getElementById("ticsPrice");
   const changeEl = document.getElementById("ticsChange");
+  const high24hEl = document.getElementById("ticsHigh24h");
+  const low24hEl = document.getElementById("ticsLow24h");
   
-  if (!priceEl || !changeEl) {
-    // Елементів немає на about.html - це нормально
+  if (!priceEl && !changeEl && !high24hEl && !low24hEl) {
     return;
   }
 
   try {
     console.log('🔄 Fetching TICS price from MEXC via Cloudflare Worker...');
     
-    // Використовуємо Cloudflare Worker як проксі
     const workerUrl = "https://tics-price.yuskivvolodymyr.workers.dev";
-    
     const data = await fetchJSON(workerUrl);
     
     console.log('📊 MEXC response:', data);
@@ -282,32 +297,53 @@ async function updateTicsPrice() {
     if (data && data.lastPrice) {
       const price = parseFloat(data.lastPrice);
       const change24h = parseFloat(data.priceChangePercent);
+      const high24h = parseFloat(data.highPrice);
+      const low24h = parseFloat(data.lowPrice);
       
-      priceEl.textContent = "$" + price.toFixed(5); // 5 знаків замість 6
-      const changeText = (change24h >= 0 ? "+" : "") + change24h.toFixed(2) + "%";
-      changeEl.textContent = changeText;
+      // Price
+      if (priceEl) {
+        priceEl.textContent = "$" + price.toFixed(5);
+      }
       
-      const changeValue = changeEl.parentElement;
-      changeValue.style.color = change24h >= 0 ? "#22c55e" : "#ef4444";
+      // 24h Change
+      if (changeEl) {
+        const changeText = (change24h >= 0 ? "+" : "") + change24h.toFixed(2) + "%";
+        changeEl.textContent = changeText;
+        const changeValue = changeEl.parentElement;
+        changeValue.style.color = change24h >= 0 ? "#22c55e" : "#ef4444";
+      }
+      
+      // 24h High
+      if (high24hEl && high24h) {
+        high24hEl.textContent = "$" + high24h.toFixed(5);
+      }
+      
+      // 24h Low
+      if (low24hEl && low24h) {
+        low24hEl.textContent = "$" + low24h.toFixed(5);
+      }
       
       // Update calculator price
       if (typeof updateCalculatorPrice === 'function') {
         updateCalculatorPrice(price);
       }
       
-      console.log(`✅ TICS price: $${price.toFixed(5)} (${changeText}) - via Cloudflare Worker`);
+      console.log(`✅ TICS price: $${price.toFixed(5)} (${change24h >= 0 ? "+" : ""}${change24h.toFixed(2)}%)`);
       return;
     }
     
     console.error('❌ MEXC returned data without lastPrice');
-    priceEl.textContent = "--";
-    changeEl.textContent = "--";
+    if (priceEl) priceEl.textContent = "--";
+    if (changeEl) changeEl.textContent = "--";
+    if (high24hEl) high24hEl.textContent = "--";
+    if (low24hEl) low24hEl.textContent = "--";
     
   } catch (e) {
     console.error("❌ TICS price error:", e.message);
-    console.error("Full error:", e);
-    priceEl.textContent = "--";
-    changeEl.textContent = "--";
+    if (priceEl) priceEl.textContent = "--";
+    if (changeEl) changeEl.textContent = "--";
+    if (high24hEl) high24hEl.textContent = "--";
+    if (low24hEl) low24hEl.textContent = "--";
   }
 }
 
@@ -432,7 +468,15 @@ async function updateAll() {
     updateInflation(),
     updateUptime(),
     updateTicsPrice(),        // Ціна TICS з MEXC через Cloudflare Worker
-    updateBlocksProposed()    // Blocks proposed by QubeNode
+    updateBlocksProposed(),   // Blocks proposed by QubeNode
+    updateSelfBonded(),       // Self-Bonded amount
+    updateNetworkShare(),     // Network Share %
+    updateNetworkStats(),     // Network statistics (Total Staked, Active Validators)
+    updateMarketCap(),        // Market Cap (using circulating supply)
+    updateTotalSupply(),      // Total Supply (1.362B format)
+    updateCirculationSupply(), // Circulation Supply
+    updateTicsBurn(),         // TICS Burn Total
+    updateAPY()               // APY (static)
   ]);
 }
 
@@ -491,8 +535,39 @@ document.addEventListener('DOMContentLoaded', () => {
     updateUptime();
     updateTicsPrice();
     updateBlocksProposed();
+    updateSelfBonded();
+    updateNetworkShare();
+    updateNetworkStats(); // Використовує кешовані дані з pricebot
+    updateMarketCap(); // Використовує кешовані дані з pricebot
+    updateTotalSupply();
+    updateTicsBurn();
     // About page updates - MOVED TO init-about.js
   }, 15000);
+  
+  // Оновлюємо дані з pricebot API дуже рідко (кожні 5 хвилин) - ОДИН ЗАПИТ тільки для Circulation Supply
+  setInterval(async () => {
+    try {
+      const pricebotData = await fetchJSON('https://pricebot.ticslab.xyz/api/prices');
+      
+      if (pricebotData?.combined?.circulatingSupply) {
+        const circulatingSupply = parseFloat(pricebotData.combined.circulatingSupply);
+        cachedCirculatingSupply = circulatingSupply;
+        console.log(`✅ Pricebot data fetched: Circulating Supply = ${circulatingSupply.toLocaleString()} TICS`);
+        
+        // Тільки оновлюємо відображення Circulation Supply
+        // Market Cap і % Circulation Staked рахуються в своїх функціях використовуючи кеш
+        updateCirculationSupplyDisplay(circulatingSupply);
+      } else {
+        console.warn('⚠️ Pricebot API returned data without circulatingSupply');
+      }
+    } catch (error) {
+      console.error('❌ Pricebot fetch error:', error);
+      // Використовуємо кешовані дані якщо є
+      if (cachedCirculatingSupply) {
+        updateCirculationSupplyDisplay(cachedCirculatingSupply);
+      }
+    }
+  }, 300000); // 300000ms = 5 хвилин
 });
 
 // Переініціалізація при зміні розміру вікна (для адаптації)
@@ -630,14 +705,246 @@ async function updateBlocksProposed() {
       blocksEl.textContent = blocks.toLocaleString();
       console.log(`✅ Blocks proposed: ${blocks.toLocaleString()}`);
     } else {
-      // Fallback to static value if worker not ready yet
       blocksEl.textContent = "141,715";
-      console.log('⚠️ Using fallback blocks count');
     }
   } catch (error) {
     console.error('❌ Error fetching blocks proposed:', error);
-    // Fallback to static value
     blocksEl.textContent = "141,715";
   }
+}
+
+// ===== SELF-BONDED =====
+async function updateSelfBonded() {
+  const selfBondedEl = document.getElementById("selfBonded");
+  if (!selfBondedEl) return;
+  
+  try {
+    const delegationsUrl = 'https://swagger.qubetics.com/cosmos/staking/v1beta1/delegations/qubetics1tzk9f84cv2gmk3du3m9dpxcuph70sfj6ltvqjf';
+    const response = await fetch(delegationsUrl);
+    
+    if (!response.ok) {
+      console.error('❌ Self-Bonded API error:', response.status);
+      return;
+    }
+    
+    const data = await response.json();
+    
+    if (data?.delegation_responses && data.delegation_responses.length > 0) {
+      const selfDelegation = data.delegation_responses.find(d => 
+        d.delegation.validator_address === 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld'
+      );
+      
+      if (selfDelegation) {
+        const amountMicro = parseFloat(selfDelegation.balance.amount);
+        const amountTICS = amountMicro / 1000000000000000000;
+        
+        selfBondedEl.textContent = formatLargeNumber(amountTICS) + ' TICS';
+        console.log('✅ Self-Bonded:', amountTICS.toFixed(1), 'TICS');
+      }
+    }
+  } catch (error) {
+    console.error('❌ Self-Bonded error:', error);
+  }
+}
+
+// ===== NETWORK SHARE =====
+async function updateNetworkShare() {
+  const networkShareEl = document.getElementById("networkShare");
+  if (!networkShareEl) return;
+  
+  try {
+    const validatorUrl = `${API_BASE}/cosmos/staking/v1beta1/validators/${VALIDATOR}`;
+    const poolUrl = `${API_BASE}/cosmos/staking/v1beta1/pool`;
+    
+    const [validatorData, poolData] = await Promise.all([
+      fetchJSON(validatorUrl),
+      fetchJSON(poolUrl)
+    ]);
+    
+    if (validatorData?.validator && poolData?.pool) {
+      const ourTokens = parseInt(validatorData.validator.tokens);
+      const totalBonded = parseInt(poolData.pool.bonded_tokens);
+      
+      const ourStake = ourTokens / 1e18;
+      const networkTotal = totalBonded / 1e18;
+      const share = ((ourStake / networkTotal) * 100).toFixed(2);
+      
+      networkShareEl.textContent = share + '%';
+      console.log(`✅ Network Share: ${share}%`);
+    }
+  } catch (error) {
+    console.error('❌ Network Share error:', error);
+  }
+}
+
+// ===== NETWORK STATISTICS =====
+// ===== NETWORK STATISTICS (uses cached circulating supply) =====
+async function updateNetworkStats() {
+  try {
+    const poolUrl = `${API_BASE}/cosmos/staking/v1beta1/pool`;
+    const validatorsUrl = `${API_BASE}/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED&pagination.limit=300`;
+    
+    const [poolData, validatorsData] = await Promise.all([
+      fetchJSON(poolUrl),
+      fetchJSON(validatorsUrl)
+    ]);
+    
+    // Total Staked
+    const totalStakedEl = document.getElementById("totalStaked");
+    if (totalStakedEl && poolData?.pool) {
+      const totalBonded = parseInt(poolData.pool.bonded_tokens) / 1e18;
+      totalStakedEl.textContent = formatLargeNumber(totalBonded);
+      console.log(`✅ Total Staked: ${totalBonded.toLocaleString()} TICS`);
+    }
+    
+    // Active Validators
+    const activeValidatorsEl = document.getElementById("activeValidators");
+    if (activeValidatorsEl && validatorsData?.validators) {
+      const count = validatorsData.validators.length;
+      activeValidatorsEl.textContent = count;
+      console.log(`✅ Active Validators: ${count}`);
+    }
+    
+    // % Circulation Staked (uses cached circulating supply)
+    const circulationStakedEl = document.getElementById("circulationStaked");
+    if (circulationStakedEl && poolData?.pool && cachedCirculatingSupply) {
+      const totalStaked = parseInt(poolData.pool.bonded_tokens) / 1e18;
+      const circulatingSupply = cachedCirculatingSupply;
+      
+      if (circulatingSupply > 0) {
+        const percentStaked = ((totalStaked / circulatingSupply) * 100).toFixed(2);
+        circulationStakedEl.textContent = percentStaked + '%';
+        console.log(`✅ % Circulation Staked: ${percentStaked}% (${totalStaked.toLocaleString()} / ${circulatingSupply.toLocaleString()})`);
+      }
+    }
+    
+  } catch (error) {
+    console.error('❌ Network Stats error:', error);
+  }
+}
+
+// ===== TOTAL SUPPLY (1.361.867B format with dots) =====
+function updateTotalSupply() {
+  const totalSupplyEl = document.getElementById("totalSupply");
+  if (!totalSupplyEl) return;
+  
+  const TOTAL_SUPPLY = 1361867964; // 1,361,867,964 TICS
+  
+  // Format: 1.361.867B
+  // 1361867964 / 1000 = 1361867.964 thousands
+  // Split into: 1 billion, 361 million, 867 thousand
+  const billions = Math.floor(TOTAL_SUPPLY / 1000000000); // 1
+  const millions = Math.floor((TOTAL_SUPPLY % 1000000000) / 1000000); // 361
+  const thousands = Math.floor((TOTAL_SUPPLY % 1000000) / 1000); // 867
+  
+  const formatted = `${billions}.${millions.toString().padStart(3, '0')}.${thousands.toString().padStart(3, '0')}B`;
+  
+  totalSupplyEl.textContent = formatted;
+  console.log(`✅ Total Supply: ${formatted} (${TOTAL_SUPPLY.toLocaleString()} TICS)`);
+}
+
+// ===== MARKET CAP (uses cached circulating supply from pricebot) =====
+async function updateMarketCap() {
+  const marketCapEl = document.getElementById("marketCap");
+  if (!marketCapEl) return;
+  
+  try {
+    const workerUrl = "https://tics-price.yuskivvolodymyr.workers.dev";
+    const priceData = await fetchJSON(workerUrl);
+    
+    if (priceData && priceData.lastPrice && cachedCirculatingSupply) {
+      const price = parseFloat(priceData.lastPrice);
+      const circulatingSupply = cachedCirculatingSupply;
+      
+      const marketCap = price * circulatingSupply;
+      
+      marketCapEl.textContent = '$' + formatLargeNumber(marketCap);
+      console.log(`✅ Market Cap: $${marketCap.toLocaleString()} (Price: $${price} × Circulating: ${circulatingSupply.toLocaleString()})`);
+    }
+  } catch (error) {
+    console.error('❌ Market Cap error:', error);
+  }
+}
+
+// ===== CIRCULATION SUPPLY DISPLAY (uses cached data) =====
+function updateCirculationSupplyDisplay(circulatingSupply) {
+  const circulationSupplyEl = document.getElementById("circulationSupply");
+  if (!circulationSupplyEl) return;
+  
+  if (circulatingSupply) {
+    circulationSupplyEl.textContent = formatLargeNumber(circulatingSupply);
+    console.log(`✅ Circulation Supply displayed: ${circulatingSupply.toLocaleString()} TICS`);
+  }
+}
+
+// ===== CIRCULATION SUPPLY (updated every 5 minutes to avoid rate limits) =====
+async function updateCirculationSupply() {
+  const circulationSupplyEl = document.getElementById("circulationSupply");
+  if (!circulationSupplyEl) return;
+  
+  try {
+    // Use pricebot API for accurate circulating supply
+    const data = await fetchJSON('https://pricebot.ticslab.xyz/api/prices');
+    
+    if (data?.combined?.circulatingSupply) {
+      const circulatingSupply = parseFloat(data.combined.circulatingSupply);
+      cachedCirculatingSupply = circulatingSupply; // Update cache
+      circulationSupplyEl.textContent = formatLargeNumber(circulatingSupply);
+      console.log(`✅ Circulation Supply: ${circulatingSupply.toLocaleString()} TICS (from pricebot)`);
+      return circulatingSupply;
+    }
+    
+    // Use cached value if API failed but we have cached data
+    if (cachedCirculatingSupply) {
+      circulationSupplyEl.textContent = formatLargeNumber(cachedCirculatingSupply);
+      console.log(`✅ Circulation Supply: ${cachedCirculatingSupply.toLocaleString()} TICS (from cache)`);
+      return cachedCirculatingSupply;
+    }
+    
+    console.warn('⚠️ Circulating supply not found and no cached value');
+    circulationSupplyEl.textContent = "--";
+    return null;
+  } catch (error) {
+    console.error('❌ Circulation Supply error:', error);
+    
+    // Use cached value on error
+    if (cachedCirculatingSupply) {
+      circulationSupplyEl.textContent = formatLargeNumber(cachedCirculatingSupply);
+      console.log(`✅ Circulation Supply: ${cachedCirculatingSupply.toLocaleString()} TICS (from cache after error)`);
+      return cachedCirculatingSupply;
+    }
+    
+    return null;
+  }
+}
+
+// ===== TICS BURN =====
+async function updateTicsBurn() {
+  const ticsBurnEl = document.getElementById("ticsBurn");
+  if (!ticsBurnEl) return;
+  
+  try {
+    const data = await fetchJSON('https://native-api.qubetics.com/qubetics/explorer/dashboard');
+    
+    if (data?.data?.burnedAmount) {
+      const burned = parseFloat(data.data.burnedAmount);
+      ticsBurnEl.textContent = formatLargeNumber(burned);
+      console.log(`✅ TICS Burned: ${burned.toLocaleString()} TICS`);
+    } else {
+      console.warn('⚠️ Burn data structure:', data);
+      ticsBurnEl.textContent = "--";
+    }
+  } catch (error) {
+    console.error('❌ TICS Burn error:', error);
+    ticsBurnEl.textContent = "--";
+  }
+}
+
+// ===== APY (static) =====
+function updateAPY() {
+  const apyEl = document.getElementById("apyRate");
+  if (!apyEl) return;
+  
+  apyEl.textContent = "30%";
 }
 

@@ -1288,12 +1288,9 @@ footer a:hover {
 }
 
 .growth-chart-container {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(0, 212, 255, 0.2);
-    border-radius: 20px;
+    /* Background і border прибрано для чистого вигляду */
     padding: 30px;
-    height: 300px;
+    height: 400px; /* Збільшено */
 }
 
 #growthChart {
@@ -1476,8 +1473,8 @@ footer a:hover {
     }
     
     .growth-chart-container {
-        padding: 20px;
-        height: 350px; /* Збільшено з 250px */
+        padding: 15px; /* Зменшено з 20px */
+        height: 300px; /* Зменшено з 350px щоб не обрізало текст */
     }
     
     .activity-item {
@@ -1506,12 +1503,12 @@ footer a:hover {
 /* Мобільна версія */
 @media (max-width: 768px) {
     #growthChart {
-        height: 350px !important;
-        min-height: 350px;
+        height: 300px !important; /* Зменшено з 350px */
+        min-height: 300px;
     }
     
     .growth-chart-container {
-        min-height: 350px;
-        height: 350px;
+        min-height: 300px;
+        height: 300px;
     }
 }

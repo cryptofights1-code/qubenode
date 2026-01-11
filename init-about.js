@@ -833,9 +833,12 @@
         const max = Math.max(...data);
         const min = Math.min(...data);
         const range = max - min || 1;
-        const paddingPercent = 0.1;
-        const yMin = min - (range * paddingPercent);
-        const yMax = max + (range * paddingPercent);
+        
+        // Фіксований padding в TICS (замість %)
+        // Додаємо 50K TICS зверху і знизу для кращого вигляду
+        const paddingAmount = 50000;
+        const yMin = min - paddingAmount;
+        const yMax = max + paddingAmount;
         
         const padding = 80;
         const chartWidth = width - padding * 2;

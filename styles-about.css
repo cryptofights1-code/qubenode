@@ -1489,3 +1489,29 @@ footer a:hover {
         min-width: 30px;
     }
 }
+
+/* ===== DELEGATION GROWTH CHART - ЗБІЛЬШЕНА ВИСОТА ===== */
+/* Додано: 2026-01-11 */
+
+#growthChart {
+    width: 100%;
+    height: 400px !important;
+    min-height: 400px;
+}
+
+.growth-chart-container {
+    min-height: 400px;
+}
+
+/* Мобільна версія */
+@media (max-width: 768px) {
+    #growthChart {
+        height: 350px !important;
+        min-height: 350px;
+    }
+    
+    .growth-chart-container {
+        min-height: 350px;
+        height: 350px;
+    }
+}

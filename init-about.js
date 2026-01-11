@@ -630,7 +630,7 @@
         
         const ctx = canvas.getContext('2d');
         const width = canvas.width = canvas.offsetWidth * 2;
-        const height = canvas.height = 600;
+        const height = canvas.height = 800; // Збільшено висоту
         
         const data = [];
         for (let i = 6; i >= 0; i--) {
@@ -783,7 +783,7 @@
         
         const ctx = canvas.getContext('2d');
         const width = canvas.width = canvas.offsetWidth * 2;
-        const height = canvas.height = 600;
+        const height = canvas.height = 800; // Збільшено висоту
         
         let snapshots = [];
         let data = [];
@@ -981,11 +981,11 @@
                 const x = padding + (chartWidth / (data.length - 1)) * highlightIndex;
                 const y = height - padding - ((value - yMin) / (yMax - yMin)) * chartHeight;
                 
-                // Tooltip box
-                const tooltipWidth = 280;
-                const tooltipHeight = 80;
+                // Tooltip box - ЗБІЛЬШЕНО
+                const tooltipWidth = 400; // було 280
+                const tooltipHeight = 110; // було 80
                 let tooltipX = x + 15;
-                let tooltipY = y - 50;
+                let tooltipY = y - 60; // трохи вище
                 
                 // Keep tooltip in bounds
                 if (tooltipX + tooltipWidth > width - 20) {
@@ -996,24 +996,24 @@
                 }
                 
                 // Draw tooltip background
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.95)';
                 ctx.strokeStyle = '#00D4FF';
-                ctx.lineWidth = 2;
+                ctx.lineWidth = 3; // товща рамка
                 ctx.beginPath();
-                ctx.roundRect(tooltipX, tooltipY, tooltipWidth, tooltipHeight, 8);
+                ctx.roundRect(tooltipX, tooltipY, tooltipWidth, tooltipHeight, 10);
                 ctx.fill();
                 ctx.stroke();
                 
-                // Draw tooltip text
+                // Draw tooltip text - БІЛЬШИЙ ШРИФТ
                 ctx.fillStyle = '#00FFF0';
-                ctx.font = 'bold 18px Space Grotesk';
+                ctx.font = 'bold 26px Space Grotesk'; // було 18px
                 ctx.textAlign = 'left';
-                ctx.fillText(dateStr, tooltipX + 15, tooltipY + 25);
+                ctx.fillText(dateStr, tooltipX + 20, tooltipY + 35);
                 
                 ctx.fillStyle = '#ffffff';
-                ctx.font = '16px Space Grotesk';
+                ctx.font = 'bold 22px Space Grotesk'; // було 16px
                 ctx.fillText(`Total: ${value.toLocaleString('en-US', { maximumFractionDigits: 0 })} TICS`, 
-                    tooltipX + 15, tooltipY + 50);
+                    tooltipX + 20, tooltipY + 70);
             }
         }
         

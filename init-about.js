@@ -984,11 +984,11 @@
                 const x = padding + (chartWidth / (data.length - 1)) * highlightIndex;
                 const y = height - padding - ((value - yMin) / (yMax - yMin)) * chartHeight;
                 
-                // Tooltip box - ЗБІЛЬШЕНО
-                const tooltipWidth = 400; // було 280
-                const tooltipHeight = 110; // було 80
+                // Tooltip box - компактний розмір
+                const tooltipWidth = 420;
+                const tooltipHeight = 75; // Зменшено з 110px (прибрано пустий простір)
                 let tooltipX = x + 15;
-                let tooltipY = y - 60; // трохи вище
+                let tooltipY = y - 45;
                 
                 // Keep tooltip in bounds
                 if (tooltipX + tooltipWidth > width - 20) {
@@ -1001,22 +1001,22 @@
                 // Draw tooltip background
                 ctx.fillStyle = 'rgba(0, 0, 0, 0.95)';
                 ctx.strokeStyle = '#00D4FF';
-                ctx.lineWidth = 3; // товща рамка
+                ctx.lineWidth = 3;
                 ctx.beginPath();
                 ctx.roundRect(tooltipX, tooltipY, tooltipWidth, tooltipHeight, 10);
                 ctx.fill();
                 ctx.stroke();
                 
-                // Draw tooltip text - БІЛЬШИЙ ШРИФТ
+                // Draw tooltip text - центровано вертикально
                 ctx.fillStyle = '#00FFF0';
-                ctx.font = 'bold 26px Space Grotesk'; // було 18px
+                ctx.font = 'bold 28px Space Grotesk'; // Збільшено для desktop
                 ctx.textAlign = 'left';
-                ctx.fillText(dateStr, tooltipX + 20, tooltipY + 35);
+                ctx.fillText(dateStr, tooltipX + 20, tooltipY + 28); // Центровано
                 
                 ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 22px Space Grotesk'; // було 16px
+                ctx.font = 'bold 24px Space Grotesk'; // Збільшено для desktop
                 ctx.fillText(`Total: ${value.toLocaleString('en-US', { maximumFractionDigits: 0 })} TICS`, 
-                    tooltipX + 20, tooltipY + 70);
+                    tooltipX + 20, tooltipY + 55); // Центровано
             }
         }
         

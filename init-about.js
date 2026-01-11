@@ -827,142 +827,246 @@
         // Auto-scale Y axis with 10% padding
         const max = Math.max(...data);
         const min = Math.min(...data);
-        const range = max - min || 1; // Prevent division by zero
+        const range = max - min || 1;
         const paddingPercent = 0.1;
         const yMin = min - (range * paddingPercent);
         const yMax = max + (range * paddingPercent);
         
-        const padding = 80; // Increased for Y-axis labels
+        const padding = 80;
         const chartWidth = width - padding * 2;
         const chartHeight = height - padding * 2;
         
-        ctx.clearRect(0, 0, width, height);
+        // Store chart state for tooltip
+        const chartState = {
+            data: data,
+            dates: dates,
+            yMin: yMin,
+            yMax: yMax,
+            padding: padding,
+            chartWidth: chartWidth,
+            chartHeight: chartHeight,
+            width: width,
+            height: height
+        };
         
-        // Draw gradient fill
-        const gradient = ctx.createLinearGradient(0, padding, 0, height - padding);
-        gradient.addColorStop(0, 'rgba(0, 212, 255, 0.3)');
-        gradient.addColorStop(1, 'rgba(0, 212, 255, 0)');
-        
-        ctx.beginPath();
-        ctx.moveTo(padding, height - padding);
-        
-        data.forEach((value, index) => {
-            const x = padding + (chartWidth / (data.length - 1)) * index;
-            const y = height - padding - ((value - yMin) / (yMax - yMin)) * chartHeight;
-            ctx.lineTo(x, y);
-        });
-        
-        ctx.lineTo(width - padding, height - padding);
-        ctx.closePath();
-        ctx.fillStyle = gradient;
-        ctx.fill();
-        
-        // Draw line
-        ctx.beginPath();
-        data.forEach((value, index) => {
-            const x = padding + (chartWidth / (data.length - 1)) * index;
-            const y = height - padding - ((value - yMin) / (yMax - yMin)) * chartHeight;
+        function drawChart(highlightIndex = -1) {
+            ctx.clearRect(0, 0, width, height);
             
-            if (index === 0) {
-                ctx.moveTo(x, y);
-            } else {
+            // Draw gradient fill
+            const gradient = ctx.createLinearGradient(0, padding, 0, height - padding);
+            gradient.addColorStop(0, 'rgba(0, 212, 255, 0.3)');
+            gradient.addColorStop(1, 'rgba(0, 212, 255, 0)');
+            
+            ctx.beginPath();
+            ctx.moveTo(padding, height - padding);
+            
+            data.forEach((value, index) => {
+                const x = padding + (chartWidth / (data.length - 1)) * index;
+                const y = height - padding - ((value - yMin) / (yMax - yMin)) * chartHeight;
                 ctx.lineTo(x, y);
-            }
-        });
-        
-        ctx.strokeStyle = '#00D4FF';
-        ctx.lineWidth = 4;
-        ctx.stroke();
-        
-        // Draw points
-        data.forEach((value, index) => {
-            const x = padding + (chartWidth / (data.length - 1)) * index;
-            const y = height - padding - ((value - yMin) / (yMax - yMin)) * chartHeight;
+            });
             
-            ctx.beginPath();
-            ctx.arc(x, y, 6, 0, Math.PI * 2);
-            ctx.fillStyle = '#00D4FF';
+            ctx.lineTo(width - padding, height - padding);
+            ctx.closePath();
+            ctx.fillStyle = gradient;
             ctx.fill();
-            ctx.strokeStyle = '#000';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-        });
-        
-        // Draw axes
-        ctx.strokeStyle = 'rgba(0, 212, 255, 0.2)';
-        ctx.lineWidth = 2;
-        
-        // Y-axis
-        ctx.beginPath();
-        ctx.moveTo(padding, padding);
-        ctx.lineTo(padding, height - padding);
-        ctx.stroke();
-        
-        // X-axis
-        ctx.beginPath();
-        ctx.moveTo(padding, height - padding);
-        ctx.lineTo(width - padding, height - padding);
-        ctx.stroke();
-        
-        // Y-axis labels (TICS in millions)
-        ctx.fillStyle = '#94a3b8';
-        ctx.font = '20px Space Grotesk';
-        ctx.textAlign = 'right';
-        ctx.textBaseline = 'middle';
-        
-        const ySteps = 5;
-        for (let i = 0; i <= ySteps; i++) {
-            const value = yMin + ((yMax - yMin) / ySteps) * i;
-            const y = height - padding - (chartHeight / ySteps) * i;
-            const millions = (value / 1000000).toFixed(1);
-            ctx.fillText(`${millions}M`, padding - 15, y);
             
-            // Draw grid line
-            ctx.strokeStyle = 'rgba(0, 212, 255, 0.05)';
-            ctx.lineWidth = 1;
+            // Draw line
             ctx.beginPath();
-            ctx.moveTo(padding, y);
-            ctx.lineTo(width - padding, y);
-            ctx.stroke();
-        }
-        
-        // X-axis labels (dates)
-        ctx.fillStyle = '#94a3b8';
-        ctx.font = '22px Space Grotesk';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'top';
-        
-        if (dates.length > 0) {
-            // Show first date
-            const firstDate = new Date(dates[0]);
-            const firstLabel = `${firstDate.getDate()} ${firstDate.toLocaleString('en', { month: 'short' })}`;
-            ctx.fillText(firstLabel, padding + 50, height - padding + 15);
+            data.forEach((value, index) => {
+                const x = padding + (chartWidth / (data.length - 1)) * index;
+                const y = height - padding - ((value - yMin) / (yMax - yMin)) * chartHeight;
+                
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
             
-            // Show middle date
-            if (dates.length > 15) {
-                const midDate = new Date(dates[Math.floor(dates.length / 2)]);
-                const midLabel = `${midDate.getDate()} ${midDate.toLocaleString('en', { month: 'short' })}`;
-                ctx.fillText(midLabel, width / 2, height - padding + 15);
+            ctx.strokeStyle = '#00D4FF';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+            
+            // Draw points
+            data.forEach((value, index) => {
+                const x = padding + (chartWidth / (data.length - 1)) * index;
+                const y = height - padding - ((value - yMin) / (yMax - yMin)) * chartHeight;
+                
+                ctx.beginPath();
+                ctx.arc(x, y, 6, 0, Math.PI * 2);
+                ctx.fillStyle = index === highlightIndex ? '#FFFF00' : '#00D4FF';
+                ctx.fill();
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            });
+            
+            // Draw axes
+            ctx.strokeStyle = 'rgba(0, 212, 255, 0.2)';
+            ctx.lineWidth = 2;
+            
+            // Y-axis
+            ctx.beginPath();
+            ctx.moveTo(padding, padding);
+            ctx.lineTo(padding, height - padding);
+            ctx.stroke();
+            
+            // X-axis
+            ctx.beginPath();
+            ctx.moveTo(padding, height - padding);
+            ctx.lineTo(width - padding, height - padding);
+            ctx.stroke();
+            
+            // Y-axis labels (TICS in millions) - NO TITLE
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '20px Space Grotesk';
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            
+            const ySteps = 5;
+            for (let i = 0; i <= ySteps; i++) {
+                const value = yMin + ((yMax - yMin) / ySteps) * i;
+                const y = height - padding - (chartHeight / ySteps) * i;
+                const millions = (value / 1000000).toFixed(1);
+                ctx.fillText(`${millions}M`, padding - 15, y);
+                
+                // Draw grid line
+                ctx.strokeStyle = 'rgba(0, 212, 255, 0.05)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(width - padding, y);
+                ctx.stroke();
             }
             
-            // Show last date (Today)
-            ctx.fillText('Today', width - padding - 50, height - padding + 15);
-        } else {
-            // Fallback labels
-            ctx.fillText('30d ago', padding + 50, height - padding + 15);
-            ctx.fillText('15d', width / 2, height - padding + 15);
-            ctx.fillText('Today', width - padding - 50, height - padding + 15);
+            // X-axis labels - show MORE dates
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '20px Space Grotesk';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            
+            if (dates.length > 0) {
+                // Show first date
+                const firstDate = new Date(dates[0]);
+                const firstLabel = `${firstDate.getDate()} ${firstDate.toLocaleString('en', { month: 'short' })}`;
+                ctx.fillText(firstLabel, padding + 50, height - padding + 15);
+                
+                // Show middle date if we have enough points
+                if (dates.length > 2) {
+                    const midIndex = Math.floor(dates.length / 2);
+                    const midDate = new Date(dates[midIndex]);
+                    const midLabel = `${midDate.getDate()} ${midDate.toLocaleString('en', { month: 'short' })}`;
+                    const midX = padding + (chartWidth / (data.length - 1)) * midIndex;
+                    ctx.fillText(midLabel, midX, height - padding + 15);
+                }
+                
+                // Show last date with actual date
+                const lastDate = new Date(dates[dates.length - 1]);
+                const lastLabel = `${lastDate.getDate()} ${lastDate.toLocaleString('en', { month: 'short' })}`;
+                ctx.fillText(lastLabel, width - padding - 50, height - padding + 15);
+            }
+            
+            // Draw tooltip if hovering
+            if (highlightIndex >= 0) {
+                const value = data[highlightIndex];
+                const date = new Date(dates[highlightIndex]);
+                const dateStr = date.toLocaleDateString('en', { month: 'short', day: 'numeric', year: 'numeric' });
+                
+                const x = padding + (chartWidth / (data.length - 1)) * highlightIndex;
+                const y = height - padding - ((value - yMin) / (yMax - yMin)) * chartHeight;
+                
+                // Tooltip box
+                const tooltipWidth = 280;
+                const tooltipHeight = 80;
+                let tooltipX = x + 15;
+                let tooltipY = y - 50;
+                
+                // Keep tooltip in bounds
+                if (tooltipX + tooltipWidth > width - 20) {
+                    tooltipX = x - tooltipWidth - 15;
+                }
+                if (tooltipY < 20) {
+                    tooltipY = y + 20;
+                }
+                
+                // Draw tooltip background
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
+                ctx.strokeStyle = '#00D4FF';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.roundRect(tooltipX, tooltipY, tooltipWidth, tooltipHeight, 8);
+                ctx.fill();
+                ctx.stroke();
+                
+                // Draw tooltip text
+                ctx.fillStyle = '#00FFF0';
+                ctx.font = 'bold 18px Space Grotesk';
+                ctx.textAlign = 'left';
+                ctx.fillText(dateStr, tooltipX + 15, tooltipY + 25);
+                
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '16px Space Grotesk';
+                ctx.fillText(`Total: ${value.toLocaleString('en-US', { maximumFractionDigits: 0 })} TICS`, 
+                    tooltipX + 15, tooltipY + 50);
+            }
         }
         
-        // Y-axis title
-        ctx.save();
-        ctx.translate(25, height / 2);
-        ctx.rotate(-Math.PI / 2);
-        ctx.fillStyle = '#00FFF0';
-        ctx.font = 'bold 22px Space Grotesk';
-        ctx.textAlign = 'center';
-        ctx.fillText('Total Staked (TICS)', 0, 0);
-        ctx.restore();
+        // Initial draw
+        drawChart();
+        
+        // Mouse interaction (desktop)
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = (e.clientX - rect.left) * 2; // Account for 2x scale
+            const mouseY = (e.clientY - rect.top) * 2;
+            
+            let closestIndex = -1;
+            let closestDist = Infinity;
+            
+            data.forEach((value, index) => {
+                const x = padding + (chartWidth / (data.length - 1)) * index;
+                const y = height - padding - ((value - yMin) / (yMax - yMin)) * chartHeight;
+                const dist = Math.sqrt((mouseX - x) ** 2 + (mouseY - y) ** 2);
+                
+                if (dist < 30 && dist < closestDist) {
+                    closestDist = dist;
+                    closestIndex = index;
+                }
+            });
+            
+            drawChart(closestIndex);
+        });
+        
+        // Touch interaction (mobile)
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            const touchX = (touch.clientX - rect.left) * 2;
+            const touchY = (touch.clientY - rect.top) * 2;
+            
+            let closestIndex = -1;
+            let closestDist = Infinity;
+            
+            data.forEach((value, index) => {
+                const x = padding + (chartWidth / (data.length - 1)) * index;
+                const y = height - padding - ((value - yMin) / (yMax - yMin)) * chartHeight;
+                const dist = Math.sqrt((touchX - x) ** 2 + (touchY - y) ** 2);
+                
+                if (dist < 50 && dist < closestDist) {
+                    closestDist = dist;
+                    closestIndex = index;
+                }
+            });
+            
+            drawChart(closestIndex);
+        });
+        
+        // Clear highlight on mouse leave
+        canvas.addEventListener('mouseleave', () => {
+            drawChart();
+        });
     }
 
     // ===== LIVE ACTIVITY FEED (REAL DATA) =====

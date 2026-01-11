@@ -1078,7 +1078,21 @@
         await updateActivityFeed();
         
         // Update every 15 seconds
-        setInterval(updateActivityFeed, 15000);
+        const updateInterval = setInterval(updateActivityFeed, 15000);
+        
+        // Handle page visibility - refresh when user returns to tab
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                console.log('👁️ Page visible - refreshing activity feed');
+                updateActivityFeed();
+            }
+        });
+        
+        // Also refresh when window gains focus
+        window.addEventListener('focus', () => {
+            console.log('🎯 Window focused - refreshing activity feed');
+            updateActivityFeed();
+        });
     }
     
     async function updateActivityFeed() {

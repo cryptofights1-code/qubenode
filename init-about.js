@@ -984,11 +984,11 @@
                 const x = padding + (chartWidth / (data.length - 1)) * highlightIndex;
                 const y = height - padding - ((value - yMin) / (yMax - yMin)) * chartHeight;
                 
-                // Tooltip box - компактний розмір
-                const tooltipWidth = 420;
-                const tooltipHeight = 75; // Зменшено з 110px (прибрано пустий простір)
+                // Tooltip box - компактна ШИРИНА, нормальна висота
+                const tooltipWidth = 280; // Зменшено з 420px (прибрано пустий простір справа)
+                const tooltipHeight = 85; // Нормальна висота
                 let tooltipX = x + 15;
-                let tooltipY = y - 45;
+                let tooltipY = y - 50;
                 
                 // Keep tooltip in bounds
                 if (tooltipX + tooltipWidth > width - 20) {
@@ -1007,16 +1007,16 @@
                 ctx.fill();
                 ctx.stroke();
                 
-                // Draw tooltip text - центровано вертикально
+                // Draw tooltip text - центровано
                 ctx.fillStyle = '#00FFF0';
-                ctx.font = 'bold 28px Space Grotesk'; // Збільшено для desktop
+                ctx.font = 'bold 24px Space Grotesk';
                 ctx.textAlign = 'left';
-                ctx.fillText(dateStr, tooltipX + 20, tooltipY + 28); // Центровано
+                ctx.fillText(dateStr, tooltipX + 15, tooltipY + 30);
                 
                 ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 24px Space Grotesk'; // Збільшено для desktop
+                ctx.font = 'bold 20px Space Grotesk';
                 ctx.fillText(`Total: ${value.toLocaleString('en-US', { maximumFractionDigits: 0 })} TICS`, 
-                    tooltipX + 20, tooltipY + 55); // Центровано
+                    tooltipX + 15, tooltipY + 60);
             }
         }
         

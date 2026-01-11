@@ -322,7 +322,11 @@
     async function fetchValidatorEvents() {
         try {
             const WORKER_URL = 'https://qubenode-rpc-proxy.yuskivvolodymyr.workers.dev';
-            const response = await fetch(`${WORKER_URL}/events/${VALIDATOR_ADDRESS}?limit=30`);
+            // Add timestamp to prevent browser caching
+            const cacheBuster = Date.now();
+            const response = await fetch(`${WORKER_URL}/events/${VALIDATOR_ADDRESS}?limit=30&_=${cacheBuster}`, {
+                cache: 'no-store' // Force no cache
+            });
             
             if (!response.ok) {
                 throw new Error(`Worker API error: ${response.status}`);
@@ -338,7 +342,8 @@
             console.log('✅ Worker API response:', {
                 total: data.total_events,
                 current_block: data.current_block,
-                current_time: data.current_time
+                current_time: data.current_time,
+                timestamp: new Date().toLocaleTimeString()
             });
             
             // Map to our format

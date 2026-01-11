@@ -1477,7 +1477,7 @@ footer a:hover {
     
     .growth-chart-container {
         padding: 20px;
-        height: 250px;
+        height: 350px; /* Збільшено з 250px */
     }
     
     .activity-item {

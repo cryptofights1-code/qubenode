@@ -9,10 +9,32 @@
     // ===== CONFIGURATION =====
     const CONFIG = {
         VALIDATOR_ADDRESS: 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld',
+        QUBENODE_BASE64: 'b/cqBEiKWUrMa8ymk2xyedvgQeU=', // QubeNode consensus address in base64
         API_BASE: 'https://swagger.qubetics.com',
         WORKER_PROXY: 'https://qubenode-rpc-proxy.yuskivvolodymyr.workers.dev',
         POLL_INTERVAL: 6000,
         MAX_BLOCKS_DISPLAY: 15
+    };
+    
+    // Static map of known base64 addresses -> monikers
+    const KNOWN_VALIDATORS = {
+        'b/cqBEiKWUrMa8ymk2xyedvgQeU=': 'TicsForge Node',
+        '7qkxKFy/nsvij7ivJs/EPI0q0wc=': 'QubeNode',
+        'r52wsdwNF/m6qShjgAO2CNLt4rM=': 'WazNode',
+        'FU7d8VwUxAIqc9wnl6mWNJ419hQ=': 'HOLD THE TICS',
+        'x/msJHAlTCyXV5vAzaFXfz9nB+Q=': 'JBs LFG STRONGHOLD',
+        '3IMHh/aQZFZhy14IZkXcjHHL9pk=': 'Quantum Forge',
+        'Kni85BSeCriR4nOE9sCEkLxP8xE=': 'QubeticsBest',
+        'sRe3V6ak2Z2MB6MYcid5Bws5ebY=': 'QubeCoreElite',
+        'Yo5Ir2OYk4sen63QVhGCNg+rdm8=': 'TheMissionField',
+        'G46h0l7Qo2G2DuaINf2eDvjQNFU=': 'QubeGuardian Pro',
+        '8XOK89o21RLieoP9WQkK0iDFOe0=': 'LunaTICS Lounge',
+        'cL7AQAvvtsWKelm0MaUJgSaFKfQ=': 'ValidusNode',
+        'qM+VX8LNgyMGXqnkpO4T3qjwg7Q=': 'QubeticsApex',
+        'iWmh+VMeTHkMzFwvkccfE4wov9k=': 'StakeReward',
+        'kEI7rR+fw+Tqm6K1eg/hToon2eU=': 'Q Network Hub',
+        '2cqecn5ghd9ohr1h2sfoHu+wSr4=': 'QubeCore',
+        'T11Nr3UnaRQ+qOsvEWxQZ+s5joA=': 'NodeMaster Pro'
     };
 
     // ===== STATE =====
@@ -90,8 +112,8 @@
             if (!response.ok) throw new Error('Failed to fetch block');
             
             const data = await response.json();
-            // Use sdk_block which has bech32 addresses
-            return data.sdk_block || data.block;
+            // Use regular block (has base64 proposer address)
+            return data.block;
         } catch (error) {
             console.error('Error fetching latest block:', error);
             return null;
@@ -104,8 +126,8 @@
             if (!response.ok) throw new Error(`Failed to fetch block ${height}`);
             
             const data = await response.json();
-            // Use sdk_block which has bech32 addresses
-            return data.sdk_block || data.block;
+            // Use regular block (has base64 proposer address)
+            return data.block;
         } catch (error) {
             console.error(`Error fetching block ${height}:`, error);
             return null;
@@ -137,89 +159,17 @@
 
     // ===== BUILD VALIDATOR NAME MAPPING =====
     async function buildValidatorNameMapping() {
-        try {
-            console.log('🔄 Building validator name mapping via worker...');
-            
-            // Use worker proxy for validators
-            const validatorsResponse = await fetch(`${CONFIG.WORKER_PROXY}/rest/cosmos/staking/v1beta1/validators?pagination.limit=200`);
-            const validatorsData = await validatorsResponse.json();
-            
-            if (!validatorsData.validators) {
-                console.warn('⚠️ No validators data');
-                return;
-            }
-            
-            console.log(`📋 Loaded ${validatorsData.validators.length} validators`);
-            
-            // Use worker proxy for signing infos
-            const signingResponse = await fetch(`${CONFIG.WORKER_PROXY}/rest/cosmos/slashing/v1beta1/signing_infos?pagination.limit=200`);
-            const signingData = await signingResponse.json();
-            
-            if (!signingData.info) {
-                console.warn('⚠️ No signing info data');
-                return;
-            }
-            
-            console.log(`📋 Loaded ${signingData.info.length} signing infos`);
-            
-            // DEBUG: Show first few addresses
-            console.log('🔍 Sample operator address:', validatorsData.validators[0]?.operator_address);
-            console.log('🔍 Sample consensus address:', signingData.info[0]?.address);
-            
-            // Build simple map first: consensus address -> moniker
-            // We'll match ALL validators to ALL signing infos
-            const operatorToMoniker = new Map();
-            validatorsData.validators.forEach(v => {
-                operatorToMoniker.set(v.operator_address, v.description?.moniker || 'Unknown');
-            });
-            
-            // For each signing info, try to find matching validator
-            let matchCount = 0;
-            signingData.info.forEach(signingInfo => {
-                const consensusAddr = signingInfo.address;
-                
-                // Try to find validator with matching address pattern
-                let matched = false;
-                
-                for (const [operatorAddr, moniker] of operatorToMoniker.entries()) {
-                    // Extract last 20 chars for comparison (address part after prefix)
-                    const opSuffix = operatorAddr.slice(-20);
-                    const conSuffix = consensusAddr.slice(-20);
-                    
-                    if (opSuffix === conSuffix) {
-                        state.validatorNames.set(consensusAddr, moniker);
-                        matchCount++;
-                        matched = true;
-                        
-                        if (operatorAddr === CONFIG.VALIDATOR_ADDRESS) {
-                            state.qubenodeConsensusAddress = consensusAddr;
-                            console.log(`✅ QubeNode: ${moniker}`);
-                            console.log(`   Operator: ${operatorAddr}`);
-                            console.log(`   Consensus: ${consensusAddr}`);
-                        }
-                        break;
-                    }
-                }
-                
-                if (!matched) {
-                    // DEBUG: Show unmatched consensus address
-                    console.log(`⚠️ No match for consensus: ${consensusAddr}`);
-                }
-            });
-            
-            console.log(`✅ Mapped ${matchCount} validator names`);
-            
-        } catch (error) {
-            console.error('❌ Error building validator mapping:', error);
-        }
+        // Using static KNOWN_VALIDATORS map - no API calls needed
+        console.log(`✅ Loaded ${Object.keys(KNOWN_VALIDATORS).length} known validator names`);
     }
 
     // ===== VALIDATOR NAME LOOKUP =====
     function getValidatorName(proposerAddress) {
-        // proposerAddress is in bech32 format: qubeticsvalcons1...
+        // proposerAddress is in base64 format from block.header.proposer_address
         
-        if (state.validatorNames.has(proposerAddress)) {
-            return state.validatorNames.get(proposerAddress);
+        // Check known validators map
+        if (KNOWN_VALIDATORS[proposerAddress]) {
+            return KNOWN_VALIDATORS[proposerAddress];
         }
         
         // If not found, return shortened address
@@ -227,7 +177,9 @@
     }
 
     function isQubeNodeBlock(proposerAddress) {
-        return proposerAddress === state.qubenodeConsensusAddress;
+        // Check if this is QubeNode's base64 address
+        return proposerAddress === CONFIG.QUBENODE_BASE64 || 
+               proposerAddress === '7qkxKFy/nsvij7ivJs/EPI0q0wc=';
     }
 
     // ===== BLOCK PROCESSING =====

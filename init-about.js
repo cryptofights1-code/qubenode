@@ -1210,57 +1210,6 @@
     }
 
     // ===== TOP 20 DELEGATORS =====
-    async function updateTop20Delegators() {
-        const tableBody = document.getElementById("topDelegatorsTable");
-        if (!tableBody) return;
-
-        try {
-            const url = `https://swagger.qubetics.com/cosmos/staking/v1beta1/validators/qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld/delegations?pagination.limit=1000`;
-            const response = await fetch(url);
-            
-            if (!response.ok) {
-                console.error('❌ TOP 20 API error:', response.status);
-                return;
-            }
-            
-            const data = await response.json();
-            
-            if (!data?.delegation_responses) return;
-
-            const allDelegations = data.delegation_responses.map(item => ({
-                address: item.delegation.delegator_address,
-                amount: parseInt(item.balance.amount) / 1000000000000000000
-            }));
-
-            allDelegations.sort((a, b) => b.amount - a.amount);
-            const top20 = allDelegations.slice(0, 20);
-            const totalStake = allDelegations.reduce((sum, d) => sum + d.amount, 0);
-            
-            tableBody.innerHTML = '';
-            
-            top20.forEach((delegator, index) => {
-                const row = document.createElement('div');
-                row.className = 'table-row';
-                row.style.animationDelay = (index * 0.03) + 's';
-                
-                const rank = index + 1;
-                const share = ((delegator.amount / totalStake) * 100).toFixed(2);
-                
-                row.innerHTML = `
-                    <div class="top-rank">#${rank}</div>
-                    <div class="delegator-address">${formatAddress(delegator.address)}</div>
-                    <div class="delegation-amount">${formatNumber(delegator.amount)} TICS</div>
-                    <div class="top-share">${share}%</div>
-                `;
-                
-                tableBody.appendChild(row);
-            });
-            
-            console.log('✅ TOP 20 Delegators loaded:', top20.length);
-        } catch (error) {
-            console.error('❌ TOP 20 error:', error);
-        }
-    }
 
     // ===== HERO VALIDATOR STATUS BADGE =====
     async function updateHeroValidatorStatus() {
@@ -1388,7 +1337,6 @@
         updateSelfBonded();
         updateSigningInfo();
         updateDelegatorsCount();
-        updateTop20Delegators();
         updateHeroValidatorStatus();
         updateBlockHeight();
         updateVotingPower();
@@ -1411,7 +1359,6 @@
         setInterval(updateSelfBonded, 10000); // 10 sec
         setInterval(updateSigningInfo, 10000); // 10 sec
         setInterval(updateDelegatorsCount, 10000); // 10 sec
-        setInterval(updateTop20Delegators, 10000); // 10 sec
         setInterval(updateHeroValidatorStatus, 10000); // 10 sec
         setInterval(updateBlockHeight, 3000); // 3 sec
         setInterval(updateVotingPower, 10000); // 10 sec

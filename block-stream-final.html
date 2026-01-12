@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Block Stream - QubeNode Prototype</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000000;
+            color: #ffffff;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .prototype-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            border-radius: 8px;
+            color: #f59e0b;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        /* Live Block Stream Section */
+        .block-stream-section {
+            margin: 40px 0;
+        }
+
+        .section-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .title-icon {
+            font-size: 36px;
+        }
+
+        .block-stream-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        /* Block Stream */
+        .block-stream {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .stream-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .stream-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #00D4FF;
+        }
+
+        .stream-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #22c55e;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { 
+                opacity: 1;
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+            }
+            50% { 
+                opacity: 0.8;
+                box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+            }
+        }
+
+        .block-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 12px;
+            transition: all 0.3s;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .block-item.qubenode {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(167, 139, 250, 0.15));
+            border: 1px solid rgba(0, 212, 255, 0.4);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .block-item:hover {
+            transform: translateX(5px);
+            border-color: rgba(0, 212, 255, 0.4);
+        }
+
+        .block-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .block-height {
+            font-size: 18px;
+            font-weight: 700;
+            color: #00D4FF;
+        }
+
+        .block-time {
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .block-proposer {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .block-proposer.is-qubenode {
+            color: #00FFF0;
+        }
+
+        .qubenode-badge {
+            font-size: 18px;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .block-details {
+            display: flex;
+            gap: 20px;
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .block-detail {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Stats Panel */
+        .stats-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .stat-card.highlight {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(167, 139, 250, 0.1));
+            border-color: rgba(0, 212, 255, 0.4);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #00D4FF;
+        }
+
+        .stat-sublabel {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        /* Network Health Dashboard */
+        .network-health-section {
+            margin: 40px 0;
+        }
+
+        .health-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .health-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .health-card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #00D4FF;
+            margin-bottom: 16px;
+        }
+
+        .health-metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .health-metric:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            font-size: 14px;
+            color: #94a3b8;
+        }
+
+        .metric-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .metric-value.success {
+            color: #22c55e;
+        }
+
+        .metric-value.highlight {
+            color: #00FFF0;
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            gap: 15px;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(0, 212, 255, 0.2);
+            border-top-color: #00D4FF;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .block-stream-container {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                font-size: 24px;
+            }
+
+            .stat-value {
+                font-size: 28px;
+            }
+        }
+
+        /* Custom Scrollbar */
+        .block-stream::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .block-stream::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .block-stream::-webkit-scrollbar-thumb {
+            background: rgba(0, 212, 255, 0.3);
+            border-radius: 10px;
+        }
+
+        .block-stream::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 212, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="prototype-badge">
+            🔬 PROTOTYPE - Live Block Stream Feature
+        </div>
+
+        <!-- Live Block Stream Section -->
+        <section class="block-stream-section">
+            <h2 class="section-title">
+                <span class="title-icon">🟢</span>
+                Live Block Production
+            </h2>
+
+            <div class="block-stream-container">
+                <!-- Block Stream -->
+                <div class="block-stream" id="blockStream">
+                    <div class="stream-header">
+                        <div class="stream-title">Latest Blocks</div>
+                        <div class="stream-status">
+                            <span class="status-dot"></span>
+                            <span>LIVE</span>
+                        </div>
+                    </div>
+
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <span>Connecting to blockchain...</span>
+                    </div>
+                </div>
+
+                <!-- Stats Panel -->
+                <div class="stats-panel">
+                    <div class="stat-card highlight">
+                        <div class="stat-label">QubeNode Blocks</div>
+                        <div class="stat-value" id="qubenodeBlockCount">0</div>
+                        <div class="stat-sublabel">In current session</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-label">Total Monitored</div>
+                        <div class="stat-value" id="totalBlockCount">0</div>
+                        <div class="stat-sublabel">Since page load</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-label">Your Share</div>
+                        <div class="stat-value" id="blockShare">0%</div>
+                        <div class="stat-sublabel">Of monitored blocks</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Network Health Dashboard -->
+        <section class="network-health-section">
+            <h2 class="section-title">
+                <span class="title-icon">🌐</span>
+                Network Health Dashboard
+            </h2>
+
+            <div class="health-grid">
+                <div class="health-card">
+                    <div class="health-card-title">Network Status</div>
+                    <div class="health-metric">
+                        <span class="metric-label">Status:</span>
+                        <span class="metric-value success" id="networkStatus">Healthy</span>
+                    </div>
+                    <div class="health-metric">
+                        <span class="metric-label">Block Height:</span>
+                        <span class="metric-value" id="blockHeight">--</span>
+                    </div>
+                    <div class="health-metric">
+                        <span class="metric-label">Chain ID:</span>
+                        <span class="metric-value" id="chainId">--</span>
+                    </div>
+                </div>
+
+                <div class="health-card">
+                    <div class="health-card-title">Your Validator</div>
+                    <div class="health-metric">
+                        <span class="metric-label">Status:</span>
+                        <span class="metric-value success" id="validatorStatus">ACTIVE</span>
+                    </div>
+                    <div class="health-metric">
+                        <span class="metric-label">Voting Power:</span>
+                        <span class="metric-value highlight" id="votingPower">--</span>
+                    </div>
+                    <div class="health-metric">
+                        <span class="metric-label">Commission:</span>
+                        <span class="metric-value" id="commission">5%</span>
+                    </div>
+                </div>
+
+                <div class="health-card">
+                    <div class="health-card-title">Session Info</div>
+                    <div class="health-metric">
+                        <span class="metric-label">Monitoring:</span>
+                        <span class="metric-value" id="monitorDuration">0m</span>
+                    </div>
+                    <div class="health-metric">
+                        <span class="metric-label">Last Update:</span>
+                        <span class="metric-value" id="lastUpdate">--</span>
+                    </div>
+                    <div class="health-metric">
+                        <span class="metric-label">Refresh Rate:</span>
+                        <span class="metric-value">6s</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="block-stream-final.js"></script>
+</body>
+</html>

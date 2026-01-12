@@ -16,25 +16,39 @@
         MAX_BLOCKS_DISPLAY: 15
     };
     
-    // Static map of known base64 addresses -> monikers
+    // Complete map of all 31 active validators (HEX -> Base64)
     const KNOWN_VALIDATORS = {
-        'b/cqBEiKWUrMa8ymk2xyedvgQeU=': 'TicsForge Node',
-        '7qkxKFy/nsvij7ivJs/EPI0q0wc=': 'QubeNode',
-        'r52wsdwNF/m6qShjgAO2CNLt4rM=': 'WazNode',
+        '7qkxKFy/nsvij7ivJs/EPI0q0wc=': 'JBs LFG STRONGHOLD',
+        'r52wsdwNF/m6qShjgAO2CNLt4rM=': 'TicsForge Node',
         'FU7d8VwUxAIqc9wnl6mWNJ419hQ=': 'HOLD THE TICS',
-        'x/msJHAlTCyXV5vAzaFXfz9nB+Q=': 'JBs LFG STRONGHOLD',
-        '3IMHh/aQZFZhy14IZkXcjHHL9pk=': 'Quantum Forge',
-        'Kni85BSeCriR4nOE9sCEkLxP8xE=': 'QubeticsBest',
-        'sRe3V6ak2Z2MB6MYcid5Bws5ebY=': 'QubeCoreElite',
-        'Yo5Ir2OYk4sen63QVhGCNg+rdm8=': 'TheMissionField',
-        'G46h0l7Qo2G2DuaINf2eDvjQNFU=': 'QubeGuardian Pro',
-        '8XOK89o21RLieoP9WQkK0iDFOe0=': 'LunaTICS Lounge',
-        'cL7AQAvvtsWKelm0MaUJgSaFKfQ=': 'ValidusNode',
-        'qM+VX8LNgyMGXqnkpO4T3qjwg7Q=': 'QubeticsApex',
-        'iWmh+VMeTHkMzFwvkccfE4wov9k=': 'StakeReward',
-        'kEI7rR+fw+Tqm6K1eg/hToon2eU=': 'Q Network Hub',
-        '2cqecn5ghd9ohr1h2sfoHu+wSr4=': 'QubeCore',
-        'T11Nr3UnaRQ+qOsvEWxQZ+s5joA=': 'NodeMaster Pro'
+        'x/msJHAlTCyXV5vAzaFXfz9nB+Q=': 'QubeGuardian Pro',
+        'T11Nr3UnaRQ+qOsvEWxQZ+s5joA=': 'Quantum Forge',
+        'b/cqBEiKWUrMa8ymk2xyedvgQeU=': 'QubeNode',
+        '3IMHh/aQZFZhy14IZkXcjHHL9pk=': 'Vanguard Prime',
+        'Kni85BSeCriR4nOE9sCEkLxP8xE=': 'Veritics',
+        'sRe3V6ak2Z2MB6MYcid5Bws5ebY=': 'QubeCore',
+        'Yo5Ir2OYk4sen63QVhGCNg+rdm8=': 'ValidusNode',
+        'G46h0l7Qo2G2DuaINf2eDvjQNFU=': 'LunaTICS Lounge',
+        '8XOK89o21RLieoP9WQkK0iDFOe0=': 'QubeticsBest',
+        'cL7AQAvvtsWKelm0MaUJgSaFKfQ=': 'StakeReward',
+        'qM+VX8LNgyMGXqnkpO4T3qjwg7Q=': 'SOUTHERN CROSS',
+        'iWmh+VMeTHkMzFwvkccfE4wov9k=': 'WazNode',
+        'kEI7rR+fw+Tqm6K1eg/hToon2eU=': 'Block Dock',
+        '2cqecn5ghd9ohr1h2sfoHu+wSr4=': 'QubeWars',
+        'eJ/cSzq3W/4bK3K8MfkDvHJRYhw=': 'Moebius Node',
+        'HnaG5K2Qe9CipB1Lr1Gs4IXHGt0=': 'Qubetics Varin',
+        'q4KadZ37UEsTU1UNvmmCqvC7Src=': 'QuantumTrust Validator',
+        'W8RtG5vJYUatEMYNI4mwqgpKfTY=': 'TICS Sly MTGFE',
+        'l10b5BKXpPpPoZJz4XO0lZvqSHM=': 'VeritasNode',
+        'CbbVR8DeSd0l3FIk1n+2u/AWvyc=': 'TICS Transatron',
+        'GCDv9+61vwV2g7QN7Nxgy3tlZ48=': 'Qubelidator',
+        'cvehC37laaLv3u3/EPL/zcrUHm8=': 'TheMissionField',
+        '4s03GNE+gGk0IA6+TMvdpd4OkfA=': 'TicsNodeToSuccess',
+        '2KE/lngn/UQn4wo7FMOnAv4SuKE=': 'AussieTICS',
+        'iNkdrhIgZnwWbLVSM9yzpKrnZBQ=': 'QNode',
+        'dp+ISgGR5wSRLIW4q2jMse8sv94=': 'MarkAL Qubetics Validator',
+        'DEbr0Kr+XisdlGTSO+Xfbyojvn4=': 'NodeForgeAlpha',
+        'FaBH50MPYfrNZ8FNkoK9jEqyLiU=': 'CertusNode'
     };
 
     // ===== STATE =====
@@ -177,9 +191,8 @@
     }
 
     function isQubeNodeBlock(proposerAddress) {
-        // Check if this is QubeNode's base64 address
-        return proposerAddress === CONFIG.QUBENODE_BASE64 || 
-               proposerAddress === '7qkxKFy/nsvij7ivJs/EPI0q0wc=';
+        // QubeNode has base64: b/cqBEiKWUrMa8ymk2xyedvgQeU=
+        return proposerAddress === 'b/cqBEiKWUrMa8ymk2xyedvgQeU=';
     }
 
     // ===== BLOCK PROCESSING =====
@@ -207,10 +220,17 @@
         } else if (gap > 1 && gap <= 20) {
             console.log(`⚠️ Missed ${gap - 1} blocks, backfilling...`);
             
+            // Backfill with delay to avoid rate limits
             for (let height = state.lastBlockHeight + 1; height < latestHeight; height++) {
-                const block = await fetchBlockByHeight(height);
-                if (block) {
-                    await processBlock(block);
+                try {
+                    const block = await fetchBlockByHeight(height);
+                    if (block) {
+                        await processBlock(block);
+                    }
+                    // Small delay between requests
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                } catch (error) {
+                    console.warn(`⚠️ Failed to fetch block ${height}:`, error.message);
                 }
             }
             

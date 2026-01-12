@@ -162,30 +162,52 @@
             
             console.log(`📋 Loaded ${signingData.info.length} signing infos`);
             
-            // Build mapping - match by address suffix
-            validatorsData.validators.forEach(validator => {
-                const moniker = validator.description?.moniker || 'Unknown';
-                const operatorAddr = validator.operator_address;
+            // DEBUG: Show first few addresses
+            console.log('🔍 Sample operator address:', validatorsData.validators[0]?.operator_address);
+            console.log('🔍 Sample consensus address:', signingData.info[0]?.address);
+            
+            // Build simple map first: consensus address -> moniker
+            // We'll match ALL validators to ALL signing infos
+            const operatorToMoniker = new Map();
+            validatorsData.validators.forEach(v => {
+                operatorToMoniker.set(v.operator_address, v.description?.moniker || 'Unknown');
+            });
+            
+            // For each signing info, try to find matching validator
+            let matchCount = 0;
+            signingData.info.forEach(signingInfo => {
+                const consensusAddr = signingInfo.address;
                 
-                const operatorSuffix = operatorAddr.replace('qubeticsvaloper', '');
+                // Try to find validator with matching address pattern
+                let matched = false;
                 
-                signingData.info.forEach(signingInfo => {
-                    const consensusAddr = signingInfo.address;
-                    const consensusSuffix = consensusAddr.replace('qubeticsvalcons', '');
+                for (const [operatorAddr, moniker] of operatorToMoniker.entries()) {
+                    // Extract last 20 chars for comparison (address part after prefix)
+                    const opSuffix = operatorAddr.slice(-20);
+                    const conSuffix = consensusAddr.slice(-20);
                     
-                    if (operatorSuffix === consensusSuffix) {
+                    if (opSuffix === conSuffix) {
                         state.validatorNames.set(consensusAddr, moniker);
+                        matchCount++;
+                        matched = true;
                         
                         if (operatorAddr === CONFIG.VALIDATOR_ADDRESS) {
                             state.qubenodeConsensusAddress = consensusAddr;
                             console.log(`✅ QubeNode: ${moniker}`);
+                            console.log(`   Operator: ${operatorAddr}`);
                             console.log(`   Consensus: ${consensusAddr}`);
                         }
+                        break;
                     }
-                });
+                }
+                
+                if (!matched) {
+                    // DEBUG: Show unmatched consensus address
+                    console.log(`⚠️ No match for consensus: ${consensusAddr}`);
+                }
             });
             
-            console.log(`✅ Mapped ${state.validatorNames.size} validator names`);
+            console.log(`✅ Mapped ${matchCount} validator names`);
             
         } catch (error) {
             console.error('❌ Error building validator mapping:', error);

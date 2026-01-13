@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Safari theme color - fixes pull-to-refresh background -->
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    
+    <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    
+    <!-- Android Chrome Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
+    
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/site.webmanifest">
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#00D4FF">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="QubeNode">
+    
+    <!-- Primary Meta Tags - Enhanced for SEO -->
+    <title>QubeNode - Professional Qubetics Validator | $TICS Staking 30% APY | 5% Commission</title>
+    <meta name="title" content="QubeNode - Professional Qubetics Validator | $TICS Staking 30% APY | 5% Commission">
+    <meta name="description" content="Stake $TICS with QubeNode - trusted Qubetics validator with 100% uptime, 5% commission, and up to 30% APY. Professional validator service with real-time statistics and secure delegation through Keplr & Cosmostation wallets.">
+    <meta name="keywords" content="QubeNode, Qubetics validator, TICS staking, Qubetics staking, delegate TICS, Qubetics blockchain, TICS rewards, TICS APY, Qubetics validator 5% commission, stake TICS tokens, Qubetics network validator, best Qubetics validator, Chain Abstraction Protocol, Qubetics dVPN, QubeNode validator, crypto staking, blockchain validator, passive income crypto, Cosmos validator, proof of stake">
+    <meta name="author" content="QubeNode Validator Team">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <link rel="canonical" href="https://qubenode.space/">
+    
+    <!-- Preconnect to External Resources -->
+    <link rel="preconnect" href="https://rpc.qubetics.com">
+    <link rel="dns-prefetch" href="https://api.qubetics.com">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://qubenode.space/">
+    <meta property="og:title" content="QubeNode - Professional Qubetics Validator | Stake $TICS">
+    <meta property="og:description" content="Stake $TICS with QubeNode validator. 100% uptime, 5% commission, up to 30% APY. Secure delegation through Keplr & Cosmostation wallets.">
+    <meta property="og:image" content="https://qubenode.space/android-chrome-512x512.png">
+    <meta property="og:image:width" content="512">
+    <meta property="og:image:height" content="512">
+    <meta property="og:image:alt" content="QubeNode - Qubetics Validator Logo">
+    <meta property="og:site_name" content="QubeNode">
+    <meta property="og:locale" content="en_US">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://qubenode.space/">
+    <meta name="twitter:title" content="QubeNode - Professional Qubetics Validator | Stake $TICS">
+    <meta name="twitter:description" content="Stake $TICS with QubeNode validator. 100% uptime, 5% commission, up to 30% APY. Secure staking with professional validator service.">
+    <meta name="twitter:image" content="https://qubenode.space/android-chrome-512x512.png">
+    <meta name="twitter:image:alt" content="QubeNode - Qubetics Validator">
+    <meta name="twitter:creator" content="@QubeNode">
+    <meta name="twitter:site" content="@QubeNode">
+    
+    <!-- Structured Data - Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://qubenode.space/#organization",
+          "name": "QubeNode",
+          "url": "https://qubenode.space/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://qubenode.space/android-chrome-512x512.png",
+            "width": 512,
+            "height": 512
+          },
+          "description": "Professional Qubetics blockchain validator providing secure staking services",
+          "sameAs": [
+            "https://twitter.com/QubeNode",
+            "https://t.me/QubeNode"
+          ],
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "Customer Service",
+            "availableLanguage": ["en", "uk"]
+          }
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://qubenode.space/#website",
+          "url": "https://qubenode.space/",
+          "name": "QubeNode - Qubetics Validator",
+          "description": "Professional Qubetics validator with 100% uptime and 5% commission",
+          "publisher": {
+            "@id": "https://qubenode.space/#organization"
+          },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://qubenode.space/?s={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "Service",
+          "@id": "https://qubenode.space/#service",
+          "serviceType": "Blockchain Validator Service",
+          "provider": {
+            "@id": "https://qubenode.space/#organization"
+          },
+          "name": "Qubetics Validator Service",
+          "description": "Professional validator service for Qubetics blockchain with up to 30% APY staking rewards",
+          "areaServed": "Worldwide",
+          "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Staking Services",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "TICS Token Staking",
+                  "description": "Stake TICS tokens with 5% commission and up to 30% APY"
+                }
+              }
+            ]
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "ratingCount": "150",
+            "bestRating": "5",
+            "worstRating": "1"
+          }
+        },
+        {
+          "@type": "SoftwareApplication",
+          "name": "QubeNode Staking Platform",
+          "applicationCategory": "FinanceApplication",
+          "operatingSystem": "Web",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "ratingCount": "150"
+          }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://qubenode.space/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Calculator",
+              "item": "https://qubenode.space/calculator.html"
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": "How to Delegate",
+              "item": "https://qubenode.space/how-to-delegate.html"
+            },
+            {
+              "@type": "ListItem",
+              "position": 4,
+              "name": "FAQ",
+              "item": "https://qubenode.space/faq.html"
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+    
+    
+    <!-- Index Styles - CSP Compliant (NO Google Fonts - uses system fallback) -->
+    <link rel="stylesheet" href="styles-index.css">
+</head>
+<body>
+    
+    <!-- КРИТИЧНИЙ STYLE - МАКСИМАЛЬНИЙ ПРІОРИТЕТ ДЛЯ ФІКСАЦІЇ -->
+    <style>
+        /* АБСОЛЮТНА ФІКСАЦІЯ - НАЙВИЩИЙ ПРІОРИТЕТ */
+        @media (max-width: 768px) {
+            body .hamburger,
+            body label.hamburger,
+            body [for="menu-toggle"].hamburger,
+            html body .hamburger,
+            html body label.hamburger {
+                display: flex !important;
+                position: fixed !important;
+                top: 20px !important;
+                left: 20px !important;
+                bottom: auto !important;
+                right: auto !important;
+                width: 50px !important;
+                height: 50px !important;
+                z-index: 999999 !important;
+                background: transparent !important;
+                border: none !important;
+                border-radius: 0 !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                align-items: center !important;
+                gap: 6px !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                transform: none !important;
+                translate: none !important;
+                inset: 20px auto auto 20px !important;
+            }
+            
+            body .hamburger span,
+            html body .hamburger span {
+                width: 30px !important;
+                height: 3.5px !important;
+                background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important;
+                display: block !important;
+                border-radius: 2px !important;
+                pointer-events: none !important;
+            }
+            
+            body .fixed-mobile-contacts,
+            body div.fixed-mobile-contacts,
+            html body .fixed-mobile-contacts,
+            html body div.fixed-mobile-contacts {
+                display: flex !important;
+                position: fixed !important;
+                top: 20px !important;
+                right: 20px !important;
+                bottom: auto !important;
+                left: auto !important;
+                z-index: 999998 !important;
+                flex-direction: row !important;
+                gap: 15px !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                transform: none !important;
+                translate: none !important;
+                inset: 20px 20px auto auto !important;
+            }
+
+            body .fixed-mobile-contacts *,
+            html body .fixed-mobile-contacts * {
+                position: static !important;
+            }
+        }
+
+        @media (min-width: 769px) {
+            /* Ховати мобільні іконки на десктопі */
+            #mobile-icons-container {
+                display: none !important;
+            }
+            
+            .hamburger { display: none !important; }
+            .fixed-mobile-contacts { display: none !important; }
+            
+            /* Ховати весь контейнер з мобільними іконками на десктопі */
+            #mobile-icons-container {
+                display: none !important;
+            }
+        }
+        
+        /* Ховати іконки коли модальне вікно відкрите */
+        .modal.show ~ div .hamburger,
+        .modal.show ~ div .fixed-mobile-contacts {
+            display: none !important;
+        }
+    </style>
+    <!-- Header Wallet Functions - MUST Load First -->
+    
+    <!-- КОНТЕЙНЕР ДЛЯ ІКОНОК - ТІЛЬКИ ВГОРІ САЙТУ -->
+    <div id="mobile-icons-container" style="position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important; width: 100% !important; height: 80px !important; z-index: 999999 !important; pointer-events: none !important; margin: 0 !important; padding: 0 !important;">
+        <!-- Hamburger Menu - ЗЛІВА -->
+        <label for="menu-toggle" class="hamburger" style="position: absolute !important; top: 20px !important; left: 20px !important; pointer-events: auto !important; display: flex !important; width: 50px !important; height: 50px !important; flex-direction: column !important; justify-content: center !important; align-items: center !important; gap: 6px !important; background: transparent !important; border: none !important; z-index: 1000000 !important; cursor: pointer !important;">
+            <span style="display: block !important; width: 30px !important; height: 3.5px !important; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important; border-radius: 2px !important; transition: all 0.3s ease !important;"></span>
+            <span style="display: block !important; width: 30px !important; height: 3.5px !important; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important; border-radius: 2px !important; transition: all 0.3s ease !important;"></span>
+            <span style="display: block !important; width: 30px !important; height: 3.5px !important; background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 25%, #6366F1 50%, #A855F7 75%, #FFD60A 100%) !important; border-radius: 2px !important; transition: all 0.3s ease !important;"></span>
+        </label>
+
+
+        <!-- Fixed Mobile Контакти Icons - СПРАВА ГОРИЗОНТАЛЬНО -->
+        <div class="fixed-mobile-contacts" style="position: absolute !important; top: 20px !important; right: 20px !important; display: flex !important; flex-direction: row !important; gap: 15px !important; pointer-events: auto !important; z-index: 1000000 !important;">
+            <a href="https://t.me/+sRnz7RyoL4Q0MWEy" class="fixed-contact-icon" target="_blank">
+                <svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 25L18 27.5L21 37L27 30L36 37L39 12L10 25Z" stroke="url(#iconGrad)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <path d="M18 27.5L21 32" stroke="url(#iconGrad)" stroke-width="3.5" stroke-linecap="round"/>
+                    <path d="M21 37V32" stroke="url(#iconGrad)" stroke-width="3.5" stroke-linecap="round"/>
+                    <path d="M18 27.5L31 17" stroke="url(#iconGrad)" stroke-width="3.5" stroke-linecap="round"/>
+                    <defs>
+                        <linearGradient id="iconGrad" x1="0" y1="0" x2="50" y2="50" gradientUnits="userSpaceOnUse">
+                            <stop offset="0%" stop-color="#00FFB3"/>
+                            <stop offset="25%" stop-color="#00D4FF"/>
+                            <stop offset="50%" stop-color="#6366F1"/>
+                            <stop offset="75%" stop-color="#A855F7"/>
+                            <stop offset="100%" stop-color="#FFD60A"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </a>
+            <a href="/cdn-cgi/l/email-protection#7b0d1a17121f1a0f1409550a0e191e15141f1e3b1c161a121755181416" class="fixed-contact-icon">
+                <svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="11" y="16" width="28" height="18" rx="2" stroke="url(#iconGrad2)" stroke-width="3.5" fill="none"/>
+                    <path d="M11 19L25 28L39 19" stroke="url(#iconGrad2)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <defs>
+                        <linearGradient id="iconGrad2" x1="0" y1="0" x2="50" y2="50" gradientUnits="userSpaceOnUse">
+                            <stop offset="0%" stop-color="#00FFB3"/>
+                            <stop offset="25%" stop-color="#00D4FF"/>
+                            <stop offset="50%" stop-color="#6366F1"/>
+                            <stop offset="75%" stop-color="#A855F7"/>
+                            <stop offset="100%" stop-color="#FFD60A"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </a>
+        </div>
+    </div>
+
+    <!-- WALLET CONNECTION MODAL -->
+    <div class="wallet-modal-overlay" id="walletModal">
+        <div class="wallet-modal-content">
+            <button class="wallet-modal-close">×</button>
+            <h2 class="wallet-modal-title">Connect Wallet</h2>
+            <p class="wallet-modal-subtitle">Choose your wallet to connect</p>
+            <div class="wallet-buttons">
+                <button id="modalKeplrBtn" class="wallet-btn">
+                    <img src="keplr.png" alt="Keplr" style="width: 32px; height: 32px; border-radius: 8px;">
+                    <span>Keplr Wallet</span>
+                </button>
+                <button id="modalCosmostationBtn" class="wallet-btn">
+                    <img src="Cosmostation.png" alt="Cosmostation" style="width: 32px; height: 32px; border-radius: 8px;">
+                    <span>Cosmostation</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОБІЛЬНА КНОПКА ГАМАНЦЯ МІЖ ГАМБУРГЕРОМ І ТЕЛЕГРАМОМ -->
+    <style>
+        #mobileHeaderWalletBtn {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            #mobileHeaderWalletBtn {
+                display: inline-block !important;
+                position: fixed !important;
+                top: 24px !important;
+                left: 85px !important;
+                right: 150px !important;
+                width: auto !important;
+                max-width: calc(100vw - 235px) !important;
+                height: 42px !important;
+                background: linear-gradient(135deg, rgba(0, 212, 255, 0.12), rgba(99, 102, 241, 0.12)) !important;
+                border: 1.5px solid transparent !important;
+                border-radius: 21px !important;
+                background-clip: padding-box !important;
+                color: #00D4FF !important;
+                font-size: 11px !important;
+                font-weight: 600 !important;
+                cursor: pointer !important;
+                z-index: 999998 !important;
+                text-align: center !important;
+                line-height: 39px !important;
+                transition: all 0.3s ease !important;
+                padding: 0 12px !important;
+                margin: 0 !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                box-shadow: 0 2px 6px rgba(0, 212, 255, 0.15) !important;
+                font-family: 'Space Grotesk', sans-serif !important;
+                letter-spacing: 0.2px !important;
+                position: relative !important;
+            }
+            
+            #mobileHeaderWalletBtn::before {
+                content: '' !important;
+                position: absolute !important;
+                top: -1.5px !important;
+                left: -1.5px !important;
+                right: -1.5px !important;
+                bottom: -1.5px !important;
+                background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 60%, #6366F1 100%) !important;
+                border-radius: 21px !important;
+                z-index: -1 !important;
+                opacity: 0.5 !important;
+            }
+            
+            #mobileHeaderWalletBtn:active {
+                transform: scale(0.97) !important;
+                box-shadow: 0 1px 3px rgba(0, 212, 255, 0.2) !important;
+            }
+        }
+    </style>
+    <button id="mobileHeaderWalletBtn" type="button">Connect Wallet</button>
+
+    <div class="bg-animation"></div>
+    <div class="grid-overlay"></div>
+
+    <!-- CSS-only Menu Toggle -->
+    <input type="checkbox" id="menu-toggle" style="display: none;">
+
+    <!-- Mobile Menu Overlay -->
+    <label for="menu-toggle" class="mobile-menu-overlay" id="menuOverlay"></label>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div style="padding: 15px 20px 20px 20px; text-align: left; border-bottom: 1px solid rgba(0, 212, 255, 0.2); color: #00D4FF; font-weight: 700; font-size: 32px; margin-bottom: 20px; padding-left: 30px;">
+            Menu
+        </div>
+        <div class="mobile-menu-items">
+            <button class="mobile-menu-item" id="mobileMenuEcosystem"" type="button">
+                <span>🌐</span>
+                <span>Qubetics Ecosystem</span>
+            </button>
+            <button class="mobile-menu-item" id="mobileMenuTics"" type="button">
+                <span>💎</span>
+                <span>TICS Coin</span>
+            </button>
+            <button class="mobile-menu-item" id="mobileMenuCalculator"" type="button">
+                <span>🧮</span>
+                <span>Calculator</span>
+            </button>
+            <button class="mobile-menu-item" id="mobileMenuDelegate"" type="button">
+                <span>🤝</span>
+                <span>Become a Delegator</span>
+            </button>
+            <button class="mobile-menu-item" id="mobileMenuFaq"" type="button">
+                <span>❓</span>
+                <span>FAQ</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="top-left-menu">
+            <button class="ecosystem-button" id="desktopEcosystemBtn">
+                <span>🌐</span>
+                <span>Qubetics Ecosystem</span>
+            </button>
+            <button class="ecosystem-button" id="desktopTicsBtn">
+                <span>💎</span>
+                <span>TICS Coin</span>
+            </button>
+            <button class="ecosystem-button" id="desktopCalculatorBtn">
+                <span>🧮</span>
+                <span>Calculator</span>
+            </button>
+            <button class="ecosystem-button" id="desktopDelegateBtn">
+                <span>🤝</span>
+                <span>Become a Delegator</span>
+            </button>
+            <button class="ecosystem-button" id="desktopFaqBtn">
+                <span>❓</span>
+                <span>FAQ</span>
+            </button>
+            <div style="position: relative;">
+                <button class="header-wallet-button" id="headerWalletBtn">
+                    <span>💼</span>
+                    <span>Connect Wallet</span>
+                </button>
+                <div class="wallet-dropdown" id="headerWalletDropdown">
+                    <button class="wallet-option" id="headerKeplrOption">
+                        <img src="keplr.png" alt="Keplr" style="width: 24px; height: 24px; border-radius: 6px;">
+                        <span>Keplr</span>
+                    </button>
+                    <button class="wallet-option" id="headerCosmostationOption">
+                        <img src="Cosmostation.png" alt="Cosmostation" style="width: 24px; height: 24px; border-radius: 6px;">
+                        <span>Cosmostation</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="top-contacts">
+            <a href="https://t.me/+sRnz7RyoL4Q0MWEy" class="contact-link" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
+                </svg>
+                <span>Telegram</span>
+            </a>
+            <a href="/cdn-cgi/l/email-protection#740215181d1015001b065a050116111a1b1011341319151d185a171b19" class="contact-link">
+                <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                </svg>
+                <span>Email</span>
+            </a>
+        </div>
+
+        <header>
+            <div class="qubetics-brand">
+                <img src="qubetics.png" alt="Qubetics">
+                <span>QUBETICS BLOCKCHAIN</span>
+            </div>
+
+            <div class="brand-container">
+                <img src="qubenode-logo.png" alt="QubeNode">
+                <h1 class="validator-name">QubeNode</h1>
+            </div>
+            <p class="subtitle">Stable and reliable Qubetics network validator</p>
+            <div class="status-badge-extended">
+                <div class="status-badge-header">
+                    <span class="status-dot"></span>
+                    <span>Active Validator</span>
+                </div>
+                <div class="block-info" style="text-align: center; margin-bottom: 4px; width: 100%;">
+                    Блок #<span id="currentBlock">—</span> • Avg Block Time: <span id="avgBlockTime">—</span>
+                </div>
+                <div class="blocks-chain-inline" id="blocksChainInline" style="width: 100%; display: flex; overflow: hidden; position: relative;">
+                    <!-- Blocks will be added here -->
+                </div>
+            </div>
+        </header>
+
+        <!-- ===== SECTION 1: VALIDATOR INFO ===== -->
+        <h2 class="section-title">Validator Info</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Amount</div>
+                <div class="stat-value" id="delegatedAmountContainer">--</div>
+                <div class="stat-subvalue">Delegated $TICS Coins</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Delegators</div>
+                <div class="stat-value"><span id="delegatorsCount">--</span></div>
+                <div class="stat-subvalue">Active delegators</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Uptime</div>
+                <div class="stat-value"><span id="uptimePercent">--</span></div>
+                <div class="stat-subvalue">Last 100K blocks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Rank</div>
+                <div class="stat-value"><span id="validatorRank">--</span></div>
+                <div class="stat-subvalue">By voting power</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Blocks Proposed</div>
+                <div class="stat-value"><span id="blocksProposed">--</span></div>
+                <div class="stat-subvalue">Total blocks proposed by QubeNode</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Commission Rate</div>
+                <div class="stat-value"><span id="commissionRate">--</span></div>
+                <div class="stat-subvalue">Lowest possible commission<br>From 30% APY → 28.5% your income</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Self-Bonded</div>
+                <div class="stat-value"><span id="selfBonded">--</span></div>
+                <div class="stat-subvalue">Validator's own stake</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Network Share</div>
+                <div class="stat-value"><span id="networkShare">--</span></div>
+                <div class="stat-subvalue">% of Total Network Stake</div>
+            </div>
+        </div>
+
+        <!-- ===== SECTION 2: QUBETICS NETWORK ===== -->
+        <h2 class="section-title">Qubetics Network</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Supply</div>
+                <div class="stat-value"><span id="totalSupply">--</span></div>
+                <div class="stat-subvalue">Fixed maximum supply</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Circulation Supply</div>
+                <div class="stat-value"><span id="circulationSupply">--</span></div>
+                <div class="stat-subvalue">Currently in circulation</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Staked</div>
+                <div class="stat-value"><span id="totalStaked">--</span></div>
+                <div class="stat-subvalue">Total network stake</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">% Circulation Staked</div>
+                <div class="stat-value"><span id="circulationStaked">--</span></div>
+                <div class="stat-subvalue">Percentage of supply staked</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Market Cap</div>
+                <div class="stat-value"><span id="marketCap">--</span></div>
+                <div class="stat-subvalue">Total market capitalization</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">APY</div>
+                <div class="stat-value"><span id="apyRate">30%</span></div>
+                <div class="stat-subvalue">Annual percentage yield</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Active Validators</div>
+                <div class="stat-value"><span id="activeValidators">--</span></div>
+                <div class="stat-subvalue">Total active validators</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">TICS Burn</div>
+                <div class="stat-value"><span id="ticsBurn">--</span></div>
+                <div class="stat-subvalue">Total tokens burned</div>
+            </div>
+        </div>
+
+        <!-- ===== SECTION 3: TICS COIN ===== -->
+        <h2 class="section-title">TICS Coin</h2>
+        <div class="stats-grid stats-grid-4">
+            <div class="stat-card">
+                <div class="stat-label">$TICS Price</div>
+                <div class="stat-value"><span id="ticsPrice">--</span></div>
+                <div class="stat-subvalue">Current market price</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">24H Change</div>
+                <div class="stat-value" style="color: #22c55e;"><span id="ticsChange">--</span></div>
+                <div class="stat-subvalue">24h price change</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">24H High</div>
+                <div class="stat-value"><span id="ticsHigh24h">--</span></div>
+                <div class="stat-subvalue">Highest price in 24h</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">24H Low</div>
+                <div class="stat-value"><span id="ticsLow24h">--</span></div>
+                <div class="stat-subvalue">Lowest price in 24h</div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2>Why Choose QubeNode?</h2>
+            <div class="info-row">
+                <div class="info-label">🛡️ Reliability</div>
+                <div class="info-value">High uptime — we ensure stable node operation 24/7 with professional monitoring</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">💎 Lowest Network Commission</div>
+                <div class="info-value">Fixed 5% commission — more rewards stay with you</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">⚡ Performance</div>
+                <div class="info-value">Powerful hardware and optimized node configuration for maximum efficiency</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">🤝 Support</div>
+                <div class="info-value">Fast support and open communication with delegators</div>
+            </div>
+        </div>
+
+        <footer>
+            <p><strong>QubeNode</strong> - Professional Qubetics Network validator</p>
+            <p>© 2025 QubeNode. All rights reserved. | <a href="https://t.me/+sRnz7RyoL4Q0MWEy" target="_blank" style="color: #00D4FF; text-decoration: none;">Telegram</a></p>
+        </footer>
+    </div>
+
+    <!-- Ecosystem Modal -->
+    <!-- Delegator Modal -->
+    <div id="delegatorModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Become a Delegator QubeNode</h2>
+                <button class="close-button" data-close="delegatorModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- DELEGATOR DASHBOARD - Shows when wallet is connected -->
+
+                <!-- Способи делегування -->
+                <div style="background: rgba(0, 212, 255, 0.03); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 20px; padding: 40px; margin: 30px 0;">
+                    
+                    <!-- Спосіб 1: Через гаманці Keplr/Cosmostation -->
+                    <div style="margin-bottom: 40px;">
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                            <div style="width: 45px; height: 45px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4em; font-weight: 800; color: #000;">1</div>
+                            <h3 style="color: #00FFF0; font-size: 1.5em; margin: 0;">Delegation via Mobile Wallet</h3>
+                        </div>
+                        
+                        <p style="color: #cbd5e1; margin-bottom: 20px; line-height: 1.8;">
+                            You can make delegation in wallet 
+                            <span style="color: #00D4FF; font-weight: 600; cursor: pointer;"  data-modal="keplrGuideModal">Keplr (<u>guide</u>)</span> 
+                            or 
+                            <span style="color: #00D4FF; font-weight: 600;">Cosmostation</span>.
+                        </p>
+                        
+                        <div style="background: rgba(250, 204, 21, 0.1); border-left: 4px solid #facc15; padding: 15px 20px; border-radius: 8px; margin-top: 15px;">
+                            <p style="color: #fde047; margin: 0; font-size: 0.95em;">
+                                <span style="font-weight: 700;">💡 Recommendation:</span> We recommend using Keplr wallet for mobile delegation.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Спосіб 2: Через наш сайт -->
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                            <div style="width: 45px; height: 45px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4em; font-weight: 800; color: #000;">2</div>
+                            <h3 style="color: #00FFF0; font-size: 1.5em; margin: 0;">Delegation via QubeNode.space</h3>
+                        </div>
+                        
+                        <p style="color: #cbd5e1; margin-bottom: 20px; line-height: 1.8;">
+                            The easiest way is to connect wallet directly on this page for instant delegation.
+                        </p>
+                        
+                        <div style="background: rgba(0, 212, 255, 0.05); border-left: 4px solid #00D4FF; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
+                            <p style="color: #00FFF0; font-weight: 600; margin-bottom: 12px; font-size: 1.05em;">
+                                💎 After connecting wallet you will be able to:
+                            </p>
+                            <ul style="color: #cbd5e1; margin: 0; padding-left: 20px; line-height: 2;">
+                                <li><strong style="color: #00D4FF;">View delegator dashboard</strong> — balance, delegations, rewards</li>
+                                <li><strong style="color: #00D4FF;">Delegate tokens</strong> to QubeNode validator</li>
+                                <li><strong style="color: #00D4FF;">Redelegate</strong> tokens between validators</li>
+                                <li><strong style="color: #00D4FF;">Claim rewards</strong> at any time</li>
+                                <li><strong style="color: #00D4FF;">Make Undelegate</strong> (unlocking for 14 days)</li>
+                                <li><strong style="color: #00D4FF;">Cancel active Unbond</strong> during unlocking period</li>
+                            </ul>
+                        </div>
+
+                        <!-- Wallet Connection Section -->
+                        <div id="walletSection">
+                            <p style="color: #cbd5e1; margin-bottom: 15px; font-size: 0.95em; font-weight: 600;">Connect wallet for $TICS delegation:</p>
+                            
+                            <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 15px;">
+                                <button id="connectKeplrBtn" style="flex: 1; min-width: 180px; padding: 14px 24px; background: rgba(0, 212, 255, 0.15); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 10px; color: #00FFF0; font-size: 1em; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                    <span style="font-size: 1.2em;">🔷</span>
+                                    <span>Keplr Wallet</span>
+                                </button>
+                                
+                                <button id="connectCosmostationBtn" style="flex: 1; min-width: 180px; padding: 14px 24px; background: rgba(0, 212, 255, 0.15); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 10px; color: #00FFF0; font-size: 1em; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                    <span style="font-size: 1.2em;">🔶</span>
+                                    <span>Cosmostation</span>
+                                </button>
+                            </div>
+                            
+                            <div id="walletStatus" style="display: none; padding: 20px; background: rgba(0, 212, 255, 0.1); border-radius: 12px; margin-top: 20px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                    <div>
+                                        <div style="color: #00FFF0; font-weight: 600; margin-bottom: 5px;">Connected: <span id="connectedWallet"></span></div>
+                                        <div style="color: #94a3b8; font-size: 0.9em; word-break: break-all;"><span id="connectedAddress"></span></div>
+                                    </div>
+                                    <button id="disconnectWalletBtn" style="padding: 10px 20px; background: rgba(255, 0, 0, 0.2); border: 1px solid rgba(255, 0, 0, 0.4); border-radius: 8px; color: #ff6b6b; cursor: pointer; font-weight: 600;">Disconnect</button>
+                                </div>
+                                
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
+                                    <div style="padding: 15px; background: rgba(0, 0, 0, 0.3); border-radius: 10px;">
+                                        <div style="color: #94a3b8; font-size: 0.9em; margin-bottom: 5px;">Balance</div>
+                                        <div style="color: #00FFF0; font-size: 1.3em; font-weight: 700;"><span id="walletBalance">0</span> TICS</div>
+                                    </div>
+                                    <div style="padding: 15px; background: rgba(0, 0, 0, 0.3); border-radius: 10px;">
+                                        <div style="color: #94a3b8; font-size: 0.9em; margin-bottom: 5px;">Delegated</div>
+                                        <div style="color: #00FFF0; font-size: 1.3em; font-weight: 700;"><span id="walletDelegated">0</span> TICS</div>
+                                    </div>
+                                    <div style="padding: 15px; background: rgba(0, 0, 0, 0.3); border-radius: 10px;">
+                                        <div style="color: #94a3b8; font-size: 0.9em; margin-bottom: 5px;">Rewards</div>
+                                        <div style="color: #22c55e; font-size: 1.3em; font-weight: 700;"><span id="walletRewards">0</span> TICS</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Staking Actions Section -->
+                        <div id="stakingActions" style="display: none; margin-top: 30px;">
+                            <div style="background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 25px;">
+                                <h4 style="color: #00FFF0; font-size: 1.2em; margin-bottom: 20px;">Staking Operations</h4>
+                                
+                                <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid rgba(0, 212, 255, 0.2); padding-bottom: 10px;">
+                                    <button id="tabDelegate" class="staking-tab active" style="padding: 12px 24px; background: rgba(0, 212, 255, 0.2); border: none; border-radius: 8px; color: #00FFF0; font-weight: 600; cursor: pointer; transition: all 0.3s;">Delegate</button>
+                                    <button id="tabUndelegate" class="staking-tab" style="padding: 12px 24px; background: transparent; border: none; border-radius: 8px; color: #94a3b8; font-weight: 600; cursor: pointer; transition: all 0.3s;">Undelegate</button>
+                                    <button id="tabClaim" class="staking-tab" style="padding: 12px 24px; background: transparent; border: none; border-radius: 8px; color: #94a3b8; font-weight: 600; cursor: pointer; transition: all 0.3s;">Claim Reward</button>
+                                </div>
+                                
+                                <!-- Delegate Tab -->
+                                <div id="delegateTab" class="staking-tab-content">
+                                    <p style="color: #cbd5e1; margin-bottom: 15px;">Minimum delegation amount: <strong style="color: #00FFF0;">0.1 TICS</strong></p>
+                                    <div style="margin-bottom: 20px;">
+                                        <label style="color: #94a3b8; font-size: 0.95em; margin-bottom: 8px; display: block;">TICS Amount:</label>
+                                        <input type="number" id="delegateAmount" placeholder="0.1" step="0.1" min="0.1" style="width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 10px; color: #fff; font-size: 1.1em;">
+                                    </div>
+                                    <button id="executeDelegateBtn" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border: none; border-radius: 12px; color: #000; font-size: 1.2em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
+                                        💎 Delegate to QubeNode
+                                    </button>
+                                </div>
+                                
+                                <!-- Undelegate Tab -->
+                                <div id="undelegateTab" class="staking-tab-content" style="display: none;">
+                                    <p style="color: #cbd5e1; margin-bottom: 15px;">Undelegation period: <strong style="color: #ff6b6b;">14 days</strong></p>
+                                    <div style="margin-bottom: 20px;">
+                                        <label style="color: #94a3b8; font-size: 0.95em; margin-bottom: 8px; display: block;">TICS Amount:</label>
+                                        <input type="number" id="undelegateAmount" placeholder="0.1" step="0.1" min="0.1" style="width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 10px; color: #fff; font-size: 1.1em;">
+                                    </div>
+                                    <button id="executeUndelegateBtn" style="width: 100%; padding: 18px; background: rgba(255, 107, 107, 0.2); border: 2px solid rgba(255, 107, 107, 0.4); border-radius: 12px; color: #ff6b6b; font-size: 1.2em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
+                                        ⚠️ Undelegate
+                                    </button>
+                                </div>
+                                
+                                <!-- Claim Tab -->
+                                <div id="claimTab" class="staking-tab-content" style="display: none;">
+                                    <p style="color: #cbd5e1; margin-bottom: 20px;">Claim your accumulated reward:</p>
+                                    <div style="padding: 20px; background: rgba(34, 197, 94, 0.1); border: 2px solid rgba(34, 197, 94, 0.3); border-radius: 12px; margin-bottom: 20px; text-align: center;">
+                                        <div style="color: #94a3b8; font-size: 0.9em; margin-bottom: 5px;">Available reward</div>
+                                        <div style="color: #22c55e; font-size: 2em; font-weight: 700;"><span id="claimableRewards">0</span> TICS</div>
+                                    </div>
+                                    <button id="executeClaimBtn" style="width: 100%; padding: 18px; background: linear-gradient(135deg, #22c55e, #16a34a); border: none; border-radius: 12px; color: #000; font-size: 1.2em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
+                                        💰 Claim Reward
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div id="txStatus" style="display: none; margin-top: 20px; padding: 20px; border-radius: 12px;"></div>
+                        </div>
+                    </div>
+
+                        <!-- DELEGATOR DASHBOARD - Shows when wallet is connected -->
+                        <div id="delegatorDashboard" style="display: none; position: relative; z-index: 10; background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 240, 0.05)); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 15px; padding: 20px; margin-top: 25px;">
+                    <h3 style="color: #00FFF0; font-size: 1.5em; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                        <span>💎</span>
+                        <span>Your Staking Dashboard</span>
+                    </h3>
+                    
+                    <!-- Dashboard Stats Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                        <!-- Available Balance -->
+                        <div style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(0, 212, 255, 0.05)); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 12px; padding: 15px; text-align: center;">
+                            <div style="color: #94a3b8; font-size: 0.8em; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">💰 Balance</div>
+                            <div style="color: #00D4FF; font-size: 1.6em; font-weight: 700; margin-bottom: 3px;"><span id="dashBalance">0.00</span></div>
+                            <div style="color: #64748b; font-size: 0.8em;">TICS</div>
+                        </div>
+                        
+                        <!-- Delegated Amount -->
+                        <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.05)); border: 2px solid rgba(34, 197, 94, 0.4); border-radius: 12px; padding: 15px; text-align: center;">
+                            <div style="color: #94a3b8; font-size: 0.8em; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">🤝 Delegated</div>
+                            <div style="color: #22c55e; font-size: 1.6em; font-weight: 700; margin-bottom: 3px;"><span id="dashDelegated">0.00</span></div>
+                            <div style="color: #86efac; font-size: 0.8em;">TICS</div>
+                        </div>
+                        
+                        <!-- Rewards -->
+                        <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.05)); border: 2px solid rgba(34, 197, 94, 0.4); border-radius: 12px; padding: 15px; text-align: center;">
+                            <div style="color: #94a3b8; font-size: 0.8em; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">✨ Rewards</div>
+                            <div style="color: #22c55e; font-size: 1.6em; font-weight: 700; margin-bottom: 3px;"><span id="dashRewards">0.00</span></div>
+                            <div style="color: #86efac; font-size: 0.8em;">TICS</div>
+                        </div>
+                        
+                        <!-- Unbonding -->
+                        <div style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05)); border: 2px solid rgba(239, 68, 68, 0.4); border-radius: 12px; padding: 15px; text-align: center;">
+                            <div style="color: #94a3b8; font-size: 0.8em; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">⏳ Unbonding</div>
+                            <div style="color: #ef4444; font-size: 1.6em; font-weight: 700; margin-bottom: 3px;"><span id="dashUnbonding">0.00</span></div>
+                            <div style="color: #fca5a5; font-size: 0.8em;">TICS (14 days)</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Rewards Forecast Section - MOVED UP -->
+                    <div style="background: rgba(0, 0, 0, 0.3); border-radius: 12px; padding: 18px; margin-bottom: 20px;">
+                        <h4 style="color: #00FFF0; font-size: 1.1em; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                            <span>📈</span>
+                            <span>Rewards Forecast</span>
+                        </h4>
+                        <div id="dashRewardsForecast">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px;">
+                                <!-- Daily -->
+                                <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(34, 197, 94, 0.04)); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 10px; padding: 12px; text-align: center;">
+                                    <div style="color: #86efac; font-size: 0.75em; margin-bottom: 6px; font-weight: 600;">Per day</div>
+                                    <div style="color: #4ade80; font-size: 1.2em; font-weight: 700;"><span id="forecastDaily">0.00</span> TICS</div>
+                                </div>
+                                
+                                <!-- Weekly -->
+                                <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(34, 197, 94, 0.04)); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 10px; padding: 12px; text-align: center;">
+                                    <div style="color: #86efac; font-size: 0.75em; margin-bottom: 6px; font-weight: 600;">Per week</div>
+                                    <div style="color: #4ade80; font-size: 1.2em; font-weight: 700;"><span id="forecastWeekly">0.00</span> TICS</div>
+                                </div>
+                                
+                                <!-- Monthly -->
+                                <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(34, 197, 94, 0.04)); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 10px; padding: 12px; text-align: center;">
+                                    <div style="color: #86efac; font-size: 0.75em; margin-bottom: 6px; font-weight: 600;">Per month</div>
+                                    <div style="color: #22c55e; font-size: 1.2em; font-weight: 700;"><span id="forecastMonthly">0.00</span> TICS</div>
+                                </div>
+                                
+                                <!-- Yearly -->
+                                <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(34, 197, 94, 0.04)); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 10px; padding: 12px; text-align: center;">
+                                    <div style="color: #86efac; font-size: 0.75em; margin-bottom: 6px; font-weight: 600;">Per year</div>
+                                    <div style="color: #10b981; font-size: 1.2em; font-weight: 700;"><span id="forecastYearly">0.00</span> TICS</div>
+                                </div>
+                            </div>
+                            <p style="color: #64748b; font-size: 0.75em; margin-top: 10px; text-align: center;">* APY ~30%, validator commission already included. Calculations provided without compound interest.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions Section - FIRST ONE (before My Delegations) -->
+                    <div style="background: rgba(0, 212, 255, 0.08); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 12px; padding: 18px; margin-bottom: 15px;">
+                        <h4 style="color: #00FFF0; font-size: 1.1em; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                            <span>💎</span>
+                            <span>Quick Actions</span>
+                        </h4>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button id="btnQuickStakeQubeNode" style="flex: 1; min-width: 200px; padding: 14px 20px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border: none; border-radius: 10px; color: #000; font-size: 1em; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                                <span style="font-size: 1.2em;">🚀</span>
+                                <span>Delegate to QubeNode</span>
+                            </button>
+                            <button id="btnQuickClaimAllRewards" style="flex: 1; min-width: 200px; padding: 14px 20px; background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.1)); border: 2px solid rgba(34, 197, 94, 0.4); border-radius: 10px; color: #22c55e; font-size: 1em; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                                <span style="font-size: 1.2em;">💰</span>
+                                <span>Claim All Rewards (<span id="dashClaimableRewards">0.00</span> TICS)</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- My Delegations Section - MOVED UP -->
+                    <div style="background: rgba(0, 0, 0, 0.3); border-radius: 12px; padding: 18px; margin-bottom: 15px;">
+                        <h4 style="color: #00FFF0; font-size: 1.1em; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                            <span>📊</span>
+                            <span>My Delegations</span>
+                        </h4>
+                        <div id="dashDelegationsList">
+                            <div style="padding: 15px; text-align: center; color: #94a3b8; font-size: 0.9em;">
+                                Loading delegations...
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Transaction Status -->
+                    <div id="dashTxStatus" style="display: none; margin-bottom: 15px; padding: 15px; border-radius: 10px; font-size: 0.9em;"></div>
+                    
+                    <!-- Unbonding Delegations Section -->
+                    <div id="unbondingSection" style="background: rgba(239, 68, 68, 0.1); border: 2px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 18px; margin-bottom: 20px; display: none;">
+                        <h4 style="color: #ef4444; font-size: 1.1em; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                            <span>⏳</span>
+                            <span>Unbonding Delegations</span>
+                        </h4>
+                        <div id="unbondingList">
+                            <!-- Unbonding items will be loaded here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Disconnect Button -->
+                    <div style="text-align: center;">
+                        <button id="disconnectDashboardBtn" style="padding: 10px 25px; background: rgba(239, 68, 68, 0.2); border: 2px solid rgba(239, 68, 68, 0.4); border-radius: 30px; color: #ef4444; cursor: pointer; font-weight: 600; transition: all 0.3s; font-size: 0.9em;">
+                            🔌 Disconnect Wallet
+                        </button>
+                    </div>
+                </div>
+
+                </div>
+            </div>
+            
+            <div class="modal-footer" style="padding: 40px 60px; background: rgba(0, 212, 255, 0.05); border-top: 1px solid rgba(0, 212, 255, 0.2); display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+                <a href="https://t.me/+sRnz7RyoL4Q0MWEy" class="modal-link" target="_blank" style="display: inline-flex; align-items: center; gap: 12px; padding: 18px 40px; background: rgba(0, 212, 255, 0.1); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 50px; color: #00D4FF; text-decoration: none; font-weight: 600; font-size: 1.1em; transition: all 0.3s; white-space: nowrap;">
+                    <span>💬</span>
+                    <span>Support in Telegram</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Validator Selection Modal -->
+    <div id="validatorSelectorModal" class="modal">
+        <div class="modal-content">
+            <button class="закрити-button" data-close="validatorSelectorModal" style="position: absolute; top: 20px; right: 20px; background: rgba(239, 68, 68, 0.2); border: 2px solid rgba(239, 68, 68, 0.4); padding: 8px 16px; border-radius: 8px; color: #ef4444; cursor: pointer; font-weight: 600; z-index: 10;">✕ Close</button>
+            
+            <h2 id="validatorModalTitle" style="color: #00FFF0; font-size: 1.8em; margin-bottom: 25px; text-align: center;">Select Validator</h2>
+            
+            <div id="validatorListContainer" style="display: flex; flex-direction: column; gap: 12px;">
+                <!-- Validators will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Keplr Guide Modal -->
+    <div id="keplrGuideModal" class="modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h2 class="modal-title">📱 How to Delegate via Keplr Mobile</h2>
+                <button class="close-button" data-close="keplrGuideModal">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 40px;">
+                <p style="font-size: 1.1em; color: #cbd5e1; margin-bottom: 30px; line-height: 1.6;">
+                    Step-by-step guide for delegating $TICS via Keplr mobile app:
+                </p>
+                
+                <!-- Steps -->
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <div style="display: flex; gap: 15px;">
+                        <div style="min-width: 35px; height: 35px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #000; font-size: 1.1em;">1</div>
+                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Download Keplr Wallet from App Store or Play Store</p>
+                    </div>
+                    
+                    <div style="display: flex; gap: 15px;">
+                        <div style="min-width: 35px; height: 35px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #000; font-size: 1.1em;">2</div>
+                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Create new wallet</p>
+                    </div>
+                    
+                    <div style="display: flex; gap: 15px;">
+                        <div style="min-width: 35px; height: 35px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #000; font-size: 1.1em;">3</div>
+                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Securely save your seed phrase and password. <strong style="color: #ef4444;">Never share them with anyone</strong></p>
+                    </div>
+                    
+                    <div style="display: flex; gap: 15px;">
+                        <div style="min-width: 35px; height: 35px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #000; font-size: 1.1em;">4</div>
+                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Add Qubetics Mainnet: find Qubetics and enable it</p>
+                    </div>
+                    
+                    <div style="display: flex; gap: 15px;">
+                        <div style="min-width: 35px; height: 35px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #000; font-size: 1.1em;">5</div>
+                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">On main screen tap <strong style="color: #00FFF0;">Deposit</strong> → find Qubetics → copy your Qubetics Mainnet wallet address (select <strong style="color: #00FFF0;">EVM address</strong>, it starts with <code style="background: rgba(0,212,255,0.1); padding: 2px 6px; border-radius: 4px; color: #00D4FF;">0x...</code>)</p>
+                    </div>
+                    
+                    <div style="display: flex; gap: 15px;">
+                        <div style="min-width: 35px; height: 35px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #000; font-size: 1.1em;">6</div>
+                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Send $TICS to copied address</p>
+                    </div>
+                    
+                    <div style="display: flex; gap: 15px;">
+                        <div style="min-width: 35px; height: 35px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #000; font-size: 1.1em;">7</div>
+                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">When transaction completes and you see $TICS in your Keplr wallet, tap <strong style="color: #00FFF0;">Qubetics Mainnet</strong> on main screen</p>
+                    </div>
+                    
+                    <div style="display: flex; gap: 15px;">
+                        <div style="min-width: 35px; height: 35px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #000; font-size: 1.1em;">8</div>
+                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Tap <strong style="color: #00FFF0;">Stake</strong></p>
+                    </div>
+                    
+                    <div style="display: flex; gap: 15px;">
+                        <div style="min-width: 35px; height: 35px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #000; font-size: 1.1em;">9</div>
+                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Tap <strong style="color: #00FFF0;">Stake</strong> ще раз</p>
+                    </div>
+                    
+                    <div style="display: flex; gap: 15px;">
+                        <div style="min-width: 35px; height: 35px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #000; font-size: 1.1em;">10</div>
+                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Select validator <strong style="color: #00FFF0;">QubeNode</strong></p>
+                    </div>
+                    
+                    <div style="display: flex; gap: 15px;">
+                        <div style="min-width: 35px; height: 35px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #000; font-size: 1.1em;">11</div>
+                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Tap <strong style="color: #00FFF0;">Stake</strong></p>
+                    </div>
+                    
+                    <div style="display: flex; gap: 15px;">
+                        <div style="min-width: 35px; height: 35px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #000; font-size: 1.1em;">12</div>
+                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Enter staking amount (leave <em style="color: #94a3b8;">Memo</em> field empty) → tap <strong style="color: #00FFF0;">Next</strong></p>
+                    </div>
+                    
+                    <div style="display: flex; gap: 15px;">
+                        <div style="min-width: 35px; height: 35px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #000; font-size: 1.1em;">13</div>
+                        <p style="color: #cbd5e1; margin: 0; padding-top: 5px;">Confirm transaction</p>
+                    </div>
+                    
+                    <div style="display: flex; gap: 15px;">
+                        <div style="min-width: 35px; height: 35px; background: linear-gradient(135deg, #22c55e, #16a34a); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #fff; font-size: 1.3em;">✓</div>
+                        <p style="color: #22c55e; margin: 0; padding-top: 5px; font-weight: 600; font-size: 1.1em;">Done! You are officially staking 🎉</p>
+                    </div>
+                </div>
+                
+                <div style="background: rgba(34, 197, 94, 0.1); border-left: 4px solid #22c55e; padding: 20px; border-radius: 8px; margin-top: 30px;">
+                    <p style="color: #86efac; margin: 0; line-height: 1.6;">
+                        <span style="font-size: 1.2em;">✨</span> Now you will receive rewards automatically after each block!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Modal -->
+    <!-- Cosmos Staking Module Integration - Load in correct order -->
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="chain-config.js"></script>
+    <script src="wallet-manager.js"></script>
+    <script src="chain-client.js"></script>
+    <script src="transaction-builder.js"></script>
+    <script src="staking-service.js"></script>
+    <script src="cosmos-staking.js"></script>
+    <script src="sync.js"></script>
+
+    
+    <!-- Wallet Connector - Adapted from TicsLab -->
+    <!-- Wallet Connector - Adapted from TicsLab -->
+    <script src="validators-registry.js"></script>
+    <script src="wallet-connector.js"></script>
+
+    <!-- Index Page Initialization - Event Listeners for CSP Compliance -->
+    <script src="init-index.js"></script>
+</body>
+</html>

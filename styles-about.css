@@ -1405,6 +1405,16 @@ footer a:hover {
         font-size: 20px;
         min-width: 30px;
     }
+    
+    /* Activity Feed - тільки 5 останніх подій на мобільному */
+    .activity-feed {
+        max-height: 450px;
+        overflow-y: auto;
+    }
+    
+    .activity-item:nth-child(n+7) {
+        display: none;
+    }
 }
 
 /* ===== DELEGATION GROWTH CHART - ЗБІЛЬШЕНА ВИСОТА ===== */
@@ -1622,11 +1632,37 @@ footer a:hover {
 /* Mobile Responsive */
 @media (max-width: 768px) {
     .block-stream-container-simple {
-        padding: 20px;
+        padding: 15px;
         max-height: 450px;
     }
     
+    .block-item-simple {
+        padding: 12px;
+        margin-bottom: 10px;
+    }
+    
+    .block-header-simple {
+        margin-bottom: 8px;
+    }
+    
     .block-height-simple {
+        font-size: 14px;
+    }
+    
+    .block-time-simple {
+        font-size: 11px;
+    }
+    
+    .block-proposer-simple {
+        font-size: 12px;
+        margin-bottom: 6px;
+    }
+    
+    .block-details-simple {
+        font-size: 11px;
+    }
+    
+    .stream-title-simple {
         font-size: 16px;
     }
 }

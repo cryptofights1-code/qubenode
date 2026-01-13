@@ -1349,6 +1349,9 @@
         initGrowthChart();
         initActivityFeed(); // Real data activity feed
         
+        // Live Block Production
+        initLiveBlocks();
+        
         // Regular updates
         setInterval(() => {
             updateInfrastructureMetrics();
@@ -1374,3 +1377,159 @@
     }
 
 })();
+// ===== LIVE BLOCK PRODUCTION INTEGRATION =====
+// Add to init-about.js
+
+// Configuration
+const BLOCK_CONFIG = {
+    API_BASE: 'https://swagger.qubetics.com',
+    POLL_INTERVAL: 6000,
+    MAX_BLOCKS: 10
+};
+
+// Known validators map (31 validators)
+const KNOWN_VALIDATORS = {
+    '7qkxKFy/nsvij7ivJs/EPI0q0wc=': 'JBs LFG STRONGHOLD',
+    'r52wsdwNF/m6qShjgAO2CNLt4rM=': 'TicsForge Node',
+    'FU7d8VwUxAIqc9wnl6mWNJ419hQ=': 'HOLD THE TICS',
+    'x/msJHAlTCyXV5vAzaFXfz9nB+Q=': 'QubeGuardian Pro',
+    'T11Nr3UnaRQ+qOsvEWxQZ+s5joA=': 'Quantum Forge',
+    'b/cqBEiKWUrMa8ymk2xyedvgQeU=': 'QubeNode',
+    '3IMHh/aQZFZhy14IZkXcjHHL9pk=': 'Vanguard Prime',
+    'Kni85BSeCriR4nOE9sCEkLxP8xE=': 'Veritics',
+    'sRe3V6ak2Z2MB6MYcid5Bws5ebY=': 'QubeCore',
+    'Yo5Ir2OYk4sen63QVhGCNg+rdm8=': 'ValidusNode',
+    'G46h0l7Qo2G2DuaINf2eDvjQNFU=': 'LunaTICS Lounge',
+    '8XOK89o21RLieoP9WQkK0iDFOe0=': 'QubeticsBest',
+    'cL7AQAvvtsWKelm0MaUJgSaFKfQ=': 'StakeReward',
+    'qM+VX8LNgyMGXqnkpO4T3qjwg7Q=': 'SOUTHERN CROSS',
+    'iWmh+VMeTHkMzFwvkccfE4wov9k=': 'WazNode',
+    'kEI7rR+fw+Tqm6K1eg/hToon2eU=': 'Block Dock',
+    '2cqecn5ghd9ohr1h2sfoHu+wSr4=': 'QubeWars',
+    'eJ/cSzq3W/4bK3K8MfkDvHJRYhw=': 'Moebius Node',
+    'HnaG5K2Qe9CipB1Lr1Gs4IXHGt0=': 'Qubetics Varin',
+    'q4KadZ37UEsTU1UNvmmCqvC7Src=': 'QuantumTrust Validator',
+    'W8RtG5vJYUatEMYNI4mwqgpKfTY=': 'TICS Sly MTGFE',
+    'l10b5BKXpPpPoZJz4XO0lZvqSHM=': 'VeritasNode',
+    'CbbVR8DeSd0l3FIk1n+2u/AWvyc=': 'TICS Transatron',
+    'GCDv9+61vwV2g7QN7Nxgy3tlZ48=': 'Qubelidator',
+    'cvehC37laaLv3u3/EPL/zcrUHm8=': 'TheMissionField',
+    '4s03GNE+gGk0IA6+TMvdpd4OkfA=': 'TicsNodeToSuccess',
+    '2KE/lngn/UQn4wo7FMOnAv4SuKE=': 'AussieTICS',
+    'iNkdrhIgZnwWbLVSM9yzpKrnZBQ=': 'QNode',
+    'dp+ISgGR5wSRLIW4q2jMse8sv94=': 'MarkAL Qubetics Validator',
+    'DEbr0Kr+XisdlGTSO+Xfbyojvn4=': 'NodeForgeAlpha',
+    'FaBH50MPYfrNZ8FNkoK9jEqyLiU=': 'CertusNode'
+};
+
+// State
+const blockState = {
+    blocks: [],
+    lastHeight: null
+};
+
+// Utilities
+function timeAgo(timestamp) {
+    const seconds = Math.floor((Date.now() - new Date(timestamp).getTime()) / 1000);
+    if (seconds < 10) return 'just now';
+    if (seconds < 60) return seconds + 's ago';
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return minutes + 'm ago';
+    return Math.floor(minutes / 60) + 'h ago';
+}
+
+function getValidatorName(address) {
+    return KNOWN_VALIDATORS[address] || address.slice(0, 10) + '...';
+}
+
+function isQubeNode(address) {
+    return address === 'b/cqBEiKWUrMa8ymk2xyedvgQeU=';
+}
+
+// Fetch latest block
+async function fetchLatestBlock() {
+    try {
+        const response = await fetch(`${BLOCK_CONFIG.API_BASE}/cosmos/base/tendermint/v1beta1/blocks/latest`);
+        const data = await response.json();
+        return data.block;
+    } catch (error) {
+        console.error('Block fetch error:', error);
+        return null;
+    }
+}
+
+// Process block
+function processBlock(block) {
+    const height = parseInt(block.header.height);
+    if (blockState.lastHeight && height <= blockState.lastHeight) return;
+    
+    const proposer = block.header.proposer_address;
+    blockState.blocks.unshift({
+        height,
+        time: block.header.time,
+        proposer,
+        proposerName: getValidatorName(proposer),
+        txCount: block.data?.txs?.length || 0,
+        isQubeNode: isQubeNode(proposer)
+    });
+    
+    if (blockState.blocks.length > BLOCK_CONFIG.MAX_BLOCKS) {
+        blockState.blocks.pop();
+    }
+    
+    blockState.lastHeight = height;
+    updateBlockDisplay();
+}
+
+// Update display
+function updateBlockDisplay() {
+    const container = document.getElementById('blockStreamSimple');
+    if (!container) return;
+    
+    const header = container.querySelector('.stream-header-simple');
+    container.innerHTML = '';
+    container.appendChild(header);
+    
+    blockState.blocks.forEach(block => {
+        const div = document.createElement('div');
+        div.className = 'block-item-simple' + (block.isQubeNode ? ' qubenode' : '');
+        
+        const proposerHTML = block.isQubeNode 
+            ? '<span class="block-proposer-simple is-qubenode">QubeNode <span class="qubenode-badge-simple">✨</span></span>'
+            : `<span class="block-proposer-simple">${block.proposerName}</span>`;
+        
+        div.innerHTML = `
+            <div class="block-header-simple">
+                <div class="block-height-simple">#${block.height.toLocaleString()}</div>
+                <div class="block-time-simple">${timeAgo(block.time)}</div>
+            </div>
+            ${proposerHTML}
+            <div class="block-details-simple">
+                <div class="block-detail-simple">
+                    <span>📝</span>
+                    <span>Txs: ${block.txCount}</span>
+                </div>
+            </div>
+        `;
+        
+        container.appendChild(div);
+    });
+}
+
+// Main update loop
+async function updateBlocks() {
+    const block = await fetchLatestBlock();
+    if (block) processBlock(block);
+}
+
+// Initialize
+function initLiveBlocks() {
+    console.log('🚀 Initializing Live Block Production...');
+    updateBlocks();
+    setInterval(updateBlocks, BLOCK_CONFIG.POLL_INTERVAL);
+}
+
+// Export for integration
+if (typeof window !== 'undefined') {
+    window.initLiveBlocks = initLiveBlocks;
+}

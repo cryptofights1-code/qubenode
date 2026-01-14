@@ -530,6 +530,8 @@
             </div>
         </header>
 
+        <!-- ===== SECTION 1: VALIDATOR INFO ===== -->
+        <h2 class="section-title">Validator Info</h2>
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-label">Total Amount</div>
@@ -562,14 +564,84 @@
                 <div class="stat-subvalue">Lowest possible commission<br>From 30% APY → 28.5% your income</div>
             </div>
             <div class="stat-card">
+                <div class="stat-label">Self-Bonded</div>
+                <div class="stat-value"><span id="selfBonded">--</span></div>
+                <div class="stat-subvalue">Validator's own stake</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Network Share</div>
+                <div class="stat-value"><span id="networkShare">--</span></div>
+                <div class="stat-subvalue">% of Total Network Stake</div>
+            </div>
+        </div>
+
+        <!-- ===== SECTION 2: QUBETICS NETWORK ===== -->
+        <h2 class="section-title">Qubetics Network</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Supply</div>
+                <div class="stat-value"><span id="totalSupply">--</span></div>
+                <div class="stat-subvalue">Fixed maximum supply</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Circulation Supply</div>
+                <div class="stat-value"><span id="circulationSupply">--</span></div>
+                <div class="stat-subvalue">Currently in circulation</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Staked</div>
+                <div class="stat-value"><span id="totalStaked">--</span></div>
+                <div class="stat-subvalue">Total network stake</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">% Circulation Staked</div>
+                <div class="stat-value"><span id="circulationStaked">--</span></div>
+                <div class="stat-subvalue">Percentage of supply staked</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Market Cap</div>
+                <div class="stat-value"><span id="marketCap">--</span></div>
+                <div class="stat-subvalue">Total market capitalization</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">APY</div>
+                <div class="stat-value"><span id="apyRate">30%</span></div>
+                <div class="stat-subvalue">Annual percentage yield</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Active Validators</div>
+                <div class="stat-value"><span id="activeValidators">--</span></div>
+                <div class="stat-subvalue">Total active validators</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">TICS Burn</div>
+                <div class="stat-value"><span id="ticsBurn">--</span></div>
+                <div class="stat-subvalue">Total tokens burned</div>
+            </div>
+        </div>
+
+        <!-- ===== SECTION 3: TICS COIN ===== -->
+        <h2 class="section-title">TICS Coin</h2>
+        <div class="stats-grid stats-grid-4">
+            <div class="stat-card">
                 <div class="stat-label">$TICS Price</div>
                 <div class="stat-value"><span id="ticsPrice">--</span></div>
-                <div class="stat-subvalue">Current market price of $TICS coin</div>
+                <div class="stat-subvalue">Current market price</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">24H Change</div>
                 <div class="stat-value" style="color: #22c55e;"><span id="ticsChange">--</span></div>
                 <div class="stat-subvalue">24h price change</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">24H High</div>
+                <div class="stat-value"><span id="ticsHigh24h">--</span></div>
+                <div class="stat-subvalue">Highest price in 24h</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">24H Low</div>
+                <div class="stat-value"><span id="ticsLow24h">--</span></div>
+                <div class="stat-subvalue">Lowest price in 24h</div>
             </div>
         </div>
 

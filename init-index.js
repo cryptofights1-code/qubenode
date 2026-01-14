@@ -317,8 +317,12 @@
         // =====================================================================
         
         window.quickStakeMore = async function(validatorAddress) {
-            // Get validator name
-            const validatorName = validatorNamesCache[validatorAddress] || validatorAddress.substring(0, 20) + '...';
+            // ✅ БЕЗПЕЧНО: Санітизація адреси валідатора
+            const sanitizedAddress = String(validatorAddress).replace(/[<>"']/g, '');
+            
+            // Get validator name and sanitize
+            let validatorName = validatorNamesCache[sanitizedAddress] || sanitizedAddress.substring(0, 20) + '...';
+            const sanitizedName = String(validatorName).replace(/[<>"']/g, '');
             
             // Create and show custom modal
             const modal = document.createElement('div');
@@ -340,13 +344,14 @@
             const overview = cosmosStaking ? cosmosStaking.getStakingOverview() : null;
             const available = overview ? cosmosStaking.formatTics(overview.balance) : '0';
             
+            // ✅ БЕЗПЕЧНО: Використовуємо екрановані значення
             modal.innerHTML = `
                 <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 20px; padding: 30px; max-width: 500px; width: 90%; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);">
                     <h3 style="color: #00D4FF; font-size: 1.5em; margin: 0 0 20px 0; text-align: center;">💎 Delegate TICS</h3>
                     
                     <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
-                        <div style="color: #00FFF0; font-weight: 600; margin-bottom: 8px; font-size: 1.1em;">${validatorName}</div>
-                        <div style="color: #64748b; font-size: 0.85em; font-family: monospace; word-break: break-all;">${validatorAddress}</div>
+                        <div id="modalValidatorName" style="color: #00FFF0; font-weight: 600; margin-bottom: 8px; font-size: 1.1em;"></div>
+                        <div id="modalValidatorAddress" style="color: #64748b; font-size: 0.85em; font-family: monospace; word-break: break-all;"></div>
                     </div>
                     
                     <div style="margin-bottom: 20px;">
@@ -387,6 +392,12 @@
             // Force modal to be on top by setting style after append
             modal.style.zIndex = '2147483647'; // Max z-index value
             
+            // ✅ БЕЗПЕЧНО: Встановлюємо текст через textContent після створення DOM
+            const nameEl = document.getElementById('modalValidatorName');
+            const addressEl = document.getElementById('modalValidatorAddress');
+            if (nameEl) nameEl.textContent = sanitizedName;
+            if (addressEl) addressEl.textContent = sanitizedAddress;
+            
             // Focus input
             setTimeout(() => document.getElementById('modalStakeAmount').focus(), 100);
             
@@ -418,8 +429,8 @@
                     // Convert to minimal units
                     const amountMinimal = cosmosStaking.ticsToMinimal(parseFloat(amount));
                     
-                    // Delegate to specific validator
-                    const result = await stakingService.delegate(validatorAddress, amountMinimal, 'Stake more to ' + validatorName);
+                    // Delegate to specific validator (using sanitized address)
+                    const result = await stakingService.delegate(sanitizedAddress, amountMinimal, 'Stake more to ' + sanitizedName);
                     
                     showDashTxStatus('success', `Успішно! TX: ${result.transactionHash}`);
                     
@@ -437,7 +448,11 @@
         }
         
         window.quickSwitchValidator = async function(fromValidatorAddress) {
-            const fromValidatorName = validatorNamesCache[fromValidatorAddress] || fromValidatorAddress.substring(0, 20) + '...';
+            // ✅ Санітизація адреси
+            const sanitizedFromAddress = String(fromValidatorAddress).replace(/[<>"']/g, '');
+            let fromValidatorName = validatorNamesCache[sanitizedFromAddress] || sanitizedFromAddress.substring(0, 20) + '...';
+            const sanitizedFromName = String(fromValidatorName).replace(/[<>"']/g, '');
+            
             const overview = cosmosStaking ? cosmosStaking.getStakingOverview() : null;
             
             if (!overview || !overview.delegations) {
@@ -447,7 +462,7 @@
             
             // Get current delegation amount
             let currentAmount = '0';
-            const delegation = overview.delegations.find(d => d.delegation.validator_address === fromValidatorAddress);
+            const delegation = overview.delegations.find(d => d.delegation.validator_address === sanitizedFromAddress);
             if (delegation) {
                 currentAmount = cosmosStaking.formatTics(delegation.balance.amount);
             }
@@ -469,166 +484,248 @@
                 justify-content: center;
             `;
             
-            // Build validator options
-            let validatorOptions = '';
-            const qubenodeAddr = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
+            // Create modal content container
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = 'background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 20px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);';
             
-            // Add QubeNode first if not the current validator
-            if (fromValidatorAddress !== qubenodeAddr) {
-                validatorOptions += `
-                    <div class="validator-option" data-address="${qubenodeAddr}" style="background: rgba(0, 212, 255, 0.12); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 12px; padding: 12px; margin-bottom: 8px; cursor: pointer; transition: all 0.3s;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                            <div style="color: #00D4FF; font-weight: 600; font-size: 1em;">QubeNode 🏆</div>
-                            <div style="color: #94a3b8; font-size: 0.85em;">Commission: 5.00%</div>
-                        </div>
-                        <div style="color: #64748b; font-size: 0.75em; font-family: monospace;">${qubenodeAddr.substring(0, 30)}...</div>
-                    </div>
-                `;
+            // Title
+            const title = document.createElement('h3');
+            title.style.cssText = 'color: #00D4FF; font-size: 1.5em; margin: 0 0 20px 0; text-align: center;';
+            title.textContent = '🔄 Switch Validator';
+            
+            // From section
+            const fromSection = document.createElement('div');
+            fromSection.style.cssText = 'background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 20px;';
+            
+            const fromLabel = document.createElement('div');
+            fromLabel.style.cssText = 'color: #00FFF0; font-weight: 600; margin-bottom: 8px;';
+            fromLabel.textContent = 'From:';
+            
+            const fromName = document.createElement('div');
+            fromName.style.cssText = 'color: #00D4FF; font-size: 1.1em; font-weight: 700; margin-bottom: 4px;';
+            fromName.textContent = sanitizedFromName;
+            
+            const fromAmount = document.createElement('div');
+            fromAmount.style.cssText = 'color: #64748b; font-size: 0.85em;';
+            fromAmount.textContent = `Staked: ${parseFloat(currentAmount).toFixed(4)} TICS`;
+            
+            fromSection.appendChild(fromLabel);
+            fromSection.appendChild(fromName);
+            fromSection.appendChild(fromAmount);
+            
+            // Amount input section
+            const amountSection = document.createElement('div');
+            amountSection.style.cssText = 'margin-bottom: 20px;';
+            
+            const amountLabel = document.createElement('label');
+            amountLabel.style.cssText = 'color: #94a3b8; font-size: 0.9em; display: block; margin-bottom: 8px; font-weight: 500;';
+            amountLabel.textContent = 'Amount to redelegate (TICS)';
+            
+            const amountInput = document.createElement('input');
+            amountInput.type = 'number';
+            amountInput.id = 'modalSwitchAmount';
+            amountInput.placeholder = '0.00';
+            amountInput.min = '0.1';
+            amountInput.step = '0.1';
+            amountInput.style.cssText = 'width: 100%; padding: 14px; background: rgba(15, 23, 42, 0.6); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 10px; color: #fff; font-size: 1.2em; font-weight: 600; text-align: center; box-sizing: border-box;';
+            
+            const amountInfo = document.createElement('div');
+            amountInfo.style.cssText = 'color: #64748b; font-size: 0.85em; margin-top: 8px;';
+            amountInfo.innerHTML = `Min: 0.1 TICS &nbsp;•&nbsp; Available: ${parseFloat(currentAmount).toFixed(2)} TICS`;
+            
+            const maxBtn = document.createElement('button');
+            maxBtn.style.cssText = 'width: 100%; margin-top: 10px; padding: 10px; background: rgba(0, 212, 255, 0.15); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; color: #00D4FF; font-weight: 600; cursor: pointer;';
+            maxBtn.textContent = '⚡ Use Maximum';
+            maxBtn.addEventListener('click', () => {
+                amountInput.value = currentAmount;
+            });
+            
+            amountSection.appendChild(amountLabel);
+            amountSection.appendChild(amountInput);
+            amountSection.appendChild(amountInfo);
+            amountSection.appendChild(maxBtn);
+            
+            // To section (validators list)
+            const toSection = document.createElement('div');
+            toSection.style.cssText = 'margin-bottom: 20px;';
+            
+            const toLabel = document.createElement('label');
+            toLabel.style.cssText = 'color: #94a3b8; font-size: 0.9em; display: block; margin-bottom: 12px; font-weight: 500;';
+            toLabel.textContent = 'Select new validator:';
+            
+            const validatorsList = document.createElement('div');
+            validatorsList.style.cssText = 'max-height: 300px; overflow-y: auto; padding-right: 5px;';
+            validatorsList.id = 'validatorsList';
+            
+            toSection.appendChild(toLabel);
+            toSection.appendChild(validatorsList);
+            
+            // Buttons section
+            const buttonsSection = document.createElement('div');
+            buttonsSection.style.cssText = 'display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px;';
+            
+            const cancelBtn = document.createElement('button');
+            cancelBtn.style.cssText = 'padding: 14px; background: rgba(100, 116, 139, 0.2); border: 2px solid rgba(100, 116, 139, 0.4); border-radius: 10px; color: #94a3b8; font-size: 1em; font-weight: 600; cursor: pointer;';
+            cancelBtn.textContent = 'Cancel';
+            cancelBtn.addEventListener('click', () => modal.remove());
+            
+            const confirmBtn = document.createElement('button');
+            confirmBtn.id = 'modalSwitchConfirmBtn';
+            confirmBtn.style.cssText = 'padding: 14px; background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(0, 212, 255, 0.15)); border: 2px solid rgba(0, 212, 255, 0.5); border-radius: 10px; color: #00FFF0; font-size: 1em; font-weight: 600; cursor: pointer;';
+            confirmBtn.textContent = '🔄 Switch Validator';
+            
+            buttonsSection.appendChild(cancelBtn);
+            buttonsSection.appendChild(confirmBtn);
+            
+            // Assemble modal
+            modalContent.appendChild(title);
+            modalContent.appendChild(fromSection);
+            modalContent.appendChild(amountSection);
+            modalContent.appendChild(toSection);
+            modalContent.appendChild(buttonsSection);
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+            modal.style.zIndex = '2147483647';
+            
+            // ✅ БЕЗПЕЧНО: Додаємо валідаторів через DOM API
+            const qubenodeAddr = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
+            let selectedToValidator = null;
+            
+            function createValidatorOption(addr, name, commission, isQubeNode = false) {
+                const sanitizedAddr = String(addr).replace(/[<>"']/g, '');
+                const sanitizedName = String(name).replace(/[<>"']/g, '');
+        
+                const option = document.createElement('div');
+                option.className = 'validator-option';
+                option.dataset.address = sanitizedAddr;
+                option.style.cssText = isQubeNode
+                    ? 'background: rgba(0, 212, 255, 0.12); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 12px; padding: 12px; margin-bottom: 8px; cursor: pointer; transition: all 0.3s;'
+                    : 'background: rgba(100, 116, 139, 0.1); border: 2px solid rgba(100, 116, 139, 0.3); border-radius: 12px; padding: 12px; margin-bottom: 8px; cursor: pointer; transition: all 0.3s;';
+        
+                const topRow = document.createElement('div');
+                topRow.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;';
+        
+                const nameDiv = document.createElement('div');
+                nameDiv.style.cssText = isQubeNode 
+                    ? 'color: #00D4FF; font-weight: 600; font-size: 1em;'
+                    : 'color: #94a3b8; font-weight: 600; font-size: 0.95em;';
+                nameDiv.textContent = sanitizedName;
+        
+                const commissionDiv = document.createElement('div');
+                commissionDiv.style.cssText = 'color: #64748b; font-size: 0.85em;';
+                commissionDiv.textContent = `Commission: ${commission}%`;
+        
+                topRow.appendChild(nameDiv);
+                topRow.appendChild(commissionDiv);
+        
+                const addressDiv = document.createElement('div');
+                addressDiv.style.cssText = 'color: #64748b; font-size: 0.75em; font-family: monospace;';
+                addressDiv.textContent = sanitizedAddr.substring(0, 30) + '...';
+        
+                option.appendChild(topRow);
+                option.appendChild(addressDiv);
+        
+                // Selection logic
+                option.addEventListener('click', function() {
+                    // Remove selection from all
+                    document.querySelectorAll('.validator-option').forEach(el => {
+                        el.style.borderColor = el.classList.contains('qubenode-option') 
+                            ? 'rgba(0, 212, 255, 0.4)'
+                            : 'rgba(100, 116, 139, 0.3)';
+                    });
+                    // Highlight selected
+                    this.style.borderColor = '#00FFF0';
+                    this.style.borderWidth = '3px';
+                    selectedToValidator = sanitizedAddr;
+                });
+        
+                option.addEventListener('mouseover', function() {
+                    if (selectedToValidator !== sanitizedAddr) {
+                        this.style.background = isQubeNode
+                            ? 'rgba(0, 212, 255, 0.18)'
+                            : 'rgba(100, 116, 139, 0.15)';
+                    }
+                });
+        
+                option.addEventListener('mouseout', function() {
+                    if (selectedToValidator !== sanitizedAddr) {
+                        this.style.background = isQubeNode
+                            ? 'rgba(0, 212, 255, 0.12)'
+                            : 'rgba(100, 116, 139, 0.1)';
+                    }
+                });
+        
+                if (isQubeNode) option.classList.add('qubenode-option');
+        
+                return option;
             }
             
-            // Add ALL active validators (not just delegated ones)
+            // Add QubeNode first
+            if (sanitizedFromAddress !== qubenodeAddr) {
+                const qubenodeOption = createValidatorOption(qubenodeAddr, 'QubeNode 🏆', '5.00', true);
+                validatorsList.appendChild(qubenodeOption);
+            }
+            
+            // Add all other validators
             if (allValidators && allValidators.length > 0) {
                 allValidators.forEach(validator => {
                     const addr = validator.operator_address;
-                    if (addr !== fromValidatorAddress && addr !== qubenodeAddr) {
+                    if (addr !== sanitizedFromAddress && addr !== qubenodeAddr) {
                         const name = validatorNamesCache[addr] || validator.description?.moniker || addr.substring(0, 20) + '...';
                         const commission = validator.commission?.commission_rates?.rate 
                             ? (parseFloat(validator.commission.commission_rates.rate) * 100).toFixed(2) 
                             : '5.00';
-                        
-                        validatorOptions += `
-                            <div class="validator-option" data-address="${addr}" style="background: rgba(100, 116, 139, 0.1); border: 2px solid rgba(100, 116, 139, 0.3); border-radius: 12px; padding: 12px; margin-bottom: 8px; cursor: pointer; transition: all 0.3s;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                    <div style="color: #94a3b8; font-weight: 600; font-size: 0.95em;">${name}</div>
-                                    <div style="color: #64748b; font-size: 0.85em;">Commission: ${commission}%</div>
-                                </div>
-                                <div style="color: #64748b; font-size: 0.75em; font-family: monospace;">${addr.substring(0, 30)}...</div>
-                            </div>
-                        `;
+                
+                        const option = createValidatorOption(addr, name, commission, false);
+                        validatorsList.appendChild(option);
                     }
                 });
             }
             
-            modal.innerHTML = `
-                <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 2px solid rgba(0, 212, 255, 0.4); border-radius: 20px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);">
-                    <h3 style="color: #00D4FF; font-size: 1.5em; margin: 0 0 20px 0; text-align: center;">🔄 Switch Validator</h3>
-                    
-                    <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
-                        <div style="color: #00FFF0; font-weight: 600; margin-bottom: 8px;">From:</div>
-                        <div style="color: #00D4FF; font-size: 1.1em; font-weight: 700; margin-bottom: 4px;">${fromValidatorName}</div>
-                        <div style="color: #64748b; font-size: 0.85em;">Staked: ${parseFloat(currentAmount).toFixed(4)} TICS</div>
-                    </div>
-                    
-                    <div style="margin-bottom: 20px;">
-                        <label style="color: #94a3b8; font-size: 0.9em; display: block; margin-bottom: 12px; font-weight: 600;">Select Validator:</label>
-                        <div id="validatorList" style="max-height: 200px; overflow-y: auto;">
-                            ${validatorOptions}
-                        </div>
-                    </div>
-                    
-                    <div style="margin-bottom: 20px; display: none;" id="amountSection">
-                        <label style="color: #94a3b8; font-size: 0.9em; display: block; margin-bottom: 8px; font-weight: 500;">Amount (TICS)</label>
-                        <input 
-                            type="number" 
-                            id="modalRedelegateAmount" 
-                            placeholder="0.00"
-                            min="0.1"
-                            max="${currentAmount}"
-                            step="0.1"
-                            style="width: 100%; padding: 14px; background: rgba(15, 23, 42, 0.6); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 10px; color: #fff; font-size: 1.2em; font-weight: 600; text-align: center; box-sizing: border-box;"
-                        />
-                        <div style="color: #64748b; font-size: 0.85em; margin-top: 8px;">
-                            Maximum: ${parseFloat(currentAmount).toFixed(4)} TICS
-                        </div>
-                    </div>
-                    
-                    <div style="display: flex; gap: 12px;">
-                        <button onclick="document.getElementById('customSwitchModal').remove()" style="flex: 1; padding: 14px; background: rgba(100, 116, 139, 0.2); border: 1px solid rgba(100, 116, 139, 0.4); border-radius: 12px; color: #94a3b8; font-size: 1em; font-weight: 600; cursor: pointer;">
-                            Cancel
-                        </button>
-                        <button id="modalSwitchBtn" disabled style="flex: 1; padding: 14px; background: linear-gradient(135deg, #00D4FF, #00FFF0); border: none; border-radius: 12px; color: #000; font-size: 1em; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(0, 212, 255, 0.4); opacity: 0.5;">
-                            Next
-                        </button>
-                    </div>
-                </div>
-            `;
-            
-            // Ensure modal is LAST element in body (after everything else)
-            document.body.appendChild(modal);
-            // Force modal to be on top by setting style after append
-            modal.style.zIndex = '2147483647'; // Max z-index value
-            
-            // Handle validator selection
-            let selectedValidator = null;
-            const validatorOptionEls = modal.querySelectorAll('.validator-option');
-            
-            validatorOptionEls.forEach(el => {
-                el.addEventListener('click', () => {
-                    // Remove selection from all
-                    validatorOptionEls.forEach(v => {
-                        v.style.borderColor = v.dataset.address === qubenodeAddr ? 'rgba(0, 212, 255, 0.4)' : 'rgba(100, 116, 139, 0.3)';
-                        v.style.background = v.dataset.address === qubenodeAddr ? 'rgba(0, 212, 255, 0.1)' : 'rgba(100, 116, 139, 0.1)';
-                    });
-                    
-                    // Add selection to clicked
-                    el.style.borderColor = 'rgba(0, 212, 255, 0.8)';
-                    el.style.background = 'rgba(0, 212, 255, 0.2)';
-                    selectedValidator = el.dataset.address;
-                    
-                    // Show amount section
-                    document.getElementById('amountSection').style.display = 'block';
-                    document.getElementById('modalSwitchBtn').disabled = false;
-                    document.getElementById('modalSwitchBtn').style.opacity = '1';
-                    document.getElementById('modalRedelegateAmount').focus();
-                });
-            });
+            // Focus input
+            setTimeout(() => amountInput.focus(), 100);
             
             // Close on overlay click
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) modal.remove();
             });
             
-            // Handle Next/Switch button
-            document.getElementById('modalSwitchBtn').onclick = async () => {
-                if (!selectedValidator) {
-                    alert('Please select a validator');
-                    return;
-                }
-                
-                const amount = document.getElementById('modalRedelegateAmount').value;
-                
+            // Confirm button handler
+            confirmBtn.onclick = async () => {
+                const amount = amountInput.value;
+        
                 if (!amount || isNaN(amount) || parseFloat(amount) < 0.1) {
                     alert('Minimum amount: 0.1 TICS');
                     return;
                 }
-                
-                if (parseFloat(amount) > parseFloat(currentAmount)) {
-                    alert('Amount exceeds staked amount');
+        
+                if (!selectedToValidator) {
+                    alert('Please select a validator');
                     return;
                 }
-                
+        
                 modal.remove();
-                
+        
                 try {
-                    showDashTxStatus('processing', 'Processing transaction...');
-                    
+                    showDashTxStatus('processing', 'Processing redelegate transaction...');
+            
                     const stakingService = cosmosStaking.stakingService;
                     if (!stakingService) {
                         throw new Error('Staking service not available');
                     }
-                    
+            
                     const amountMinimal = cosmosStaking.ticsToMinimal(parseFloat(amount));
-                    const toValidatorName = validatorNamesCache[selectedValidator] || 'validator';
-                    
+            
+                    // Redelegate
                     const result = await stakingService.redelegate(
-                        fromValidatorAddress,
-                        selectedValidator,
+                        sanitizedFromAddress,
+                        selectedToValidator,
                         amountMinimal,
-                        'Redelegate from ' + fromValidatorName + ' to ' + toValidatorName
+                        'Switch validator via QubeNode.space'
                     );
-                    
+            
                     showDashTxStatus('success', `Success! TX: ${result.transactionHash}`);
-                    
+            
                     setTimeout(async () => await updateDashboardData(), 3000);
                     let refreshCount = 0;
                     const refreshInterval = setInterval(async () => {
@@ -640,19 +737,29 @@
                     showDashTxStatus('error', 'Error: ' + error.message);
                 }
             };
-        }
-        
+        };
+
+        // ===============================================
+        // FIXED: window.quickUnbond
+        // ===============================================
         window.quickUnbond = async function(validatorAddress) {
-            const validatorName = validatorNamesCache[validatorAddress] || validatorAddress.substring(0, 20) + '...';
+            // ✅ Санітизація
+            const sanitizedAddress = String(validatorAddress).replace(/[<>"']/g, '');
+            let validatorName = validatorNamesCache[sanitizedAddress] || sanitizedAddress.substring(0, 20) + '...';
+            const sanitizedName = String(validatorName).replace(/[<>"']/g, '');
+            
             const overview = cosmosStaking ? cosmosStaking.getStakingOverview() : null;
             
-            // Get current delegation amount
+            if (!overview || !overview.delegations) {
+                alert('No delegations');
+                return;
+            }
+            
+            // Get current delegation
             let currentAmount = '0';
-            if (overview && overview.delegations) {
-                const delegation = overview.delegations.find(d => d.delegation.validator_address === validatorAddress);
-                if (delegation) {
-                    currentAmount = cosmosStaking.formatTics(delegation.balance.amount);
-                }
+            const delegation = overview.delegations.find(d => d.delegation.validator_address === sanitizedAddress);
+            if (delegation) {
+                currentAmount = cosmosStaking.formatTics(delegation.balance.amount);
             }
             
             // Create modal
@@ -672,97 +779,137 @@
                 justify-content: center;
             `;
             
-            modal.innerHTML = `
-                <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 2px solid rgba(239, 68, 68, 0.4); border-radius: 20px; padding: 30px; max-width: 500px; width: 90%; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);">
-                    <h3 style="color: #ef4444; font-size: 1.5em; margin: 0 0 20px 0; text-align: center;">🔓 Unstake TICS</h3>
-                    
-                    <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
-                        <div style="color: #ef4444; font-weight: 600; margin-bottom: 8px; font-size: 1.1em;">${validatorName}</div>
-                        <div style="color: #64748b; font-size: 0.85em;">Staked: ${parseFloat(currentAmount).toFixed(4)} TICS</div>
-                    </div>
-                    
-                    <div style="margin-bottom: 20px;">
-                        <label style="color: #94a3b8; font-size: 0.9em; display: block; margin-bottom: 8px; font-weight: 500;">Amount (TICS)</label>
-                        <input 
-                            type="number" 
-                            id="modalUnbondAmount" 
-                            placeholder="0.00"
-                            min="0.1"
-                            max="${currentAmount}"
-                            step="0.1"
-                            style="width: 100%; padding: 14px; background: rgba(15, 23, 42, 0.6); border: 2px solid rgba(239, 68, 68, 0.3); border-radius: 10px; color: #fff; font-size: 1.2em; font-weight: 600; text-align: center; box-sizing: border-box;"
-                        />
-                        <div style="color: #64748b; font-size: 0.85em; margin-top: 8px;">
-                            Staked: 0.1000 TICS
-                        </div>
-                    </div>
-                    
-                    <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 10px; padding: 16px; margin-bottom: 20px;">
-                        <div style="color: #64748b; font-size: 0.85em; line-height: 1.6;">
-                            ⚠️ You will NOT earn rewards during unbonding<br/>
-                            ⚠️ Tokens will be locked for 14 days<br/>
-                            ⚠️ You can cancel unbonding before completion
-                        </div>
-                    </div>
-                    
-                    <div style="display: flex; gap: 12px;">
-                        <button onclick="document.getElementById('customUnbondModal').remove()" style="flex: 1; padding: 14px; background: rgba(100, 116, 139, 0.2); border: 1px solid rgba(100, 116, 139, 0.4); border-radius: 12px; color: #94a3b8; font-size: 1em; font-weight: 600; cursor: pointer;">
-                            Cancel
-                        </button>
-                        <button id="modalUnbondBtn" style="flex: 1; padding: 14px; background: linear-gradient(135deg, #ef4444, #dc2626); border: none; border-radius: 12px; color: #fff; font-size: 1em; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);">
-                            Unstake
-                        </button>
-                    </div>
-                </div>
-            `;
+            // Create modal content
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = 'background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 2px solid rgba(239, 68, 68, 0.5); border-radius: 20px; padding: 30px; max-width: 500px; width: 90%; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);';
             
-            // Ensure modal is LAST element in body (after everything else)
+            // Title
+            const title = document.createElement('h3');
+            title.style.cssText = 'color: #ef4444; font-size: 1.5em; margin: 0 0 20px 0; text-align: center;';
+            title.textContent = '🔓 Unbond TICS';
+            
+            // Validator info
+            const validatorSection = document.createElement('div');
+            validatorSection.style.cssText = 'background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 20px;';
+            
+            const valNameDiv = document.createElement('div');
+            valNameDiv.style.cssText = 'color: #f87171; font-weight: 600; margin-bottom: 8px; font-size: 1.1em;';
+            valNameDiv.textContent = sanitizedName;
+            
+            const valStakedDiv = document.createElement('div');
+            valStakedDiv.style.cssText = 'color: #64748b; font-size: 0.85em;';
+            valStakedDiv.textContent = `Staked: ${parseFloat(currentAmount).toFixed(4)} TICS`;
+            
+            validatorSection.appendChild(valNameDiv);
+            validatorSection.appendChild(valStakedDiv);
+            
+            // Amount input
+            const amountSection = document.createElement('div');
+            amountSection.style.cssText = 'margin-bottom: 20px;';
+            
+            const amountLabel = document.createElement('label');
+            amountLabel.style.cssText = 'color: #94a3b8; font-size: 0.9em; display: block; margin-bottom: 8px; font-weight: 500;';
+            amountLabel.textContent = 'Amount to unbond (TICS)';
+            
+            const amountInput = document.createElement('input');
+            amountInput.type = 'number';
+            amountInput.id = 'modalUnbondAmount';
+            amountInput.placeholder = '0.00';
+            amountInput.min = '0.1';
+            amountInput.step = '0.1';
+            amountInput.style.cssText = 'width: 100%; padding: 14px; background: rgba(15, 23, 42, 0.6); border: 2px solid rgba(239, 68, 68, 0.4); border-radius: 10px; color: #fff; font-size: 1.2em; font-weight: 600; text-align: center; box-sizing: border-box;';
+            
+            const amountInfo = document.createElement('div');
+            amountInfo.style.cssText = 'color: #64748b; font-size: 0.85em; margin-top: 8px;';
+            amountInfo.textContent = `Min: 0.1 TICS • Available: ${parseFloat(currentAmount).toFixed(2)} TICS`;
+            
+            const maxBtn = document.createElement('button');
+            maxBtn.style.cssText = 'width: 100%; margin-top: 10px; padding: 10px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; color: #ef4444; font-weight: 600; cursor: pointer;';
+            maxBtn.textContent = '⚡ Unbond Maximum';
+            maxBtn.addEventListener('click', () => {
+                amountInput.value = currentAmount;
+            });
+            
+            amountSection.appendChild(amountLabel);
+            amountSection.appendChild(amountInput);
+            amountSection.appendChild(amountInfo);
+            amountSection.appendChild(maxBtn);
+            
+            // Warning box
+            const warningBox = document.createElement('div');
+            warningBox.style.cssText = 'background: rgba(239, 68, 68, 0.1); border-left: 4px solid #ef4444; padding: 15px; border-radius: 8px; margin-bottom: 20px;';
+            
+            const warningText = document.createElement('div');
+            warningText.style.cssText = 'color: #fca5a5; font-size: 0.85em; line-height: 1.5;';
+            warningText.innerHTML = '<strong>⚠️ Important:</strong><br>• Unbonding period: 21 days<br>• No rewards during unbonding<br>• Cannot cancel after confirmation';
+            
+            warningBox.appendChild(warningText);
+            
+            // Buttons
+            const buttonsSection = document.createElement('div');
+            buttonsSection.style.cssText = 'display: grid; grid-template-columns: 1fr 1fr; gap: 12px;';
+            
+            const cancelBtn = document.createElement('button');
+            cancelBtn.style.cssText = 'padding: 14px; background: rgba(100, 116, 139, 0.2); border: 2px solid rgba(100, 116, 139, 0.4); border-radius: 10px; color: #94a3b8; font-size: 1em; font-weight: 600; cursor: pointer;';
+            cancelBtn.textContent = 'Cancel';
+            cancelBtn.addEventListener('click', () => modal.remove());
+            
+            const confirmBtn = document.createElement('button');
+            confirmBtn.id = 'modalUnbondConfirmBtn';
+            confirmBtn.style.cssText = 'padding: 14px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(239, 68, 68, 0.15)); border: 2px solid rgba(239, 68, 68, 0.5); border-radius: 10px; color: #ef4444; font-size: 1em; font-weight: 600; cursor: pointer;';
+            confirmBtn.textContent = '🔓 Confirm Unbond';
+            
+            buttonsSection.appendChild(cancelBtn);
+            buttonsSection.appendChild(confirmBtn);
+            
+            // Assemble modal
+            modalContent.appendChild(title);
+            modalContent.appendChild(validatorSection);
+            modalContent.appendChild(amountSection);
+            modalContent.appendChild(warningBox);
+            modalContent.appendChild(buttonsSection);
+            modal.appendChild(modalContent);
             document.body.appendChild(modal);
-            // Force modal to be on top by setting style after append
-            modal.style.zIndex = '2147483647'; // Max z-index value
+            modal.style.zIndex = '2147483647';
             
             // Focus input
-            setTimeout(() => document.getElementById('modalUnbondAmount').focus(), 100);
+            setTimeout(() => amountInput.focus(), 100);
             
-            // Close on overlay click
+            // Close on overlay
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) modal.remove();
             });
             
-            // Handle Unbond button
-            document.getElementById('modalUnbondBtn').onclick = async () => {
-                const amount = document.getElementById('modalUnbondAmount').value;
-                
+            // Confirm handler
+            confirmBtn.onclick = async () => {
+                const amount = amountInput.value;
+        
                 if (!amount || isNaN(amount) || parseFloat(amount) < 0.1) {
                     alert('Minimum amount: 0.1 TICS');
                     return;
                 }
-                
-                if (parseFloat(amount) > parseFloat(currentAmount)) {
-                    alert('Amount exceeds staked amount');
-                    return;
-                }
-                
+        
                 modal.remove();
-                
+        
                 try {
-                    showDashTxStatus('processing', 'Processing transaction...');
-                    
+                    showDashTxStatus('processing', 'Processing unbond transaction...');
+            
                     const stakingService = cosmosStaking.stakingService;
                     if (!stakingService) {
                         throw new Error('Staking service not available');
                     }
-                    
+            
                     const amountMinimal = cosmosStaking.ticsToMinimal(parseFloat(amount));
-                    
+            
+                    // Unbond
                     const result = await stakingService.undelegate(
-                        validatorAddress,
+                        sanitizedAddress,
                         amountMinimal,
-                        'Unbond from ' + validatorName
+                        'Unbond via QubeNode.space'
                     );
-                    
-                    showDashTxStatus('success', `Success! TX: ${result.transactionHash}. Wait 14 days.`);
-                    
+            
+                    showDashTxStatus('success', `Success! TX: ${result.transactionHash}`);
+            
                     setTimeout(async () => await updateDashboardData(), 3000);
                     let refreshCount = 0;
                     const refreshInterval = setInterval(async () => {
@@ -774,7 +921,8 @@
                     showDashTxStatus('error', 'Error: ' + error.message);
                 }
             };
-        }
+        };
+
         
         window.quickStakeQubeNode = async function() {
             const qubenodeAddress = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
@@ -982,7 +1130,10 @@
             }
             
             section.style.display = 'block';
-            let html = '<div style="display: flex; flex-direction: column; gap: 12px;">';
+            
+            // ✅ БЕЗПЕЧНО: Створюємо контейнер без innerHTML
+            const mainContainer = document.createElement('div');
+            mainContainer.style.cssText = 'display: flex; flex-direction: column; gap: 12px;';
             
             overview.unbondingDelegations.forEach(unbonding => {
                 const valAddress = unbonding.validator_address;
@@ -997,36 +1148,86 @@
                         const daysRemaining = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
                         const hoursRemaining = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                         
-                        html += `
-                            <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px; padding: 15px;">
-                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
-                                    <div style="flex: 1;">
-                                        <div style="color: #ef4444; font-weight: 700; font-size: 1.1em; margin-bottom: 5px;">${parseFloat(amount).toFixed(4)} TICS</div>
-                                        <div style="color: #fff; font-weight: 600; font-size: 0.9em; margin-bottom: 3px;">From: ${validatorName}</div>
-                                        <div style="color: #64748b; font-size: 0.75em;">${valAddress}</div>
-                                    </div>
-                                    <div style="text-align: right;">
-                                        <div style="color: #94a3b8; font-size: 0.75em; margin-bottom: 3px;">Completion</div>
-                                        <div style="color: #fff; font-size: 0.85em; font-weight: 600;">${completionTime.toLocaleString('uk-UA', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
-                                    </div>
-                                </div>
-                                
-                                <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 8px; padding: 10px; margin-bottom: 10px;">
-                                    <div style="color: #94a3b8; font-size: 0.75em; margin-bottom: 3px;">Time Remaining</div>
-                                    <div style="color: #FFA500; font-size: 1em; font-weight: 700;">${daysRemaining}d ${hoursRemaining}h</div>
-                                </div>
-                                
-                                <button onclick="executeCancelUnbonding('${valAddress}', '${amount}', ${entry.creation_height})" style="width: 100%; padding: 10px; background: rgba(239, 68, 68, 0.2); border: 2px solid rgba(239, 68, 68, 0.4); border-radius: 8px; color: #ef4444; font-size: 0.9em; font-weight: 600; cursor: pointer; transition: all 0.3s;">
-                                    Cancel Unbonding
-                                </button>
-                            </div>
-                        `;
+                        // Головна картка
+                        const card = document.createElement('div');
+                        card.style.cssText = 'background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px; padding: 15px;';
+                        
+                        // Верхня секція
+                        const topSection = document.createElement('div');
+                        topSection.style.cssText = 'display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;';
+                        
+                        // Ліва частина
+                        const leftInfo = document.createElement('div');
+                        leftInfo.style.cssText = 'flex: 1;';
+                        
+                        const amountDiv = document.createElement('div');
+                        amountDiv.style.cssText = 'color: #ef4444; font-weight: 700; font-size: 1.1em; margin-bottom: 5px;';
+                        amountDiv.textContent = `${parseFloat(amount).toFixed(4)} TICS`;
+                        
+                        const validatorDiv = document.createElement('div');
+                        validatorDiv.style.cssText = 'color: #fff; font-weight: 600; font-size: 0.9em; margin-bottom: 3px;';
+                        validatorDiv.textContent = `From: ${validatorName}`;
+                        
+                        const addressDiv = document.createElement('div');
+                        addressDiv.style.cssText = 'color: #64748b; font-size: 0.75em;';
+                        addressDiv.textContent = valAddress;
+                        
+                        leftInfo.appendChild(amountDiv);
+                        leftInfo.appendChild(validatorDiv);
+                        leftInfo.appendChild(addressDiv);
+                        
+                        // Права частина
+                        const rightInfo = document.createElement('div');
+                        rightInfo.style.cssText = 'text-align: right;';
+                        
+                        const completionLabel = document.createElement('div');
+                        completionLabel.style.cssText = 'color: #94a3b8; font-size: 0.75em; margin-bottom: 3px;';
+                        completionLabel.textContent = 'Completion';
+                        
+                        const completionDate = document.createElement('div');
+                        completionDate.style.cssText = 'color: #fff; font-size: 0.85em; font-weight: 600;';
+                        completionDate.textContent = completionTime.toLocaleString('uk-UA', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                        
+                        rightInfo.appendChild(completionLabel);
+                        rightInfo.appendChild(completionDate);
+                        
+                        topSection.appendChild(leftInfo);
+                        topSection.appendChild(rightInfo);
+                        
+                        // Час що залишився
+                        const timeBox = document.createElement('div');
+                        timeBox.style.cssText = 'background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 8px; padding: 10px; margin-bottom: 10px;';
+                        
+                        const timeLabel = document.createElement('div');
+                        timeLabel.style.cssText = 'color: #94a3b8; font-size: 0.75em; margin-bottom: 3px;';
+                        timeLabel.textContent = 'Time Remaining';
+                        
+                        const timeValue = document.createElement('div');
+                        timeValue.style.cssText = 'color: #FFA500; font-size: 1em; font-weight: 700;';
+                        timeValue.textContent = `${daysRemaining}d ${hoursRemaining}h`;
+                        
+                        timeBox.appendChild(timeLabel);
+                        timeBox.appendChild(timeValue);
+                        
+                        // Кнопка Cancel
+                        const cancelBtn = document.createElement('button');
+                        cancelBtn.style.cssText = 'width: 100%; padding: 10px; background: rgba(239, 68, 68, 0.2); border: 2px solid rgba(239, 68, 68, 0.4); border-radius: 8px; color: #ef4444; font-size: 0.9em; font-weight: 600; cursor: pointer; transition: all 0.3s;';
+                        cancelBtn.textContent = 'Cancel Unbonding';
+                        cancelBtn.addEventListener('click', () => executeCancelUnbonding(valAddress, amount, entry.creation_height));
+                        
+                        // Збираємо картку
+                        card.appendChild(topSection);
+                        card.appendChild(timeBox);
+                        card.appendChild(cancelBtn);
+                        
+                        mainContainer.appendChild(card);
                     });
                 }
             });
             
-            html += '</div>';
-            container.innerHTML = html;
+            // Очищаємо контейнер та додаємо новий контент
+            container.textContent = '';
+            container.appendChild(mainContainer);
         }
 
         async function executeCancelUnbonding(validatorAddress, amount, creationHeight) {
@@ -1282,7 +1483,9 @@
                 return;
             }
             
-            let html = '<div style="display: flex; flex-direction: column; gap: 12px;">';
+            // ✅ БЕЗПЕЧНО: Створюємо контейнер без innerHTML
+            const mainContainer = document.createElement('div');
+            mainContainer.style.cssText = 'display: flex; flex-direction: column; gap: 12px;';
             
             overview.delegations.forEach(del => {
                 const amount = cosmosStaking.formatTics(del.balance.amount);
@@ -1318,63 +1521,121 @@
                 // Check if QubeNode
                 const isQubeNode = valAddress === 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
                 
-                // Unique colors - ALL validator names are CYAN #00D4FF
+                // Styles
                 const cardBg = isQubeNode 
                     ? 'linear-gradient(135deg, rgba(0, 212, 255, 0.08), rgba(168, 85, 247, 0.05))'
                     : 'linear-gradient(135deg, rgba(100, 116, 139, 0.08), rgba(71, 85, 105, 0.05))';
                 const cardBorder = isQubeNode 
                     ? 'rgba(0, 212, 255, 0.4)'
                     : 'rgba(100, 116, 139, 0.3)';
-                const nameColor = '#00D4FF'; // ALL names cyan (same shade)
-                const badge = isQubeNode ? ' <span style="background: linear-gradient(135deg, #00D4FF, #a855f7); padding: 2px 8px; border-radius: 6px; font-size: 0.65em; color: #000; font-weight: 700; margin-left: 6px;">🏆</span>' : '';
                 
-                html += `
-                    <div style="background: ${cardBg}; border: 1px solid ${cardBorder}; border-radius: 14px; padding: 18px; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);">
-                        <!-- Header row -->
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-                            <div style="flex: 1;">
-                                <div style="color: ${nameColor}; font-weight: 700; font-size: 1.15em; margin-bottom: 5px;">${validatorName}${badge}</div>
-                                <div style="color: #64748b; font-size: 0.8em; font-family: monospace;">${shortAddress}</div>
-                            </div>
-                            <div style="text-align: right;">
-                                <div style="color: #00D4FF; font-size: 1.4em; font-weight: 700; line-height: 1;">${parseFloat(amount).toFixed(4)}</div>
-                                <div style="color: #7dd3fc; font-size: 0.75em; margin-top: 3px; font-weight: 600;">TICS Staked</div>
-                            </div>
-                        </div>
-                        
-                        <!-- Rewards row - light green shade -->
-                        <div style="background: linear-gradient(90deg, rgba(34, 197, 94, 0.12), rgba(34, 197, 94, 0.06)); border-left: 3px solid #22c55e; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
-                            <div style="color: #4ade80; font-size: 0.9em; font-weight: 600;">💰 Pending Rewards</div>
-                            <div style="color: #86efac; font-size: 1.05em; font-weight: 700;">${validatorRewards} TICS</div>
-                        </div>
-                        
-                        <!-- Buttons -->
-                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
-                            <button class="btn-stake-more" data-validator="${valAddress}" style="padding: 11px; background: linear-gradient(135deg, rgba(0, 212, 255, 0.18), rgba(0, 212, 255, 0.08)); border: 1px solid rgba(0, 212, 255, 0.5); border-radius: 9px; color: #00FFF0; font-size: 0.88em; font-weight: 600; cursor: pointer; transition: all 0.2s;">
-                                💎 Stake More
-                            </button>
-                            <button class="btn-switch-validator" data-validator="${valAddress}" style="padding: 11px; background: linear-gradient(135deg, rgba(132, 204, 22, 0.18), rgba(132, 204, 22, 0.08)); border: 1px solid rgba(132, 204, 22, 0.5); border-radius: 9px; color: #a3e635; font-size: 0.88em; font-weight: 600; cursor: pointer; transition: all 0.2s;">
-                                🔄 Switch Validator
-                            </button>
-                            <button class="btn-unbond" data-validator="${valAddress}" style="padding: 11px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.18), rgba(239, 68, 68, 0.08)); border: 1px solid rgba(239, 68, 68, 0.5); border-radius: 9px; color: #f87171; font-size: 0.88em; font-weight: 600; cursor: pointer; transition: all 0.2s;">
-                                🔓 Unbond
-                            </button>
-                        </div>
-                    </div>
-                `;
+                // Головна картка
+                const card = document.createElement('div');
+                card.style.cssText = `background: ${cardBg}; border: 1px solid ${cardBorder}; border-radius: 14px; padding: 18px; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);`;
+                
+                // Header row
+                const header = document.createElement('div');
+                header.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;';
+                
+                // Left section - validator name
+                const leftSection = document.createElement('div');
+                leftSection.style.cssText = 'flex: 1;';
+                
+                const nameDiv = document.createElement('div');
+                nameDiv.style.cssText = 'color: #00D4FF; font-weight: 700; font-size: 1.15em; margin-bottom: 5px;';
+                nameDiv.textContent = validatorName;
+                
+                // Badge для QubeNode
+                if (isQubeNode) {
+                    const badge = document.createElement('span');
+                    badge.style.cssText = 'background: linear-gradient(135deg, #00D4FF, #a855f7); padding: 2px 8px; border-radius: 6px; font-size: 0.65em; color: #000; font-weight: 700; margin-left: 6px;';
+                    badge.textContent = '🏆';
+                    nameDiv.appendChild(badge);
+                }
+                
+                const addressDiv = document.createElement('div');
+                addressDiv.style.cssText = 'color: #64748b; font-size: 0.8em; font-family: monospace;';
+                addressDiv.textContent = shortAddress;
+                
+                leftSection.appendChild(nameDiv);
+                leftSection.appendChild(addressDiv);
+                
+                // Right section - amount
+                const rightSection = document.createElement('div');
+                rightSection.style.cssText = 'text-align: right;';
+                
+                const amountDiv = document.createElement('div');
+                amountDiv.style.cssText = 'color: #00D4FF; font-size: 1.4em; font-weight: 700; line-height: 1;';
+                amountDiv.textContent = parseFloat(amount).toFixed(4);
+                
+                const amountLabel = document.createElement('div');
+                amountLabel.style.cssText = 'color: #7dd3fc; font-size: 0.75em; margin-top: 3px; font-weight: 600;';
+                amountLabel.textContent = 'TICS Staked';
+                
+                rightSection.appendChild(amountDiv);
+                rightSection.appendChild(amountLabel);
+                
+                header.appendChild(leftSection);
+                header.appendChild(rightSection);
+                
+                // Rewards row
+                const rewardsBox = document.createElement('div');
+                rewardsBox.style.cssText = 'background: linear-gradient(90deg, rgba(34, 197, 94, 0.12), rgba(34, 197, 94, 0.06)); border-left: 3px solid #22c55e; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;';
+                
+                const rewardsLabel = document.createElement('div');
+                rewardsLabel.style.cssText = 'color: #4ade80; font-size: 0.9em; font-weight: 600;';
+                rewardsLabel.textContent = '💰 Pending Rewards';
+                
+                const rewardsValue = document.createElement('div');
+                rewardsValue.style.cssText = 'color: #86efac; font-size: 1.05em; font-weight: 700;';
+                rewardsValue.textContent = `${validatorRewards} TICS`;
+                
+                rewardsBox.appendChild(rewardsLabel);
+                rewardsBox.appendChild(rewardsValue);
+                
+                // Buttons container
+                const buttonsContainer = document.createElement('div');
+                buttonsContainer.style.cssText = 'display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;';
+                
+                // Stake More button
+                const stakeMoreBtn = document.createElement('button');
+                stakeMoreBtn.className = 'btn-stake-more';
+                stakeMoreBtn.dataset.validator = valAddress;
+                stakeMoreBtn.style.cssText = 'padding: 11px; background: linear-gradient(135deg, rgba(0, 212, 255, 0.18), rgba(0, 212, 255, 0.08)); border: 1px solid rgba(0, 212, 255, 0.5); border-radius: 9px; color: #00FFF0; font-size: 0.88em; font-weight: 600; cursor: pointer; transition: all 0.2s;';
+                stakeMoreBtn.textContent = '💎 Stake More';
+                stakeMoreBtn.addEventListener('click', () => window.quickStakeMore(valAddress));
+                
+                // Switch Validator button
+                const switchBtn = document.createElement('button');
+                switchBtn.className = 'btn-switch-validator';
+                switchBtn.dataset.validator = valAddress;
+                switchBtn.style.cssText = 'padding: 11px; background: linear-gradient(135deg, rgba(132, 204, 22, 0.18), rgba(132, 204, 22, 0.08)); border: 1px solid rgba(132, 204, 22, 0.5); border-radius: 9px; color: #a3e635; font-size: 0.88em; font-weight: 600; cursor: pointer; transition: all 0.2s;';
+                switchBtn.textContent = '🔄 Switch Validator';
+                switchBtn.addEventListener('click', () => window.quickSwitchValidator(valAddress));
+                
+                // Unbond button
+                const unbondBtn = document.createElement('button');
+                unbondBtn.className = 'btn-unbond';
+                unbondBtn.dataset.validator = valAddress;
+                unbondBtn.style.cssText = 'padding: 11px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.18), rgba(239, 68, 68, 0.08)); border: 1px solid rgba(239, 68, 68, 0.5); border-radius: 9px; color: #f87171; font-size: 0.88em; font-weight: 600; cursor: pointer; transition: all 0.2s;';
+                unbondBtn.textContent = '🔓 Unbond';
+                unbondBtn.addEventListener('click', () => window.quickUnbond(valAddress));
+                
+                buttonsContainer.appendChild(stakeMoreBtn);
+                buttonsContainer.appendChild(switchBtn);
+                buttonsContainer.appendChild(unbondBtn);
+                
+                // Збираємо картку
+                card.appendChild(header);
+                card.appendChild(rewardsBox);
+                card.appendChild(buttonsContainer);
+                
+                mainContainer.appendChild(card);
             });
             
-            html += '</div>';
-            container.innerHTML = html;
-            
-            // Attach event listeners to delegation card buttons using event delegation
-            document.querySelectorAll('.btn-stake-more').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const validator = this.getAttribute('data-validator');
-                    // console.log('🚀 Stake more clicked for:', validator);
-                    window.quickStakeMore(validator);
-                });
-            });
+            // Очищаємо контейнер та додаємо новий контент
+            container.textContent = '';
+            container.appendChild(mainContainer);
             
             document.querySelectorAll('.btn-switch-validator').forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -1476,27 +1737,57 @@
                 if (!overview || !overview.delegations || overview.delegations.length === 0) {
                     container.innerHTML = '<div class="empty-state-message">No delegations</div>';
                 } else {
-                    let html = '';
+                    // ✅ БЕЗПЕЧНО: Створюємо елементи без innerHTML
+                    container.textContent = '';
                     overview.delegations.forEach(del => {
                         const valAddress = del.delegation.validator_address;
                         const valName = validatorNamesCache[valAddress] || valAddress.substring(0, 20) + '...';
                         const amount = cosmosStaking.formatTics(del.balance.amount);
                         const shortAddress = valAddress.substring(0, 20) + '...' + valAddress.substring(valAddress.length - 6);
                         
-                        html += `
-                            <div onclick="selectValidator('${valAddress}', '${valName.replace(/'/g, "\\'")}', 'from')" style="background: rgba(0, 212, 255, 0.05); border: 2px solid rgba(0, 212, 255, 0.2); border-radius: 10px; padding: 15px; cursor: pointer; transition: all 0.3s; display: flex; justify-content: space-between; align-items: center;" onmouseover="this.style.background='rgba(0, 212, 255, 0.15)'" onmouseout="this.style.background='rgba(0, 212, 255, 0.05)'">
-                                <div style="flex: 1;">
-                                    <div style="color: #00FFF0; font-weight: 700; font-size: 1.05em; margin-bottom: 5px;">${valName}</div>
-                                    <div style="color: #64748b; font-size: 0.8em;">${shortAddress}</div>
-                                </div>
-                                <div style="text-align: right;">
-                                    <div style="color: #00D4FF; font-weight: 700; font-size: 1.1em;">${parseFloat(amount).toFixed(2)}</div>
-                                    <div style="color: #86efac; font-size: 0.8em;">TICS</div>
-                                </div>
-                            </div>
-                        `;
+                        const validatorCard = document.createElement('div');
+                        validatorCard.style.cssText = 'background: rgba(0, 212, 255, 0.05); border: 2px solid rgba(0, 212, 255, 0.2); border-radius: 10px; padding: 15px; cursor: pointer; transition: all 0.3s; display: flex; justify-content: space-between; align-items: center;';
+                        validatorCard.addEventListener('mouseover', function() {
+                            this.style.background = 'rgba(0, 212, 255, 0.15)';
+                        });
+                        validatorCard.addEventListener('mouseout', function() {
+                            this.style.background = 'rgba(0, 212, 255, 0.05)';
+                        });
+                        validatorCard.addEventListener('click', () => selectValidator(valAddress, valName, 'from'));
+                        
+                        const leftSection = document.createElement('div');
+                        leftSection.style.cssText = 'flex: 1;';
+                        
+                        const nameDiv = document.createElement('div');
+                        nameDiv.style.cssText = 'color: #00FFF0; font-weight: 700; font-size: 1.05em; margin-bottom: 5px;';
+                        nameDiv.textContent = valName;
+                        
+                        const addressDiv = document.createElement('div');
+                        addressDiv.style.cssText = 'color: #64748b; font-size: 0.8em;';
+                        addressDiv.textContent = shortAddress;
+                        
+                        leftSection.appendChild(nameDiv);
+                        leftSection.appendChild(addressDiv);
+                        
+                        const rightSection = document.createElement('div');
+                        rightSection.style.cssText = 'text-align: right;';
+                        
+                        const amountDiv = document.createElement('div');
+                        amountDiv.style.cssText = 'color: #00D4FF; font-weight: 700; font-size: 1.1em;';
+                        amountDiv.textContent = parseFloat(amount).toFixed(2);
+                        
+                        const labelDiv = document.createElement('div');
+                        labelDiv.style.cssText = 'color: #86efac; font-size: 0.8em;';
+                        labelDiv.textContent = 'TICS';
+                        
+                        rightSection.appendChild(amountDiv);
+                        rightSection.appendChild(labelDiv);
+                        
+                        validatorCard.appendChild(leftSection);
+                        validatorCard.appendChild(rightSection);
+                        
+                        container.appendChild(validatorCard);
                     });
-                    container.innerHTML = html;
                 }
             } else {
                 title.textContent = 'To whom to delegate';
@@ -1504,7 +1795,8 @@
                 if (!allValidators || allValidators.length === 0) {
                     container.innerHTML = '<div class="empty-state-message">Loading validators...</div>';
                 } else {
-                    let html = '';
+                    // ✅ БЕЗПЕЧНО: Створюємо елементи без innerHTML
+                    container.textContent = '';
                     allValidators.forEach(validator => {
                         const valAddress = validator.operator_address;
                         const valName = validatorNamesCache[valAddress] || valAddress.substring(0, 20) + '...';
@@ -1513,20 +1805,49 @@
                             ? (parseFloat(validator.commission.commission_rates.rate) * 100).toFixed(2) 
                             : '0.00';
                         
-                        html += `
-                            <div onclick="selectValidator('${valAddress}', '${valName.replace(/'/g, "\\'")}', 'to')" style="background: rgba(0, 212, 255, 0.05); border: 2px solid rgba(0, 212, 255, 0.2); border-radius: 10px; padding: 15px; cursor: pointer; transition: all 0.3s; display: flex; justify-content: space-between; align-items: center;" onmouseover="this.style.background='rgba(0, 212, 255, 0.15)'" onmouseout="this.style.background='rgba(0, 212, 255, 0.05)'">
-                                <div style="flex: 1;">
-                                    <div style="color: #00FFF0; font-weight: 700; font-size: 1.05em; margin-bottom: 5px;">${valName}</div>
-                                    <div style="color: #64748b; font-size: 0.8em;">${shortAddress}</div>
-                                </div>
-                                <div style="text-align: right;">
-                                    <div style="color: #94a3b8; font-weight: 600; font-size: 0.8em; margin-bottom: 2px;">Commission</div>
-                                    <div style="color: #22c55e; font-weight: 700; font-size: 1.1em;">${commission}%</div>
-                                </div>
-                            </div>
-                        `;
+                        const validatorCard = document.createElement('div');
+                        validatorCard.style.cssText = 'background: rgba(0, 212, 255, 0.05); border: 2px solid rgba(0, 212, 255, 0.2); border-radius: 10px; padding: 15px; cursor: pointer; transition: all 0.3s; display: flex; justify-content: space-between; align-items: center;';
+                        validatorCard.addEventListener('mouseover', function() {
+                            this.style.background = 'rgba(0, 212, 255, 0.15)';
+                        });
+                        validatorCard.addEventListener('mouseout', function() {
+                            this.style.background = 'rgba(0, 212, 255, 0.05)';
+                        });
+                        validatorCard.addEventListener('click', () => selectValidator(valAddress, valName, 'to'));
+                        
+                        const leftSection = document.createElement('div');
+                        leftSection.style.cssText = 'flex: 1;';
+                        
+                        const nameDiv = document.createElement('div');
+                        nameDiv.style.cssText = 'color: #00FFF0; font-weight: 700; font-size: 1.05em; margin-bottom: 5px;';
+                        nameDiv.textContent = valName;
+                        
+                        const addressDiv = document.createElement('div');
+                        addressDiv.style.cssText = 'color: #64748b; font-size: 0.8em;';
+                        addressDiv.textContent = shortAddress;
+                        
+                        leftSection.appendChild(nameDiv);
+                        leftSection.appendChild(addressDiv);
+                        
+                        const rightSection = document.createElement('div');
+                        rightSection.style.cssText = 'text-align: right;';
+                        
+                        const commissionLabel = document.createElement('div');
+                        commissionLabel.style.cssText = 'color: #94a3b8; font-weight: 600; font-size: 0.8em; margin-bottom: 2px;';
+                        commissionLabel.textContent = 'Commission';
+                        
+                        const commissionValue = document.createElement('div');
+                        commissionValue.style.cssText = 'color: #22c55e; font-weight: 700; font-size: 1.1em;';
+                        commissionValue.textContent = `${commission}%`;
+                        
+                        rightSection.appendChild(commissionLabel);
+                        rightSection.appendChild(commissionValue);
+                        
+                        validatorCard.appendChild(leftSection);
+                        validatorCard.appendChild(rightSection);
+                        
+                        container.appendChild(validatorCard);
                     });
-                    container.innerHTML = html;
                 }
             }
             
@@ -1757,33 +2078,70 @@
                 const balance = cosmosStaking.formatTics(overview.balance);
                 const formattedBalance = parseFloat(balance).toFixed(2);
                 
-                // Shorten address: first 8 and last 6 characters
-                const address = walletInfo.address;
+                // ✅ БЕЗПЕЧНО: Санітизація адреси гаманця
+                const address = String(walletInfo.address).replace(/[<>"']/g, '');
                 const shortAddress = address.substring(0, 8) + '...' + address.substring(address.length - 6);
                 
+                // ✅ БЕЗПЕЧНО: Створюємо елементи через DOM API замість innerHTML
                 const headerBtn = document.getElementById('headerWalletBtn');
-                headerBtn.innerHTML = `
-                    <span>💼</span>
-                    <div class="wallet-info">
-                        <div class="wallet-address">${shortAddress}</div>
-                        <div class="wallet-balance">${formattedBalance} TICS</div>
-                    </div>
-                `;
+                headerBtn.innerHTML = ''; // Очищуємо
+                
+                const iconSpan = document.createElement('span');
+                iconSpan.textContent = '💼';
+                
+                const walletInfoDiv = document.createElement('div');
+                walletInfoDiv.className = 'wallet-info';
+                
+                const addressDiv = document.createElement('div');
+                addressDiv.className = 'wallet-address';
+                addressDiv.textContent = shortAddress; // textContent автоматично екранує
+                
+                const balanceDiv = document.createElement('div');
+                balanceDiv.className = 'wallet-balance';
+                balanceDiv.textContent = `${formattedBalance} TICS`;
+                
+                walletInfoDiv.appendChild(addressDiv);
+                walletInfoDiv.appendChild(balanceDiv);
+                headerBtn.appendChild(iconSpan);
+                headerBtn.appendChild(walletInfoDiv);
                 headerBtn.classList.add('wallet-connected');
                 
-                // Update dropdown options for connected state
+                // ✅ БЕЗПЕЧНО: Update dropdown без innerHTML та inline onclick
                 const dropdown = document.getElementById('headerWalletDropdown');
                 if (dropdown) {
-                    dropdown.innerHTML = `
-                        <button class="wallet-option" onclick="window.location.href='dashboard.html?wallet=${walletInfo.walletType}&address=${address}'; event.stopPropagation();">
-                            <span>📊</span>
-                            <span>View Dashboard</span>
-                        </button>
-                        <button class="wallet-option" onclick="disconnectHeaderWallet(); event.stopPropagation();" style="background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: #ef4444;">
-                            <span>🔌</span>
-                            <span>Disconnect Wallet</span>
-                        </button>
-                    `;
+                    dropdown.innerHTML = ''; // Очищуємо
+                    
+                    // Dashboard button
+                    const dashboardBtn = document.createElement('button');
+                    dashboardBtn.className = 'wallet-option';
+                    const dashIcon = document.createElement('span');
+                    dashIcon.textContent = '📊';
+                    const dashText = document.createElement('span');
+                    dashText.textContent = 'View Dashboard';
+                    dashboardBtn.appendChild(dashIcon);
+                    dashboardBtn.appendChild(dashText);
+                    dashboardBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        window.location.href = `dashboard.html?wallet=${encodeURIComponent(walletInfo.walletType)}&address=${encodeURIComponent(address)}`;
+                    });
+                    
+                    // Disconnect button
+                    const disconnectBtn = document.createElement('button');
+                    disconnectBtn.className = 'wallet-option';
+                    disconnectBtn.style.cssText = 'background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: #ef4444;';
+                    const discIcon = document.createElement('span');
+                    discIcon.textContent = '🔌';
+                    const discText = document.createElement('span');
+                    discText.textContent = 'Disconnect Wallet';
+                    disconnectBtn.appendChild(discIcon);
+                    disconnectBtn.appendChild(discText);
+                    disconnectBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        disconnectHeaderWallet();
+                    });
+                    
+                    dropdown.appendChild(dashboardBtn);
+                    dropdown.appendChild(disconnectBtn);
                 }
                 
                 // Update mobile button too

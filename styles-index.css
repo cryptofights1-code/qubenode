@@ -379,11 +379,11 @@ html::before {
 .top-left-menu {
     position: absolute;
     top: 30px;
-    left: 30px;
+    left: 40px;
     right: 420px;
     z-index: 10;
     display: flex;
-    gap: 8px;
+    gap: 10px;
     align-items: center;
     flex-wrap: nowrap;
 }
@@ -391,19 +391,19 @@ html::before {
 .ecosystem-button {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 8px 14px;
-    background: transparent;
-    border: none;
-    border-radius: 0;
+    gap: 8px;
+    padding: 10px 16px;
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 50px;
     color: #ffffff;
-    font-size: 0.85em;
+    font-size: 0.9em;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     outline: none;
     white-space: nowrap;
-    height: 38px;
+    height: 40px;
 }
 
 .ecosystem-button span {
@@ -411,7 +411,10 @@ html::before {
 }
 
 .ecosystem-button:hover {
+    background: rgba(0, 212, 255, 0.2);
+    border: 1px solid rgba(0, 212, 255, 0.5);
     transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
 }
 
 /* Header Wallet Button */
@@ -805,104 +808,19 @@ header {
     margin: 60px 0;
 }
 
-/* Section titles for card groups */
-.section-title {
-    font-size: 1.8em;
-    font-weight: 700;
-    text-align: center;
-    margin: 80px 0 50px 0;
-    background: linear-gradient(135deg, #00FFB3 0%, #00D4FF 50%, #6366F1 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    position: relative;
-    padding-bottom: 25px;
-    animation: titleBreathe 4s ease-in-out infinite;
-}
-
-@keyframes titleBreathe {
-    0%, 100% { 
-        opacity: 0.95;
-        filter: drop-shadow(0 0 0px rgba(0, 212, 255, 0));
-    }
-    50% { 
-        opacity: 1;
-        filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.3));
-    }
-}
-
-.section-title::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 120px;
-    height: 3px;
-    background: linear-gradient(90deg, transparent, #00D4FF, transparent);
-    border-radius: 2px;
-}
-
-/* First section title has less top margin */
-.section-title:first-of-type {
-    margin-top: 40px;
-}
-
-/* Icon styling for stat labels */
-.stat-label {
-    font-size: 0.95em;
-    color: #94a3b8;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-bottom: 18px;
-    font-weight: 700;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* 4-column grid for TICS Coin section */
-.stats-grid-4 {
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-
 .stat-card {
-    background: transparent;
-    backdrop-filter: none;
-    border: none;
-    border-radius: 0;
-    padding: 35px 20px;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(0, 255, 240, 0.05) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    border-radius: 20px;
+    padding: 35px;
+    transition: all 0.4s;
     opacity: 0;
     transform: translateY(30px);
     text-align: center;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    overflow: visible;
-    position: relative;
-    cursor: default;
-}
-
-/* Тонка нижня лінія при ховері */
-.stat-card::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%) scaleX(0);
-    width: 60%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #00D4FF, transparent);
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.stat-card:hover::after {
-    transform: translateX(-50%) scaleX(1);
 }
 
 .stat-card:nth-child(1) { animation: cardFadeIn 0.6s ease-out 2s forwards; }
@@ -922,19 +840,18 @@ header {
 }
 
 .stat-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-8px);
+    border-color: rgba(0, 212, 255, 0.5);
+    box-shadow: 0 20px 60px rgba(0, 212, 255, 0.3);
 }
 
-/* Micro-interaction: Value scales and glows on hover */
-.stat-card:hover .stat-value {
-    transform: scale(1.08);
-    filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.4));
-}
-
-/* Micro-interaction: Label gets subtle glow */
-.stat-card:hover .stat-label {
-    color: #00D4FF;
-    text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+.stat-label {
+    font-size: 0.95em;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+    font-weight: 700;
 }
 
 .stat-value {
@@ -945,11 +862,6 @@ header {
     -webkit-text-fill-color: transparent;
     background-clip: text;
     margin-bottom: 10px;
-    line-height: 1.3;
-    padding: 8px 0;
-    display: block;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    transform-origin: center;
 }
 
 .stat-subvalue {
@@ -957,198 +869,6 @@ header {
     color: #64748b;
     font-weight: 400;
     margin-top: auto;
-}
-
-/* ===== TICS COIN SECTION WITH CHART ===== */
-.tics-coin-section {
-    display: grid;
-    grid-template-columns: 70% 30%;
-    gap: 30px;
-    margin: 40px 0 60px 0;
-    align-items: start;
-}
-
-/* Chart wrapper with gradient glow */
-/* Chart wrapper - NO glassmorphism wrapper, just glow behind */
-.tics-chart-wrapper {
-    position: relative;
-    border-radius: 0;
-    overflow: visible;
-    height: 500px;
-    /* NO background, NO border, NO padding */
-}
-
-/* Full-area gradient overlay to lighten entire chart */
-.tics-chart-wrapper::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 16px;
-    background: linear-gradient(
-        135deg,
-        rgba(0, 212, 255, 0.06) 0%,
-        rgba(0, 255, 240, 0.05) 50%,
-        rgba(138, 43, 226, 0.04) 100%
-    );
-    pointer-events: none;
-    z-index: 1;
-}
-
-/* Gradient glow effect behind chart */
-.tics-chart-wrapper::before {
-    content: '';
-    position: absolute;
-    inset: -60px;
-    background: radial-gradient(
-        ellipse at center,
-        rgba(0, 212, 255, 0.2) 0%,
-        rgba(0, 255, 240, 0.15) 25%,
-        rgba(138, 43, 226, 0.1) 50%,
-        transparent 70%
-    );
-    z-index: -1;
-    filter: blur(50px);
-    pointer-events: none;
-    animation: glowPulse 8s ease-in-out infinite;
-}
-
-@keyframes glowPulse {
-    0%, 100% {
-        opacity: 0.8;
-        transform: scale(1);
-    }
-    50% {
-        opacity: 1;
-        transform: scale(1.05);
-    }
-}
-
-.tics-chart-wrapper iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-    border-radius: 16px;
-    background: transparent;
-    display: block;
-    position: relative;
-    z-index: 0;
-}
-
-/* Compact stats cards on the right */
-.tics-stats-compact {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    height: 100%;
-    justify-content: center;
-}
-
-.tics-stat-card {
-    background: transparent;
-    backdrop-filter: none;
-    border: none;
-    border-radius: 0;
-    padding: 25px 15px;
-    text-align: center;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: visible;
-    cursor: default;
-}
-
-/* Thin bottom line on hover */
-.tics-stat-card::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%) scaleX(0);
-    width: 60%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #00D4FF, transparent);
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.tics-stat-card:hover::after {
-    transform: translateX(-50%) scaleX(1);
-}
-
-.tics-stat-card:hover {
-    transform: translateY(-5px);
-}
-
-/* Value scales and glows on hover */
-.tics-stat-card:hover .tics-stat-value {
-    transform: scale(1.08);
-    filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.4));
-}
-
-/* Label gets subtle glow */
-.tics-stat-card:hover .tics-stat-label {
-    color: #00D4FF;
-    text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
-}
-
-.tics-stat-label {
-    font-size: 0.8em;
-    color: #94a3b8;
-    text-transform: uppercase;
-    letter-spacing: 1.8px;
-    margin-bottom: 10px;
-    font-weight: 600;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.tics-stat-value {
-    font-size: 2.2em;
-    font-weight: 800;
-    background: linear-gradient(135deg, #00FFF0 0%, #00D4FF 50%, #0080FF 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1.3;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    transform-origin: center;
-    display: block;
-}
-
-/* Mobile responsive */
-@media (max-width: 768px) {
-    .tics-coin-section {
-        grid-template-columns: 1fr;
-        gap: 20px;
-        margin: 30px 0 40px 0;
-    }
-    
-    .tics-chart-wrapper {
-        height: 350px;
-        order: 2;
-    }
-    
-    .tics-chart-wrapper::before {
-        inset: -30px;
-        filter: blur(30px);
-    }
-    
-    .tics-stats-compact {
-        order: 1;
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-    }
-    
-    .tics-stat-card {
-        padding: 15px 10px;
-    }
-    
-    .tics-stat-label {
-        font-size: 0.75em;
-        margin-bottom: 8px;
-    }
-    
-    .tics-stat-value {
-        font-size: 1.4em;
-    }
 }
 
 .info-section {
@@ -1474,19 +1194,6 @@ footer {
 }
 
 /* Medium screens - adjust menu layout */
-@media (max-width: 1400px) {
-    .top-left-menu {
-        gap: 6px;
-        left: 20px;
-    }
-    
-    .ecosystem-button {
-        font-size: 0.82em;
-        padding: 8px 12px;
-        gap: 5px;
-    }
-}
-
 @media (max-width: 1100px) {
     .top-left-menu {
         flex-wrap: wrap;
@@ -1494,9 +1201,9 @@ footer {
     }
     
     .ecosystem-button, .header-wallet-button {
-        font-size: 0.85em;
-        padding: 8px 14px;
-        height: 38px;
+        font-size: 0.9em;
+        padding: 10px 16px;
+        height: 40px;
     }
 }
 
@@ -1694,23 +1401,6 @@ footer {
         margin: 20px 0 40px 0;
     }
 
-    /* Section titles on mobile */
-    .section-title {
-        font-size: 1.3em;
-        margin-top: 40px;
-        margin-bottom: 15px;
-        letter-spacing: 1.5px;
-    }
-
-    .section-title:first-of-type {
-        margin-top: 25px;
-    }
-
-    /* TICS Coin grid on mobile - same as main grid */
-    .stats-grid-4 {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
     .stat-card {
         padding: 20px 15px;
         text-align: center;
@@ -1721,11 +1411,9 @@ footer {
     }
 
     .stat-label {
-        font-size: 0.65em;
+        font-size: 0.75em;
         text-align: center;
         margin-bottom: 10px;
-        letter-spacing: 1px;
-        line-height: 1.2;
     }
 
     .stat-value {
@@ -1739,7 +1427,7 @@ footer {
     }
 
     .stat-subvalue {
-        font-size: 0.7em;
+        font-size: 0.75em;
         text-align: center;
         line-height: 1.3;
     }
@@ -2376,20 +2064,6 @@ footer {
     #mobileConnectWallet {
         padding: 10px 16px !important;
         font-size: 0.75em !important;
-    }
-    
-    /* Even smaller stat labels for very small screens */
-    .stat-label {
-        font-size: 0.6em !important;
-        letter-spacing: 0.5px !important;
-    }
-    
-    .stat-value {
-        font-size: 1.5em !important;
-    }
-    
-    .stat-subvalue {
-        font-size: 0.65em !important;
     }
 }
 

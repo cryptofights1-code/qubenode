@@ -948,31 +948,20 @@
                 ctx.stroke();
             }
             
-            // X-axis labels - show MORE dates
+            // X-axis labels - показати дату під КОЖНОЮ крапкою
             ctx.fillStyle = '#94a3b8';
-            ctx.font = '20px Space Grotesk';
+            ctx.font = '18px Space Grotesk';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'top';
             
             if (dates.length > 0) {
-                // Show first date
-                const firstDate = new Date(dates[0]);
-                const firstLabel = `${firstDate.getDate()} ${firstDate.toLocaleString('en', { month: 'short' })}`;
-                ctx.fillText(firstLabel, padding + 50, height - padding + 15);
-                
-                // Show middle date if we have enough points
-                if (dates.length > 2) {
-                    const midIndex = Math.floor(dates.length / 2);
-                    const midDate = new Date(dates[midIndex]);
-                    const midLabel = `${midDate.getDate()} ${midDate.toLocaleString('en', { month: 'short' })}`;
-                    const midX = padding + (chartWidth / (data.length - 1)) * midIndex;
-                    ctx.fillText(midLabel, midX, height - padding + 15);
-                }
-                
-                // Show last date with actual date
-                const lastDate = new Date(dates[dates.length - 1]);
-                const lastLabel = `${lastDate.getDate()} ${lastDate.toLocaleString('en', { month: 'short' })}`;
-                ctx.fillText(lastLabel, width - padding - 50, height - padding + 15);
+                // Показати дату під кожною крапкою
+                dates.forEach((dateStr, index) => {
+                    const date = new Date(dateStr);
+                    const label = `${date.getDate()} ${date.toLocaleString('en', { month: 'short' })}`;
+                    const x = padding + (chartWidth / (data.length - 1)) * index;
+                    ctx.fillText(label, x, height - padding + 15);
+                });
             }
             
             // Draw tooltip if hovering

@@ -1223,63 +1223,118 @@ footer a:hover {
     margin: 60px 0;
 }
 
-.activity-feed {
+/* ===== ACTIVITY FEED TABLE ===== */
+.activity-feed-table {
     background: rgba(255, 255, 255, 0.03);
     backdrop-filter: blur(20px);
     border: 1px solid rgba(0, 212, 255, 0.2);
     border-radius: 20px;
-    padding: 20px;
-    max-height: 720px;
+    padding: 0;
+    overflow: hidden;
+}
+
+.activity-table-header {
+    display: grid;
+    grid-template-columns: 130px 150px 1fr 180px 120px;
+    gap: 30px;
+    padding: 20px 30px;
+    background: rgba(0, 212, 255, 0.1);
+    border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+    font-size: 13px;
+    font-weight: 700;
+    color: #00D4FF;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.activity-table-body {
+    max-height: 650px;
     overflow-y: auto;
 }
 
-.activity-item {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 15px;
-    background: rgba(0, 212, 255, 0.03);
-    border: 1px solid rgba(0, 212, 255, 0.1);
-    border-radius: 12px;
-    margin-bottom: 12px;
+.activity-table-row {
+    display: grid;
+    grid-template-columns: 130px 150px 1fr 180px 120px;
+    gap: 30px;
+    padding: 18px 30px;
+    border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+    transition: background 0.2s;
     animation: slideIn 0.3s ease-out;
 }
 
-.activity-item:last-child {
-    margin-bottom: 0;
+.activity-table-row:hover {
+    background: rgba(0, 212, 255, 0.05);
 }
 
-.activity-item.loading {
+.activity-table-row:last-child {
+    border-bottom: none;
+}
+
+.activity-table-row.loading {
+    display: flex;
     justify-content: center;
     padding: 30px;
+    border: none;
 }
 
-.activity-icon {
-    font-size: 24px;
-    min-width: 40px;
-    text-align: center;
+.table-col {
+    display: flex;
+    align-items: center;
 }
 
-.activity-content {
-    flex: 1;
+.col-height {
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: #00D4FF;
 }
 
-.activity-type {
-    color: #00FFF0;
+.col-action {
     font-size: 14px;
     font-weight: 600;
-    margin-bottom: 4px;
+    color: #00FFF0;
 }
 
-.activity-details {
-    color: #94a3b8;
+.col-delegator {
     font-size: 13px;
+    color: #94a3b8;
+    font-family: 'Courier New', monospace;
 }
 
-.activity-time {
-    color: #64748b;
+.col-amount {
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.col-when {
     font-size: 12px;
-    white-space: nowrap;
+    color: #64748b;
+    justify-content: flex-start;
+}
+
+/* Desktop-only columns */
+.desktop-only {
+    display: block;
+}
+
+/* Custom scrollbar for table body */
+.activity-table-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.activity-table-body::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.activity-table-body::-webkit-scrollbar-thumb {
+    background: rgba(0, 212, 255, 0.3);
+    border-radius: 10px;
+}
+
+.activity-table-body::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 212, 255, 0.5);
 }
 
 /* ===== RESPONSIVE UPDATES ===== */
@@ -1393,26 +1448,121 @@ footer a:hover {
     }
     
     .growth-chart-container {
-        padding: 15px; /* Зменшено з 20px */
-        height: 300px; /* Зменшено з 350px щоб не обрізало текст */
+        padding: 15px;
+        height: 300px;
     }
     
-    .activity-item {
+    /* Activity Feed Table - мобільна версія */
+    .desktop-only {
+        display: none !important;
+    }
+    
+    .activity-table-header {
+        display: grid;
+        grid-template-columns: 100px 1fr 75px;
+        gap: 15px;
+        padding: 12px 15px;
+        background: transparent;
+        border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+        font-size: 11px;
+        font-weight: 700;
+        color: #00D4FF;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 15px;
+    }
+    
+    .activity-feed-table {
+        background: transparent;
+        border: none;
+    }
+    
+    .activity-table-body {
+        max-height: 500px;
+        padding: 0;
+        background: transparent;
+    }
+    
+    /* КАРТКИ - правильний порядок колонок */
+    .activity-table-row {
+        display: grid;
+        grid-template-columns: 100px 1fr 75px;
+        grid-template-areas: "block actions when";
+        gap: 15px;
         padding: 12px;
+        background: rgba(0, 212, 255, 0.03);
+        border: 1px solid rgba(0, 212, 255, 0.1);
+        border-radius: 12px;
+        margin-bottom: 12px;
+        align-items: start;
     }
     
-    .activity-icon {
-        font-size: 20px;
-        min-width: 30px;
+    .activity-table-row:last-child {
+        margin-bottom: 0;
     }
     
-    /* Activity Feed - тільки 5 останніх подій на мобільному */
-    .activity-feed {
-        max-height: 450px;
-        overflow-y: auto;
+    /* BLOCK - перша колонка */
+    .col-height {
+        grid-area: block;
+        font-size: 12px;
+        font-weight: 600;
+        color: #00D4FF;
+        font-family: 'Courier New', monospace;
     }
     
-    .activity-item:nth-child(n+7) {
+    .col-action {
+        display: none;
+    }
+    
+    /* ACTIONS - друга колонка */
+    .col-delegator {
+        grid-area: actions;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+    
+    /* 1. New Delegation */
+    .col-delegator::before {
+        content: attr(data-action);
+        color: #00FFF0;
+        font-size: 13px;
+        font-weight: 600;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        order: 1;
+    }
+    
+    /* 2. +31,949 TICS from */
+    .col-delegator::after {
+        content: attr(data-amount);
+        color: #ffffff;
+        font-size: 12px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        order: 2;
+    }
+    
+    /* 3. Адреса */
+    .col-delegator {
+        font-size: 11px;
+        color: #94a3b8;
+        font-family: 'Courier New', monospace;
+        order: 3;
+    }
+    
+    .col-amount {
+        display: none;
+    }
+    
+    /* WHEN - третя колонка */
+    .col-when {
+        grid-area: when;
+        font-size: 11px;
+        color: #64748b;
+        text-align: right;
+    }
+    
+    /* Тільки 5 останніх подій */
+    .activity-table-row:nth-child(n+7) {
         display: none;
     }
 }

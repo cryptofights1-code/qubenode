@@ -316,7 +316,7 @@
                     </defs>
                 </svg>
             </a>
-            <a href="/cdn-cgi/l/email-protection#7b0d1a17121f1a0f1409550a0e191e15141f1e3b1c161a121755181416" class="fixed-contact-icon">
+            <a href="/cdn-cgi/l/email-protection#87f1e6ebeee3e6f3e8f5a9f6f2e5e2e9e8e3e2c7e0eae6eeeba9e4e8ea" class="fixed-contact-icon">
                 <svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <rect x="11" y="16" width="28" height="18" rx="2" stroke="url(#iconGrad2)" stroke-width="3.5" fill="none"/>
                     <path d="M11 19L25 28L39 19" stroke="url(#iconGrad2)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -427,50 +427,58 @@
             Menu
         </div>
         <div class="mobile-menu-items">
-            <button class="mobile-menu-item" id="mobileMenuEcosystem"" type="button">
+            <button class="mobile-menu-item" id="mobileMenuEcosystem" type="button">
                 <span>🌐</span>
                 <span>Qubetics Ecosystem</span>
             </button>
-            <button class="mobile-menu-item" id="mobileMenuTics"" type="button">
+            <button class="mobile-menu-item" id="mobileMenuTics" type="button">
                 <span>💎</span>
                 <span>TICS Coin</span>
             </button>
-            <button class="mobile-menu-item" id="mobileMenuCalculator"" type="button">
+            <button class="mobile-menu-item" id="mobileMenuCalculator" type="button">
                 <span>🧮</span>
                 <span>Calculator</span>
             </button>
-            <button class="mobile-menu-item" id="mobileMenuDelegate"" type="button">
+            <button class="mobile-menu-item" id="mobileMenuDelegate" type="button">
                 <span>🤝</span>
                 <span>Become a Delegator</span>
             </button>
-            <button class="mobile-menu-item" id="mobileMenuFaq"" type="button">
+            <button class="mobile-menu-item" id="mobileMenuFaq" type="button">
                 <span>❓</span>
                 <span>FAQ</span>
+            </button>
+            <button class="mobile-menu-item" id="mobileMenuStats" type="button">
+                <span>📊</span>
+                <span>Validator Stats</span>
             </button>
         </div>
     </div>
 
     <div class="container">
         <div class="top-left-menu">
-            <button class="ecosystem-button" id="desktopEcosystemBtn">
+            <button class="ecosystem-button" id="desktopEcosystemBtn" type="button">
                 <span>🌐</span>
                 <span>Qubetics Ecosystem</span>
             </button>
-            <button class="ecosystem-button" id="desktopTicsBtn">
+            <button class="ecosystem-button" id="desktopTicsBtn" type="button">
                 <span>💎</span>
                 <span>TICS Coin</span>
             </button>
-            <button class="ecosystem-button" id="desktopCalculatorBtn">
+            <button class="ecosystem-button" id="desktopCalculatorBtn" type="button">
                 <span>🧮</span>
                 <span>Calculator</span>
             </button>
-            <button class="ecosystem-button" id="desktopDelegateBtn">
+            <button class="ecosystem-button" id="desktopDelegateBtn" type="button">
                 <span>🤝</span>
                 <span>Become a Delegator</span>
             </button>
-            <button class="ecosystem-button" id="desktopFaqBtn">
+            <button class="ecosystem-button" id="desktopFaqBtn" type="button">
                 <span>❓</span>
                 <span>FAQ</span>
+            </button>
+            <button class="ecosystem-button" id="desktopStatsBtn" type="button">
+                <span>📊</span>
+                <span>Validator Stats</span>
             </button>
             <div style="position: relative;">
                 <button class="header-wallet-button" id="headerWalletBtn">
@@ -497,7 +505,7 @@
                 </svg>
                 <span>Telegram</span>
             </a>
-            <a href="/cdn-cgi/l/email-protection#740215181d1015001b065a050116111a1b1011341319151d185a171b19" class="contact-link">
+            <a href="/cdn-cgi/l/email-protection#2056414c494441544f520e515542454e4f444560474d41494c0e434f4d" class="contact-link">
                 <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                     <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
                 </svg>
@@ -530,6 +538,8 @@
             </div>
         </header>
 
+        <!-- ===== SECTION 1: VALIDATOR INFO ===== -->
+        <h2 class="section-title">Validator Info</h2>
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-label">Total Amount</div>
@@ -562,14 +572,93 @@
                 <div class="stat-subvalue">Lowest possible commission<br>From 30% APY → 28.5% your income</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">$TICS Price</div>
-                <div class="stat-value"><span id="ticsPrice">--</span></div>
-                <div class="stat-subvalue">Current market price of $TICS coin</div>
+                <div class="stat-label">Self-Bonded</div>
+                <div class="stat-value"><span id="selfBonded">--</span></div>
+                <div class="stat-subvalue">Validator's own stake</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">24H Change</div>
-                <div class="stat-value" style="color: #22c55e;"><span id="ticsChange">--</span></div>
-                <div class="stat-subvalue">24h price change</div>
+                <div class="stat-label">Network Share</div>
+                <div class="stat-value"><span id="networkShare">--</span></div>
+                <div class="stat-subvalue">% of Total Network Stake</div>
+            </div>
+        </div>
+
+        <!-- ===== SECTION 2: QUBETICS NETWORK ===== -->
+        <h2 class="section-title">Qubetics Network</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Supply</div>
+                <div class="stat-value"><span id="totalSupply">--</span></div>
+                <div class="stat-subvalue">Fixed maximum supply</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Circulation Supply</div>
+                <div class="stat-value"><span id="circulationSupply">--</span></div>
+                <div class="stat-subvalue">Currently in circulation</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Staked</div>
+                <div class="stat-value"><span id="totalStaked">--</span></div>
+                <div class="stat-subvalue">Total network stake</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">% Circulation Staked</div>
+                <div class="stat-value"><span id="circulationStaked">--</span></div>
+                <div class="stat-subvalue">Percentage of supply staked</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Market Cap</div>
+                <div class="stat-value"><span id="marketCap">Calculating...</span></div>
+                <div class="stat-subvalue">Total market capitalization</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">APY</div>
+                <div class="stat-value"><span id="apyRate">30%</span></div>
+                <div class="stat-subvalue">Annual percentage yield</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Active Validators</div>
+                <div class="stat-value"><span id="activeValidators">--</span></div>
+                <div class="stat-subvalue">Total active validators</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">TICS Burn</div>
+                <div class="stat-value"><span id="ticsBurn">--</span></div>
+                <div class="stat-subvalue">Total tokens burned</div>
+            </div>
+        </div>
+
+        <!-- ===== SECTION 3: TICS COIN ===== -->
+        <h2 class="section-title">TICS Coin</h2>
+        <div class="tics-coin-section">
+            <!-- Chart on the left -->
+            <div class="tics-chart-wrapper">
+                <iframe 
+                    src="https://www.tradingview.com/widgetembed/?frameElementId=tradingview_chart&symbol=MEXC%3ATICSUSDT&interval=240&hidesidetoolbar=1&symboledit=0&saveimage=0&toolbarbg=rgba(0%2C0%2C0%2C0)&studies=%5B%5D&theme=dark&style=1&timezone=Etc%2FUTC&withdateranges=1&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=www.tradingview.com&utm_medium=widget&utm_campaign=chart&utm_term=MEXC%3ATICSUSDT"
+                    allowtransparency="true"
+                    frameborder="0"
+                    scrolling="no">
+                </iframe>
+            </div>
+            
+            <!-- Compact stats on the right -->
+            <div class="tics-stats-compact">
+                <div class="tics-stat-card">
+                    <div class="tics-stat-label">Price</div>
+                    <div class="tics-stat-value"><span id="ticsPrice">--</span></div>
+                </div>
+                <div class="tics-stat-card">
+                    <div class="tics-stat-label">24h Change</div>
+                    <div class="tics-stat-value"><span id="ticsChange">--</span></div>
+                </div>
+                <div class="tics-stat-card">
+                    <div class="tics-stat-label">24h High</div>
+                    <div class="tics-stat-value"><span id="ticsHigh24h">--</span></div>
+                </div>
+                <div class="tics-stat-card">
+                    <div class="tics-stat-label">24h Low</div>
+                    <div class="tics-stat-value"><span id="ticsLow24h">--</span></div>
+                </div>
             </div>
         </div>
 
@@ -1007,15 +1096,8 @@
     <script src="transaction-builder.js"></script>
     <script src="staking-service.js"></script>
     <script src="cosmos-staking.js"></script>
-    <script src="sync.js"></script>
-
-    
-    <!-- Wallet Connector - Adapted from TicsLab -->
-    <!-- Wallet Connector - Adapted from TicsLab -->
     <script src="validators-registry.js"></script>
-    <script src="wallet-connector.js"></script>
-
-    <!-- Index Page Initialization - Event Listeners for CSP Compliance -->
+    <script src="sync.js"></script>
     <script src="init-index.js"></script>
 </body>
 </html>

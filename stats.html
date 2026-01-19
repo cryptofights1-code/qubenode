@@ -368,10 +368,19 @@
                 Live Activity Feed
             </h2>
             
-            <div class="activity-feed" id="activityFeed">
-                <div class="activity-item loading">
-                    <div class="loading-spinner"></div>
-                    <span>Loading activity...</span>
+            <div class="activity-feed-table">
+                <div class="activity-table-header">
+                    <div class="table-col col-height">Height</div>
+                    <div class="table-col col-action">Action</div>
+                    <div class="table-col col-delegator">Delegator</div>
+                    <div class="table-col col-amount">Amount</div>
+                    <div class="table-col col-when">When</div>
+                </div>
+                <div class="activity-table-body" id="activityFeed">
+                    <div class="activity-table-row loading">
+                        <div class="loading-spinner"></div>
+                        <span>Loading activity...</span>
+                    </div>
                 </div>
             </div>
         </section>
@@ -453,11 +462,7 @@
                         </div>
                         <div class="security-feature">
                             <span class="security-check">✓</span>
-                            <span>Cloudflare DDoS Protection</span>
-                        </div>
-                        <div class="security-feature">
-                            <span class="security-check">✓</span>
-                            <span>SSL/TLS Encryption</span>
+                            <span>SSH Key Authentication</span>
                         </div>
                         <div class="security-feature">
                             <span class="security-check">✓</span>
@@ -465,7 +470,7 @@
                         </div>
                         <div class="security-feature">
                             <span class="security-check">✓</span>
-                            <span>Rate Limiting & API Keys</span>
+                            <span>Automated Status Alerts</span>
                         </div>
                     </div>
                 </div>
@@ -496,10 +501,6 @@
                         <div class="security-feature">
                             <span class="security-check">✓</span>
                             <span>Uptime Tracking</span>
-                        </div>
-                        <div class="security-feature">
-                            <span class="security-check">✓</span>
-                            <span>Performance Optimization</span>
                         </div>
                     </div>
                 </div>

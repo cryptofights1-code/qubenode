@@ -1313,11 +1313,6 @@ footer a:hover {
     justify-content: flex-start;
 }
 
-/* Desktop-only columns */
-.desktop-only {
-    display: block;
-}
-
 /* Custom scrollbar for table body */
 .activity-table-body::-webkit-scrollbar {
     width: 8px;
@@ -1452,116 +1447,91 @@ footer a:hover {
         height: 300px;
     }
     
-    /* Activity Feed Table - мобільна версія */
-    .desktop-only {
-        display: none !important;
-    }
-    
+    /* Activity Feed Table - мобільна версія (як на скріні) */
     .activity-table-header {
-        display: grid;
-        grid-template-columns: 100px 1fr 75px;
-        gap: 15px;
-        padding: 12px 15px;
-        background: transparent;
-        border-bottom: 1px solid rgba(0, 212, 255, 0.3);
-        font-size: 11px;
-        font-weight: 700;
-        color: #00D4FF;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 15px;
+        display: none; /* Приховуємо заголовки */
     }
     
     .activity-feed-table {
         background: transparent;
         border: none;
+        padding: 0;
     }
     
     .activity-table-body {
         max-height: 500px;
         padding: 0;
-        background: transparent;
     }
     
-    /* КАРТКИ - правильний порядок колонок */
     .activity-table-row {
-        display: grid;
-        grid-template-columns: 100px 1fr 75px;
-        grid-template-areas: "block actions when";
+        display: flex;
+        align-items: center;
         gap: 15px;
-        padding: 12px;
+        padding: 15px;
         background: rgba(0, 212, 255, 0.03);
         border: 1px solid rgba(0, 212, 255, 0.1);
         border-radius: 12px;
         margin-bottom: 12px;
-        align-items: start;
+        grid-template-columns: auto; /* Скидаємо grid */
     }
     
     .activity-table-row:last-child {
         margin-bottom: 0;
     }
     
-    /* BLOCK - перша колонка */
     .col-height {
-        grid-area: block;
-        font-size: 12px;
+        font-size: 13px;
         font-weight: 600;
         color: #00D4FF;
+        min-width: 90px;
         font-family: 'Courier New', monospace;
     }
     
     .col-action {
-        display: none;
+        display: none; /* Ховаємо на мобільному */
     }
     
-    /* ACTIONS - друга колонка */
     .col-delegator {
-        grid-area: actions;
+        flex: 1;
         display: flex;
         flex-direction: column;
-        gap: 2px;
-    }
-    
-    /* 1. New Delegation */
-    .col-delegator::before {
-        content: attr(data-action);
-        color: #00FFF0;
-        font-size: 13px;
-        font-weight: 600;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        order: 1;
-    }
-    
-    /* 2. +31,949 TICS from */
-    .col-delegator::after {
-        content: attr(data-amount);
-        color: #ffffff;
-        font-size: 12px;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        order: 2;
-    }
-    
-    /* 3. Адреса */
-    .col-delegator {
+        gap: 4px;
         font-size: 11px;
         color: #94a3b8;
         font-family: 'Courier New', monospace;
-        order: 3;
     }
     
+    /* Action відображається як заголовок перед delegator */
+    .col-delegator::before {
+        content: attr(data-action);
+        color: #00FFF0;
+        font-size: 14px;
+        font-weight: 600;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        margin-bottom: 2px;
+    }
+    
+    /* Amount відображається в тому ж рядку що і action */
     .col-amount {
         display: none;
     }
     
-    /* WHEN - третя колонка */
+    .col-delegator::after {
+        content: attr(data-amount);
+        color: #94a3b8;
+        font-size: 13px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    
     .col-when {
-        grid-area: when;
-        font-size: 11px;
+        font-size: 12px;
         color: #64748b;
+        white-space: nowrap;
+        min-width: 70px;
         text-align: right;
     }
     
-    /* Тільки 5 останніх подій */
+    /* Тільки 5 останніх подій на мобільному */
     .activity-table-row:nth-child(n+7) {
         display: none;
     }

@@ -349,6 +349,10 @@
                     <img src="Cosmostation.png" alt="Cosmostation" style="width: 32px; height: 32px; border-radius: 8px;">
                     <span>Cosmostation</span>
                 </button>
+                <button id="modalMetaMaskBtn" class="wallet-btn">
+                    <img src="metamask-fox.svg" alt="MetaMask" style="width: 32px; height: 32px; border-radius: 8px;">
+                    <span>MetaMask</span>
+                </button>
             </div>
         </div>
     </div>
@@ -608,7 +612,7 @@
             </div>
             <div class="stat-card">
                 <div class="stat-label">Market Cap</div>
-                <div class="stat-value"><span id="marketCap">--</span></div>
+                <div class="stat-value"><span id="marketCap">Calculating...</span></div>
                 <div class="stat-subvalue">Total market capitalization</div>
             </div>
             <div class="stat-card">
@@ -630,26 +634,35 @@
 
         <!-- ===== SECTION 3: TICS COIN ===== -->
         <h2 class="section-title">TICS Coin</h2>
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-label">$TICS Price</div>
-                <div class="stat-value"><span id="ticsPrice">--</span></div>
-                <div class="stat-subvalue">Current market price</div>
+        <div class="tics-coin-section">
+            <!-- Chart on the left -->
+            <div class="tics-chart-wrapper">
+                <iframe 
+                    src="https://www.tradingview.com/widgetembed/?frameElementId=tradingview_chart&symbol=MEXC%3ATICSUSDT&interval=240&hidesidetoolbar=1&symboledit=0&saveimage=0&toolbarbg=rgba(0%2C0%2C0%2C0)&studies=%5B%5D&theme=dark&style=1&timezone=Etc%2FUTC&withdateranges=1&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=www.tradingview.com&utm_medium=widget&utm_campaign=chart&utm_term=MEXC%3ATICSUSDT"
+                    allowtransparency="true"
+                    frameborder="0"
+                    scrolling="no">
+                </iframe>
             </div>
-            <div class="stat-card">
-                <div class="stat-label">24H Change</div>
-                <div class="stat-value" style="color: #22c55e;"><span id="ticsChange">--</span></div>
-                <div class="stat-subvalue">24h price change</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">24H High</div>
-                <div class="stat-value"><span id="ticsHigh24h">--</span></div>
-                <div class="stat-subvalue">Highest price in 24h</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">24H Low</div>
-                <div class="stat-value"><span id="ticsLow24h">--</span></div>
-                <div class="stat-subvalue">Lowest price in 24h</div>
+            
+            <!-- Compact stats on the right -->
+            <div class="tics-stats-compact">
+                <div class="tics-stat-card">
+                    <div class="tics-stat-label">Price</div>
+                    <div class="tics-stat-value"><span id="ticsPrice">--</span></div>
+                </div>
+                <div class="tics-stat-card">
+                    <div class="tics-stat-label">24h Change</div>
+                    <div class="tics-stat-value"><span id="ticsChange">--</span></div>
+                </div>
+                <div class="tics-stat-card">
+                    <div class="tics-stat-label">24h High</div>
+                    <div class="tics-stat-value"><span id="ticsHigh24h">--</span></div>
+                </div>
+                <div class="tics-stat-card">
+                    <div class="tics-stat-label">24h Low</div>
+                    <div class="tics-stat-value"><span id="ticsLow24h">--</span></div>
+                </div>
             </div>
         </div>
 
@@ -1081,6 +1094,14 @@
 
     <!-- FAQ Modal -->
     <!-- Cosmos Staking Module Integration - Load in correct order -->
+    
+    <!-- Ethers.js for MetaMask Support -->
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.7.0/dist/ethers.umd.min.js"></script>
+    
+    <!-- MetaMask Integration -->
+    <script src="metamask-connector.js"></script>
+    
+    <!-- Cosmos Modules -->
     <script src="chain-config.js"></script>
     <script src="wallet-manager.js"></script>
     <script src="chain-client.js"></script>
@@ -1088,6 +1109,8 @@
     <script src="staking-service.js"></script>
     <script src="cosmos-staking.js"></script>
     <script src="validators-registry.js"></script>
+    
+    <!-- Sync and Initialization -->
     <script src="sync.js"></script>
     <script src="init-index.js"></script>
 </body>

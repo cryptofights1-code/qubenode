@@ -348,6 +348,12 @@
             
             // Map to our format
             const allEvents = data.events.map(event => {
+                const icons = {
+                    'delegate': '💰',
+                    'unbond': '📤',
+                    'redelegate': '🔄'
+                };
+                
                 const labels = {
                     'delegate': 'New Delegation',
                     'unbond': 'Unbond',
@@ -356,7 +362,7 @@
                 
                 return {
                     type: event.type,
-                    blockHeight: event.height, // Block height instead of emoji
+                    icon: icons[event.type] || '📍',
                     label: labels[event.type] || event.type,
                     address: event.delegator,
                     amount: event.amount / 1e18, // Convert from wei to TICS
@@ -1084,6 +1090,16 @@
             console.log('🎯 Window focused - refreshing activity feed');
             updateActivityFeed();
         });
+
+        // Update layout on resize/orientation change
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                console.log('📱 Screen resized - updating activity feed layout');
+                updateActivityFeed();
+            }, 250);
+        });
     }
     
     async function updateActivityFeed() {
@@ -1093,29 +1109,70 @@
         const events = await fetchValidatorEvents();
         
         if (events.length === 0) {
-            feedEl.innerHTML = '<div class="activity-table-row"><div class="col-delegator">No recent activity</div></div>';
+            feedEl.innerHTML = '<div class="activity-item"><div class="activity-content">No recent activity</div></div>';
             return;
         }
         
-        feedEl.innerHTML = '';
+        // Check if mobile or desktop
+        const isMobile = window.innerWidth <= 768;
+        let html = '';
+        
+        if (isMobile) {
+            // Mobile headers
+            html += `
+                <div class="activity-feed-mobile-headers">
+                    <div class="header-item">Height</div>
+                    <div class="header-item">Actions</div>
+                    <div class="header-item">When</div>
+                </div>
+            `;
+        } else {
+            // Desktop headers
+            html += `
+                <div class="activity-feed-desktop-headers">
+                    <div class="header-item">Height</div>
+                    <div class="header-item">Actions</div>
+                    <div class="header-item">Delegator</div>
+                    <div class="header-item">Amount</div>
+                    <div class="header-item">When</div>
+                </div>
+            `;
+        }
+        
+        feedEl.innerHTML = html;
         
         events.forEach((event, index) => {
-            const row = document.createElement('div');
-            row.className = 'activity-table-row';
-            row.style.animationDelay = (index * 0.05) + 's';
+            const item = document.createElement('div');
+            item.className = 'activity-item';
+            item.style.animationDelay = (index * 0.05) + 's';
             
             const sign = event.type === 'unbond' ? '-' : '+';
             const amountText = `${sign}${formatNumber(event.amount)} TICS`;
+            const fullHeight = event.height || '---';
             
-            row.innerHTML = `
-                <div class="col-height">#${event.blockHeight.toLocaleString()}</div>
-                <div class="col-action">${event.label}</div>
-                <div class="col-delegator" data-action="${event.label}" data-amount="${amountText} from">${formatAddress(event.address)}</div>
-                <div class="col-amount">${amountText}</div>
-                <div class="col-when">${timeAgo(new Date(event.timestamp).getTime())}</div>
-            `;
+            if (isMobile) {
+                // Mobile layout: Height | Actions | When
+                item.innerHTML = `
+                    <div class="activity-height">#${fullHeight}</div>
+                    <div class="activity-content">
+                        <div class="activity-type">${event.label}</div>
+                        <div class="activity-amount">${amountText} from</div>
+                        <div class="activity-address">${formatAddress(event.address)}</div>
+                    </div>
+                    <div class="activity-time">${timeAgo(new Date(event.timestamp).getTime())}</div>
+                `;
+            } else {
+                // Desktop layout: Height | Actions | Delegator | Amount | When
+                item.innerHTML = `
+                    <div class="activity-height">#${fullHeight}</div>
+                    <div class="activity-type">${event.label}</div>
+                    <div class="activity-delegator">${formatAddress(event.address)}</div>
+                    <div class="activity-amount">${amountText}</div>
+                    <div class="activity-time">${timeAgo(new Date(event.timestamp).getTime())}</div>
+                `;
+            }
             
-            feedEl.appendChild(row);
+            feedEl.appendChild(item);
         });
         
         console.log('✅ Activity Feed updated:', events.length, 'events');

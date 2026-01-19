@@ -1223,113 +1223,121 @@ footer a:hover {
     margin: 60px 0;
 }
 
-/* ===== ACTIVITY FEED TABLE ===== */
-.activity-feed-table {
+.activity-feed {
     background: rgba(255, 255, 255, 0.03);
     backdrop-filter: blur(20px);
     border: 1px solid rgba(0, 212, 255, 0.2);
     border-radius: 20px;
-    padding: 0;
-    overflow: hidden;
-}
-
-.activity-table-header {
-    display: grid;
-    grid-template-columns: 130px 150px 1fr 180px 120px;
-    gap: 30px;
-    padding: 20px 30px;
-    background: rgba(0, 212, 255, 0.1);
-    border-bottom: 1px solid rgba(0, 212, 255, 0.2);
-    font-size: 13px;
-    font-weight: 700;
-    color: #00D4FF;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.activity-table-body {
-    max-height: 650px;
+    padding: 20px;
+    max-height: 720px;
     overflow-y: auto;
 }
 
-.activity-table-row {
+/* Desktop Activity Feed Headers */
+.activity-feed-desktop-headers {
     display: grid;
-    grid-template-columns: 130px 150px 1fr 180px 120px;
-    gap: 30px;
-    padding: 18px 30px;
-    border-bottom: 1px solid rgba(0, 212, 255, 0.1);
-    transition: background 0.2s;
-    animation: slideIn 0.3s ease-out;
+    grid-template-columns: 150px 200px 320px 200px 130px;
+    gap: 25px;
+    padding: 15px 20px;
+    margin-bottom: 10px;
+    font-weight: 700;
+    font-size: 13px;
+    color: #00D4FF;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    border-bottom: 1px solid rgba(0, 212, 255, 0.3);
 }
 
-.activity-table-row:hover {
+.activity-feed-desktop-headers .header-item {
+    text-align: left;
+}
+
+.activity-feed-desktop-headers .header-item:last-child {
+    text-align: right;
+}
+
+/* Desktop Activity Item - Grid Layout */
+.activity-item {
+    display: grid;
+    grid-template-columns: 150px 200px 320px 200px 130px;
+    gap: 25px;
+    align-items: center;
+    padding: 18px 20px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0;
+    margin-bottom: 0;
+    animation: slideIn 0.3s ease-out;
+    transition: all 0.3s;
+}
+
+.activity-item:hover {
     background: rgba(0, 212, 255, 0.05);
 }
 
-.activity-table-row:last-child {
-    border-bottom: none;
+.activity-item:last-child {
+    margin-bottom: 0;
 }
 
-.activity-table-row.loading {
+.activity-item.loading {
     display: flex;
     justify-content: center;
     padding: 30px;
     border: none;
+    grid-template-columns: unset;
 }
 
-.table-col {
-    display: flex;
-    align-items: center;
+/* Desktop columns - no emoji icon */
+.activity-icon {
+    display: none;
 }
 
-.col-height {
-    font-family: 'Courier New', monospace;
-    font-size: 13px;
-    font-weight: 600;
+.activity-height {
+    font-size: 16px;
+    font-weight: 700;
     color: #00D4FF;
+    text-align: left;
 }
 
-.col-action {
-    font-size: 14px;
-    font-weight: 600;
+.activity-type {
     color: #00FFF0;
-}
-
-.col-delegator {
-    font-size: 13px;
-    color: #94a3b8;
-    font-family: 'Courier New', monospace;
-}
-
-.col-amount {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
+    text-align: left;
+}
+
+.activity-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.activity-delegator {
+    color: #94a3b8;
+    font-size: 14px;
+    text-align: left;
+    word-break: break-all;
+}
+
+.activity-amount {
     color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: left;
 }
 
-.col-when {
-    font-size: 12px;
-    color: #64748b;
-    justify-content: flex-start;
+.activity-details {
+    color: #94a3b8;
+    font-size: 13px;
 }
 
-/* Custom scrollbar for table body */
-.activity-table-body::-webkit-scrollbar {
-    width: 8px;
+.activity-time {
+    color: #94a3b8;
+    font-size: 13px;
+    text-align: right;
 }
-
-.activity-table-body::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-}
-
-.activity-table-body::-webkit-scrollbar-thumb {
-    background: rgba(0, 212, 255, 0.3);
-    border-radius: 10px;
-}
-
-.activity-table-body::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 212, 255, 0.5);
+    text-align: right;
 }
 
 /* ===== RESPONSIVE UPDATES ===== */
@@ -1443,96 +1451,26 @@ footer a:hover {
     }
     
     .growth-chart-container {
-        padding: 15px;
-        height: 300px;
+        padding: 15px; /* Зменшено з 20px */
+        height: 300px; /* Зменшено з 350px щоб не обрізало текст */
     }
     
-    /* Activity Feed Table - мобільна версія (як на скріні) */
-    .activity-table-header {
-        display: none; /* Приховуємо заголовки */
+    .activity-item {
+        padding: 12px;
     }
     
-    .activity-feed-table {
-        background: transparent;
-        border: none;
-        padding: 0;
+    .activity-icon {
+        font-size: 20px;
+        min-width: 30px;
     }
     
-    .activity-table-body {
-        max-height: 500px;
-        padding: 0;
+    /* Activity Feed - тільки 5 останніх подій на мобільному */
+    .activity-feed {
+        max-height: 450px;
+        overflow-y: auto;
     }
     
-    .activity-table-row {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        padding: 15px;
-        background: rgba(0, 212, 255, 0.03);
-        border: 1px solid rgba(0, 212, 255, 0.1);
-        border-radius: 12px;
-        margin-bottom: 12px;
-        grid-template-columns: auto; /* Скидаємо grid */
-    }
-    
-    .activity-table-row:last-child {
-        margin-bottom: 0;
-    }
-    
-    .col-height {
-        font-size: 13px;
-        font-weight: 600;
-        color: #00D4FF;
-        min-width: 90px;
-        font-family: 'Courier New', monospace;
-    }
-    
-    .col-action {
-        display: none; /* Ховаємо на мобільному */
-    }
-    
-    .col-delegator {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        font-size: 11px;
-        color: #94a3b8;
-        font-family: 'Courier New', monospace;
-    }
-    
-    /* Action відображається як заголовок перед delegator */
-    .col-delegator::before {
-        content: attr(data-action);
-        color: #00FFF0;
-        font-size: 14px;
-        font-weight: 600;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        margin-bottom: 2px;
-    }
-    
-    /* Amount відображається в тому ж рядку що і action */
-    .col-amount {
-        display: none;
-    }
-    
-    .col-delegator::after {
-        content: attr(data-amount);
-        color: #94a3b8;
-        font-size: 13px;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    }
-    
-    .col-when {
-        font-size: 12px;
-        color: #64748b;
-        white-space: nowrap;
-        min-width: 70px;
-        text-align: right;
-    }
-    
-    /* Тільки 5 останніх подій на мобільному */
-    .activity-table-row:nth-child(n+7) {
+    .activity-item:nth-child(n+7) {
         display: none;
     }
 }
@@ -1784,5 +1722,99 @@ footer a:hover {
     
     .stream-title-simple {
         font-size: 16px;
+    }
+
+    /* Mobile Activity Feed - Clean Headers */
+    .activity-feed-mobile-headers {
+        display: grid;
+        grid-template-columns: 95px 1fr 70px;
+        gap: 12px;
+        padding: 10px 8px;
+        margin-bottom: 12px;
+        font-weight: 700;
+        font-size: 11px;
+        color: #00D4FF;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+    }
+
+    .activity-feed-mobile-headers .header-item {
+        text-align: left;
+    }
+
+    .activity-feed-mobile-headers .header-item:last-child {
+        text-align: right;
+    }
+
+    /* Mobile Activity Item - No Boxes, Clean Grid */
+    .activity-item {
+        display: grid !important;
+        grid-template-columns: 95px 1fr 70px !important;
+        gap: 12px !important;
+        align-items: start !important;
+        padding: 10px 8px !important;
+        background: transparent !important;
+        border: none !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+    .activity-item:hover {
+        background: rgba(0, 212, 255, 0.05) !important;
+    }
+
+    .activity-item .activity-icon {
+        display: none !important;
+    }
+
+    /* Height Column */
+    .activity-item .activity-height {
+        font-size: 13px;
+        font-weight: 700;
+        color: #00D4FF;
+        text-align: left;
+        line-height: 1.3;
+        word-break: break-all;
+    }
+
+    /* Actions Column */
+    .activity-item .activity-content {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        text-align: left;
+    }
+
+    .activity-item .activity-type {
+        font-size: 12px;
+        font-weight: 600;
+        color: #00FFF0;
+        line-height: 1.2;
+    }
+
+    .activity-item .activity-amount {
+        font-size: 11px;
+        font-weight: 600;
+        color: #fff;
+        line-height: 1.2;
+    }
+
+    .activity-item .activity-address {
+        font-size: 10px;
+        color: #94a3b8;
+        line-height: 1.2;
+        word-break: break-all;
+    }
+
+    /* When Column */
+    .activity-item .activity-time {
+        font-size: 10px;
+        color: #94a3b8;
+        text-align: right;
+        margin: 0 !important;
+        line-height: 1.3;
+        white-space: nowrap;
     }
 }

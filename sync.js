@@ -1,24 +1,29 @@
-// === QubeNode Live Sync Script v3.0 ===
+// === QubeNode Live Sync Script v3.0.3 ===
 // Includes: validator info, delegators, inflation, uptime, validator rank, TICS price from MEXC
-// v3.0: Using Cloudflare Worker proxy for MEXC API (GitHub Pages compatible)
+// v3.0.3: Added localStorage caching for circulating supply to prevent API rate limiting
 
-console.log('🚀 QubeNode Sync v3.0.2 LOADED - RPC Worker + Cloudflare Worker proxy');
+console.log('🚀 QubeNode Sync v3.0.3 LOADED - RPC Worker + Cloudflare Worker proxy + localStorage cache');
 
 const API_BASE = "https://swagger.qubetics.com";
 const VALIDATOR = "qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld";
 const TICSSCAN_API = "https://v2.ticsscan.com/api/v2";
-const RPC_WORKER = "https://qubenode-rpc-proxy.yuskivvolodymyr.workers.dev"; // QubeNode RPC через Worker
+const RPC_WORKER = "https://qubenode-rpc-proxy.yuskivvolodymyr.workers.dev";
 
 // Validator addresses
-const VALCONS_ADDR = "qubeticsvalcons1dlmj5pzg3fv54nrtejnfxmrj08d7qs09xjp2eu"; // Signer/Consensus
-const VAL_HEX_ADDR = "0x6FF72A04488A594ACC6BCCA6936C7279DBE041E5"; // Hex address with 0x prefix
-const VAL_ACCOUNT_ADDR = "qubetics1tzk9f84cv2gmk3du3m9dpxcuph70sfj6ltvqjf"; // Account address
+const VALCONS_ADDR = "qubeticsvalcons1dlmj5pzg3fv54nrtejnfxmrj08d7qs09xjp2eu";
+const VAL_HEX_ADDR = "0x6FF72A04488A594ACC6BCCA6936C7279DBE041E5";
+const VAL_ACCOUNT_ADDR = "qubetics1tzk9f84cv2gmk3du3m9dpxcuph70sfj6ltvqjf";
 
 // Global variables
-let currentBlockTime = 5.87; // Default value
+let currentBlockTime = 5.87;
 let blockAnimationInterval = null;
 let lastBlockHeight = null;
-let cachedCirculatingSupply = null; // Cache for circulating supply from pricebot
+let cachedCirculatingSupply = null;
+
+// LocalStorage cache constants
+const CACHE_KEY = 'qubenode_circulating_supply';
+const CACHE_TIMESTAMP_KEY = 'qubenode_circulating_timestamp';
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 // Universal JSON fetch helper
 async function fetchJSON(url, headers = {}) {
@@ -32,10 +37,71 @@ async function fetchJSON(url, headers = {}) {
   }
 }
 
+// Get cached circulating supply from localStorage
+function getCachedCirculatingSupply() {
+  try {
+    const cachedValue = localStorage.getItem(CACHE_KEY);
+    const cachedTimestamp = localStorage.getItem(CACHE_TIMESTAMP_KEY);
+    
+    if (cachedValue && cachedTimestamp) {
+      const now = Date.now();
+      const age = now - parseInt(cachedTimestamp);
+      
+      if (age < CACHE_DURATION) {
+        const value = parseFloat(cachedValue);
+        console.log(`✅ Using cached Circulating Supply: ${value.toLocaleString()} TICS (age: ${Math.floor(age/1000)}s)`);
+        return value;
+      } else {
+        console.log(`⏰ Cache expired (age: ${Math.floor(age/1000)}s), fetching fresh data`);
+      }
+    }
+  } catch (error) {
+    console.warn('⚠️ Error reading cache:', error);
+  }
+  return null;
+}
+
+// Save circulating supply to localStorage
+function saveCachedCirculatingSupply(value) {
+  try {
+    localStorage.setItem(CACHE_KEY, value.toString());
+    localStorage.setItem(CACHE_TIMESTAMP_KEY, Date.now().toString());
+    console.log(`💾 Cached Circulating Supply: ${value.toLocaleString()} TICS`);
+  } catch (error) {
+    console.warn('⚠️ Error saving cache:', error);
+  }
+}
+
+// Fetch circulating supply with cache check
+async function fetchCirculatingSupply(forceRefresh = false) {
+  if (!forceRefresh) {
+    const cached = getCachedCirculatingSupply();
+    if (cached) {
+      cachedCirculatingSupply = cached;
+      return cached;
+    }
+  }
+  
+  try {
+    console.log('🔄 Fetching fresh Circulating Supply from pricebot...');
+    const pricebotData = await fetchJSON('https://pricebot.ticslab.xyz/api/prices');
+    
+    if (pricebotData?.combined?.circulatingSupply) {
+      const circulatingSupply = parseFloat(pricebotData.combined.circulatingSupply);
+      cachedCirculatingSupply = circulatingSupply;
+      saveCachedCirculatingSupply(circulatingSupply);
+      console.log(`✅ Fresh Circulating Supply: ${circulatingSupply.toLocaleString()} TICS`);
+      return circulatingSupply;
+    }
+  } catch (error) {
+    console.error('❌ Pricebot fetch error:', error);
+  }
+  return null;
+}
+
 // Format large numbers with M/K suffix
 function formatLargeNumber(num) {
   if (num >= 1000000) {
-    // Truncate to 3 decimal places WITHOUT rounding
     const millions = num / 1000000;
     const truncated = Math.floor(millions * 1000) / 1000;
     return truncated.toFixed(3) + 'M';
@@ -52,7 +118,6 @@ async function updateBlockHeight() {
   const el = document.getElementById("currentBlock");
   if (!el) return;
   
-  // Try different endpoints to get current block
   const endpoints = [
     'https://swagger.qubetics.com/cosmos/base/tendermint/v1beta1/blocks/latest',
     'https://tendermint.qubetics.com/abci_info'
@@ -62,18 +127,14 @@ async function updateBlockHeight() {
     try {
       const data = await fetchJSON(endpoint);
       
-      // Parse different response formats
       let blockHeight = null;
       
-      // Format 1: RPC abci_info
       if (data?.result?.response?.last_block_height) {
         blockHeight = data.result.response.last_block_height;
       }
-      // Format 2: Cosmos SDK REST
       else if (data?.block?.header?.height) {
         blockHeight = data.block.header.height;
       }
-      // Format 3: RPC status
       else if (data?.result?.sync_info?.latest_block_height) {
         blockHeight = data.result.sync_info.latest_block_height;
       }
@@ -82,7 +143,6 @@ async function updateBlockHeight() {
         const blockNum = parseInt(blockHeight);
         el.textContent = blockNum.toLocaleString('en-US');
         
-        // Якщо блок змінився - додаємо нову паличку
         if (lastBlockHeight !== null && blockNum > lastBlockHeight) {
           addNewBlockVisual();
         }
@@ -110,7 +170,6 @@ async function updateAverageBlockTime() {
     if (data?.average_block_time) {
       let blockTime = parseFloat(data.average_block_time);
       
-      // Якщо значення більше 100, це мілісекунди - конвертуємо в секунди
       if (blockTime > 100) {
         blockTime = blockTime / 1000;
       }
@@ -131,7 +190,6 @@ async function updateValidatorRank() {
   if (!el) return;
 
   try {
-    // Отримуємо всіх активних валідаторів
     const url = `${API_BASE}/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED&pagination.limit=300`;
     const data = await fetchJSON(url);
     
@@ -140,14 +198,12 @@ async function updateValidatorRank() {
       return;
     }
 
-    // Сортуємо валідаторів за кількістю токенів (від більшого до меншого)
     const validators = data.validators.sort((a, b) => {
       const tokensA = parseFloat(a.tokens || "0");
       const tokensB = parseFloat(b.tokens || "0");
       return tokensB - tokensA;
     });
 
-    // Знаходимо позицію QubeNode
     const rank = validators.findIndex(v => v.operator_address === VALIDATOR) + 1;
     const total = validators.length;
 
@@ -173,23 +229,15 @@ async function updateValidatorCore() {
   const v = data.validator;
   const commission = parseFloat(v.commission.commission_rates.rate) * 100;
   
-  // v.tokens приходить у форматі uTICS (micro TICS) як STRING  
-  // Приклад: "10758095273067618117969514" (26 цифр)
-  // Щоб отримати мільйони TICS: відрізаємо останні 21 цифру
-  // 10758 M TICS = 10,758,000,000 TICS = 10,758,000,000,000,000 uTICS
   const tokensString = v.tokens.toString();
   
   let millions;
   
   if (tokensString.length > 21) {
-    // Відрізаємо останні 21 цифру щоб отримати мільйони
-    // "10758095273067618117969514" (26 цифр) -> slice(0, -21) -> "10758"
     millions = parseInt(tokensString.slice(0, -21));
   } else if (tokensString.length === 21) {
-    // Рівно 21 цифра = менше 10 мільйонів
     millions = parseInt(tokensString[0]);
   } else {
-    // Менше 21 цифри = менше 1 мільйона
     millions = 0;
   }
   
@@ -207,8 +255,6 @@ async function updateValidatorCore() {
       powerEl.removeChild(powerEl.firstChild);
     }
     
-    // Форматуємо: 10758 -> "10,758 M"
-    // Показуємо мільйони з комою після тисяч
     const formatted = millions.toLocaleString('en-US') + " M";
     const textNode = document.createTextNode(formatted);
     powerEl.appendChild(textNode);
@@ -300,12 +346,10 @@ async function updateTicsPrice() {
       const high24h = parseFloat(data.highPrice);
       const low24h = parseFloat(data.lowPrice);
       
-      // Price
       if (priceEl) {
         priceEl.textContent = "$" + price.toFixed(5);
       }
       
-      // 24h Change
       if (changeEl) {
         const changeText = (change24h >= 0 ? "+" : "") + change24h.toFixed(2) + "%";
         changeEl.textContent = changeText;
@@ -313,17 +357,14 @@ async function updateTicsPrice() {
         changeValue.style.color = change24h >= 0 ? "#22c55e" : "#ef4444";
       }
       
-      // 24h High
       if (high24hEl && high24h) {
         high24hEl.textContent = "$" + high24h.toFixed(5);
       }
       
-      // 24h Low
       if (low24hEl && low24h) {
         low24hEl.textContent = "$" + low24h.toFixed(5);
       }
       
-      // Update calculator price
       if (typeof updateCalculatorPrice === 'function') {
         updateCalculatorPrice(price);
       }
@@ -363,24 +404,20 @@ function addNewBlockVisual() {
   
   console.log('🟢 NEW BLOCK ANIMATION TRIGGERED!');
   
-  // Отримуємо ширину існуючих паличок
   const existingBlock = wrapper.querySelector('.chain-block');
   const blockWidth = existingBlock ? existingBlock.offsetWidth : 6;
   
-  // Створюємо новий блок з підсвічуванням СПРАВА (в кінець)
   const block = createBlock(true);
-  block.style.width = blockWidth + 'px'; // Встановлюємо ту саму ширину
-  wrapper.appendChild(block); // Додаємо в кінець (справа)
+  block.style.width = blockWidth + 'px';
+  wrapper.appendChild(block);
   
   console.log('✅ Block element created with .fresh class at the END (right side)');
   
-  // Видаляємо підсвічування через 600мс
   setTimeout(() => {
     block.classList.remove('fresh');
     console.log('⚪ .fresh class removed after 600ms');
   }, 600);
   
-  // Видаляємо ПЕРШИЙ блок (зліва) щоб загальна кількість не змінювалася
   const firstBlock = wrapper.firstChild;
   if (firstBlock) {
     firstBlock.style.transition = 'opacity 0.3s ease';
@@ -397,19 +434,15 @@ function addNewBlockVisual() {
 function initBlockAnimation() {
   const container = document.getElementById('blocksChainInline');
   if (!container) {
-    // Контейнера немає на about.html - це нормально
     return;
   }
   
-  // Очищуємо контейнер
   container.innerHTML = '';
   
-  // Створюємо wrapper для анімації
   const wrapper = document.createElement('div');
   wrapper.className = 'blocks-track-inline';
   container.appendChild(wrapper);
   
-  // Розраховуємо скільки паличок поміститься
   const isMobile = window.innerWidth <= 768;
   let containerWidth;
   let blocksCount;
@@ -417,24 +450,18 @@ function initBlockAnimation() {
   let gapWidth;
   
   if (isMobile) {
-    // МОБІЛЬНА ВЕРСІЯ: фіксована кількість паличок для всіх пристроїв
     containerWidth = container.offsetWidth || (window.innerWidth - 40);
-    blocksCount = 30; // Оптимально для видимого вікна
+    blocksCount = 30;
     
-    // Динамічно розраховуємо ширину паличку та gap щоб заповнити контейнер
-    // Формула: containerWidth = (blocksCount × blockWidth) + ((blocksCount - 1) × gap)
-    // Приймаємо gap = 3px (фіксований), розраховуємо blockWidth
     gapWidth = 3;
     const totalGapsWidth = (blocksCount - 1) * gapWidth;
     blockWidth = Math.floor((containerWidth - totalGapsWidth) / blocksCount);
     
-    // Мінімальна ширина паличку - 4px
     if (blockWidth < 4) {
       blockWidth = 4;
       blocksCount = Math.floor(containerWidth / (blockWidth + gapWidth));
     }
   } else {
-    // DESKTOP ВЕРСІЯ: заповнюємо всю ширину
     containerWidth = container.offsetWidth || 800;
     blockWidth = 6;
     gapWidth = 8;
@@ -444,10 +471,9 @@ function initBlockAnimation() {
   
   console.log(`📊 Container: ${containerWidth}px, Block: ${blockWidth}px, Gap: ${gapWidth}px, Count: ${blocksCount} (${isMobile ? 'MOBILE' : 'DESKTOP'}, screenWidth: ${window.innerWidth}px)`);
   
-  // ЗАПОВНЮЄМО паличками
   for (let i = 0; i < blocksCount; i++) {
     const block = createBlock(false);
-    block.style.width = blockWidth + 'px'; // Встановлюємо динамічну ширину
+    block.style.width = blockWidth + 'px';
     wrapper.appendChild(block);
   }
   
@@ -458,33 +484,31 @@ function initBlockAnimation() {
 async function updateAll() {
   console.log("🔄 QubeNode sync running…");
   
-  // Оновлюємо дані паралельно
   await Promise.all([
-    updateBlockHeight(),      // Оновлює номер блоку кожні 3 секунди
-    updateAverageBlockTime(), // Оновлює Avg Block Time кожні 15 секунд
+    updateBlockHeight(),
+    updateAverageBlockTime(),
     updateValidatorCore(),
-    updateValidatorRank(),    // Нова функція - Rank валідатора
+    updateValidatorRank(),
     updateDelegators(),
     updateInflation(),
     updateUptime(),
-    updateTicsPrice(),        // Ціна TICS з MEXC через Cloudflare Worker
-    updateBlocksProposed(),   // Blocks proposed by QubeNode
-    updateSelfBonded(),       // Self-Bonded amount
-    updateNetworkShare(),     // Network Share %
-    updateNetworkStats(),     // Network statistics (Total Staked, Active Validators)
-    updateMarketCap(),        // Market Cap (using circulating supply)
-    updateTotalSupply(),      // Total Supply (1.362B format)
-    updateCirculationSupply(), // Circulation Supply
-    updateTicsBurn(),         // TICS Burn Total
-    updateAPY()               // APY (static)
+    updateTicsPrice(),
+    updateBlocksProposed(),
+    updateSelfBonded(),
+    updateNetworkShare(),
+    updateNetworkStats(),
+    updateMarketCap(),
+    updateTotalSupply(),
+    updateCirculationSupply(),
+    updateTicsBurn(),
+    updateAPY()
   ]);
 }
 
 // Initialize on page load
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('🚀 QubeNode Sync v3.0 initialized - Cloudflare Worker proxy');
+document.addEventListener('DOMContentLoaded', async () => {
+  console.log('🚀 QubeNode Sync v3.0.3 initialized - localStorage cache enabled');
   
-  // БЛОКУЄМО всі ::before та ::after для stat-value
   const style = document.createElement('style');
   style.textContent = `
     #delegatedAmountContainer,
@@ -503,7 +527,6 @@ document.addEventListener('DOMContentLoaded', () => {
   `;
   document.head.appendChild(style);
   
-  // Оновлюємо формат при зміні розміру вікна
   let resizeTimeout;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimeout);
@@ -512,8 +535,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 250);
   });
   
-  // Даємо браузеру час для розрахунку розмірів контейнера
-  // На мобільних потрібно більше часу
+  // Load circulating supply from cache or API BEFORE updateAll
+  const circulatingSupply = await fetchCirculatingSupply();
+  if (circulatingSupply) {
+    updateCirculationSupplyDisplay(circulatingSupply);
+  }
+  
   const isMobile = window.innerWidth <= 768;
   const initDelay = isMobile ? 300 : 100;
   
@@ -522,10 +549,8 @@ document.addEventListener('DOMContentLoaded', () => {
     updateAll();
   }, initDelay);
   
-  // Оновлюємо номер блоку частіше (кожні 3 секунди)
   setInterval(updateBlockHeight, 3000);
   
-  // Оновлюємо всі інші дані рідше (кожні 15 секунд)
   setInterval(() => {
     updateAverageBlockTime();
     updateValidatorCore();
@@ -537,40 +562,22 @@ document.addEventListener('DOMContentLoaded', () => {
     updateBlocksProposed();
     updateSelfBonded();
     updateNetworkShare();
-    updateNetworkStats(); // Використовує кешовані дані з pricebot
-    updateMarketCap(); // Використовує кешовані дані з pricebot
+    updateNetworkStats();
+    updateMarketCap();
     updateTotalSupply();
     updateTicsBurn();
-    // About page updates - MOVED TO init-about.js
   }, 15000);
   
-  // Оновлюємо дані з pricebot API дуже рідко (кожні 5 хвилин) - ОДИН ЗАПИТ тільки для Circulation Supply
+  // Refresh circulating supply every 5 minutes (with cache check)
   setInterval(async () => {
-    try {
-      const pricebotData = await fetchJSON('https://pricebot.ticslab.xyz/api/prices');
-      
-      if (pricebotData?.combined?.circulatingSupply) {
-        const circulatingSupply = parseFloat(pricebotData.combined.circulatingSupply);
-        cachedCirculatingSupply = circulatingSupply;
-        console.log(`✅ Pricebot data fetched: Circulating Supply = ${circulatingSupply.toLocaleString()} TICS`);
-        
-        // Тільки оновлюємо відображення Circulation Supply
-        // Market Cap і % Circulation Staked рахуються в своїх функціях використовуючи кеш
-        updateCirculationSupplyDisplay(circulatingSupply);
-      } else {
-        console.warn('⚠️ Pricebot API returned data without circulatingSupply');
-      }
-    } catch (error) {
-      console.error('❌ Pricebot fetch error:', error);
-      // Використовуємо кешовані дані якщо є
-      if (cachedCirculatingSupply) {
-        updateCirculationSupplyDisplay(cachedCirculatingSupply);
-      }
+    const circulatingSupply = await fetchCirculatingSupply(true);
+    if (circulatingSupply) {
+      updateCirculationSupplyDisplay(circulatingSupply);
+      await updateMarketCap();
     }
-  }, 300000); // 300000ms = 5 хвилин
+  }, 300000);
 });
 
-// Переініціалізація при зміні розміру вікна (для адаптації)
 let resizeTimeout;
 window.addEventListener('resize', () => {
   clearTimeout(resizeTimeout);
@@ -581,10 +588,6 @@ window.addEventListener('resize', () => {
 });
 
 // ===== ABOUT PAGE ADDITIONAL FUNCTIONS =====
-// These functions are only for about.html page
-// They are called conditionally in setInterval above
-
-// Format helpers
 function formatNumber(num) {
     if (num >= 1000000) return (num / 1000000).toFixed(3) + 'M';
     if (num >= 1000) return (num / 1000).toFixed(3) + 'K';
@@ -596,7 +599,6 @@ function formatAddress(address) {
     return address.slice(0, 12) + '...' + address.slice(-6);
 }
 
-// ===== VALIDATOR STATUS =====
 async function updateValidatorStatus() {
   const statusEl = document.getElementById("validatorStatus");
   if (!statusEl) return;
@@ -610,16 +612,16 @@ async function updateValidatorStatus() {
       
       if (validator.status === "BOND_STATUS_BONDED") {
         statusEl.textContent = "ACTIVE";
-        statusEl.style.color = "#22c55e"; // Green
+        statusEl.style.color = "#22c55e";
       } else if (validator.jailed) {
         statusEl.textContent = "JAILED";
-        statusEl.style.color = "#ef4444"; // Red
+        statusEl.style.color = "#ef4444";
       } else if (validator.status === "BOND_STATUS_UNBONDING") {
         statusEl.textContent = "UNBONDING";
-        statusEl.style.color = "#fbbf24"; // Yellow
+        statusEl.style.color = "#fbbf24";
       } else {
         statusEl.textContent = "INACTIVE";
-        statusEl.style.color = "#94a3b8"; // Gray
+        statusEl.style.color = "#94a3b8";
       }
       
       console.log(`✅ Validator status: ${statusEl.textContent}`);
@@ -629,13 +631,11 @@ async function updateValidatorStatus() {
   }
 }
 
-// ===== NETWORK PEERS (з вашого RPC) =====
 async function updateNetworkPeers() {
   const peerCountEl = document.getElementById("peerCount");
   if (!peerCountEl) return;
   
   try {
-    // Отримати net_info з вашого RPC через Worker
     const url = `${RPC_WORKER}/rpc/net_info`;
     const data = await fetchJSON(url);
     
@@ -649,7 +649,6 @@ async function updateNetworkPeers() {
   }
 }
 
-// Latest Delegations (for about.html)
 async function updateLatestDelegations() {
   const tableBody = document.getElementById("delegationsTable");
   if (!tableBody) return;
@@ -672,10 +671,9 @@ async function updateLatestDelegations() {
       const amountMicro = parseInt(item.balance.amount);
       const amountTICS = (amountMicro / 1000000000000000000).toFixed(1);
       
-      // ✅ БЕЗПЕЧНО: Створюємо елементи без innerHTML для запобігання XSS
       const addressDiv = document.createElement('div');
       addressDiv.className = 'delegator-address';
-      addressDiv.textContent = formatAddress(delegator); // textContent безпечний
+      addressDiv.textContent = formatAddress(delegator);
       
       const amountDiv = document.createElement('div');
       amountDiv.className = 'delegation-amount';
@@ -696,18 +694,11 @@ async function updateLatestDelegations() {
   }
 }
 
-// Top 20 Delegators (for about.html)
-// Outstanding Rewards (for about.html) - MOVED TO init-about.js
-
-// Network Share (for about.html) - MOVED TO init-about.js
-
-// ===== BLOCKS PROPOSED =====
 async function updateBlocksProposed() {
   const blocksEl = document.getElementById("blocksProposed");
   if (!blocksEl) return;
   
   try {
-    // Fetch from Cloudflare Worker
     const url = `${RPC_WORKER}/blocks-proposed`;
     const data = await fetchJSON(url);
     
@@ -724,7 +715,6 @@ async function updateBlocksProposed() {
   }
 }
 
-// ===== SELF-BONDED =====
 async function updateSelfBonded() {
   const selfBondedEl = document.getElementById("selfBonded");
   if (!selfBondedEl) return;
@@ -758,7 +748,6 @@ async function updateSelfBonded() {
   }
 }
 
-// ===== NETWORK SHARE =====
 async function updateNetworkShare() {
   const networkShareEl = document.getElementById("networkShare");
   if (!networkShareEl) return;
@@ -788,8 +777,6 @@ async function updateNetworkShare() {
   }
 }
 
-// ===== NETWORK STATISTICS =====
-// ===== NETWORK STATISTICS (uses cached circulating supply) =====
 async function updateNetworkStats() {
   try {
     const poolUrl = `${API_BASE}/cosmos/staking/v1beta1/pool`;
@@ -800,7 +787,6 @@ async function updateNetworkStats() {
       fetchJSON(validatorsUrl)
     ]);
     
-    // Total Staked
     const totalStakedEl = document.getElementById("totalStaked");
     if (totalStakedEl && poolData?.pool) {
       const totalBonded = parseInt(poolData.pool.bonded_tokens) / 1e18;
@@ -808,7 +794,6 @@ async function updateNetworkStats() {
       console.log(`✅ Total Staked: ${totalBonded.toLocaleString()} TICS`);
     }
     
-    // Active Validators
     const activeValidatorsEl = document.getElementById("activeValidators");
     if (activeValidatorsEl && validatorsData?.validators) {
       const count = validatorsData.validators.length;
@@ -816,7 +801,6 @@ async function updateNetworkStats() {
       console.log(`✅ Active Validators: ${count}`);
     }
     
-    // % Circulation Staked (uses cached circulating supply)
     const circulationStakedEl = document.getElementById("circulationStaked");
     if (circulationStakedEl && poolData?.pool && cachedCirculatingSupply) {
       const totalStaked = parseInt(poolData.pool.bonded_tokens) / 1e18;
@@ -834,19 +818,15 @@ async function updateNetworkStats() {
   }
 }
 
-// ===== TOTAL SUPPLY (1.361.867B format with dots) =====
 function updateTotalSupply() {
   const totalSupplyEl = document.getElementById("totalSupply");
   if (!totalSupplyEl) return;
   
-  const TOTAL_SUPPLY = 1361867964; // 1,361,867,964 TICS
+  const TOTAL_SUPPLY = 1361867964;
   
-  // Format: 1.361.867B
-  // 1361867964 / 1000 = 1361867.964 thousands
-  // Split into: 1 billion, 361 million, 867 thousand
-  const billions = Math.floor(TOTAL_SUPPLY / 1000000000); // 1
-  const millions = Math.floor((TOTAL_SUPPLY % 1000000000) / 1000000); // 361
-  const thousands = Math.floor((TOTAL_SUPPLY % 1000000) / 1000); // 867
+  const billions = Math.floor(TOTAL_SUPPLY / 1000000000);
+  const millions = Math.floor((TOTAL_SUPPLY % 1000000000) / 1000000);
+  const thousands = Math.floor((TOTAL_SUPPLY % 1000000) / 1000);
   
   const formatted = `${billions}.${millions.toString().padStart(3, '0')}.${thousands.toString().padStart(3, '0')}B`;
   
@@ -854,7 +834,6 @@ function updateTotalSupply() {
   console.log(`✅ Total Supply: ${formatted} (${TOTAL_SUPPLY.toLocaleString()} TICS)`);
 }
 
-// ===== MARKET CAP (uses cached circulating supply from pricebot) =====
 async function updateMarketCap() {
   const marketCapEl = document.getElementById("marketCap");
   if (!marketCapEl) return;
@@ -877,7 +856,6 @@ async function updateMarketCap() {
   }
 }
 
-// ===== CIRCULATION SUPPLY DISPLAY (uses cached data) =====
 function updateCirculationSupplyDisplay(circulatingSupply) {
   const circulationSupplyEl = document.getElementById("circulationSupply");
   if (!circulationSupplyEl) return;
@@ -888,24 +866,21 @@ function updateCirculationSupplyDisplay(circulatingSupply) {
   }
 }
 
-// ===== CIRCULATION SUPPLY (updated every 5 minutes to avoid rate limits) =====
 async function updateCirculationSupply() {
   const circulationSupplyEl = document.getElementById("circulationSupply");
   if (!circulationSupplyEl) return;
   
   try {
-    // Use pricebot API for accurate circulating supply
     const data = await fetchJSON('https://pricebot.ticslab.xyz/api/prices');
     
     if (data?.combined?.circulatingSupply) {
       const circulatingSupply = parseFloat(data.combined.circulatingSupply);
-      cachedCirculatingSupply = circulatingSupply; // Update cache
+      cachedCirculatingSupply = circulatingSupply;
       circulationSupplyEl.textContent = formatLargeNumber(circulatingSupply);
       console.log(`✅ Circulation Supply: ${circulatingSupply.toLocaleString()} TICS (from pricebot)`);
       return circulatingSupply;
     }
     
-    // Use cached value if API failed but we have cached data
     if (cachedCirculatingSupply) {
       circulationSupplyEl.textContent = formatLargeNumber(cachedCirculatingSupply);
       console.log(`✅ Circulation Supply: ${cachedCirculatingSupply.toLocaleString()} TICS (from cache)`);
@@ -918,7 +893,6 @@ async function updateCirculationSupply() {
   } catch (error) {
     console.error('❌ Circulation Supply error:', error);
     
-    // Use cached value on error
     if (cachedCirculatingSupply) {
       circulationSupplyEl.textContent = formatLargeNumber(cachedCirculatingSupply);
       console.log(`✅ Circulation Supply: ${cachedCirculatingSupply.toLocaleString()} TICS (from cache after error)`);
@@ -929,7 +903,6 @@ async function updateCirculationSupply() {
   }
 }
 
-// ===== TICS BURN =====
 async function updateTicsBurn() {
   const ticsBurnEl = document.getElementById("ticsBurn");
   if (!ticsBurnEl) return;
@@ -951,7 +924,6 @@ async function updateTicsBurn() {
   }
 }
 
-// ===== APY (static) =====
 function updateAPY() {
   const apyEl = document.getElementById("apyRate");
   if (!apyEl) return;

@@ -1,8 +1,9 @@
-// === QubeNode Live Sync Script v3.0.3 ===
+// === QubeNode Live Sync Script v3.0.4 ===
 // Includes: validator info, delegators, inflation, uptime, validator rank, TICS price from MEXC
 // v3.0.3: Added localStorage caching for circulating supply to prevent API rate limiting
+// v3.0.4: Fixed TICS 24H change display - multiply by 100 and apply color to correct element
 
-console.log('🚀 QubeNode Sync v3.0.3 LOADED - RPC Worker + Cloudflare Worker proxy + localStorage cache');
+console.log('🚀 QubeNode Sync v3.0.4 LOADED - RPC Worker + Cloudflare Worker proxy + localStorage cache');
 
 const API_BASE = "https://swagger.qubetics.com";
 const VALIDATOR = "qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld";
@@ -342,7 +343,7 @@ async function updateTicsPrice() {
     
     if (data && data.lastPrice) {
       const price = parseFloat(data.lastPrice);
-      const change24h = parseFloat(data.priceChangePercent);
+      const change24h = parseFloat(data.priceChangePercent) * 100;  // ✅ FIX: Multiply by 100 (API returns decimal format)
       const high24h = parseFloat(data.highPrice);
       const low24h = parseFloat(data.lowPrice);
       
@@ -353,8 +354,8 @@ async function updateTicsPrice() {
       if (changeEl) {
         const changeText = (change24h >= 0 ? "+" : "") + change24h.toFixed(2) + "%";
         changeEl.textContent = changeText;
-        const changeValue = changeEl.parentElement;
-        changeValue.style.color = change24h >= 0 ? "#22c55e" : "#ef4444";
+        // ✅ FIX: Apply color directly to changeEl, not parentElement
+        changeEl.style.color = change24h >= 0 ? "#22c55e" : "#ef4444";
       }
       
       if (high24hEl && high24h) {

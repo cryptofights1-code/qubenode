@@ -536,8 +536,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     }, 250);
   });
   
-  // Load circulating supply from cache or API BEFORE updateAll
-  const circulatingSupply = await fetchCirculatingSupply();
+  // Load circulating supply from API (force fresh on page load) BEFORE updateAll
+  const circulatingSupply = await fetchCirculatingSupply(true); // true = force refresh, skip cache
   if (circulatingSupply) {
     updateCirculationSupplyDisplay(circulatingSupply);
   }

@@ -349,10 +349,6 @@
                     <img src="Cosmostation.png" alt="Cosmostation" style="width: 32px; height: 32px; border-radius: 8px;">
                     <span>Cosmostation</span>
                 </button>
-                <button id="modalMetaMaskBtn" class="wallet-btn">
-                    <img src="metamask-fox.svg" alt="MetaMask" style="width: 32px; height: 32px; border-radius: 8px;">
-                    <span>MetaMask</span>
-                </button>
             </div>
         </div>
     </div>
@@ -1094,23 +1090,13 @@
 
     <!-- FAQ Modal -->
     <!-- Cosmos Staking Module Integration - Load in correct order -->
-    
-    <!-- Ethers.js for MetaMask Support -->
-    <script src="https://cdn.jsdelivr.net/npm/ethers@6.7.0/dist/ethers.umd.min.js"></script>
-    
-    <!-- MetaMask Integration -->
-    <script src="metamask-connector.js"></script>
-    
-    <!-- Cosmos Modules -->
-    <script src="chain-config.js"></script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="chain-config.js"></script>
     <script src="wallet-manager.js"></script>
     <script src="chain-client.js"></script>
     <script src="transaction-builder.js"></script>
     <script src="staking-service.js"></script>
     <script src="cosmos-staking.js"></script>
     <script src="validators-registry.js"></script>
-    
-    <!-- Sync and Initialization -->
     <script src="sync.js"></script>
     <script src="init-index.js"></script>
 </body>

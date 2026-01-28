@@ -56,18 +56,23 @@
             
             const APY = 30;
             const COMMISSION = 5;
-            const NET_APY = APY * (1 - COMMISSION / 100);
-            const ANNUAL_RATE = NET_APY / 100;
+            const GROSS_ANNUAL_RATE = APY / 100; // 0.30 (брутто ставка)
+            const NET_APY = APY * (1 - COMMISSION / 100); // 28.5% (для відображення)
+            const NET_ANNUAL_RATE = NET_APY / 100; // 0.285 (чиста ставка)
             
-            let finalAmount, totalReward, compoundsPerYear, compoundText;
+            let finalAmount, totalGrossReward, totalNetReward, totalCommission, compoundsPerYear, compoundText;
             
             if (compoundFreq === 'none') {
-                const monthlyRate = ANNUAL_RATE / 12;
-                const monthlyReward = amount * monthlyRate;
-                totalReward = monthlyReward * period;
-                finalAmount = amount + totalReward;
+                // Без компаундингу: щомісяця нараховується винагорода
+                const monthlyGrossRate = GROSS_ANNUAL_RATE / 12;
+                const monthlyGrossReward = amount * monthlyGrossRate;
+                totalGrossReward = monthlyGrossReward * period;
+                totalCommission = totalGrossReward * (COMMISSION / 100);
+                totalNetReward = totalGrossReward - totalCommission;
+                finalAmount = amount + totalNetReward;
                 compoundText = 'No compounding';
             } else {
+                // З компаундингом: комісія віднімається на кожному кроці
                 switch(compoundFreq) {
                     case 'daily': compoundsPerYear = 365; compoundText = 'Daily (manual)'; break;
                     case 'weekly': compoundsPerYear = 52; compoundText = 'Weekly (manual)'; break;
@@ -75,34 +80,35 @@
                     case 'quarterly': compoundsPerYear = 4; compoundText = 'Quarterly (manual)'; break;
                 }
                 
-                const ratePerPeriod = ANNUAL_RATE / compoundsPerYear;
+                // Компаундимо з ЧИСТОЮ ставкою (після комісії на кожному кроці)
+                const netRatePerPeriod = NET_ANNUAL_RATE / compoundsPerYear;
                 const totalPeriods = compoundsPerYear * (period / 12);
-                finalAmount = amount * Math.pow(1 + ratePerPeriod, totalPeriods);
-                totalReward = finalAmount - amount;
+                finalAmount = amount * Math.pow(1 + netRatePerPeriod, totalPeriods);
+                totalNetReward = finalAmount - amount;
+                
+                // Розраховуємо скільки б було брутто винагороди та комісії
+                totalGrossReward = totalNetReward / (1 - COMMISSION / 100);
+                totalCommission = totalGrossReward - totalNetReward;
             }
             
             const daysInPeriod = (period / 12) * 365;
-            const dailyReward = totalReward / daysInPeriod;
-            const weeklyReward = dailyReward * 7;
-            const monthlyReward = totalReward / period;
+            const dailyNetReward = totalNetReward / daysInPeriod;
+            const weeklyNetReward = dailyNetReward * 7;
+            const monthlyNetReward = totalNetReward / period;
             
             document.getElementById('calcResults').style.display = 'block';
             
-            document.getElementById('dailyResult').textContent = dailyReward.toFixed(2) + ' TICS';
-            document.getElementById('dailyUSD').textContent = '$' + (dailyReward * priceToUse).toFixed(2);
+            document.getElementById('dailyResult').textContent = dailyNetReward.toFixed(2) + ' TICS';
+            document.getElementById('dailyUSD').textContent = '$' + (dailyNetReward * priceToUse).toFixed(2);
             
-            document.getElementById('weeklyResult').textContent = weeklyReward.toFixed(2) + ' TICS';
-            document.getElementById('weeklyUSD').textContent = '$' + (weeklyReward * priceToUse).toFixed(2);
+            document.getElementById('weeklyResult').textContent = weeklyNetReward.toFixed(2) + ' TICS';
+            document.getElementById('weeklyUSD').textContent = '$' + (weeklyNetReward * priceToUse).toFixed(2);
             
-            document.getElementById('monthlyResult').textContent = monthlyReward.toFixed(2) + ' TICS';
-            document.getElementById('monthlyUSD').textContent = '$' + (monthlyReward * priceToUse).toFixed(2);
+            document.getElementById('monthlyResult').textContent = monthlyNetReward.toFixed(2) + ' TICS';
+            document.getElementById('monthlyUSD').textContent = '$' + (monthlyNetReward * priceToUse).toFixed(2);
             
-            document.getElementById('totalResult').textContent = totalReward.toFixed(2) + ' TICS';
-            document.getElementById('totalUSD').textContent = '$' + (totalReward * priceToUse).toFixed(2);
-            
-            const netReward = totalReward;
-            const grossReward = netReward / 0.95;
-            const validatorCommission = grossReward - netReward;
+            document.getElementById('totalResult').textContent = totalNetReward.toFixed(2) + ' TICS';
+            document.getElementById('totalUSD').textContent = '$' + (totalNetReward * priceToUse).toFixed(2);
             
             // COLORS: USD must match TICS color EXACTLY
             const WHITE = '#ffffff';        // Для білих значень
@@ -114,14 +120,14 @@
             document.getElementById('periodText').textContent = getPeriodText(period, customDays);
             document.getElementById('compoundText').textContent = compoundText;
             
-            // Загальна винагорода - ЗЕЛЕНИЙ TICS → ЗЕЛЕНИЙ USD
-            document.getElementById('totalRewardAmount').innerHTML = grossReward.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: ' + GREEN + ';">($' + (grossReward * priceToUse).toFixed(2) + ')</span>';
+            // Загальна винагорода (БРУТТО, до відрахування комісії) - ЗЕЛЕНИЙ TICS → ЗЕЛЕНИЙ USD
+            document.getElementById('totalRewardAmount').innerHTML = totalGrossReward.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: ' + GREEN + ';">($' + (totalGrossReward * priceToUse).toFixed(2) + ')</span>';
             
             // Комісія валідатора - ЖОВТИЙ TICS → ЖОВТИЙ USD
-            document.getElementById('validatorCommissionAmount').innerHTML = validatorCommission.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: ' + YELLOW + ';">($' + (validatorCommission * priceToUse).toFixed(2) + ')</span>';
+            document.getElementById('validatorCommissionAmount').innerHTML = totalCommission.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: ' + YELLOW + ';">($' + (totalCommission * priceToUse).toFixed(2) + ')</span>';
             
-            // Ваша винагорода (чиста) - ЗЕЛЕНИЙ TICS → ЗЕЛЕНИЙ USD
-            document.getElementById('netRewardAmount').innerHTML = netReward.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: ' + GREEN + ';">($' + (netReward * priceToUse).toFixed(2) + ')</span>';
+            // Ваша винагорода (чиста, після комісії) - ЗЕЛЕНИЙ TICS → ЗЕЛЕНИЙ USD
+            document.getElementById('netRewardAmount').innerHTML = totalNetReward.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: ' + GREEN + ';">($' + (totalNetReward * priceToUse).toFixed(2) + ')</span>';
             
             // Кінцева сума - ЗЕЛЕНИЙ TICS → ЗЕЛЕНИЙ USD
             document.getElementById('finalAmount').innerHTML = finalAmount.toFixed(2) + ' TICS<br><span style="font-size: 0.85em; color: ' + GREEN + ';">($' + (finalAmount * priceToUse).toFixed(2) + ')</span>';
@@ -140,9 +146,13 @@
             document.getElementById('realAPY').textContent = realAPY.toFixed(2) + '%';
             
             if (compoundFreq !== 'none') {
-                const monthlyRate = ANNUAL_RATE / 12;
-                const withoutCompoundReward = amount * monthlyRate * period;
-                const withoutCompoundFinal = amount + withoutCompoundReward;
+                // Порівняння: без компаундингу vs з компаундингом
+                const monthlyGrossRate = GROSS_ANNUAL_RATE / 12;
+                const monthlyGrossReward = amount * monthlyGrossRate;
+                const withoutCompoundGrossReward = monthlyGrossReward * period;
+                const withoutCompoundCommission = withoutCompoundGrossReward * (COMMISSION / 100);
+                const withoutCompoundNetReward = withoutCompoundGrossReward - withoutCompoundCommission;
+                const withoutCompoundFinal = amount + withoutCompoundNetReward;
                 const benefit = finalAmount - withoutCompoundFinal;
                 
                 document.getElementById('compoundComparison').style.display = 'block';

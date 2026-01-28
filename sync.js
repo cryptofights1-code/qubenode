@@ -84,18 +84,18 @@ async function fetchCirculatingSupply(forceRefresh = false) {
   }
   
   try {
-    console.log('🔄 Fetching fresh Circulating Supply from pricebot...');
-    const pricebotData = await fetchJSON('https://pricebot.ticslab.xyz/api/prices');
+    console.log('🔄 Fetching fresh Circulating Supply from API...');
+    const apiData = await fetchJSON('https://evm-api.qubetics.com/qubetics/explorer/circulation-supply');
     
-    if (pricebotData?.combined?.circulatingSupply) {
-      const circulatingSupply = parseFloat(pricebotData.combined.circulatingSupply);
+    if (apiData?.data?.circulatingSupply) {
+      const circulatingSupply = parseFloat(apiData.data.circulatingSupply);
       cachedCirculatingSupply = circulatingSupply;
       saveCachedCirculatingSupply(circulatingSupply);
       console.log(`✅ Fresh Circulating Supply: ${circulatingSupply.toLocaleString()} TICS`);
       return circulatingSupply;
     }
   } catch (error) {
-    console.error('❌ Pricebot fetch error:', error);
+    console.error('❌ API fetch error:', error);
   }
   return null;
 }
@@ -872,13 +872,13 @@ async function updateCirculationSupply() {
   if (!circulationSupplyEl) return;
   
   try {
-    const data = await fetchJSON('https://pricebot.ticslab.xyz/api/prices');
+    const data = await fetchJSON('https://evm-api.qubetics.com/qubetics/explorer/circulation-supply');
     
-    if (data?.combined?.circulatingSupply) {
-      const circulatingSupply = parseFloat(data.combined.circulatingSupply);
+    if (data?.data?.circulatingSupply) {
+      const circulatingSupply = parseFloat(data.data.circulatingSupply);
       cachedCirculatingSupply = circulatingSupply;
       circulationSupplyEl.textContent = formatLargeNumber(circulatingSupply);
-      console.log(`✅ Circulation Supply: ${circulatingSupply.toLocaleString()} TICS (from pricebot)`);
+      console.log(`✅ Circulation Supply: ${circulatingSupply.toLocaleString()} TICS (from API)`);
       return circulatingSupply;
     }
     

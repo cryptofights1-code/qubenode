@@ -185,7 +185,7 @@
                 console.log('🔄 Fetching TICS price from MEXC via Cloudflare Worker...');
                 
                 // Use Cloudflare Worker instead of CORS proxy
-                const workerUrl = "https://tics-price.yuskivvolodymyr.workers.dev";
+                const workerUrl = "https://price.qubenode.space";
                 
                 const response = await fetch(workerUrl);
                 

@@ -8,7 +8,7 @@ console.log('🚀 QubeNode Sync v3.0.4 LOADED - RPC Worker + Cloudflare Worker p
 const API_BASE = "https://swagger.qubetics.com";
 const VALIDATOR = "qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld";
 const TICSSCAN_API = "https://v2.ticsscan.com/api/v2";
-const RPC_WORKER = "https://qubenode-rpc-proxy.yuskivvolodymyr.workers.dev";
+const RPC_WORKER = "https://rpc-proxy.qubenode.space";
 
 // Validator addresses
 const VALCONS_ADDR = "qubeticsvalcons1dlmj5pzg3fv54nrtejnfxmrj08d7qs09xjp2eu";
@@ -336,7 +336,7 @@ async function updateTicsPrice() {
   try {
     console.log('🔄 Fetching TICS price from MEXC via Cloudflare Worker...');
     
-    const workerUrl = "https://tics-price.yuskivvolodymyr.workers.dev";
+    const workerUrl = "https://price.qubenode.space";
     const data = await fetchJSON(workerUrl);
     
     console.log('📊 MEXC response:', data);
@@ -840,7 +840,7 @@ async function updateMarketCap() {
   if (!marketCapEl) return;
   
   try {
-    const workerUrl = "https://tics-price.yuskivvolodymyr.workers.dev";
+    const workerUrl = "https://price.qubenode.space";
     const priceData = await fetchJSON(workerUrl);
     
     if (priceData && priceData.lastPrice && cachedCirculatingSupply) {

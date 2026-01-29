@@ -112,7 +112,7 @@
     // ===== FETCH NETWORK INFO =====
     async function fetchNetworkInfo() {
         try {
-            const RPC_WORKER = 'https://qubenode-rpc-proxy.yuskivvolodymyr.workers.dev';
+            const RPC_WORKER = 'https://rpc-proxy.qubenode.space';
             const response = await fetch(`${RPC_WORKER}/rpc/net_info`);
             
             if (!response.ok) throw new Error('Failed to fetch network info');
@@ -135,7 +135,7 @@
     // ===== SIMULATE INFRASTRUCTURE METRICS =====
     // ===== INFRASTRUCTURE METRICS (REAL NETDATA DATA) =====
     async function updateInfrastructureMetrics() {
-        const RPC_WORKER = 'https://qubenode-rpc-proxy.yuskivvolodymyr.workers.dev';
+        const RPC_WORKER = 'https://rpc-proxy.qubenode.space';
         
         let cpuPercent = 0;
         let ramPercent = 0;
@@ -321,7 +321,7 @@
     
     async function fetchValidatorEvents() {
         try {
-            const WORKER_URL = 'https://qubenode-rpc-proxy.yuskivvolodymyr.workers.dev';
+            const WORKER_URL = 'https://rpc-proxy.qubenode.space';
             // Add timestamp to prevent browser caching
             const cacheBuster = Date.now();
             const response = await fetch(`${WORKER_URL}/events/${VALIDATOR_ADDRESS}?limit=30&_=${cacheBuster}`, {
@@ -791,7 +791,7 @@
         
         try {
             // Fetch delegation snapshots from worker
-            const WORKER_URL = 'https://qubenode-rpc-proxy.yuskivvolodymyr.workers.dev';
+            const WORKER_URL = 'https://rpc-proxy.qubenode.space';
             const response = await fetch(`${WORKER_URL}/delegation-snapshots?days=30`);
             const snapshotsData = await response.json();
             

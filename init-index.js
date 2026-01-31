@@ -1831,7 +1831,11 @@
             console.log(`💼 Connecting ${walletType}...`);
             
             const CHAIN_ID = 'qubetics-1';
-            const btn = document.getElementById(walletType === 'keplr' ? 'modalKeplrBtn' : 'modalCosmostationBtn');
+            const btn = document.getElementById(
+                walletType === 'keplr' ? 'modalKeplrBtn' : 
+                walletType === 'cosmostation' ? 'modalCosmostationBtn' : 
+                'modalMetaMaskBtn'
+            );
             
             if (!btn) return;
             
@@ -1869,6 +1873,19 @@
                     const accounts = await offlineSigner.getAccounts();
                     address = accounts[0].address;
                     console.log('✅ Cosmostation connected:', address);
+                    
+                } else if (walletType === 'metamask') {
+                    if (!window.ethereum) {
+                        alert('Please install MetaMask extension');
+                        btn.style.pointerEvents = 'auto';
+                        btn.innerHTML = '<span>🦊</span><span>MetaMask</span>';
+                        return;
+                    }
+                    
+                    // MetaMask connection logic
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    address = accounts[0];
+                    console.log('✅ MetaMask connected:', address);
                 }
                 
                 // Redirect to dashboard
@@ -1879,9 +1896,14 @@
                 console.error('❌ Connection error:', error);
                 alert('Connection error: ' + error.message);
                 btn.style.pointerEvents = 'auto';
-                btn.innerHTML = walletType === 'keplr' ? 
-                    '<span>🔷</span><span>Keplr Wallet</span>' : 
-                    '<span>🔶</span><span>Cosmostation</span>';
+                
+                if (walletType === 'keplr') {
+                    btn.innerHTML = '<span>🔷</span><span>Keplr Wallet</span>';
+                } else if (walletType === 'cosmostation') {
+                    btn.innerHTML = '<span>🔶</span><span>Cosmostation</span>';
+                } else if (walletType === 'metamask') {
+                    btn.innerHTML = '<span>🦊</span><span>MetaMask</span>';
+                }
             }
         }
 
@@ -1956,6 +1978,20 @@
                     e.preventDefault();
                     console.log('👆 Cosmostation button touched');
                     connectWalletFromModal('cosmostation');
+                }, { passive: false });
+            }
+            
+            // MetaMask button
+            const metamaskBtn = document.getElementById('modalMetaMaskBtn');
+            if (metamaskBtn) {
+                metamaskBtn.addEventListener('click', function() {
+                    console.log('🦊 MetaMask button clicked');
+                    connectWalletFromModal('metamask');
+                });
+                metamaskBtn.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    console.log('👆 MetaMask button touched');
+                    connectWalletFromModal('metamask');
                 }, { passive: false });
             }
             

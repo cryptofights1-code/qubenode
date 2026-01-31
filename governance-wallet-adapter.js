@@ -110,9 +110,22 @@
                 state.walletType = 'metamask';
                 state.address = result.evmAddress;
                 state.cosmosAddress = result.cosmosAddress;
+                
+                // FALLBACK: Якщо cosmosAddress не прийшов, конвертуємо вручну
+                if (!state.cosmosAddress && state.address) {
+                    console.log('[GOV-WALLET] Converting EVM to Cosmos address...');
+                    state.cosmosAddress = evmToCosmos(state.address);
+                    console.log('[GOV-WALLET] Converted:', state.address, '→', state.cosmosAddress);
+                }
+                
+                if (!state.cosmosAddress) {
+                    throw new Error('Failed to convert address to Cosmos format');
+                }
+                
                 state.isConnected = true;
                 
                 console.log('[GOV-WALLET] MetaMask connected:', state.address);
+                console.log('[GOV-WALLET] Cosmos address:', state.cosmosAddress);
                 
                 if (state.onConnect) {
                     state.onConnect(state.address, 'metamask');

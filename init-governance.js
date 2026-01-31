@@ -78,6 +78,18 @@ async function connectMetaMask() {
             state.wallet = result.address;
             state.walletType = 'metamask';
             state.cosmosAddress = result.cosmosAddress;
+            
+            // FALLBACK: Якщо cosmosAddress не прийшов, конвертуємо вручну
+            if (!state.cosmosAddress && state.wallet) {
+                console.log('[FALLBACK] Converting EVM to Cosmos address...');
+                state.cosmosAddress = window.govWalletEvmToCosmos(state.wallet);
+                console.log('[FALLBACK] Converted:', state.wallet, '→', state.cosmosAddress);
+            }
+            
+            if (!state.cosmosAddress) {
+                throw new Error('Failed to convert address to Cosmos format');
+            }
+            
             state.isConnected = true;
             
             await onWalletConnected();
@@ -169,15 +181,35 @@ async function checkVotingPower() {
     votingPowerEl.textContent = 'Checking voting power...';
     
     try {
+        console.log('=== VOTING POWER DEBUG START ===');
+        console.log('State:', {
+            wallet: state.wallet,
+            walletType: state.walletType,
+            cosmosAddress: state.cosmosAddress,
+            isConnected: state.isConnected
+        });
+        console.log('Validator address:', VALIDATOR_ADDRESS);
+        
         if (!state.cosmosAddress) {
             throw new Error('No Cosmos address');
         }
         
         // Initialize chain client if not exists
         if (!window.chainClient) {
+            console.log('Initializing chain client...');
+            if (!window.CosmosChainClient) {
+                throw new Error('CosmosChainClient not loaded. Check if chain-client.js is included.');
+            }
+            if (!window.QUBETICS_CHAIN_CONFIG) {
+                throw new Error('QUBETICS_CHAIN_CONFIG not found. Check if chain-config.js is included.');
+            }
             window.chainClient = new window.CosmosChainClient(window.QUBETICS_CHAIN_CONFIG);
             await window.chainClient.initialize();
+            console.log('Chain client initialized successfully');
         }
+        
+        console.log('Fetching delegation from API...');
+        console.log('API URL:', `https://swagger.qubetics.com/cosmos/staking/v1beta1/validators/${VALIDATOR_ADDRESS}/delegations/${state.cosmosAddress}`);
         
         // Get delegation to QubeNode
         const delegation = await window.chainClient.getDelegation(
@@ -185,19 +217,45 @@ async function checkVotingPower() {
             VALIDATOR_ADDRESS
         );
         
+        console.log('Delegation response:', delegation);
+        
         if (delegation && delegation.balance && delegation.balance.amount) {
             const amount = parseFloat(delegation.balance.amount) / 1e18;
             state.votingPower = amount;
             
+            console.log('Voting power calculated:', amount, 'TICS');
+            
             votingPowerEl.innerHTML = `Voting Power: <strong>${formatNumber(amount)} TICS</strong>`;
         } else {
+            console.log('No delegation found or invalid response structure');
             state.votingPower = 0;
             votingPowerEl.innerHTML = '<span style="color: #f97316;">Not delegated to QubeNode</span>';
         }
+        
+        console.log('=== VOTING POWER DEBUG END ===');
+        
     } catch (error) {
-        console.error('Error checking voting power:', error);
+        console.error('=== VOTING POWER ERROR ===');
+        console.error('Error type:', error.constructor.name);
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+        console.error('Full error:', error);
+        
+        // Show user-friendly error
         votingPowerEl.textContent = 'Could not verify voting power';
+        
+        // Additional debug info
+        if (error.message.includes('CosmosChainClient')) {
+            console.error('💡 FIX: Make sure chain-client.js is loaded before init-governance.js');
+        }
+        if (error.message.includes('QUBETICS_CHAIN_CONFIG')) {
+            console.error('💡 FIX: Make sure chain-config.js is loaded before init-governance.js');
+        }
+        if (error.message.includes('fetch') || error.message.includes('network')) {
+            console.error('💡 FIX: Check your internet connection or API endpoint');
+        }
     }
+}
 }
 
 // ==================== POLLS MANAGEMENT ====================

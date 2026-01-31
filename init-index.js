@@ -24,6 +24,26 @@
             }
             
             try {
+                // MetaMask has different connection logic
+                if (walletType === 'metamask') {
+                    if (!window.ethereum) {
+                        alert('Please install MetaMask extension');
+                        resetHeaderWalletButton();
+                        if (headerBtn) headerBtn.style.pointerEvents = 'auto';
+                        return;
+                    }
+                    
+                    // Connect MetaMask
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    const address = accounts[0];
+                    console.log('✅ MetaMask connected:', address);
+                    
+                    // Redirect to dashboard
+                    window.location.href = `dashboard.html?wallet=${walletType}&address=${address}`;
+                    return;
+                }
+                
+                // For Keplr and Cosmostation - use Cosmos modules
                 // Wait for modules to load (max 5 seconds)
                 let attempts = 0;
                 while ((typeof CosmosStakingModule === 'undefined' || typeof QUBETICS_CHAIN_CONFIG === 'undefined') && attempts < 50) {
@@ -2176,6 +2196,15 @@ document.addEventListener('DOMContentLoaded', function() {
         headerCosmostationOption.addEventListener('click', function(event) {
             event.stopPropagation();
             connectHeaderWallet('cosmostation');
+        });
+        listenersAdded++;
+    }
+    
+    const headerMetaMaskOption = document.getElementById('headerMetaMaskOption');
+    if (headerMetaMaskOption) {
+        headerMetaMaskOption.addEventListener('click', function(event) {
+            event.stopPropagation();
+            connectHeaderWallet('metamask');
         });
         listenersAdded++;
     }

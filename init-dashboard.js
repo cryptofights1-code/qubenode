@@ -237,7 +237,14 @@
             // Якщо немає dаних в overview, спробуємо прямий запит
             if (!unbondingData || unbondingData.length === 0) {
                 try {
-                    const address = cosmosStaking.walletManager.getAddress();
+                    let address;
+                    // Check if MetaMask
+                    if (cosmosStaking.isMetaMask && cosmosStaking.metamaskConnector) {
+                        address = cosmosStaking.metamaskConnector.cosmosAddress;
+                    } else {
+                        address = cosmosStaking.walletManager.getAddress();
+                    }
+                    
                     const response = await fetch(`https://swagger.qubetics.com/cosmos/staking/v1beta1/delegators/${address}/unbonding_delegations`);
                     const data = await response.json();
                     unbondingData = data.unbonding_responses || [];
@@ -481,11 +488,10 @@
                 }
                 
                 const memoText = `Delegate to ${validatorName} via QubeNode.space`;
-                const amountMinimal = String((parseFloat(amount) * 1e18).toFixed(0));
                 
-                // Direct call to stakingService - ORIGINAL WAY
-                const stakingService = cosmosStaking.stakingService;
-                const result = await stakingService.delegate(currentValidatorAddress, amountMinimal, memoText);
+                // Use cosmosStaking.delegate() - works for all wallet types
+                const amountTics = parseFloat(amount);
+                const result = await cosmosStaking.delegate(amountTics, memoText);
                 
                 showSuccess('Delegation successful!', result.txHash);
                 await loadData();
@@ -709,17 +715,20 @@
                 console.log('📥 Redelegating to:', selectedSwitchValidator);
                 console.log('💰 Amount:', amount, 'TICS');
                 
-                const walletManager = cosmosStaking.walletManager;
-                const chainClient = cosmosStaking.chainClient;
-                const txBuilder = cosmosStaking.txBuilder;
-                
                 // Get validator names
                 const fromName = validatorNamesCache[currentValidatorAddress] || 'current validator';
                 const toName = validatorNamesCache[selectedSwitchValidator] || 'new validator';
                 
-                const stakingService = new CosmosStakingService(walletManager, chainClient, txBuilder);
                 const memoText = `Redelegate from ${fromName} to ${toName} via QubeNode.space`;
-                const result = await stakingService.redelegate(currentValidatorAddress, selectedSwitchValidator, amountMinimal, memoText);
+                
+                // Use cosmosStaking.redelegate() - works for all wallet types
+                const amountTics = parseFloat(amount);
+                const result = await cosmosStaking.redelegate(
+                    currentValidatorAddress, 
+                    selectedSwitchValidator, 
+                    amountTics, 
+                    memoText
+                );
                 
                 showSuccess('Validator switched!', result.txHash);
                 await loadData();
@@ -757,19 +766,14 @@
                 
                 console.log('📤 Unbonding from:', currentValidatorAddress);
                 console.log('💰 Amount:', amount, 'TICS');
-                console.log('🔢 Amount Minimal (toFixed):', amountMinimal);
-                console.log('🔢 Type:', typeof amountMinimal);
-                
-                const walletManager = cosmosStaking.walletManager;
-                const chainClient = cosmosStaking.chainClient;
-                const txBuilder = cosmosStaking.txBuilder;
                 
                 // Get validator name
                 const validatorName = validatorNamesCache[currentValidatorAddress] || 'validator';
-                
-                const stakingService = new CosmosStakingService(walletManager, chainClient, txBuilder);
                 const memoText = `Undelegate from ${validatorName} via QubeNode.space`;
-                const result = await stakingService.undelegate(currentValidatorAddress, amountMinimal, memoText);
+                
+                // Use cosmosStaking.undelegate() - works for all wallet types
+                const amountTics = parseFloat(amount);
+                const result = await cosmosStaking.undelegate(amountTics, memoText);
                 
                 showSuccess('Unstake started! Tokens will be available in 14 days', result.txHash);
                 await loadData();
@@ -786,18 +790,17 @@
             }
             
             try {
-                const walletManager = cosmosStaking.walletManager;
-                const chainClient = cosmosStaking.chainClient;
-                const txBuilder = cosmosStaking.txBuilder;
-                
                 // Get validator name
                 const validatorName = validatorNamesCache[validatorAddress] || 'validator';
-                
-                const stakingService = new CosmosStakingService(walletManager, chainClient, txBuilder);
                 const memoText = `Cancel unbond from ${validatorName} via QubeNode.space`;
-                const result = await stakingService.cancelUnbonding(
+                
+                // Convert amount from minimal to TICS
+                const amountTics = parseFloat(amount) / 1e18;
+                
+                // Use cosmosStaking.cancelUnbonding() - works for all wallet types
+                const result = await cosmosStaking.cancelUnbonding(
                     validatorAddress, 
-                    amount, 
+                    amountTics, 
                     creationHeight, 
                     memoText
                 );

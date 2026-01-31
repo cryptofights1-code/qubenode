@@ -7,7 +7,20 @@ const chainId = 'qubetics_9030-1';
 
 // Wallet connection function
 async function connectWallet(walletType) {
-    const btn = document.getElementById(walletType === 'keplr' ? 'connectKeplrBtn' : 'connectCosmostationBtn');
+    const btnMap = {
+        'keplr': 'connectKeplrBtn',
+        'cosmostation': 'connectCosmostationBtn',
+        'metamask': 'connectMetaMaskBtn'
+    };
+    
+    const btnId = btnMap[walletType];
+    const btn = document.getElementById(btnId);
+    
+    if (!btn) {
+        console.error('Button not found:', btnId);
+        return;
+    }
+    
     btn.innerHTML = '<span>⏳</span><span>Connecting...</span>';
     btn.style.pointerEvents = 'none';
     
@@ -18,7 +31,6 @@ async function connectWallet(walletType) {
             if (!window.keplr) {
                 alert('Please install Keplr Wallet');
                 btn.style.pointerEvents = 'auto';
-                // Reset button content without inline styles
                 btn.innerHTML = '<img src="keplr.png" alt="Keplr" class="wallet-icon"><span>Keplr Wallet</span>';
                 return;
             }
@@ -32,7 +44,6 @@ async function connectWallet(walletType) {
             if (!window.cosmostation) {
                 alert('Please install Cosmostation Wallet');
                 btn.style.pointerEvents = 'auto';
-                // Reset button content without inline styles
                 btn.innerHTML = '<img src="Cosmostation.png" alt="Cosmostation" class="wallet-icon"><span>Cosmostation</span>';
                 return;
             }
@@ -42,6 +53,30 @@ async function connectWallet(walletType) {
             const offlineSigner = provider.getOfflineSigner(chainId);
             const accounts = await offlineSigner.getAccounts();
             address = accounts[0].address;
+            
+        } else if (walletType === 'metamask') {
+            if (!window.ethereum || !window.ethereum.isMetaMask) {
+                alert('Please install MetaMask Wallet');
+                btn.style.pointerEvents = 'auto';
+                btn.innerHTML = '<img src="metamask-fox.svg" alt="MetaMask" class="wallet-icon"><span>MetaMask</span>';
+                return;
+            }
+            
+            if (!window.MetaMaskConnector) {
+                alert('MetaMask connector not loaded. Please refresh the page.');
+                btn.style.pointerEvents = 'auto';
+                btn.innerHTML = '<img src="metamask-fox.svg" alt="MetaMask" class="wallet-icon"><span>MetaMask</span>';
+                return;
+            }
+            
+            const metamaskConnector = new MetaMaskConnector();
+            const result = await metamaskConnector.connect();
+            
+            if (result.success) {
+                address = result.address;
+            } else {
+                throw new Error('MetaMask connection failed');
+            }
         }
         
         // Redirect to dashboard with wallet info
@@ -51,10 +86,14 @@ async function connectWallet(walletType) {
         console.error('Wallet connection error:', error);
         alert('Connection error: ' + error.message);
         btn.style.pointerEvents = 'auto';
-        // Reset button content without inline styles
-        btn.innerHTML = walletType === 'keplr' ? 
-            '<img src="keplr.png" alt="Keplr" class="wallet-icon"><span>Keplr Wallet</span>' : 
-            '<img src="Cosmostation.png" alt="Cosmostation" class="wallet-icon"><span>Cosmostation</span>';
+        
+        const resetContent = {
+            'keplr': '<img src="keplr.png" alt="Keplr" class="wallet-icon"><span>Keplr Wallet</span>',
+            'cosmostation': '<img src="Cosmostation.png" alt="Cosmostation" class="wallet-icon"><span>Cosmostation</span>',
+            'metamask': '<img src="metamask-fox.svg" alt="MetaMask" class="wallet-icon"><span>MetaMask</span>'
+        };
+        
+        btn.innerHTML = resetContent[walletType] || btn.innerHTML;
     }
 }
 
@@ -119,6 +158,15 @@ document.addEventListener('DOMContentLoaded', function() {
             connectWallet('cosmostation');
         });
         console.log('✅ Cosmostation connect button listener attached');
+    }
+    
+    // Connect MetaMask button
+    const connectMetaMaskBtn = document.getElementById('connectMetaMaskBtn');
+    if (connectMetaMaskBtn) {
+        connectMetaMaskBtn.addEventListener('click', function() {
+            connectWallet('metamask');
+        });
+        console.log('✅ MetaMask connect button listener attached');
     }
     
     // Keplr Modal - close on click outside

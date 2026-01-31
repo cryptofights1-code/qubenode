@@ -99,6 +99,9 @@
     
     <!-- How To Delegate Styles - CSP Compliant -->
     <link rel="stylesheet" href="styles-how-to-delegate.css">
+    
+    <!-- Ethers.js for MetaMask Support -->
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.7.0/dist/ethers.umd.min.js"></script>
 </head>
 <body>
     <!-- Animated background -->
@@ -115,7 +118,7 @@
         <div class="delegate-content-wrapper">
             <h3 class="delegate-title">How to Delegate $TICS</h3>
             
-            <p class="delegate-text">You can delegate using the <span class="highlight-cyan">Keplr</span> wallet (<a href="#" class="link" id="keplrGuideLink">guide</a>) or <span class="highlight-cyan">Cosmostation</span> (<a href="#" class="link" id="cosmostationGuideLink">guide</a>).</p>
+            <p class="delegate-text">You can delegate using the <span class="highlight-cyan">Keplr</span> wallet (<a href="#" class="link" id="keplrGuideLink">guide</a>), <span class="highlight-cyan">Cosmostation</span> (<a href="#" class="link" id="cosmostationGuideLink">guide</a>), or <span class="highlight-cyan">MetaMask</span>.</p>
             
             <p class="delegate-text">For convenience, delegation is also available directly on the <span class="highlight-cyan">QubeNode</span> validator website.</p>
             
@@ -139,6 +142,11 @@
                     <button id="connectCosmostationBtn" class="wallet-connect-btn">
                         <img src="Cosmostation.png" alt="Cosmostation" class="wallet-icon">
                         <span>Cosmostation</span>
+                    </button>
+                    
+                    <button id="connectMetaMaskBtn" class="wallet-connect-btn">
+                        <img src="metamask-fox.svg" alt="MetaMask" class="wallet-icon">
+                        <span>MetaMask</span>
                     </button>
                 </div>
                 
@@ -408,6 +416,9 @@
     </footer>
     </div>
     
+    
+    <!-- MetaMask Integration -->
+    <script src="metamask-connector.js"></script>
     
     <!-- How To Delegate Initialization -->
     <script src="init-how-to-delegate.js"></script>

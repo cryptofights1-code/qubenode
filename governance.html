@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Safari theme color -->
+    <meta name="theme-color" content="#0a0e27">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    
+    <!-- Primary Meta Tags -->
+    <title>Governance | QubeNode - Delegator Voting</title>
+    <meta name="title" content="Governance | QubeNode - Delegator Voting">
+    <meta name="description" content="Vote on governance proposals as a QubeNode delegator. Your stake, your voice in Qubetics network decisions.">
+    <meta name="keywords" content="QubeNode governance, Qubetics voting, delegator voting, TICS governance, validator voting">
+    <meta name="author" content="QubeNode Validator Team">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://qubenode.space/governance.html">
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://qubenode.space/governance.html">
+    <meta property="og:title" content="Governance | QubeNode">
+    <meta property="og:description" content="Vote on governance proposals as a QubeNode delegator">
+    <meta property="og:image" content="https://qubenode.space/android-chrome-512x512.png">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Governance | QubeNode">
+    <meta name="twitter:description" content="Vote on governance proposals as a QubeNode delegator">
+    <meta name="twitter:image" content="https://qubenode.space/android-chrome-512x512.png">
+    
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://swagger.qubetics.com">
+    <link rel="dns-prefetch" href="https://tendermint.qubetics.com">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="governance.css">
+</head>
+<body>
+    <!-- Background Effects -->
+    <div class="bg-effects">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <a href="/" class="logo">
+                <img src="/qubenode-logo.svg" alt="QubeNode" class="logo-img" onerror="this.style.display='none'">
+                <span class="logo-text">QubeNode</span>
+            </a>
+            
+            <nav class="nav">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/ecosystem.html" class="nav-link">Ecosystem</a>
+                <a href="/calculator.html" class="nav-link">Calculator</a>
+                <a href="/governance.html" class="nav-link active">Governance</a>
+            </nav>
+            
+            <button class="wallet-btn" id="headerWalletBtn">
+                <span class="wallet-icon">💼</span>
+                <span class="wallet-text">Connect Wallet</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-label">Delegator Governance</div>
+                <h1 class="hero-title">Vote on Proposals</h1>
+                <p class="hero-description">
+                    As a QubeNode delegator, your voice matters. Vote on governance proposals 
+                    and help shape the future of Qubetics network. Your voting power is weighted by your delegation amount.
+                </p>
+            </div>
+        </section>
+
+        <!-- Status Messages -->
+        <div class="status-container" id="statusContainer"></div>
+
+        <!-- Connect Wallet Section -->
+        <section class="connect-section hidden" id="connectSection">
+            <div class="container">
+                <div class="connect-card">
+                    <h2 class="connect-title">Connect Your Wallet to Vote</h2>
+                    <p class="connect-text">
+                        Connect your wallet to check your voting power and participate in governance
+                    </p>
+                    <button class="btn-primary" id="connectWalletBtn">
+                        <span>💼</span>
+                        <span>Connect Wallet</span>
+                    </button>
+                    <p class="connect-wallets">
+                        Supports MetaMask, Keplr & Cosmostation
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Wallet Info Section -->
+        <section class="wallet-section hidden" id="walletSection">
+            <div class="container">
+                <div class="wallet-card">
+                    <div class="wallet-info">
+                        <div class="wallet-status">
+                            <span class="wallet-dot"></span>
+                            <span class="wallet-address" id="walletAddress">0x...</span>
+                        </div>
+                        <div class="voting-power" id="votingPower">
+                            Checking voting power...
+                        </div>
+                    </div>
+                    <button class="btn-secondary btn-small" id="disconnectBtn">
+                        Disconnect
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loading Section -->
+        <section class="loading-section hidden" id="loadingSection">
+            <div class="container">
+                <div class="spinner"></div>
+                <p class="loading-text">Loading proposals...</p>
+            </div>
+        </section>
+
+        <!-- Polls Section -->
+        <section class="polls-section" id="pollsSection">
+            <div class="container">
+                <div class="polls-header">
+                    <h2 class="section-title">Active Proposals</h2>
+                    <p class="section-subtitle">Vote on current governance proposals</p>
+                </div>
+                <div class="polls-grid" id="pollsGrid">
+                    <!-- Polls will be rendered here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Wallet Selection Modal -->
+    <div class="modal" id="walletModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">×</button>
+            <h2 class="modal-title">Connect Wallet</h2>
+            <p class="modal-subtitle">Choose your wallet to connect</p>
+            
+            <div class="wallet-options">
+                <button class="wallet-option" id="metamaskOption">
+                    <img src="metamask-fox.svg" alt="MetaMask" class="wallet-option-icon" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Ctext y=%2218%22 font-size=%2218%22%3E🦊%3C/text%3E%3C/svg%3E'">
+                    <div class="wallet-option-info">
+                        <div class="wallet-option-name">MetaMask</div>
+                        <div class="wallet-option-desc">Browser extension</div>
+                    </div>
+                </button>
+                
+                <button class="wallet-option" id="keplrOption">
+                    <img src="keplr.png" alt="Keplr" class="wallet-option-icon" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Ctext y=%2218%22 font-size=%2218%22%3E🔷%3C/text%3E%3C/svg%3E'">
+                    <div class="wallet-option-info">
+                        <div class="wallet-option-name">Keplr</div>
+                        <div class="wallet-option-desc">Cosmos wallet</div>
+                    </div>
+                </button>
+                
+                <button class="wallet-option" id="cosmostationOption">
+                    <img src="Cosmostation.png" alt="Cosmostation" class="wallet-option-icon" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Ctext y=%2218%22 font-size=%2218%22%3E🔶%3C/text%3E%3C/svg%3E'">
+                    <div class="wallet-option-info">
+                        <div class="wallet-option-name">Cosmostation</div>
+                        <div class="wallet-option-desc">Cosmos wallet</div>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p class="footer-text">
+                    © 2025 QubeNode. Professional Qubetics Validator.
+                </p>
+                <div class="footer-links">
+                    <a href="https://t.me/+sRnz7RyoL4Q0MWEy" target="_blank" class="footer-link">Telegram</a>
+                    <a href="mailto:contact@qubenode.space" class="footer-link">Email</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts - Load in correct order -->
+    <script src="chain-config.js"></script>
+    <script src="chain-client.js"></script>
+    <script src="wallet-manager.js"></script>
+    <script src="metamask-connector.js"></script>
+    <script src="cosmos-staking.js"></script>
+    <script src="init-governance.js"></script>
+</body>
+</html>

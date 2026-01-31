@@ -11,78 +11,10 @@ const state = {
     votingPower: 0,         // TICS delegated to QubeNode
     polls: [],
     myVotes: {},
-    isConnected: false,
-    cosmosStaking: null,
-    metamaskConnector: null
+    isConnected: false
 };
 
 const VALIDATOR_ADDRESS = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
-
-// ==================== BECH32 CONVERSION ====================
-const BECH32_CHARSET = 'qpzry9x8gf2tvdw0s3jn54khce6mua7l';
-
-function bech32Polymod(values) {
-    const GEN = [0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3];
-    let chk = 1;
-    for (const v of values) {
-        const b = chk >> 25;
-        chk = ((chk & 0x1ffffff) << 5) ^ v;
-        for (let i = 0; i < 5; i++) {
-            if ((b >> i) & 1) chk ^= GEN[i];
-        }
-    }
-    return chk;
-}
-
-function bech32HrpExpand(hrp) {
-    const ret = [];
-    for (const c of hrp) ret.push(c.charCodeAt(0) >> 5);
-    ret.push(0);
-    for (const c of hrp) ret.push(c.charCodeAt(0) & 31);
-    return ret;
-}
-
-function bech32CreateChecksum(hrp, data) {
-    const values = bech32HrpExpand(hrp).concat(data).concat([0, 0, 0, 0, 0, 0]);
-    const polymod = bech32Polymod(values) ^ 1;
-    const ret = [];
-    for (let i = 0; i < 6; i++) ret.push((polymod >> (5 * (5 - i))) & 31);
-    return ret;
-}
-
-function bech32Encode(hrp, data) {
-    const combined = data.concat(bech32CreateChecksum(hrp, data));
-    let ret = hrp + '1';
-    for (const d of combined) ret += BECH32_CHARSET[d];
-    return ret;
-}
-
-function convertBits(data, fromBits, toBits, pad) {
-    let acc = 0, bits = 0;
-    const ret = [], maxv = (1 << toBits) - 1;
-    for (const value of data) {
-        acc = (acc << fromBits) | value;
-        bits += fromBits;
-        while (bits >= toBits) {
-            bits -= toBits;
-            ret.push((acc >> bits) & maxv);
-        }
-    }
-    if (pad && bits > 0) ret.push((acc << (toBits - bits)) & maxv);
-    return ret;
-}
-
-function evmToCosmos(evmAddress) {
-    if (!evmAddress || !evmAddress.startsWith('0x')) return null;
-    const hex = evmAddress.slice(2).toLowerCase();
-    if (hex.length !== 40) return null;
-    const bytes = [];
-    for (let i = 0; i < hex.length; i += 2) {
-        bytes.push(parseInt(hex.slice(i, i + 2), 16));
-    }
-    const words = convertBits(bytes, 8, 5, true);
-    return bech32Encode('qubetics', words);
-}
 
 // ==================== UI HELPERS ====================
 function showStatus(message, type = 'info') {
@@ -140,15 +72,10 @@ async function connectMetaMask() {
     try {
         showStatus('Connecting MetaMask...', 'info');
         
-        if (!window.MetaMaskConnector) {
-            throw new Error('MetaMask connector not loaded');
-        }
-        
-        state.metamaskConnector = new window.MetaMaskConnector();
-        const result = await state.metamaskConnector.connect();
+        const result = await window.govWalletConnect('metamask');
         
         if (result.success) {
-            state.wallet = result.evmAddress;
+            state.wallet = result.address;
             state.walletType = 'metamask';
             state.cosmosAddress = result.cosmosAddress;
             state.isConnected = true;
@@ -165,20 +92,12 @@ async function connectKeplr() {
     try {
         showStatus('Connecting Keplr...', 'info');
         
-        if (!window.CosmosStakingModule) {
-            throw new Error('Cosmos module not loaded');
-        }
-        
-        state.cosmosStaking = new window.CosmosStakingModule();
-        await state.cosmosStaking.initialize();
-        
-        const result = await state.cosmosStaking.connectWallet('keplr');
+        const result = await window.govWalletConnect('keplr');
         
         if (result.success) {
-            const walletInfo = state.cosmosStaking.getWalletInfo();
-            state.wallet = walletInfo.address;
+            state.wallet = result.address;
             state.walletType = 'keplr';
-            state.cosmosAddress = walletInfo.address;
+            state.cosmosAddress = result.cosmosAddress;
             state.isConnected = true;
             
             await onWalletConnected();
@@ -193,20 +112,12 @@ async function connectCosmostation() {
     try {
         showStatus('Connecting Cosmostation...', 'info');
         
-        if (!window.CosmosStakingModule) {
-            throw new Error('Cosmos module not loaded');
-        }
-        
-        state.cosmosStaking = new window.CosmosStakingModule();
-        await state.cosmosStaking.initialize();
-        
-        const result = await state.cosmosStaking.connectWallet('cosmostation');
+        const result = await window.govWalletConnect('cosmostation');
         
         if (result.success) {
-            const walletInfo = state.cosmosStaking.getWalletInfo();
-            state.wallet = walletInfo.address;
+            state.wallet = result.address;
             state.walletType = 'cosmostation';
-            state.cosmosAddress = walletInfo.address;
+            state.cosmosAddress = result.cosmosAddress;
             state.isConnected = true;
             
             await onWalletConnected();
@@ -235,9 +146,7 @@ async function onWalletConnected() {
 }
 
 function disconnectWallet() {
-    if (state.cosmosStaking) {
-        state.cosmosStaking.disconnect();
-    }
+    window.govWalletDisconnect();
     
     state.wallet = null;
     state.walletType = null;
@@ -245,8 +154,6 @@ function disconnectWallet() {
     state.votingPower = 0;
     state.isConnected = false;
     state.myVotes = {};
-    state.cosmosStaking = null;
-    state.metamaskConnector = null;
     
     document.getElementById('connectSection').classList.remove('hidden');
     document.getElementById('walletSection').classList.add('hidden');
@@ -588,6 +495,21 @@ async function submitVote(pollId, vote) {
 // ==================== INITIALIZATION ====================
 function init() {
     console.log('🚀 QubeNode Governance initializing...');
+    
+    // Initialize Governance Wallet Adapter
+    if (typeof window.govWalletInit !== 'undefined') {
+        window.govWalletInit({
+            onConnect: (address, walletType) => {
+                console.log('✅ Wallet connected:', address, walletType);
+            },
+            onDisconnect: () => {
+                console.log('📌 Wallet disconnected');
+            }
+        });
+        console.log('✅ Governance Wallet Adapter initialized');
+    } else {
+        console.error('❌ Governance Wallet Adapter not loaded');
+    }
     
     // Event Listeners - Header
     const headerWalletBtn = document.getElementById('headerWalletBtn');

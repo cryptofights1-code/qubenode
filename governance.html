@@ -54,7 +54,7 @@
     <header class="header">
         <div class="header-container">
             <a href="/" class="logo">
-                <img src="/qubenode-logo.svg" alt="QubeNode" class="logo-img" onerror="this.style.display='none'">
+                <img src="/qubenode-logo.svg" alt="QubeNode" class="logo-img" id="logoImg">
                 <span class="logo-text">QubeNode</span>
             </a>
             
@@ -160,7 +160,7 @@
             
             <div class="wallet-options">
                 <button class="wallet-option" id="metamaskOption">
-                    <img src="metamask-fox.svg" alt="MetaMask" class="wallet-option-icon" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Ctext y=%2218%22 font-size=%2218%22%3E🦊%3C/text%3E%3C/svg%3E'">
+                    <img src="metamask-fox.svg" alt="MetaMask" class="wallet-option-icon wallet-icon" data-fallback="🦊">
                     <div class="wallet-option-info">
                         <div class="wallet-option-name">MetaMask</div>
                         <div class="wallet-option-desc">Browser extension</div>
@@ -168,7 +168,7 @@
                 </button>
                 
                 <button class="wallet-option" id="keplrOption">
-                    <img src="keplr.png" alt="Keplr" class="wallet-option-icon" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Ctext y=%2218%22 font-size=%2218%22%3E🔷%3C/text%3E%3C/svg%3E'">
+                    <img src="keplr.png" alt="Keplr" class="wallet-option-icon wallet-icon" data-fallback="🔷">
                     <div class="wallet-option-info">
                         <div class="wallet-option-name">Keplr</div>
                         <div class="wallet-option-desc">Cosmos wallet</div>
@@ -176,7 +176,7 @@
                 </button>
                 
                 <button class="wallet-option" id="cosmostationOption">
-                    <img src="Cosmostation.png" alt="Cosmostation" class="wallet-option-icon" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Ctext y=%2218%22 font-size=%2218%22%3E🔶%3C/text%3E%3C/svg%3E'">
+                    <img src="Cosmostation.png" alt="Cosmostation" class="wallet-option-icon wallet-icon" data-fallback="🔶">
                     <div class="wallet-option-info">
                         <div class="wallet-option-name">Cosmostation</div>
                         <div class="wallet-option-desc">Cosmos wallet</div>
@@ -195,14 +195,14 @@
                 </p>
                 <div class="footer-links">
                     <a href="https://t.me/+sRnz7RyoL4Q0MWEy" target="_blank" class="footer-link">Telegram</a>
-                    <a href="mailto:contact@qubenode.space" class="footer-link">Email</a>
+                    <a href="/cdn-cgi/l/email-protection#6c0f0302180d0f182c1d190e0902030809421f1c0d0f09" class="footer-link">Email</a>
                 </div>
             </div>
         </div>
     </footer>
 
     <!-- Scripts - Load in correct order -->
-    <script src="chain-config.js"></script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="chain-config.js"></script>
     <script src="chain-client.js"></script>
     <script src="wallet-manager.js"></script>
     
@@ -212,9 +212,4 @@
     
     <script src="cosmos-staking.js"></script>
     
-    <!-- Governance Wallet Adapter - Unified API -->
-    <script src="governance-wallet-adapter.js"></script>
-    
-    <script src="init-governance.js"></script>
-</body>
-</html>
+    <!-- Governance Walle

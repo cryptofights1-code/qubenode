@@ -256,7 +256,6 @@ async function checkVotingPower() {
         }
     }
 }
-}
 
 // ==================== POLLS MANAGEMENT ====================
 function initializeDemoPolls() {
@@ -613,6 +612,28 @@ function init() {
     if (cosmostationOption) {
         cosmostationOption.addEventListener('click', connectCosmostation);
     }
+    
+    // Image Error Handlers (CSP-compliant)
+    // Handle logo image error
+    const logoImg = document.getElementById('logoImg');
+    if (logoImg) {
+        logoImg.addEventListener('error', function() {
+            this.style.display = 'none';
+        });
+    }
+    
+    // Handle wallet icon errors with emoji fallbacks
+    const walletIcons = document.querySelectorAll('.wallet-icon');
+    walletIcons.forEach(icon => {
+        icon.addEventListener('error', function() {
+            const fallback = this.getAttribute('data-fallback');
+            if (fallback) {
+                // Create SVG with emoji as fallback
+                const svg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ctext y='18' font-size='18'%3E${fallback}%3C/text%3E%3C/svg%3E`;
+                this.src = svg;
+            }
+        });
+    });
     
     // Show connect section initially
     document.getElementById('connectSection').classList.remove('hidden');

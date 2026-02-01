@@ -537,7 +537,7 @@ function renderPollCard(poll) {
         voteButtonsHtml = `
             <div style="text-align: center; padding: 24px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px; margin-bottom: 24px;">
                 <p style="color: #94a3b8; margin-bottom: 16px;">Connect your wallet to vote</p>
-                <button onclick="document.getElementById('connectWalletBtn').click()" 
+                <button class="btn-connect-inline" 
                         style="background: #3b82f6; color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
                     Connect Wallet
                 </button>
@@ -636,6 +636,14 @@ function attachVoteListeners() {
             const pollId = parseInt(this.getAttribute('data-poll-id'));
             const vote = this.getAttribute('data-vote');
             await submitVote(pollId, vote);
+        });
+    });
+    
+    // Attach listeners to inline connect buttons
+    const connectButtons = document.querySelectorAll('.btn-connect-inline');
+    connectButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            openWalletModal();
         });
     });
 }

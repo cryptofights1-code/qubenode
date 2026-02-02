@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Governance - QubeNode Validator</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    
+    <!-- Meta Tags -->
+    <meta name="description" content="QubeNode internal governance voting system - Participate in validator decision making">
+    <meta name="theme-color" content="#00D4FF">
+    
+    <!-- Governance Styles - CSP Compliant -->
+    <link rel="stylesheet" href="styles-governance.css">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation"></div>
+    <div class="grid-overlay"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <div class="governance-header">
+            <h1 class="governance-title">🗳️ Governance Voting</h1>
+            <p class="governance-subtitle">Internal voting system to shape QubeNode's position on network proposals</p>
+            
+            <div class="header-actions">
+                <a href="index.html" class="btn-header btn-home">🏠 Home</a>
+                <button id="connectWalletBtn" class="btn-header btn-connect">💎 Connect Wallet</button>
+                <button id="disconnectWalletBtn" class="btn-header btn-disconnect" style="display: none;">🚪 Disconnect</button>
+            </div>
+        </div>
+        
+        <!-- Wallet Info Bar (shown after connection) -->
+        <div class="wallet-info-bar" id="walletInfoBar">
+            <div class="wallet-info-item">
+                <span class="wallet-info-label">Connected Address</span>
+                <span class="wallet-info-value" id="connectedAddress">-</span>
+            </div>
+            <div class="wallet-info-item">
+                <span class="wallet-info-label">Delegated to QubeNode</span>
+                <span class="wallet-info-value" id="delegatedAmount">0.000 TICS</span>
+            </div>
+            <div class="wallet-info-item">
+                <span class="wallet-info-label">Your Voting Power</span>
+                <span class="wallet-info-value voting-power-highlight" id="votingPower">0.000 TICS</span>
+            </div>
+        </div>
+        
+        <!-- Info Box -->
+        <div class="info-box">
+            <div class="info-box-title">ℹ️ About Internal Governance</div>
+            <div class="info-box-text">
+                This is QubeNode's internal voting system. Your vote helps us determine our position on network governance proposals. 
+                Voting power is based on your delegation to QubeNode. Your voice matters in shaping our validator decisions! 🚀
+            </div>
+        </div>
+        
+        <!-- Proposals Section -->
+        <div class="proposals-section">
+            <div class="section-header">
+                <h2 class="section-title">📋 Active & Recent Proposals</h2>
+            </div>
+            
+            <!-- Loading State -->
+            <div id="loadingContainer" class="loading-container">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">Loading proposals...</div>
+            </div>
+            
+            <!-- Proposals List (populated by JS) -->
+            <div id="proposalsList" style="display: none;"></div>
+            
+            <!-- Empty State (shown when no proposals) -->
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <div class="empty-state-icon">🗳️</div>
+                <div class="empty-state-title">No Active Proposals</div>
+                <div class="empty-state-text">Check back later for new governance proposals!</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+    
+    <!-- Cosmos Chain Dependencies -->
+    <script src="chain-config.js"></script>
+    <script src="wallet-manager.js"></script>
+    <script src="chain-client.js"></script>
+    
+    <!-- Governance Logic -->
+    <script src="init-governance.js"></script>
+</body>
+</html>

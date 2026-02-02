@@ -1,0 +1,632 @@
+/**
+ * Governance Page Styles
+ * QubeNode Validator Website
+ * CSP Compliant - No inline styles
+ * Internal governance voting system for delegators
+ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #000000;
+    color: white;
+    min-height: 100vh;
+    padding: 20px;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Animated background matching other pages */
+.bg-animation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    background: radial-gradient(ellipse at 50% 50%, rgba(0, 212, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(0, 255, 240, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 20% 80%, rgba(0, 128, 255, 0.15) 0%, transparent 50%);
+    animation: bgShift 20s ease infinite;
+    pointer-events: none;
+}
+
+@keyframes bgShift {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.1) rotate(5deg); }
+}
+
+.grid-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+}
+
+/* Header */
+.governance-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 30px 20px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 20px;
+    border: 1px solid rgba(0,212,255,0.2);
+}
+
+.governance-title {
+    font-size: 36px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #00D4FF, #00FFF0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+}
+
+.governance-subtitle {
+    color: #94a3b8;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.header-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.btn-header {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-home {
+    background: rgba(100,116,139,0.2);
+    border: 1px solid rgba(100,116,139,0.4);
+    color: #cbd5e1;
+}
+
+.btn-home:hover {
+    background: rgba(100,116,139,0.3);
+    border-color: rgba(100,116,139,0.6);
+}
+
+.btn-connect {
+    background: linear-gradient(135deg, #00D4FF, #00FFF0);
+    color: #000;
+    border: none;
+}
+
+.btn-connect:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,212,255,0.4);
+}
+
+.btn-disconnect {
+    background: rgba(239,68,68,0.2);
+    border: 1px solid rgba(239,68,68,0.4);
+    color: #ef4444;
+}
+
+.btn-disconnect:hover {
+    background: rgba(239,68,68,0.3);
+    border-color: rgba(239,68,68,0.6);
+}
+
+/* Wallet Info Bar */
+.wallet-info-bar {
+    display: none;
+    background: rgba(34,197,94,0.1);
+    border: 1px solid rgba(34,197,94,0.3);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 30px;
+}
+
+.wallet-info-bar.active {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.wallet-info-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.wallet-info-label {
+    color: #86efac;
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+
+.wallet-info-value {
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: monospace;
+}
+
+.voting-power-highlight {
+    color: #00FFF0;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+/* Proposals Section */
+.proposals-section {
+    margin-bottom: 40px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.section-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #00D4FF;
+}
+
+/* Proposal Card */
+.proposal-card {
+    background: rgba(15,23,42,0.6);
+    border: 1px solid rgba(100,116,139,0.3);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    transition: all 0.3s;
+}
+
+.proposal-card:hover {
+    border-color: rgba(0,212,255,0.5);
+    background: rgba(15,23,42,0.8);
+}
+
+.proposal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.proposal-id {
+    font-size: 14px;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.proposal-status {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.status-active {
+    background: rgba(34,197,94,0.2);
+    border: 1px solid rgba(34,197,94,0.4);
+    color: #86efac;
+}
+
+.status-ended {
+    background: rgba(100,116,139,0.2);
+    border: 1px solid rgba(100,116,139,0.4);
+    color: #94a3b8;
+}
+
+.proposal-title-text {
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 12px;
+}
+
+.proposal-description {
+    color: #cbd5e1;
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+/* Proposal Metadata */
+.proposal-metadata {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 10px;
+}
+
+.metadata-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.metadata-label {
+    color: #64748b;
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+
+.metadata-value {
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.countdown-timer {
+    color: #00FFF0;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+/* Voting Results */
+.voting-results {
+    margin-bottom: 20px;
+}
+
+.results-title {
+    color: #94a3b8;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.vote-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.vote-option-name {
+    font-size: 15px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.vote-option-stats {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.vote-count {
+    color: #00FFF0;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.vote-percentage {
+    color: #94a3b8;
+    font-size: 14px;
+}
+
+.vote-bar {
+    height: 6px;
+    background: rgba(100,116,139,0.2);
+    border-radius: 3px;
+    margin-top: 8px;
+    overflow: hidden;
+}
+
+.vote-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s ease;
+}
+
+.vote-bar-yes {
+    background: linear-gradient(90deg, #22c55e, #16a34a);
+}
+
+.vote-bar-no {
+    background: linear-gradient(90deg, #ef4444, #dc2626);
+}
+
+.vote-bar-abstain {
+    background: linear-gradient(90deg, #64748b, #475569);
+}
+
+/* Voting Actions */
+.voting-actions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.btn-vote {
+    padding: 14px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-vote:hover {
+    transform: translateY(-2px);
+}
+
+.btn-vote:active {
+    transform: translateY(0);
+}
+
+.btn-vote:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.btn-vote-yes {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: white;
+}
+
+.btn-vote-yes:hover:not(:disabled) {
+    box-shadow: 0 6px 20px rgba(34,197,94,0.4);
+}
+
+.btn-vote-no {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+}
+
+.btn-vote-no:hover:not(:disabled) {
+    box-shadow: 0 6px 20px rgba(239,68,68,0.4);
+}
+
+.btn-vote-abstain {
+    background: linear-gradient(135deg, #64748b, #475569);
+    color: white;
+}
+
+.btn-vote-abstain:hover:not(:disabled) {
+    box-shadow: 0 6px 20px rgba(100,116,139,0.4);
+}
+
+/* User's Vote Indicator */
+.user-vote-indicator {
+    display: none;
+    background: rgba(0,212,255,0.1);
+    border: 1px solid rgba(0,212,255,0.3);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+}
+
+.user-vote-indicator.active {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-vote-text {
+    color: #00D4FF;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.user-vote-value {
+    color: #00FFF0;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+}
+
+.empty-state-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+    opacity: 0.5;
+}
+
+.empty-state-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #94a3b8;
+    margin-bottom: 12px;
+}
+
+.empty-state-text {
+    color: #64748b;
+    font-size: 15px;
+}
+
+/* Loading State */
+.loading-container {
+    text-align: center;
+    padding: 40px;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(0,212,255,0.2);
+    border-top-color: #00D4FF;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-text {
+    color: #94a3b8;
+    font-size: 16px;
+    margin-top: 16px;
+}
+
+/* Info Box */
+.info-box {
+    background: rgba(0,212,255,0.1);
+    border: 1px solid rgba(0,212,255,0.3);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 24px;
+}
+
+.info-box-title {
+    color: #00D4FF;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.info-box-text {
+    color: #cbd5e1;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Toast Notifications */
+.toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    padding: 16px 24px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    z-index: 1000;
+    animation: slideInUp 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+@keyframes slideInUp {
+    from {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.toast-success {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: white;
+}
+
+.toast-error {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+}
+
+.toast-info {
+    background: linear-gradient(135deg, #00D4FF, #00FFF0);
+    color: #000;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .governance-title {
+        font-size: 28px;
+    }
+    
+    .proposal-title-text {
+        font-size: 18px;
+    }
+    
+    .voting-actions {
+        grid-template-columns: 1fr;
+    }
+    
+    .wallet-info-bar.active {
+        flex-direction: column;
+        align-items: start;
+    }
+    
+    .proposal-metadata {
+        grid-template-columns: 1fr;
+    }
+    
+    .header-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .btn-header {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 12px;
+    }
+    
+    .proposal-card {
+        padding: 16px;
+    }
+    
+    .governance-header {
+        padding: 20px 16px;
+    }
+    
+    .vote-option-stats {
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 4px;
+    }
+}

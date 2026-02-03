@@ -67,18 +67,13 @@ body {
     text-align: center;
     margin-bottom: 40px;
     padding: 30px 20px;
-    background: rgba(255,255,255,0.03);
-    border-radius: 20px;
-    border: 1px solid rgba(0,212,255,0.2);
+    position: relative;
 }
 
 .governance-title {
     font-size: 36px;
     font-weight: 700;
-    background: linear-gradient(135deg, #00D4FF, #00FFF0);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #ffffff;
     margin-bottom: 12px;
 }
 
@@ -113,6 +108,9 @@ body {
     background: rgba(100,116,139,0.2);
     border: 1px solid rgba(100,116,139,0.4);
     color: #cbd5e1;
+    position: absolute;
+    top: 20px;
+    left: 20px;
 }
 
 .btn-home:hover {
@@ -199,22 +197,18 @@ body {
 .section-title {
     font-size: 24px;
     font-weight: 600;
-    color: #00D4FF;
+    color: #94a3b8;
 }
 
 /* Proposal Card */
 .proposal-card {
-    background: rgba(15,23,42,0.6);
-    border: 1px solid rgba(100,116,139,0.3);
-    border-radius: 16px;
     padding: 24px;
     margin-bottom: 20px;
     transition: all 0.3s;
 }
 
 .proposal-card:hover {
-    border-color: rgba(0,212,255,0.5);
-    background: rgba(15,23,42,0.8);
+    /* Removed hover effect */
 }
 
 .proposal-header {
@@ -408,30 +402,36 @@ body {
 }
 
 .btn-vote-yes {
-    background: linear-gradient(135deg, #22c55e, #16a34a);
-    color: white;
+    background: transparent;
+    border: 2px solid #22c55e;
+    color: #22c55e;
 }
 
 .btn-vote-yes:hover:not(:disabled) {
-    box-shadow: 0 6px 20px rgba(34,197,94,0.4);
+    background: rgba(34,197,94,0.1);
+    box-shadow: 0 6px 20px rgba(34,197,94,0.3);
 }
 
 .btn-vote-no {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    color: white;
+    background: transparent;
+    border: 2px solid #ef4444;
+    color: #ef4444;
 }
 
 .btn-vote-no:hover:not(:disabled) {
-    box-shadow: 0 6px 20px rgba(239,68,68,0.4);
+    background: rgba(239,68,68,0.1);
+    box-shadow: 0 6px 20px rgba(239,68,68,0.3);
 }
 
 .btn-vote-abstain {
-    background: linear-gradient(135deg, #64748b, #475569);
-    color: white;
+    background: transparent;
+    border: 2px solid #64748b;
+    color: #64748b;
 }
 
 .btn-vote-abstain:hover:not(:disabled) {
-    box-shadow: 0 6px 20px rgba(100,116,139,0.4);
+    background: rgba(100,116,139,0.1);
+    box-shadow: 0 6px 20px rgba(100,116,139,0.3);
 }
 
 /* User's Vote Indicator */
@@ -517,22 +517,19 @@ body {
 
 /* Info Box */
 .info-box {
-    background: rgba(0,212,255,0.1);
-    border: 1px solid rgba(0,212,255,0.3);
-    border-radius: 12px;
     padding: 16px;
     margin-bottom: 24px;
 }
 
 .info-box-title {
-    color: #00D4FF;
+    color: #94a3b8;
     font-size: 16px;
     font-weight: 600;
     margin-bottom: 8px;
 }
 
 .info-box-text {
-    color: #cbd5e1;
+    color: #ffffff;
     font-size: 14px;
     line-height: 1.6;
 }
@@ -608,6 +605,12 @@ body {
     .btn-header {
         width: 100%;
         justify-content: center;
+    }
+    
+    .btn-home {
+        position: static;
+        width: 100%;
+        margin-bottom: 16px;
     }
 }
 

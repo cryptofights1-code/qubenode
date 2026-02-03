@@ -486,6 +486,10 @@ function createProposalCard(proposal) {
                 <span class="metadata-value countdown-timer" id="countdown-${proposal.id}">${isActive ? 'Calculating...' : 'Ended'}</span>
             </div>
             <div class="metadata-item">
+                <span class="metadata-label">Total Participants</span>
+                <span class="metadata-value">${proposal.results.totalVoters || 0} wallets</span>
+            </div>
+            <div class="metadata-item">
                 <span class="metadata-label">Total Votes</span>
                 <span class="metadata-value">${totalVotesNum.toFixed(3)} TICS</span>
             </div>

@@ -184,11 +184,14 @@ async function connectWallet(walletType) {
                 // Store MetaMask connector for later use
                 window.metamaskConnector = metamaskConnector;
                 
-                // Get delegation using Cosmos address
-                const delegation = await metamaskConnector.getDelegation(QUBENODE_VALIDATOR);
+                // Get all delegations and find QubeNode delegation
+                const delegations = await metamaskConnector.getDelegations();
+                const qubenodeDelegation = delegations.find(
+                    d => d.delegation.validator_address === QUBENODE_VALIDATOR
+                );
                 
                 connectedAddress = metamaskConnector.cosmosAddress; // Use Cosmos address for display
-                votingPower = delegation ? delegation.balance.amount : '0';
+                votingPower = qubenodeDelegation ? qubenodeDelegation.balance.amount : '0';
                 
                 console.log('✅ MetaMask connected');
                 console.log('   EVM Address:', metamaskConnector.address);

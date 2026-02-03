@@ -200,6 +200,7 @@ async function connectWallet(walletType) {
                 
                 // Update UI
                 updateWalletUI();
+                updateVotingPowerUI(); // ← Додано оновлення voting power!
                 showToast('MetaMask connected successfully! 🦊', 'success');
                 
                 // Reload proposals with voter parameter

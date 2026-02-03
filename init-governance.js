@@ -170,21 +170,37 @@ async function connectWallet(walletType) {
             }
             result = await walletManager.connectCosmostation();
         } else if (walletType === 'metamask') {
-            if (!window.ethereum) {
+            // Use MetaMaskConnector
+            if (!window.ethereum || !window.ethereum.isMetaMask) {
                 showToast('MetaMask not installed. Please install from https://metamask.io/', 'error');
                 return;
             }
-            // MetaMask connection for EVM-compatible addresses
-            try {
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                if (accounts && accounts.length > 0) {
-                    // Note: MetaMask returns EVM addresses, need to convert to Cosmos format
-                    // For now, show a message that MetaMask is not fully supported yet
-                    showToast('MetaMask support coming soon! Please use Keplr or Cosmostation for now.', 'info');
-                    return;
-                }
-            } catch (error) {
-                showToast('Failed to connect MetaMask: ' + error.message, 'error');
+            
+            // Create MetaMask connector instance
+            const metamaskConnector = new MetaMaskConnector();
+            result = await metamaskConnector.connect();
+            
+            if (result.success) {
+                // Store MetaMask connector for later use
+                window.metamaskConnector = metamaskConnector;
+                
+                // Get delegation using Cosmos address
+                const delegation = await metamaskConnector.getDelegation(QUBENODE_VALIDATOR);
+                
+                connectedAddress = metamaskConnector.cosmosAddress; // Use Cosmos address for display
+                votingPower = delegation ? delegation.balance.amount : '0';
+                
+                console.log('✅ MetaMask connected');
+                console.log('   EVM Address:', metamaskConnector.address);
+                console.log('   Cosmos Address:', metamaskConnector.cosmosAddress);
+                console.log('   Voting Power:', votingPower);
+                
+                // Update UI
+                updateWalletUI();
+                showToast('MetaMask connected successfully! 🦊', 'success');
+                
+                // Reload proposals with voter parameter
+                await loadProposals();
                 return;
             }
         } else {
@@ -305,6 +321,13 @@ function updateVotingPowerUI() {
  */
 function disconnectWallet() {
     walletManager.disconnect();
+    
+    // Also disconnect MetaMask if connected
+    if (window.metamaskConnector) {
+        window.metamaskConnector.disconnect();
+        window.metamaskConnector = null;
+    }
+    
     connectedAddress = null;
     votingPower = '0';
     

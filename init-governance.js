@@ -68,11 +68,59 @@ function setupEventListeners() {
 }
 
 /**
- * Show wallet connection modal (simplified - direct connection)
+ * Show wallet connection modal
  */
 function showWalletModal() {
-    // For now, try Keplr first, then Cosmostation
-    detectAndConnectWallet();
+    const modal = document.getElementById('walletModal');
+    if (!modal) {
+        console.error('Wallet modal not found');
+        return;
+    }
+    
+    // Show modal
+    modal.style.display = 'flex';
+    
+    // Setup modal event listeners
+    setupModalListeners();
+}
+
+/**
+ * Setup modal event listeners
+ */
+function setupModalListeners() {
+    const modal = document.getElementById('walletModal');
+    const closeBtn = document.getElementById('closeModalBtn');
+    const overlay = modal.querySelector('.wallet-modal-overlay');
+    const walletOptions = modal.querySelectorAll('.wallet-option');
+    
+    // Close button
+    if (closeBtn) {
+        closeBtn.onclick = closeWalletModal;
+    }
+    
+    // Click outside to close
+    if (overlay) {
+        overlay.onclick = closeWalletModal;
+    }
+    
+    // Wallet option buttons
+    walletOptions.forEach(option => {
+        option.onclick = async () => {
+            const walletType = option.dataset.wallet;
+            closeWalletModal();
+            await connectWallet(walletType);
+        };
+    });
+}
+
+/**
+ * Close wallet modal
+ */
+function closeWalletModal() {
+    const modal = document.getElementById('walletModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
 }
 
 /**
@@ -110,9 +158,35 @@ async function connectWallet(walletType) {
         
         let result;
         if (walletType === 'keplr') {
+            if (!window.keplr) {
+                showToast('Keplr wallet not installed. Please install from https://www.keplr.app/', 'error');
+                return;
+            }
             result = await walletManager.connectKeplr();
         } else if (walletType === 'cosmostation') {
+            if (!window.cosmostation) {
+                showToast('Cosmostation wallet not installed. Please install from https://cosmostation.io/', 'error');
+                return;
+            }
             result = await walletManager.connectCosmostation();
+        } else if (walletType === 'metamask') {
+            if (!window.ethereum) {
+                showToast('MetaMask not installed. Please install from https://metamask.io/', 'error');
+                return;
+            }
+            // MetaMask connection for EVM-compatible addresses
+            try {
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                if (accounts && accounts.length > 0) {
+                    // Note: MetaMask returns EVM addresses, need to convert to Cosmos format
+                    // For now, show a message that MetaMask is not fully supported yet
+                    showToast('MetaMask support coming soon! Please use Keplr or Cosmostation for now.', 'info');
+                    return;
+                }
+            } catch (error) {
+                showToast('Failed to connect MetaMask: ' + error.message, 'error');
+                return;
+            }
         } else {
             throw new Error('Unsupported wallet type');
         }

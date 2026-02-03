@@ -83,6 +83,53 @@
         </div>
     </div>
     
+    <!-- Wallet Selection Modal -->
+    <div id="walletModal" class="wallet-modal" style="display: none;">
+        <div class="wallet-modal-overlay"></div>
+        <div class="wallet-modal-content">
+            <div class="wallet-modal-header">
+                <h2 class="wallet-modal-title">Connect Wallet</h2>
+                <button id="closeModalBtn" class="wallet-modal-close">✕</button>
+            </div>
+            
+            <div class="wallet-modal-body">
+                <p class="wallet-modal-subtitle">Choose your preferred wallet to connect</p>
+                
+                <div class="wallet-options">
+                    <button class="wallet-option" data-wallet="keplr">
+                        <div class="wallet-option-icon">
+                            <img src="/keplr.png" alt="Keplr" class="wallet-logo">
+                        </div>
+                        <div class="wallet-option-info">
+                            <div class="wallet-option-name">Keplr</div>
+                            <div class="wallet-option-desc">Browser extension wallet</div>
+                        </div>
+                    </button>
+                    
+                    <button class="wallet-option" data-wallet="cosmostation">
+                        <div class="wallet-option-icon">
+                            <img src="/Cosmostation.png" alt="Cosmostation" class="wallet-logo">
+                        </div>
+                        <div class="wallet-option-info">
+                            <div class="wallet-option-name">Cosmostation</div>
+                            <div class="wallet-option-desc">Mobile & browser wallet</div>
+                        </div>
+                    </button>
+                    
+                    <button class="wallet-option" data-wallet="metamask">
+                        <div class="wallet-option-icon">
+                            <img src="/metamask-fox.svg" alt="MetaMask" class="wallet-logo">
+                        </div>
+                        <div class="wallet-option-info">
+                            <div class="wallet-option-name">MetaMask</div>
+                            <div class="wallet-option-desc">EVM-compatible wallet</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- Toast Container -->
     <div id="toastContainer"></div>
     

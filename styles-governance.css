@@ -258,6 +258,9 @@ body {
     line-height: 1.6;
     margin-bottom: 20px;
     text-align: justify;
+    text-align-last: left;
+    word-spacing: -0.05em;
+    hyphens: auto;
 }
 
 /* Proposal Metadata */
@@ -534,6 +537,9 @@ body {
     font-size: 14px;
     line-height: 1.6;
     text-align: justify;
+    text-align-last: left;
+    word-spacing: -0.05em;
+    hyphens: auto;
 }
 
 /* Toast Notifications */

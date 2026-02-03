@@ -629,8 +629,9 @@ async function handleVote(event) {
         return;
     }
     
-    // Confirm vote
-    if (!confirm(`Confirm your vote: ${vote.toUpperCase()}?`)) {
+    // Confirm vote with custom modal
+    const confirmed = await showVoteConfirmModal(vote, votingPower);
+    if (!confirmed) {
         return;
     }
     
@@ -682,6 +683,91 @@ async function handleVote(event) {
         // Re-enable button
         button.disabled = false;
         button.innerHTML = originalText;
+    }
+}
+
+/**
+ * Show vote confirmation modal
+ * Returns a Promise that resolves to true if confirmed, false if cancelled
+ */
+function showVoteConfirmModal(vote, votingPower) {
+    return new Promise((resolve) => {
+        const modal = document.getElementById('voteConfirmModal');
+        const choiceElement = document.getElementById('voteConfirmChoice');
+        const powerElement = document.getElementById('voteConfirmPower');
+        const cancelBtn = document.getElementById('voteConfirmCancel');
+        const okBtn = document.getElementById('voteConfirmOk');
+        
+        if (!modal || !choiceElement || !powerElement || !cancelBtn || !okBtn) {
+            console.error('Vote confirm modal elements not found');
+            resolve(false);
+            return;
+        }
+        
+        // Set vote choice with appropriate styling
+        choiceElement.textContent = vote.toUpperCase();
+        choiceElement.className = 'vote-confirm-choice';
+        
+        if (vote === 'yes') {
+            choiceElement.classList.add('vote-yes');
+        } else if (vote === 'no') {
+            choiceElement.classList.add('vote-no');
+        } else if (vote === 'abstain') {
+            choiceElement.classList.add('vote-abstain');
+        }
+        
+        // Set voting power
+        powerElement.textContent = formatTics(votingPower) + ' TICS';
+        
+        // Show modal
+        modal.style.display = 'flex';
+        
+        // Setup event handlers
+        const handleCancel = () => {
+            closeVoteConfirmModal(modal);
+            resolve(false);
+        };
+        
+        const handleOk = () => {
+            closeVoteConfirmModal(modal);
+            resolve(true);
+        };
+        
+        // Remove old listeners (if any)
+        cancelBtn.replaceWith(cancelBtn.cloneNode(true));
+        okBtn.replaceWith(okBtn.cloneNode(true));
+        
+        // Get new references after cloning
+        const newCancelBtn = document.getElementById('voteConfirmCancel');
+        const newOkBtn = document.getElementById('voteConfirmOk');
+        
+        // Add event listeners
+        newCancelBtn.addEventListener('click', handleCancel);
+        newOkBtn.addEventListener('click', handleOk);
+        
+        // Close on overlay click
+        const overlay = modal.querySelector('.vote-confirm-overlay');
+        if (overlay) {
+            overlay.addEventListener('click', handleCancel);
+        }
+        
+        // Close on Escape key
+        const handleEscape = (e) => {
+            if (e.key === 'Escape') {
+                handleCancel();
+                document.removeEventListener('keydown', handleEscape);
+            }
+        };
+        document.addEventListener('keydown', handleEscape);
+    });
+}
+
+/**
+ * Close vote confirmation modal
+ */
+function closeVoteConfirmModal(modal) {
+    if (modal) {
+        modal.style.display = 'none';
     }
 }
 

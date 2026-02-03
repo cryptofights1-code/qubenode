@@ -131,6 +131,31 @@
         </div>
     </div>
     
+    <!-- Vote Confirmation Modal -->
+    <div id="voteConfirmModal" class="vote-confirm-modal" style="display: none;">
+        <div class="vote-confirm-overlay"></div>
+        <div class="vote-confirm-content">
+            <div class="vote-confirm-header">
+                <div class="vote-confirm-icon">🗳️</div>
+                <h3 class="vote-confirm-title">Confirm Your Vote</h3>
+            </div>
+            
+            <div class="vote-confirm-body">
+                <p class="vote-confirm-text">You are about to vote:</p>
+                <div class="vote-confirm-choice" id="voteConfirmChoice">YES</div>
+                <p class="vote-confirm-details">
+                    <span class="vote-confirm-label">Voting Power:</span>
+                    <span class="vote-confirm-value" id="voteConfirmPower">0.000 TICS</span>
+                </p>
+            </div>
+            
+            <div class="vote-confirm-actions">
+                <button id="voteConfirmCancel" class="vote-confirm-btn vote-confirm-cancel">Cancel</button>
+                <button id="voteConfirmOk" class="vote-confirm-btn vote-confirm-ok">Confirm Vote</button>
+            </div>
+        </div>
+    </div>
+    
     <!-- Toast Container -->
     <div id="toastContainer"></div>
     

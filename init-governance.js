@@ -6,7 +6,7 @@
 
 // Configuration
 const QUBENODE_VALIDATOR = 'qubeticsvaloper1tzk9f84cv2gmk3du3m9dpxcuph70sfj6uf6kld';
-const API_BASE_URL = 'https://governance-api.qubenode.workers.dev'; // Cloudflare Worker endpoint
+const API_BASE_URL = 'https://governance.qubenode.space'; // Cloudflare Worker endpoint
 
 // Global state
 let walletManager = null;

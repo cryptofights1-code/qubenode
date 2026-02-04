@@ -565,14 +565,14 @@ function createProposalCard(proposal, proposalNumber) {
         </div>
         
         <div class="voting-actions">
-            <button class="btn-vote btn-vote-yes" data-proposal="${proposal.id}" data-vote="yes" ${!isActive || userVote ? 'disabled' : ''}>
-                ✅ Vote YES
+            <button class="btn-vote btn-vote-yes ${userVote === 'yes' ? 'btn-vote-current' : ''}" data-proposal="${proposal.id}" data-vote="yes" ${!isActive ? 'disabled' : ''}>
+                ${userVote === 'yes' ? '✅ Your Vote: YES' : '✅ Vote YES'}
             </button>
-            <button class="btn-vote btn-vote-no" data-proposal="${proposal.id}" data-vote="no" ${!isActive || userVote ? 'disabled' : ''}>
-                ❌ Vote NO
+            <button class="btn-vote btn-vote-no ${userVote === 'no' ? 'btn-vote-current' : ''}" data-proposal="${proposal.id}" data-vote="no" ${!isActive ? 'disabled' : ''}>
+                ${userVote === 'no' ? '❌ Your Vote: NO' : '❌ Vote NO'}
             </button>
-            <button class="btn-vote btn-vote-abstain" data-proposal="${proposal.id}" data-vote="abstain" ${!isActive || userVote ? 'disabled' : ''}>
-                ⚪ Abstain
+            <button class="btn-vote btn-vote-abstain ${userVote === 'abstain' ? 'btn-vote-current' : ''}" data-proposal="${proposal.id}" data-vote="abstain" ${!isActive ? 'disabled' : ''}>
+                ${userVote === 'abstain' ? '⚪ Your Vote: ABSTAIN' : '⚪ Abstain'}
             </button>
         </div>
     `;
@@ -636,6 +636,10 @@ async function handleVote(event) {
     const proposalId = button.dataset.proposal;
     const vote = button.dataset.vote;
     
+    // Find current proposal to check if user already voted
+    const proposal = proposals.find(p => p.id === parseInt(proposalId));
+    const currentVote = proposal?.userVote || null;
+    
     // Check if wallet is connected
     if (!connectedAddress) {
         showToast('Please connect your wallet first', 'error');
@@ -649,7 +653,7 @@ async function handleVote(event) {
     }
     
     // Confirm vote with custom modal
-    const confirmed = await showVoteConfirmModal(vote, votingPower);
+    const confirmed = await showVoteConfirmModal(vote, votingPower, currentVote);
     if (!confirmed) {
         return;
     }
@@ -690,7 +694,12 @@ async function handleVote(event) {
         const result = await response.json();
         console.log('✅ Vote submitted:', result);
         
-        showToast(`Vote "${vote.toUpperCase()}" submitted successfully!`, 'success');
+        // Check if vote was changed or new
+        if (result.previousVote) {
+            showToast(`Vote changed from "${result.previousVote.toUpperCase()}" to "${vote.toUpperCase()}"!`, 'success');
+        } else {
+            showToast(`Vote "${vote.toUpperCase()}" submitted successfully!`, 'success');
+        }
         
         // Reload proposals to show updated results
         await loadProposals();
@@ -709,11 +718,12 @@ async function handleVote(event) {
  * Show vote confirmation modal
  * Returns a Promise that resolves to true if confirmed, false if cancelled
  */
-function showVoteConfirmModal(vote, votingPower) {
+function showVoteConfirmModal(vote, votingPower, currentVote = null) {
     return new Promise((resolve) => {
         const modal = document.getElementById('voteConfirmModal');
         const choiceElement = document.getElementById('voteConfirmChoice');
         const powerElement = document.getElementById('voteConfirmPower');
+        const textElement = modal.querySelector('.vote-confirm-text');
         const cancelBtn = document.getElementById('voteConfirmCancel');
         const okBtn = document.getElementById('voteConfirmOk');
         
@@ -721,6 +731,15 @@ function showVoteConfirmModal(vote, votingPower) {
             console.error('Vote confirm modal elements not found');
             resolve(false);
             return;
+        }
+        
+        // Update text based on whether changing vote
+        if (currentVote && currentVote !== vote) {
+            textElement.textContent = `Change your vote from ${currentVote.toUpperCase()} to:`;
+        } else if (currentVote === vote) {
+            textElement.textContent = `You already voted ${vote.toUpperCase()}. Confirm again?`;
+        } else {
+            textElement.textContent = 'You are about to vote:';
         }
         
         // Set vote choice with appropriate styling

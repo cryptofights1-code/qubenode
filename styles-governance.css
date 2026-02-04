@@ -445,6 +445,28 @@ body {
     box-shadow: 0 6px 20px rgba(100,116,139,0.3);
 }
 
+/* Current Vote Button Highlight */
+.btn-vote-current.btn-vote-yes {
+    background: rgba(34,197,94,0.2);
+    border: 2px solid #22c55e;
+    box-shadow: 0 0 20px rgba(34,197,94,0.4);
+    font-weight: 700;
+}
+
+.btn-vote-current.btn-vote-no {
+    background: rgba(239,68,68,0.2);
+    border: 2px solid #ef4444;
+    box-shadow: 0 0 20px rgba(239,68,68,0.4);
+    font-weight: 700;
+}
+
+.btn-vote-current.btn-vote-abstain {
+    background: rgba(100,116,139,0.2);
+    border: 2px solid #64748b;
+    box-shadow: 0 0 20px rgba(100,116,139,0.4);
+    font-weight: 700;
+}
+
 /* User's Vote Indicator */
 .user-vote-indicator {
     display: none;

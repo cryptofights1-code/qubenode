@@ -515,9 +515,13 @@ function createProposalCard(proposal, proposalNumber) {
         </div>
         
         ${userVote ? `
-        <div class="user-vote-indicator active">
-            <span class="user-vote-text">Your vote:</span>
-            <span class="user-vote-value">${userVote.toUpperCase()}</span>
+        <div class="user-vote-indicator active user-vote-${userVote}">
+            <div class="user-vote-icon">${userVote === 'yes' ? '✅' : userVote === 'no' ? '❌' : '⚪'}</div>
+            <div class="user-vote-content">
+                <span class="user-vote-text">Your current vote:</span>
+                <span class="user-vote-value">${userVote.toUpperCase()}</span>
+            </div>
+            <span class="user-vote-badge">You can change your vote below</span>
         </div>
         ` : ''}
         

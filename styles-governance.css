@@ -189,7 +189,7 @@ body {
 
 .section-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     margin-bottom: 24px;
 }
@@ -198,6 +198,7 @@ body {
     font-size: 24px;
     font-weight: 600;
     color: #94a3b8;
+    text-align: center;
 }
 
 /* Proposal Card */
@@ -521,25 +522,24 @@ body {
 
 /* Info Box */
 .info-box {
-    padding: 16px;
-    margin-bottom: 24px;
+    padding: 20px 16px;
+    margin-bottom: 28px;
+    text-align: center;
 }
 
 .info-box-title {
     color: #94a3b8;
     font-size: 16px;
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
 }
 
 .info-box-text {
     color: #ffffff;
     font-size: 14px;
     line-height: 1.6;
-    text-align: justify;
-    text-align-last: left;
-    word-spacing: -0.05em;
-    hyphens: auto;
+    max-width: 700px;
+    margin: 0 auto;
 }
 
 /* Toast Notifications */

@@ -487,7 +487,7 @@ function createProposalCard(proposal) {
             </div>
             <div class="metadata-item">
                 <span class="metadata-label">Total Participants</span>
-                <span class="metadata-value">${proposal.results.totalVoters || 0} wallets</span>
+                <span class="metadata-value">${proposal.results.totalVoters || 0}</span>
             </div>
             <div class="metadata-item">
                 <span class="metadata-label">Total Votes</span>
@@ -785,13 +785,21 @@ function formatTics(minimal) {
  */
 function formatDate(dateString) {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
+    
+    // Format: "Feb 3, 2026, 19:52 UTC"
+    const formatted = date.toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',
         year: 'numeric',
+        timeZone: 'UTC'
+    }) + ', ' + date.toLocaleTimeString('en-US', {
         hour: '2-digit',
-        minute: '2-digit'
-    });
+        minute: '2-digit',
+        hour12: false,
+        timeZone: 'UTC'
+    }) + ' UTC';
+    
+    return formatted;
 }
 
 /**

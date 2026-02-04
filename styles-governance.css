@@ -240,6 +240,12 @@ body {
     color: #86efac;
 }
 
+.status-pending {
+    background: rgba(251,191,36,0.2);
+    border: 1px solid rgba(251,191,36,0.4);
+    color: #fbbf24;
+}
+
 .status-ended {
     background: rgba(100,116,139,0.2);
     border: 1px solid rgba(100,116,139,0.4);

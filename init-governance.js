@@ -450,10 +450,21 @@ function createProposalCard(proposal, proposalNumber) {
     
     // Determine status
     const now = Date.now();
+    const startTime = new Date(proposal.startTime).getTime();
     const endTime = new Date(proposal.endTime).getTime();
-    const isActive = now < endTime;
-    const statusClass = isActive ? 'status-active' : 'status-ended';
-    const statusText = isActive ? 'ACTIVE' : 'ENDED';
+    const isActive = now >= startTime && now < endTime; // Active only between start and end
+    
+    let statusClass, statusText;
+    if (now < startTime) {
+        statusClass = 'status-pending';
+        statusText = 'PENDING';
+    } else if (now >= startTime && now < endTime) {
+        statusClass = 'status-active';
+        statusText = 'ACTIVE';
+    } else {
+        statusClass = 'status-ended';
+        statusText = 'ENDED';
+    }
     
     // Check if user has voted
     const userVote = proposal.userVote || null;

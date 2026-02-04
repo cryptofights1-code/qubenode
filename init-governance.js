@@ -379,6 +379,13 @@ async function loadProposals() {
         const data = await response.json();
         proposals = data.proposals || [];
         
+        // Sort proposals: oldest first (so #1 is the first created proposal)
+        proposals.sort((a, b) => {
+            const dateA = new Date(a.created_at || a.startTime).getTime();
+            const dateB = new Date(b.created_at || b.startTime).getTime();
+            return dateA - dateB; // Ascending order (oldest first)
+        });
+        
         console.log(`✅ Loaded ${proposals.length} proposals`);
         
         // Hide loading
@@ -425,9 +432,10 @@ function renderProposals() {
     countdownIntervals.forEach(interval => clearInterval(interval));
     countdownIntervals = [];
     
-    // Render each proposal
-    proposals.forEach(proposal => {
-        const proposalCard = createProposalCard(proposal);
+    // Render each proposal with dynamic numbering
+    proposals.forEach((proposal, index) => {
+        const proposalNumber = index + 1; // Dynamic numbering: 1, 2, 3...
+        const proposalCard = createProposalCard(proposal, proposalNumber);
         proposalsList.appendChild(proposalCard);
     });
 }
@@ -435,7 +443,7 @@ function renderProposals() {
 /**
  * Create proposal card element
  */
-function createProposalCard(proposal) {
+function createProposalCard(proposal, proposalNumber) {
     const card = document.createElement('div');
     card.className = 'proposal-card';
     card.dataset.proposalId = proposal.id;
@@ -465,7 +473,7 @@ function createProposalCard(proposal) {
     // Create card HTML
     card.innerHTML = `
         <div class="proposal-header">
-            <span class="proposal-id">#${proposal.id}</span>
+            <span class="proposal-id">#${proposalNumber}</span>
             <span class="proposal-status ${statusClass}">${statusText}</span>
         </div>
         

@@ -379,11 +379,11 @@ async function loadProposals() {
         const data = await response.json();
         proposals = data.proposals || [];
         
-        // Sort proposals: oldest first (so #1 is the first created proposal)
+        // Sort proposals: newest first (so newest proposal is always #1 at the top)
         proposals.sort((a, b) => {
             const dateA = new Date(a.created_at || a.startTime).getTime();
             const dateB = new Date(b.created_at || b.startTime).getTime();
-            return dateA - dateB; // Ascending order (oldest first)
+            return dateB - dateA; // Descending order (newest first)
         });
         
         console.log(`✅ Loaded ${proposals.length} proposals`);
@@ -432,9 +432,9 @@ function renderProposals() {
     countdownIntervals.forEach(interval => clearInterval(interval));
     countdownIntervals = [];
     
-    // Render each proposal with dynamic numbering
+    // Render each proposal with reverse dynamic numbering
     proposals.forEach((proposal, index) => {
-        const proposalNumber = index + 1; // Dynamic numbering: 1, 2, 3...
+        const proposalNumber = proposals.length - index; // Reverse numbering: newest = highest number
         const proposalCard = createProposalCard(proposal, proposalNumber);
         proposalsList.appendChild(proposalCard);
     });

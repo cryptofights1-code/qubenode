@@ -22,11 +22,12 @@ class QubeNodePlatform {
         this.walletType = urlParams.get('wallet');
         this.walletAddress = urlParams.get('address');
         
+        // Setup basic event listeners
+        this.setupEventListeners();
+        
         if (!this.walletType || !this.walletAddress) {
-            this.showError('No wallet connection. Redirecting...');
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 2000);
+            // Show wallet connection screen
+            this.showWalletConnectionScreen();
             return;
         }
         
@@ -36,13 +37,146 @@ class QubeNodePlatform {
         // Initialize Cosmos Staking
         await this.initCosmosStaking();
         
-        // Setup event listeners
-        this.setupEventListeners();
-        
         // Load default module (Staking Hub)
         await this.loadModule('staking');
         
         console.log('Platform initialized successfully');
+    }
+    
+    showWalletConnectionScreen() {
+        const container = document.getElementById('moduleContainer');
+        
+        container.innerHTML = `
+            <div class="wallet-connection-screen">
+                <div class="connection-card">
+                    <div class="connection-logo">
+                        <div class="logo-icon-large">Q</div>
+                        <h1 class="connection-title">QubeNode Platform</h1>
+                        <p class="connection-subtitle">Connect your wallet to get started</p>
+                    </div>
+                    
+                    <div class="wallet-buttons-grid">
+                        <button class="wallet-btn" id="connectKeplrWallet">
+                            <div class="wallet-btn-content">
+                                <div class="wallet-icon-placeholder">K</div>
+                                <div class="wallet-info">
+                                    <div class="wallet-name">Keplr Wallet</div>
+                                    <div class="wallet-desc">Browser Extension</div>
+                                </div>
+                            </div>
+                        </button>
+                        
+                        <button class="wallet-btn" id="connectCosmostationWallet">
+                            <div class="wallet-btn-content">
+                                <div class="wallet-icon-placeholder">C</div>
+                                <div class="wallet-info">
+                                    <div class="wallet-name">Cosmostation</div>
+                                    <div class="wallet-desc">Browser Extension</div>
+                                </div>
+                            </div>
+                        </button>
+                        
+                        <button class="wallet-btn" id="connectMetaMaskWallet">
+                            <div class="wallet-btn-content">
+                                <div class="wallet-icon-placeholder">M</div>
+                                <div class="wallet-info">
+                                    <div class="wallet-name">MetaMask</div>
+                                    <div class="wallet-desc">EVM Compatible</div>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <div class="connection-footer">
+                        <p>New to Qubetics?</p>
+                        <a href="index.html" class="btn btn-secondary">Learn More</a>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Hide wallet info in header
+        const walletInfo = document.getElementById('walletInfo');
+        if (walletInfo) {
+            walletInfo.style.display = 'none';
+        }
+        
+        // Setup wallet connection buttons
+        setTimeout(() => {
+            const keplrBtn = document.getElementById('connectKeplrWallet');
+            const cosmostationBtn = document.getElementById('connectCosmostationWallet');
+            const metamaskBtn = document.getElementById('connectMetaMaskWallet');
+            
+            if (keplrBtn) {
+                keplrBtn.addEventListener('click', () => this.connectWalletDirect('keplr'));
+            }
+            if (cosmostationBtn) {
+                cosmostationBtn.addEventListener('click', () => this.connectWalletDirect('cosmostation'));
+            }
+            if (metamaskBtn) {
+                metamaskBtn.addEventListener('click', () => this.connectWalletDirect('metamask'));
+            }
+        }, 100);
+    }
+    
+    async connectWalletDirect(walletType) {
+        try {
+            const btn = document.getElementById(`connect${walletType.charAt(0).toUpperCase() + walletType.slice(1)}Wallet`);
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<div class="wallet-btn-content"><div class="loading-spinner-small"></div><div class="wallet-info"><div class="wallet-name">Connecting...</div></div></div>';
+            }
+            
+            // Initialize Cosmos Staking first
+            let attempts = 0;
+            while (typeof CosmosStakingModule === 'undefined' && attempts < 50) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                attempts++;
+            }
+            
+            if (typeof CosmosStakingModule === 'undefined') {
+                throw new Error('CosmosStakingModule not loaded');
+            }
+            
+            this.cosmosStaking = new CosmosStakingModule();
+            await this.cosmosStaking.initialize();
+            
+            const result = await this.cosmosStaking.connectWallet(walletType);
+            
+            if (result.success) {
+                this.walletConnected = true;
+                this.walletType = walletType;
+                this.walletAddress = result.address;
+                
+                // Update URL with wallet params
+                const newUrl = `${window.location.pathname}?wallet=${walletType}&address=${this.walletAddress}`;
+                window.history.pushState({}, '', newUrl);
+                
+                // Update wallet display
+                this.updateWalletDisplay();
+                
+                // Show wallet info in header
+                const walletInfo = document.getElementById('walletInfo');
+                if (walletInfo) {
+                    walletInfo.style.display = 'flex';
+                }
+                
+                // Load staking module
+                await this.loadModule('staking');
+                
+                this.showSuccess('Wallet connected successfully!');
+                
+            } else {
+                throw new Error('Failed to connect wallet');
+            }
+            
+        } catch (error) {
+            console.error('Wallet connection error:', error);
+            this.showError('Connection failed: ' + error.message);
+            
+            // Restore button
+            this.showWalletConnectionScreen();
+        }
     }
     
     async initCosmosStaking() {

@@ -51,45 +51,129 @@ class QubeNodePlatform {
                 <div class="connection-card">
                     <div class="connection-logo">
                         <div class="logo-icon-large">Q</div>
-                        <h1 class="connection-title">QubeNode Platform</h1>
-                        <p class="connection-subtitle">Connect your wallet to get started</p>
+                        <h1 class="connection-title">Welcome to QubeNode</h1>
+                        <p class="connection-subtitle">Choose your wallet to access the platform</p>
                     </div>
                     
                     <div class="wallet-buttons-grid">
                         <button class="wallet-btn" id="connectKeplrWallet">
-                            <div class="wallet-btn-content">
-                                <div class="wallet-icon-placeholder">K</div>
-                                <div class="wallet-info">
-                                    <div class="wallet-name">Keplr Wallet</div>
-                                    <div class="wallet-desc">Browser Extension</div>
-                                </div>
+                            <div class="wallet-btn-icon">
+                                <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="100" cy="100" r="90" fill="url(#keplrGradient)"/>
+                                    <path d="M100 40L70 100L100 160L130 100L100 40Z" fill="white"/>
+                                    <path d="M70 100L40 130L70 160" fill="white" opacity="0.6"/>
+                                    <path d="M130 100L160 130L130 160" fill="white" opacity="0.6"/>
+                                    <defs>
+                                        <linearGradient id="keplrGradient" x1="0" y1="0" x2="200" y2="200">
+                                            <stop offset="0%" stop-color="#7C2AE8"/>
+                                            <stop offset="100%" stop-color="#D946EF"/>
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+                            </div>
+                            <div class="wallet-btn-info">
+                                <div class="wallet-btn-name">Keplr Wallet</div>
+                                <div class="wallet-btn-desc">Most popular Cosmos wallet</div>
+                            </div>
+                            <div class="wallet-btn-arrow">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
                             </div>
                         </button>
                         
                         <button class="wallet-btn" id="connectCosmostationWallet">
-                            <div class="wallet-btn-content">
-                                <div class="wallet-icon-placeholder">C</div>
-                                <div class="wallet-info">
-                                    <div class="wallet-name">Cosmostation</div>
-                                    <div class="wallet-desc">Browser Extension</div>
-                                </div>
+                            <div class="wallet-btn-icon">
+                                <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="100" cy="100" r="90" fill="url(#cosmosGradient)"/>
+                                    <circle cx="100" cy="100" r="45" fill="white"/>
+                                    <circle cx="100" cy="65" r="8" fill="url(#cosmosGradient)"/>
+                                    <circle cx="125" cy="100" r="8" fill="url(#cosmosGradient)"/>
+                                    <circle cx="100" cy="135" r="8" fill="url(#cosmosGradient)"/>
+                                    <circle cx="75" cy="100" r="8" fill="url(#cosmosGradient)"/>
+                                    <defs>
+                                        <linearGradient id="cosmosGradient" x1="0" y1="0" x2="200" y2="200">
+                                            <stop offset="0%" stop-color="#2E3148"/>
+                                            <stop offset="100%" stop-color="#5F6B8A"/>
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+                            </div>
+                            <div class="wallet-btn-info">
+                                <div class="wallet-btn-name">Cosmostation</div>
+                                <div class="wallet-btn-desc">Comprehensive Cosmos ecosystem</div>
+                            </div>
+                            <div class="wallet-btn-arrow">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
                             </div>
                         </button>
                         
                         <button class="wallet-btn" id="connectMetaMaskWallet">
-                            <div class="wallet-btn-content">
-                                <div class="wallet-icon-placeholder">M</div>
-                                <div class="wallet-info">
-                                    <div class="wallet-name">MetaMask</div>
-                                    <div class="wallet-desc">EVM Compatible</div>
-                                </div>
+                            <div class="wallet-btn-icon">
+                                <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="100" cy="100" r="90" fill="url(#metamaskGradient)"/>
+                                    <path d="M150 60L100 30L50 60L60 100L100 130L140 100L150 60Z" fill="white"/>
+                                    <path d="M100 80L85 100L100 110L115 100L100 80Z" fill="url(#metamaskGradient)"/>
+                                    <circle cx="85" cy="95" r="5" fill="url(#metamaskGradient)"/>
+                                    <circle cx="115" cy="95" r="5" fill="url(#metamaskGradient)"/>
+                                    <defs>
+                                        <linearGradient id="metamaskGradient" x1="0" y1="0" x2="200" y2="200">
+                                            <stop offset="0%" stop-color="#F6851B"/>
+                                            <stop offset="100%" stop-color="#E2761B"/>
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+                            </div>
+                            <div class="wallet-btn-info">
+                                <div class="wallet-btn-name">MetaMask</div>
+                                <div class="wallet-btn-desc">EVM compatible connection</div>
+                            </div>
+                            <div class="wallet-btn-arrow">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
                             </div>
                         </button>
                     </div>
                     
+                    <div class="connection-divider">
+                        <span>or</span>
+                    </div>
+                    
                     <div class="connection-footer">
-                        <p>New to Qubetics?</p>
-                        <a href="index.html" class="btn btn-secondary">Learn More</a>
+                        <p class="footer-text">New to Qubetics Network?</p>
+                        <a href="index.html" class="btn-learn-more">
+                            <span>Learn More</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="connection-features">
+                    <div class="feature-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                            <path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>
+                        </svg>
+                        <span>Stake & Earn</span>
+                    </div>
+                    <div class="feature-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                        <span>Real-time Stats</span>
+                    </div>
+                    <div class="feature-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0110 0v4"/>
+                        </svg>
+                        <span>Secure</span>
                     </div>
                 </div>
             </div>

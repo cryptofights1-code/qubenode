@@ -1611,3 +1611,308 @@ body {
         display: none;
     }
 }
+
+/* ===== CONNECT WALLET BUTTON IN HEADER ===== */
+.btn-connect-wallet {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    border: none;
+    border-radius: 12px;
+    color: #000;
+    font-weight: 600;
+    font-size: 0.95em;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+}
+
+.btn-connect-wallet svg {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2.5;
+}
+
+.btn-connect-wallet:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4);
+}
+
+/* ===== INFO BANNER ===== */
+.info-banner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(99, 102, 241, 0.08));
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 14px;
+    margin-bottom: 32px;
+    color: var(--text-secondary);
+    animation: slideInUp 0.6s var(--transition-bounce) 0.2s both;
+}
+
+.info-banner svg {
+    width: 24px;
+    height: 24px;
+    color: var(--info);
+    flex-shrink: 0;
+    stroke-width: 2;
+}
+
+.info-banner strong {
+    color: var(--text-primary);
+}
+
+/* ===== VALIDATORS GRID ===== */
+.validators-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 20px;
+}
+
+.validator-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(30px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius);
+    padding: 24px;
+    transition: all var(--transition-base);
+    position: relative;
+    animation: scaleIn 0.4s var(--transition-bounce);
+}
+
+.validator-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+.validator-card.featured {
+    border: 2px solid rgba(0, 212, 255, 0.4);
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 240, 0.05));
+}
+
+.featured-badge {
+    position: absolute;
+    top: -12px;
+    right: 20px;
+    padding: 6px 16px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: #000;
+    font-weight: 700;
+    font-size: 0.8em;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+}
+
+.validator-header-info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.validator-avatar {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.3em;
+    color: #000;
+    flex-shrink: 0;
+}
+
+.validator-moniker {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.validator-address-short {
+    font-family: 'SF Mono', 'Courier New', monospace;
+    font-size: 0.8em;
+    color: var(--text-muted);
+}
+
+.validator-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+}
+
+.validator-description {
+    font-size: 0.9em;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.btn-delegate {
+    width: 100%;
+}
+
+/* ===== CONNECT REQUIRED CARD ===== */
+.connect-required-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(30px) saturate(180%);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius-large);
+    padding: 60px 40px;
+    text-align: center;
+    max-width: 500px;
+    margin: 80px auto;
+    animation: scaleIn 0.6s var(--transition-bounce);
+}
+
+.connect-required-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 24px;
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(0, 255, 240, 0.1));
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.connect-required-icon svg {
+    width: 40px;
+    height: 40px;
+    color: var(--primary);
+    stroke-width: 2;
+}
+
+.connect-required-card h2 {
+    font-size: 1.8em;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+}
+
+.connect-required-card p {
+    font-size: 1.05em;
+    color: var(--text-muted);
+    margin-bottom: 32px;
+    line-height: 1.6;
+}
+
+/* ===== WALLET SELECTION MODAL ===== */
+.wallet-selection {
+    padding: 20px 0;
+}
+
+.wallet-selection-intro {
+    text-align: center;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    font-size: 1.05em;
+}
+
+.wallet-option-btn {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    width: 100%;
+    padding: 20px 24px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    margin-bottom: 12px;
+}
+
+.wallet-option-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(0, 212, 255, 0.4);
+    transform: translateX(4px);
+}
+
+.wallet-option-icon {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+}
+
+.wallet-option-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.wallet-option-info {
+    flex: 1;
+    text-align: left;
+}
+
+.wallet-option-name {
+    font-weight: 600;
+    font-size: 1.1em;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.wallet-option-desc {
+    font-size: 0.9em;
+    color: var(--text-muted);
+}
+
+/* ===== CONNECT PROMPT ===== */
+.connect-prompt {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.connect-prompt-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 24px;
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(0, 255, 240, 0.1));
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.connect-prompt-icon svg {
+    width: 40px;
+    height: 40px;
+    color: var(--primary);
+    stroke-width: 2;
+}
+
+.connect-prompt-text {
+    font-size: 1.1em;
+    color: var(--text-secondary);
+    margin-bottom: 28px;
+    line-height: 1.6;
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .validators-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .validator-stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .connect-required-card {
+        padding: 40px 24px;
+        margin: 40px 20px;
+    }
+}

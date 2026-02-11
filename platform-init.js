@@ -17,30 +17,135 @@ class QubeNodePlatform {
     }
     
     async init() {
-        // Check wallet connection from URL
+        // Check wallet connection from URL (optional)
         const urlParams = new URLSearchParams(window.location.search);
         this.walletType = urlParams.get('wallet');
         this.walletAddress = urlParams.get('address');
         
-        // Setup basic event listeners
+        // Setup event listeners
         this.setupEventListeners();
         
-        if (!this.walletType || !this.walletAddress) {
-            // Show wallet connection screen
-            this.showWalletConnectionScreen();
-            return;
+        // Update UI based on wallet status
+        if (this.walletType && this.walletAddress) {
+            // Wallet connected - initialize
+            await this.initCosmosStaking();
+            this.updateWalletDisplay();
+        } else {
+            // No wallet - show Connect button
+            this.showConnectWalletButton();
         }
         
-        // Update wallet display
-        this.updateWalletDisplay();
-        
-        // Initialize Cosmos Staking
-        await this.initCosmosStaking();
-        
-        // Load default module (Staking Hub)
+        // Load default module (Staking Hub works without wallet)
         await this.loadModule('staking');
         
         console.log('Platform initialized successfully');
+    }
+    
+    showConnectWalletButton() {
+        const walletInfo = document.getElementById('walletInfo');
+        if (walletInfo) {
+            walletInfo.innerHTML = `
+                <button class="btn-connect-wallet" id="connectWalletBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <rect x="3" y="7" width="18" height="13" rx="2" ry="2"/>
+                        <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                    <span>Connect Wallet</span>
+                </button>
+            `;
+            
+            // Setup click handler
+            setTimeout(() => {
+                const btn = document.getElementById('connectWalletBtn');
+                if (btn) {
+                    btn.addEventListener('click', () => this.showWalletSelectionModal());
+                }
+            }, 100);
+        }
+    }
+    
+    showWalletSelectionModal() {
+        const modalContent = `
+            <div class="modal-header">
+                <h2>Connect Wallet</h2>
+                <button class="modal-close" id="modalCloseBtn">×</button>
+            </div>
+            <div class="modal-body wallet-selection">
+                <p class="wallet-selection-intro">Choose your wallet to connect</p>
+                
+                <button class="wallet-option-btn" id="connectKeplrBtn">
+                    <div class="wallet-option-icon">
+                        <svg viewBox="0 0 200 200" fill="none">
+                            <circle cx="100" cy="100" r="90" fill="url(#keplrGrad)"/>
+                            <path d="M100 40L70 100L100 160L130 100L100 40Z" fill="white"/>
+                            <defs>
+                                <linearGradient id="keplrGrad" x1="0" y1="0" x2="200" y2="200">
+                                    <stop offset="0%" stop-color="#7C2AE8"/>
+                                    <stop offset="100%" stop-color="#D946EF"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div class="wallet-option-info">
+                        <div class="wallet-option-name">Keplr Wallet</div>
+                        <div class="wallet-option-desc">Most popular Cosmos wallet</div>
+                    </div>
+                </button>
+                
+                <button class="wallet-option-btn" id="connectCosmostationBtn">
+                    <div class="wallet-option-icon">
+                        <svg viewBox="0 0 200 200" fill="none">
+                            <circle cx="100" cy="100" r="90" fill="url(#cosmosGrad)"/>
+                            <circle cx="100" cy="100" r="45" fill="white"/>
+                            <defs>
+                                <linearGradient id="cosmosGrad" x1="0" y1="0" x2="200" y2="200">
+                                    <stop offset="0%" stop-color="#2E3148"/>
+                                    <stop offset="100%" stop-color="#5F6B8A"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div class="wallet-option-info">
+                        <div class="wallet-option-name">Cosmostation</div>
+                        <div class="wallet-option-desc">Comprehensive Cosmos ecosystem</div>
+                    </div>
+                </button>
+                
+                <button class="wallet-option-btn" id="connectMetaMaskBtn">
+                    <div class="wallet-option-icon">
+                        <svg viewBox="0 0 200 200" fill="none">
+                            <circle cx="100" cy="100" r="90" fill="url(#mmGrad)"/>
+                            <path d="M100 80L85 100L100 110L115 100L100 80Z" fill="white"/>
+                            <defs>
+                                <linearGradient id="mmGrad" x1="0" y1="0" x2="200" y2="200">
+                                    <stop offset="0%" stop-color="#F6851B"/>
+                                    <stop offset="100%" stop-color="#E2761B"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div class="wallet-option-info">
+                        <div class="wallet-option-name">MetaMask</div>
+                        <div class="wallet-option-desc">EVM compatible connection</div>
+                    </div>
+                </button>
+            </div>
+        `;
+        
+        this.showModal(modalContent);
+        
+        // Setup handlers
+        setTimeout(() => {
+            const closeBtn = document.getElementById('modalCloseBtn');
+            const keplrBtn = document.getElementById('connectKeplrBtn');
+            const cosmostationBtn = document.getElementById('connectCosmostationBtn');
+            const metamaskBtn = document.getElementById('connectMetaMaskBtn');
+            
+            if (closeBtn) closeBtn.addEventListener('click', () => this.closeModal());
+            if (keplrBtn) keplrBtn.addEventListener('click', () => this.connectWalletDirect('keplr'));
+            if (cosmostationBtn) cosmostationBtn.addEventListener('click', () => this.connectWalletDirect('cosmostation'));
+            if (metamaskBtn) metamaskBtn.addEventListener('click', () => this.connectWalletDirect('metamask'));
+        }, 100);
     }
     
     showWalletConnectionScreen() {
@@ -370,13 +475,175 @@ class QubeNodePlatform {
     
     // ===== STAKING MODULE =====
     async renderStakingModule(container) {
+        if (!this.walletConnected) {
+            // Show public validator list without wallet
+            await this.renderPublicValidatorList(container);
+        } else {
+            // Show personalized staking info with wallet
+            await this.renderPersonalStaking(container);
+        }
+    }
+    
+    async renderPublicValidatorList(container) {
+        container.innerHTML = `
+            <div class="staking-hub">
+                <div class="page-header">
+                    <h1 class="page-title">Qubetics Validators</h1>
+                    <p class="page-subtitle">Choose a validator to delegate your TICS tokens</p>
+                </div>
+                
+                <div class="info-banner">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 16v-4M12 8h.01"/>
+                    </svg>
+                    <div>
+                        <strong>Connect your wallet</strong> to see your delegations and delegate tokens
+                    </div>
+                </div>
+                
+                <div class="validators-grid" id="validatorsList">
+                    <div class="loading-state">
+                        <div class="loading-spinner"></div>
+                        <p>Loading validators...</p>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Load validators from blockchain
+        await this.loadValidators();
+    }
+    
+    async loadValidators() {
+        try {
+            // Fetch validators from API
+            const response = await fetch('https://swagger.qubetics.com/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED');
+            const data = await response.json();
+            
+            const validatorsList = document.getElementById('validatorsList');
+            if (!validatorsList) return;
+            
+            if (data.validators && data.validators.length > 0) {
+                validatorsList.innerHTML = data.validators.map(validator => {
+                    const commission = parseFloat(validator.commission.commission_rates.rate) * 100;
+                    const tokens = parseFloat(validator.tokens) / 1e18;
+                    const isQubeNode = validator.operator_address === this.VALIDATOR_ADDRESS;
+                    
+                    return `
+                        <div class="validator-card ${isQubeNode ? 'featured' : ''}">
+                            ${isQubeNode ? '<div class="featured-badge">QubeNode</div>' : ''}
+                            <div class="validator-header-info">
+                                <div class="validator-avatar">${validator.description.moniker.charAt(0)}</div>
+                                <div>
+                                    <h3 class="validator-moniker">${validator.description.moniker}</h3>
+                                    <p class="validator-address-short">${validator.operator_address.slice(0, 20)}...</p>
+                                </div>
+                            </div>
+                            
+                            <div class="validator-stats-grid">
+                                <div class="validator-stat">
+                                    <span class="stat-label">Commission</span>
+                                    <span class="stat-value">${commission.toFixed(1)}%</span>
+                                </div>
+                                <div class="validator-stat">
+                                    <span class="stat-label">Total Staked</span>
+                                    <span class="stat-value">${this.formatNumber(tokens)} TICS</span>
+                                </div>
+                                <div class="validator-stat">
+                                    <span class="stat-label">APY</span>
+                                    <span class="stat-value stat-green">${(30 - commission).toFixed(1)}%</span>
+                                </div>
+                            </div>
+                            
+                            ${validator.description.details ? `
+                                <p class="validator-description">${validator.description.details.substring(0, 100)}...</p>
+                            ` : ''}
+                            
+                            <button class="btn btn-primary btn-delegate" data-validator="${validator.operator_address}">
+                                Delegate
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+                
+                // Setup delegate buttons
+                this.setupDelegateButtons();
+            } else {
+                validatorsList.innerHTML = '<div class="empty-state"><p>No validators found</p></div>';
+            }
+        } catch (error) {
+            console.error('Error loading validators:', error);
+            document.getElementById('validatorsList').innerHTML = `
+                <div class="empty-state">
+                    <p>Failed to load validators. Please try again later.</p>
+                </div>
+            `;
+        }
+    }
+    
+    setupDelegateButtons() {
+        const delegateBtns = document.querySelectorAll('.btn-delegate');
+        delegateBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const validatorAddress = btn.dataset.validator;
+                if (!this.walletConnected) {
+                    this.showConnectWalletPrompt('delegate');
+                } else {
+                    this.showDelegateModalForValidator(validatorAddress);
+                }
+            });
+        });
+    }
+    
+    showConnectWalletPrompt(action) {
+        const messages = {
+            'delegate': 'Connect your wallet to delegate tokens',
+            'view': 'Connect your wallet to view your portfolio',
+            'claim': 'Connect your wallet to claim rewards'
+        };
+        
+        const modalContent = `
+            <div class="modal-header">
+                <h2>Wallet Required</h2>
+                <button class="modal-close" id="modalCloseBtn">×</button>
+            </div>
+            <div class="modal-body connect-prompt">
+                <div class="connect-prompt-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <rect x="3" y="7" width="18" height="13" rx="2" ry="2"/>
+                        <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                </div>
+                <p class="connect-prompt-text">${messages[action] || 'Connect your wallet to continue'}</p>
+                <button class="btn btn-primary btn-large" id="connectNowBtn">Connect Wallet</button>
+            </div>
+        `;
+        
+        this.showModal(modalContent);
+        
+        setTimeout(() => {
+            const closeBtn = document.getElementById('modalCloseBtn');
+            const connectBtn = document.getElementById('connectNowBtn');
+            
+            if (closeBtn) closeBtn.addEventListener('click', () => this.closeModal());
+            if (connectBtn) {
+                connectBtn.addEventListener('click', () => {
+                    this.closeModal();
+                    this.showWalletSelectionModal();
+                });
+            }
+        }, 100);
+    }
+    
+    async renderPersonalStaking(container) {
         const data = await this.cosmosStaking.refresh();
         
         container.innerHTML = `
             <div class="staking-hub">
                 <div class="page-header">
-                    <h1 class="page-title">Staking Hub</h1>
-                    <p class="page-subtitle">Delegate your TICS tokens and earn rewards</p>
+                    <h1 class="page-title">My Staking</h1>
+                    <p class="page-subtitle">Manage your TICS delegations and rewards</p>
                 </div>
                 
                 <div class="stats-grid stagger-children">
@@ -415,39 +682,33 @@ class QubeNodePlatform {
                 </div>
                 
                 <div class="card">
-                    <div class="validator-header">
-                        <div>
-                            <h3 class="card-title">QubeNode Validator</h3>
-                            <p class="validator-address">${this.VALIDATOR_ADDRESS}</p>
-                        </div>
-                        <div class="validator-badge">
-                            <span class="live-indicator"></span>
-                            Active
-                        </div>
-                    </div>
-                    <div class="validator-stats">
-                        <div class="validator-stat">
-                            <span class="stat-label">Commission</span>
-                            <span class="stat-value">5%</span>
-                        </div>
-                        <div class="validator-stat">
-                            <span class="stat-label">Uptime</span>
-                            <span class="stat-value">99.9%</span>
-                        </div>
-                    </div>
+                    <h3 class="card-title">My Delegations</h3>
+                    <div id="delegationsList">${this.renderDelegations(data)}</div>
                 </div>
                 
                 <div class="card">
-                    <h3 class="card-title">My Delegations</h3>
-                    <div id="delegationsList">${this.renderDelegations(data)}</div>
+                    <h3 class="card-title">All Validators</h3>
+                    <div class="validators-grid" id="validatorsList">
+                        <div class="loading-spinner-small"></div>
+                    </div>
                 </div>
             </div>
         `;
         
-        // Setup event listeners for this module
+        // Setup event listeners
         setTimeout(() => {
             this.setupStakingEventListeners();
+            this.loadValidators();
         }, 100);
+    }
+    
+    formatNumber(num) {
+        if (num >= 1000000) {
+            return (num / 1000000).toFixed(2) + 'M';
+        } else if (num >= 1000) {
+            return (num / 1000).toFixed(2) + 'K';
+        }
+        return num.toFixed(2);
     }
     
     setupStakingEventListeners() {
@@ -605,6 +866,37 @@ class QubeNodePlatform {
     
     // ===== PORTFOLIO MODULE =====
     async renderPortfolioModule(container) {
+        if (!this.walletConnected) {
+            container.innerHTML = `
+                <div class="module-enter">
+                    <div class="page-header">
+                        <h1 class="page-title">Portfolio</h1>
+                        <p class="page-subtitle">Track your staking performance</p>
+                    </div>
+                    
+                    <div class="connect-required-card">
+                        <div class="connect-required-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <rect x="3" y="7" width="18" height="13" rx="2" ry="2"/>
+                                <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                        </div>
+                        <h2>Connect Wallet Required</h2>
+                        <p>Connect your wallet to view your portfolio and track your staking rewards</p>
+                        <button class="btn btn-primary btn-large" id="connectForPortfolio">Connect Wallet</button>
+                    </div>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                const btn = document.getElementById('connectForPortfolio');
+                if (btn) {
+                    btn.addEventListener('click', () => this.showWalletSelectionModal());
+                }
+            }, 100);
+            return;
+        }
+        
         const data = await this.cosmosStaking.refresh();
         const balance = parseFloat(data.balance) / 1e18;
         const delegated = parseFloat(data.totalDelegated) / 1e18;

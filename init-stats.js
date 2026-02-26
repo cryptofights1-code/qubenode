@@ -547,7 +547,12 @@
     async function updateSigningInfo() {
         try {
             const signingUrl = 'https://swagger.qubetics.com/cosmos/slashing/v1beta1/signing_infos?pagination.limit=300';
-            const response = await fetch(signingUrl);
+            const paramsUrl = 'https://swagger.qubetics.com/cosmos/slashing/v1beta1/params';
+
+            const [response, paramsResponse] = await Promise.all([
+                fetch(signingUrl),
+                fetch(paramsUrl)
+            ]);
             
             if (!response.ok) {
                 console.error('❌ Signing Info API error:', response.status);
@@ -555,6 +560,8 @@
             }
             
             const data = await response.json();
+            const paramsData = paramsResponse.ok ? await paramsResponse.json() : null;
+            const slashingWindow = parseInt(paramsData?.params?.signed_blocks_window || '100000');
             
             if (data?.info && data.info.length > 0) {
                 const ourValidator = data.info.find(v => 
@@ -562,12 +569,11 @@
                 );
                 
                 if (ourValidator) {
-                    const indexOffset = parseInt(ourValidator.index_offset);
                     const missedBlocks = parseInt(ourValidator.missed_blocks_counter);
                     
-                    // Uptime calculation (2 decimal places)
-                    const signedBlocks = indexOffset - missedBlocks;
-                    const uptime = (signedBlocks / indexOffset) * 100;
+                    // Uptime calculation based on slashing window (100K blocks), not index_offset
+                    const signedBlocks = slashingWindow - missedBlocks;
+                    const uptime = (signedBlocks / slashingWindow) * 100;
                     
                     // Update Uptime (both hero and performance sections)
                     const uptimeEl = document.getElementById('validatorUptime');

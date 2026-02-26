@@ -293,8 +293,12 @@ async function updateUptime() {
 
   try {
     const infoUrl = `${API_BASE}/cosmos/slashing/v1beta1/signing_infos?pagination.limit=1000`;
+    const paramsUrl = `${API_BASE}/cosmos/slashing/v1beta1/params`;
 
-    const info = await fetchJSON(infoUrl);
+    const [info, params] = await Promise.all([
+      fetchJSON(infoUrl),
+      fetchJSON(paramsUrl)
+    ]);
 
     const list = info?.info || info?.signing_infos || [];
 
@@ -302,13 +306,13 @@ async function updateUptime() {
       ? list.find(i => i.address === VALCONS_ADDR || i.cons_address === VALCONS_ADDR || i.valcons_address === VALCONS_ADDR)
       : null;
 
-    if (entry) {
-      const indexOffset = parseInt(entry.index_offset || "0");
-      const missed = parseInt(entry.missed_blocks_counter || "0");
-      const signed = indexOffset - missed;
-      const uptime = indexOffset > 0 ? (signed / indexOffset) * 100 : 100;
+    if (entry && params?.params?.signed_blocks_window) {
+      const slashingWindow = parseInt(params.params.signed_blocks_window); // 100,000
+      const missed = parseInt(entry.missed_blocks_counter || "0");         // ✅ правильне поле
+      const signed = slashingWindow - missed;
+      const uptime = (signed / slashingWindow) * 100;                      // ✅ правильний знаменник
       el.textContent = uptime.toFixed(2) + "%";
-      console.log(`✅ Validator uptime: ${uptime.toFixed(2)}% (${signed}/${indexOffset} blocks, missed: ${missed})`);
+      console.log(`✅ Validator uptime: ${uptime.toFixed(2)}% (${signed}/${slashingWindow} blocks in window, missed: ${missed})`);
     } else {
       el.textContent = "100.00%";
     }
